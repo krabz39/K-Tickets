@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +10,19 @@
         name="description"
         content="Sign in to your K-Tickets account."
     >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow,noarchive,nosnippet"
+    >
+
+    <meta
+        name="referrer"
+        content="same-origin"
+    >
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
@@ -75,7 +87,9 @@
             min-height: 100dvh;
 
             display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(420px, 0.8fr);
+            grid-template-columns:
+                minmax(0, 1fr)
+                minmax(420px, 0.8fr);
         }
 
         /* =========================
@@ -745,9 +759,11 @@
                 <div class="field">
 
                     <div class="field-row">
+
                         <label for="email">
                             Email address
                         </label>
+
                     </div>
 
                     <div class="input-wrap">
@@ -816,6 +832,7 @@
                         <input
                             type="checkbox"
                             id="remember"
+                            checked
                         >
 
                         <span>
@@ -867,23 +884,68 @@
 
 <script>
 
-    /* =========================
+    /* ============================================================
+       K-TICKETS / SUPABASE CONFIG
+       ============================================================ */
+
+    const SUPABASE_URL =
+        "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY,
+            {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
+                }
+            }
+        );
+
+
+    /* ============================================================
        YEAR
-    ========================= */
+       ============================================================ */
 
     document.getElementById("brandYear").textContent =
         new Date().getFullYear();
 
 
-    /* =========================
-       PASSWORD VISIBILITY
-    ========================= */
+    /* ============================================================
+       ELEMENTS
+       ============================================================ */
 
     const password =
         document.getElementById("password");
 
     const passwordToggle =
         document.getElementById("passwordToggle");
+
+    const form =
+        document.getElementById("loginForm");
+
+    const message =
+        document.getElementById("message");
+
+    const submitBtn =
+        document.getElementById("submitBtn");
+
+    const emailInput =
+        document.getElementById("email");
+
+    const rememberInput =
+        document.getElementById("remember");
+
+
+    /* ============================================================
+       PASSWORD VISIBILITY
+       ============================================================ */
 
     passwordToggle.addEventListener("click", () => {
 
@@ -906,84 +968,421 @@
     });
 
 
-    /* =========================
-       TEMPORARY FORM HANDLING
-       =========================
-       Supabase authentication
-       will replace this section.
-    ========================= */
+    /* ============================================================
+       MESSAGE HELPERS
+       ============================================================ */
 
-    const form =
-        document.getElementById("loginForm");
+    function showMessage(text, type = "error") {
 
-    const message =
-        document.getElementById("message");
+        message.textContent = text;
 
-    const submitBtn =
-        document.getElementById("submitBtn");
+        message.className =
+            "message show " + type;
+    }
 
 
-    form.addEventListener("submit", (event) => {
+    function clearMessage() {
 
-        event.preventDefault();
+        message.textContent = "";
 
         message.className = "message";
+    }
 
-        const email =
-            document.getElementById("email").value.trim();
 
-        const passwordValue =
-            password.value;
+    /* ============================================================
+       SUPABASE ERROR TRANSLATION
+       ============================================================ */
 
-        if (!email || !passwordValue) {
+    function friendlyAuthError(error) {
 
-            message.textContent =
-                "Please enter your email and password.";
+        const text =
+            String(error?.message || "")
+                .toLowerCase();
 
-            message.classList.add(
-                "show",
-                "error"
-            );
 
-            return;
+        if (
+            text.includes("invalid login credentials")
+        ) {
+            return "Incorrect email or password.";
         }
 
-        if (!email.includes("@")) {
 
-            message.textContent =
-                "Please enter a valid email address.";
-
-            message.classList.add(
-                "show",
-                "error"
-            );
-
-            return;
+        if (
+            text.includes("email not confirmed")
+        ) {
+            return "Please confirm your email address before signing in.";
         }
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Signing in...";
 
-        /*
-            SUPABASE AUTH WILL BE CONNECTED HERE.
-        */
+        if (
+            text.includes("too many requests")
+        ) {
+            return "Too many login attempts. Please wait a moment and try again.";
+        }
 
-        setTimeout(() => {
 
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Sign in";
+        if (
+            text.includes("network")
+        ) {
+            return "Network error. Please check your internet connection.";
+        }
 
-            message.textContent =
-                "Authentication will be connected to your K-Tickets account next.";
 
-            message.classList.add(
-                "show",
-                "success"
+        return error?.message ||
+            "Unable to sign in. Please try again.";
+    }
+
+
+    /* ============================================================
+       ROLE ROUTING
+       ============================================================ */
+
+    async function redirectByRole(user) {
+
+        if (!user?.id) {
+
+            throw new Error(
+                "No authenticated user was found."
+            );
+        }
+
+
+        const {
+            data: profile,
+            error
+        } = await supabaseClient
+            .from("profiles")
+            .select(
+                "id, full_name, phone, role, is_active"
+            )
+            .eq("id", user.id)
+            .maybeSingle();
+
+
+        if (error) {
+
+            console.error(
+                "Profile lookup error:",
+                error
             );
 
-        }, 700);
+            throw new Error(
+                "Your account was authenticated, but your K-Tickets profile could not be loaded."
+            );
+        }
 
-    });
+
+        if (!profile) {
+
+            await supabaseClient.auth.signOut();
+
+            throw new Error(
+                "Your K-Tickets profile has not been created yet."
+            );
+        }
+
+
+        if (!profile.is_active) {
+
+            await supabaseClient.auth.signOut();
+
+            throw new Error(
+                "Your K-Tickets account is currently inactive."
+            );
+        }
+
+
+        /* ========================================================
+           SAVE SESSION INFORMATION
+           ======================================================== */
+
+        sessionStorage.setItem(
+            "kt_user_id",
+            profile.id
+        );
+
+        sessionStorage.setItem(
+            "kt_user_name",
+            profile.full_name || ""
+        );
+
+        sessionStorage.setItem(
+            "kt_user_role",
+            profile.role
+        );
+
+
+        /* ========================================================
+           ROLE ROUTING
+           ======================================================== */
+
+        switch (profile.role) {
+
+            case "admin":
+
+                window.location.href =
+                    "admin/dashboard.html";
+
+                break;
+
+
+            case "merchant":
+
+                window.location.href =
+                    "merchant/dashboard.html";
+
+                break;
+
+
+            case "gate_staff":
+
+                window.location.href =
+                    "gate/scan.html";
+
+                break;
+
+
+            case "customer":
+
+                window.location.href =
+                    "customer/dashboard.html";
+
+                break;
+
+
+            default:
+
+                await supabaseClient.auth.signOut();
+
+                throw new Error(
+                    "Your account has an unsupported K-Tickets role."
+                );
+        }
+    }
+
+
+    /* ============================================================
+       EXISTING SESSION
+       ============================================================ */
+
+    async function checkExistingSession() {
+
+        try {
+
+            const {
+                data,
+                error
+            } = await supabaseClient.auth.getSession();
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            if (data?.session?.user) {
+
+                await redirectByRole(
+                    data.session.user
+                );
+
+                return;
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Session check:",
+                error
+            );
+
+            /*
+              Don't show an existing-session error immediately.
+              The user can still use the login form.
+            */
+        }
+    }
+
+
+    /* ============================================================
+       LOGIN
+       ============================================================ */
+
+    form.addEventListener(
+        "submit",
+        async (event) => {
+
+            event.preventDefault();
+
+            clearMessage();
+
+
+            const email =
+                emailInput.value.trim();
+
+            const passwordValue =
+                password.value;
+
+
+            if (!email) {
+
+                showMessage(
+                    "Please enter your email address."
+                );
+
+                emailInput.focus();
+
+                return;
+            }
+
+
+            if (!email.includes("@")) {
+
+                showMessage(
+                    "Please enter a valid email address."
+                );
+
+                emailInput.focus();
+
+                return;
+            }
+
+
+            if (!passwordValue) {
+
+                showMessage(
+                    "Please enter your password."
+                );
+
+                password.focus();
+
+                return;
+            }
+
+
+            submitBtn.disabled = true;
+
+            submitBtn.textContent =
+                "Signing in...";
+
+
+            try {
+
+                /*
+                  Remember me:
+                  Supabase normally persists the session.
+                  If the user doesn't want persistence,
+                  we sign out when the current browser session
+                  is closed through our session handling.
+                */
+
+                const {
+                    data,
+                    error
+                } = await supabaseClient.auth
+                    .signInWithPassword({
+                        email,
+                        password: passwordValue
+                    });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (!data?.user) {
+
+                    throw new Error(
+                        "Authentication completed without a user session."
+                    );
+                }
+
+
+                showMessage(
+                    "Login successful. Opening your K-Tickets account...",
+                    "success"
+                );
+
+
+                await redirectByRole(
+                    data.user
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "K-Tickets login error:",
+                    error
+                );
+
+
+                showMessage(
+                    friendlyAuthError(error)
+                );
+
+
+                submitBtn.disabled = false;
+
+                submitBtn.textContent =
+                    "Sign in";
+            }
+
+        }
+    );
+
+
+    /* ============================================================
+       AUTH STATE LISTENER
+       ============================================================ */
+
+    supabaseClient.auth.onAuthStateChange(
+        async (event, session) => {
+
+            /*
+              We only route when a valid signed-in session
+              exists. Login itself handles the main redirect.
+            */
+
+            if (
+                event === "SIGNED_IN" &&
+                session?.user
+            ) {
+
+                /*
+                  Small delay prevents competing auth events
+                  from causing duplicate navigation.
+                */
+
+                setTimeout(async () => {
+
+                    try {
+
+                        await redirectByRole(
+                            session.user
+                        );
+
+                    } catch (error) {
+
+                        console.error(
+                            "Auth state routing error:",
+                            error
+                        );
+
+                    }
+
+                }, 50);
+            }
+        }
+    );
+
+
+    /* ============================================================
+       START
+       ============================================================ */
+
+    checkExistingSession();
 
 </script>
 
