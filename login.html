@@ -1,661 +1,352 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sign In | K-Tickets</title>
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+    <meta name="referrer" content="same-origin">
 
-    <meta
-        name="description"
-        content="Sign in to your K-Tickets account."
-    >
+    <title>Login — K-Tickets</title>
 
-    <meta
-        name="robots"
-        content="noindex,nofollow,noarchive,nosnippet"
-    >
-
-    <meta
-        name="referrer"
-        content="same-origin"
-    >
-
-    <!-- Supabase JS -->
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
             --bordo: #6C151E;
-            --bordo-dark: #541018;
             --green: #0F3D3A;
-            --green-dark: #092D2B;
             --cream: #F5DABF;
-            --white: #FFFDF9;
-            --text: #1D2927;
-            --muted: #6D7774;
-            --border: rgba(15, 61, 58, 0.14);
-            --danger: #A52835;
-            --success: #21735D;
-            --shadow: 0 24px 70px rgba(15, 61, 58, 0.14);
+            --white: #ffffff;
+            --black: #111111;
+            --muted: #777777;
+            --border: #e8e8e8;
+            --danger: #b42318;
+            --success: #087443;
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
         }
 
         body {
             min-height: 100vh;
-            min-height: 100dvh;
-
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-
+            font-family: Inter, Arial, sans-serif;
             background: var(--cream);
-            color: var(--text);
-
-            display: flex;
-            flex-direction: column;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        button,
-        input {
-            font: inherit;
-        }
-
-        button {
-            cursor: pointer;
+            color: var(--black);
         }
 
         .page {
             min-height: 100vh;
-            min-height: 100dvh;
-
             display: grid;
-            grid-template-columns:
-                minmax(0, 1fr)
-                minmax(420px, 0.8fr);
+            grid-template-columns: 1fr 1fr;
         }
 
-        /* =========================
-           LEFT PANEL
-        ========================= */
+        /* LEFT */
 
         .brand-panel {
-            position: relative;
-            overflow: hidden;
-
             background: var(--green);
-            color: var(--cream);
-
-            padding: clamp(28px, 5vw, 70px);
-
+            color: white;
+            padding: 55px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
 
-        .brand-panel::before,
         .brand-panel::after {
             content: "";
             position: absolute;
-
-            border-radius: 50%;
-
-            pointer-events: none;
-        }
-
-        .brand-panel::before {
             width: 420px;
             height: 420px;
-
-            right: -180px;
-            top: -180px;
-
-            background: var(--bordo);
-            opacity: 0.9;
-        }
-
-        .brand-panel::after {
-            width: 280px;
-            height: 280px;
-
-            left: -160px;
+            border-radius: 50%;
+            background: rgba(245, 218, 191, 0.06);
+            right: -160px;
             bottom: -150px;
-
-            border: 1px solid rgba(245, 218, 191, 0.18);
         }
 
-        .brand-content,
-        .brand-footer {
+        .logo {
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: 1px;
             position: relative;
             z-index: 2;
         }
 
-        .brand {
-            display: inline-flex;
-            align-items: center;
-            gap: 11px;
-
-            width: fit-content;
-
-            font-weight: 900;
-            letter-spacing: -0.5px;
-        }
-
-        .brand-mark {
-            width: 44px;
-            height: 44px;
-
-            display: grid;
-            place-items: center;
-
-            border-radius: 13px;
-
-            background: var(--bordo);
-            color: var(--cream);
-
-            font-weight: 900;
-            font-size: 18px;
-        }
-
         .brand-content {
-            max-width: 620px;
-            margin-top: auto;
-            margin-bottom: auto;
-            padding: 80px 0;
-        }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-
-            padding: 8px 12px;
-
-            border-radius: 999px;
-
-            background: rgba(245, 218, 191, 0.09);
-            border: 1px solid rgba(245, 218, 191, 0.14);
-
-            color: var(--cream);
-
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            max-width: 500px;
+            position: relative;
+            z-index: 2;
         }
 
         .brand-content h1 {
-            margin-top: 24px;
-
-            max-width: 650px;
-
-            font-size: clamp(42px, 5vw, 76px);
-            line-height: 0.98;
+            font-size: clamp(45px, 6vw, 78px);
+            line-height: .95;
+            margin-bottom: 25px;
             letter-spacing: -3px;
         }
 
         .brand-content h1 span {
-            color: #E8B4A5;
+            color: var(--cream);
         }
 
         .brand-content p {
-            max-width: 550px;
-
-            margin-top: 24px;
-
-            color: rgba(245, 218, 191, 0.68);
-
-            font-size: clamp(15px, 1.5vw, 18px);
+            font-size: 18px;
             line-height: 1.7;
+            color: rgba(255,255,255,.75);
+            max-width: 430px;
         }
 
-        .brand-points {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-
-            gap: 14px;
-
-            margin-top: 38px;
+        .points {
+            display: flex;
+            gap: 35px;
+            position: relative;
+            z-index: 2;
         }
 
-        .brand-point {
-            padding: 16px;
-
-            border-radius: 15px;
-
-            background: rgba(245, 218, 191, 0.06);
-            border: 1px solid rgba(245, 218, 191, 0.09);
+        .point {
+            max-width: 150px;
         }
 
-        .brand-point strong {
+        .point strong {
             display: block;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
 
-            color: white;
+        .point span {
+            color: rgba(255,255,255,.6);
             font-size: 13px;
+            line-height: 1.5;
         }
 
-        .brand-point span {
-            display: block;
-
-            margin-top: 5px;
-
-            color: rgba(245, 218, 191, 0.55);
-            font-size: 11px;
-            line-height: 1.45;
-        }
-
-        .brand-footer {
-            color: rgba(245, 218, 191, 0.48);
-            font-size: 12px;
-        }
-
-        /* =========================
-           FORM PANEL
-        ========================= */
+        /* RIGHT */
 
         .form-panel {
-            background: var(--white);
-
-            padding:
-                clamp(24px, 5vw, 70px);
-
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 45px;
         }
 
         .form-container {
             width: 100%;
-            max-width: 460px;
+            max-width: 440px;
         }
 
-        .mobile-brand {
-            display: none;
+        .form-header {
+            margin-bottom: 35px;
         }
 
-        .form-heading h2 {
-            color: var(--green);
+        .form-header .eyebrow {
+            color: var(--bordo);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
 
-            font-size: clamp(30px, 4vw, 42px);
-            line-height: 1.05;
-
+        .form-header h2 {
+            font-size: 38px;
             letter-spacing: -1.5px;
+            margin-bottom: 10px;
         }
 
-        .form-heading p {
-            margin-top: 10px;
-
+        .form-header p {
             color: var(--muted);
-            font-size: 14px;
+            line-height: 1.6;
         }
 
-        .form {
-            margin-top: 32px;
+        .alert {
+            display: none;
+            border-radius: 10px;
+            padding: 13px 15px;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.error {
+            color: var(--danger);
+            background: #fff1f0;
+            border: 1px solid #f5c2c0;
+        }
+
+        .alert.success {
+            color: var(--success);
+            background: #eefbf4;
+            border: 1px solid #b7e3ca;
         }
 
         .field {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
-        .field-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-            gap: 15px;
-
-            margin-bottom: 8px;
-        }
-
-        label {
-            color: var(--green);
-
+        .field label {
+            display: block;
             font-size: 13px;
-            font-weight: 800;
-        }
-
-        .field-link {
-            color: var(--bordo);
-
-            font-size: 12px;
-            font-weight: 800;
-        }
-
-        .field-link:hover {
-            text-decoration: underline;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .input-wrap {
             position: relative;
         }
 
-        input {
+        .field input {
             width: 100%;
-
-            min-height: 52px;
-
-            padding: 0 15px;
-
+            height: 52px;
             border: 1px solid var(--border);
-            border-radius: 13px;
-
-            outline: none;
-
-            background: #FFFCF8;
-            color: var(--text);
-
+            border-radius: 10px;
+            padding: 0 15px;
             font-size: 15px;
-
-            transition:
-                border-color 0.2s ease,
-                box-shadow 0.2s ease,
-                background 0.2s ease;
+            outline: none;
+            transition: .2s;
         }
 
-        input::placeholder {
-            color: #A4AAA8;
-        }
-
-        input:focus {
-            border-color: var(--bordo);
-
-            background: white;
-
-            box-shadow:
-                0 0 0 4px rgba(108, 21, 30, 0.08);
-        }
-
-        .password-input {
-            padding-right: 65px;
+        .field input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15,61,58,.08);
         }
 
         .password-toggle {
             position: absolute;
-
-            right: 10px;
+            right: 12px;
             top: 50%;
-
             transform: translateY(-50%);
-
             border: 0;
             background: transparent;
-
-            color: var(--green);
-
-            padding: 8px;
-
+            color: var(--muted);
+            cursor: pointer;
             font-size: 12px;
-            font-weight: 800;
+            font-weight: 700;
         }
 
-        .password-toggle:hover {
-            color: var(--bordo);
-        }
-
-        .remember-row {
+        .form-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-
+            margin: 5px 0 25px;
             gap: 15px;
-
-            margin: 6px 0 22px;
         }
 
         .remember {
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 8px;
-
-            color: var(--muted);
-
-            font-size: 12px;
+            font-size: 13px;
+            color: #555;
         }
 
         .remember input {
-            width: 16px;
-            min-height: 16px;
+            accent-color: var(--green);
+        }
 
-            accent-color: var(--bordo);
+        .forgot {
+            color: var(--bordo);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .forgot:hover {
+            text-decoration: underline;
         }
 
         .submit-btn {
             width: 100%;
-            min-height: 54px;
-
+            height: 54px;
             border: 0;
-            border-radius: 13px;
-
+            border-radius: 10px;
             background: var(--bordo);
             color: white;
-
-            font-weight: 900;
-
-            box-shadow:
-                0 12px 25px rgba(108, 21, 30, 0.18);
-
-            transition:
-                transform 0.2s ease,
-                background 0.2s ease,
-                opacity 0.2s ease;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .2s;
         }
 
         .submit-btn:hover {
-            background: var(--bordo-dark);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
+            opacity: .94;
         }
 
         .submit-btn:disabled {
+            opacity: .65;
             cursor: not-allowed;
-            opacity: 0.65;
             transform: none;
         }
 
-        .message {
-            display: none;
-
-            margin-bottom: 18px;
-            padding: 12px 14px;
-
-            border-radius: 12px;
-
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .message.show {
-            display: block;
-        }
-
-        .message.error {
-            background: rgba(165, 40, 53, 0.08);
-            color: var(--danger);
-        }
-
-        .message.success {
-            background: rgba(33, 115, 93, 0.08);
-            color: var(--success);
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            margin: 28px 0;
-
-            color: #A4AAA8;
-
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: "";
-
-            height: 1px;
-            flex: 1;
-
-            background: var(--border);
-        }
-
-        .register-prompt {
+        .register-link {
             text-align: center;
-
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .register-prompt a {
-            color: var(--bordo);
-            font-weight: 900;
-        }
-
-        .register-prompt a:hover {
-            text-decoration: underline;
-        }
-
-        .back-home {
-            display: block;
-
             margin-top: 25px;
-
-            text-align: center;
-
-            color: var(--green);
-
-            font-size: 12px;
-            font-weight: 800;
+            color: var(--muted);
+            font-size: 14px;
         }
 
-        .back-home:hover {
+        .register-link a {
             color: var(--bordo);
+            font-weight: 800;
+            text-decoration: none;
         }
 
-        /* =========================
-           TABLET
-        ========================= */
+        .footer {
+            text-align: center;
+            color: #aaa;
+            font-size: 11px;
+            margin-top: 35px;
+        }
 
-        @media (max-width: 950px) {
-
+        @media (max-width: 850px) {
             .page {
                 grid-template-columns: 1fr;
             }
 
             .brand-panel {
+                min-height: 330px;
+                padding: 35px;
+            }
+
+            .brand-content h1 {
+                font-size: 52px;
+            }
+
+            .points {
                 display: none;
             }
 
             .form-panel {
-                min-height: 100vh;
-                min-height: 100dvh;
-
-                padding:
-                    30px 22px;
-            }
-
-            .mobile-brand {
-                display: flex;
-
-                align-items: center;
-                justify-content: center;
-
-                margin-bottom: 42px;
+                padding: 35px 22px;
             }
         }
 
-        /* =========================
-           MOBILE
-        ========================= */
-
-        @media (max-width: 520px) {
-
-            .form-panel {
-                align-items: flex-start;
-
-                padding:
-                    25px 17px 35px;
+        @media (max-width: 480px) {
+            .brand-panel {
+                min-height: 260px;
+                padding: 25px;
             }
 
-            .form-container {
-                max-width: 100%;
+            .brand-content h1 {
+                font-size: 43px;
             }
 
-            .mobile-brand {
-                justify-content: flex-start;
-                margin-bottom: 34px;
+            .brand-content p {
+                font-size: 15px;
             }
 
-            .form-heading h2 {
+            .form-header h2 {
                 font-size: 32px;
-            }
-
-            .form {
-                margin-top: 27px;
-            }
-
-            .remember-row {
-                align-items: flex-start;
-            }
-
-            .field-link {
-                text-align: right;
-            }
-        }
-
-        /* =========================
-           SMALL PHONES
-        ========================= */
-
-        @media (max-width: 360px) {
-
-            .form-panel {
-                padding-left: 14px;
-                padding-right: 14px;
-            }
-
-            .form-heading h2 {
-                font-size: 29px;
-            }
-
-            input,
-            .submit-btn {
-                min-height: 50px;
-            }
-
-            .remember-row {
-                flex-direction: column;
-            }
-        }
-
-        /* =========================
-           REDUCED MOTION
-        ========================= */
-
-        @media (prefers-reduced-motion: reduce) {
-
-            *,
-            *::before,
-            *::after {
-                scroll-behavior: auto !important;
-                transition: none !important;
             }
         }
     </style>
@@ -665,159 +356,117 @@
 
 <div class="page">
 
-    <!-- BRAND PANEL -->
-
     <section class="brand-panel">
 
-        <a href="index.html" class="brand">
-            <span class="brand-mark">K</span>
-            <span>K-Tickets</span>
-        </a>
+        <div class="logo">
+            K-Tickets
+        </div>
 
         <div class="brand-content">
-
-            <span class="eyebrow">
-                Welcome back
-            </span>
-
             <h1>
-                Your events
+                Your events<br>
                 <span>await.</span>
             </h1>
 
             <p>
-                Sign in to discover your tickets, manage your
-                events and keep your K-Tickets experience in one place.
+                Discover events, secure your tickets and experience
+                Kuwait's moments — all in one place.
             </p>
-
-            <div class="brand-points">
-
-                <div class="brand-point">
-                    <strong>Your tickets</strong>
-                    <span>Always available in your account.</span>
-                </div>
-
-                <div class="brand-point">
-                    <strong>Secure payments</strong>
-                    <span>Built around verified transactions.</span>
-                </div>
-
-                <div class="brand-point">
-                    <strong>Easy entry</strong>
-                    <span>Your unique QR is ready when you are.</span>
-                </div>
-
-            </div>
-
         </div>
 
-        <div class="brand-footer">
-            © <span id="brandYear"></span> K-Tickets
+        <div class="points">
+
+            <div class="point">
+                <strong>Simple</strong>
+                <span>
+                    Find and purchase tickets without unnecessary steps.
+                </span>
+            </div>
+
+            <div class="point">
+                <strong>Secure</strong>
+                <span>
+                    Your account and tickets stay protected.
+                </span>
+            </div>
+
+            <div class="point">
+                <strong>Ready</strong>
+                <span>
+                    Your ticket is available when you need it.
+                </span>
+            </div>
+
         </div>
 
     </section>
 
 
-    <!-- FORM PANEL -->
-
-    <main class="form-panel">
+    <section class="form-panel">
 
         <div class="form-container">
 
-            <a href="index.html" class="mobile-brand brand">
-                <span class="brand-mark">K</span>
-                <span>K-Tickets</span>
-            </a>
+            <div class="form-header">
 
-            <div class="form-heading">
+                <div class="eyebrow">
+                    Welcome back
+                </div>
 
                 <h2>
                     Sign in
                 </h2>
 
                 <p>
-                    Welcome back. Enter your details to continue.
+                    Access your K-Tickets account.
                 </p>
 
             </div>
 
 
-            <form
-                class="form"
-                id="loginForm"
-                novalidate
-            >
+            <div id="alert" class="alert"></div>
 
-                <div
-                    class="message"
-                    id="message"
-                    role="alert"
-                    aria-live="polite"
-                ></div>
 
+            <form id="loginForm">
 
                 <div class="field">
 
-                    <div class="field-row">
+                    <label for="email">
+                        Email
+                    </label>
 
-                        <label for="email">
-                            Email address
-                        </label>
-
-                    </div>
-
-                    <div class="input-wrap">
-
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            autocomplete="email"
-                            placeholder="you@example.com"
-                            required
-                        >
-
-                    </div>
+                    <input
+                        id="email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                        required
+                    >
 
                 </div>
 
 
                 <div class="field">
 
-                    <div class="field-row">
-
-                        <label for="password">
-                            Password
-                        </label>
-
-                        <a
-                            href="forgot-password.html"
-                            class="field-link"
-                        >
-                            Forgot password?
-                        </a>
-
-                    </div>
+                    <label for="password">
+                        Password
+                    </label>
 
                     <div class="input-wrap">
 
                         <input
                             id="password"
-                            name="password"
                             type="password"
                             autocomplete="current-password"
                             placeholder="Enter your password"
-                            class="password-input"
                             required
                         >
 
                         <button
                             type="button"
                             class="password-toggle"
-                            id="passwordToggle"
-                            aria-label="Show password"
+                            id="togglePassword"
                         >
-                            Show
+                            SHOW
                         </button>
 
                     </div>
@@ -825,21 +474,23 @@
                 </div>
 
 
-                <div class="remember-row">
+                <div class="form-row">
 
                     <label class="remember">
-
                         <input
                             type="checkbox"
                             id="remember"
                             checked
                         >
-
-                        <span>
-                            Remember me
-                        </span>
-
+                        Remember me
                     </label>
+
+                    <a
+                        href="forgot-password.html"
+                        class="forgot"
+                    >
+                        Forgot password?
+                    </a>
 
                 </div>
 
@@ -847,543 +498,436 @@
                 <button
                     type="submit"
                     class="submit-btn"
-                    id="submitBtn"
+                    id="loginButton"
                 >
-                    Sign in
+                    Sign In
                 </button>
 
             </form>
 
 
-            <div class="divider">
-                OR
+            <div class="register-link">
+                Don't have an account?
+                <a href="register.html">Create one</a>
             </div>
 
 
-            <p class="register-prompt">
-                Don't have a K-Tickets account?
-                <a href="register.html">
-                    Create one
-                </a>
-            </p>
-
-
-            <a
-                href="index.html"
-                class="back-home"
-            >
-                ← Back to K-Tickets
-            </a>
+            <div class="footer">
+                © <span id="year"></span> K-Tickets
+            </div>
 
         </div>
 
-    </main>
+    </section>
 
 </div>
 
 
 <script>
+/* =========================================================
+   K-TICKETS SUPABASE AUTH
+   ========================================================= */
 
-    /* ============================================================
-       K-TICKETS / SUPABASE CONFIG
-       ============================================================ */
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-    const SUPABASE_URL =
-        "https://mdzlfejdvifxxsreuzwz.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
-    const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
-
-
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY,
-            {
-                auth: {
-                    persistSession: true,
-                    autoRefreshToken: true,
-                    detectSessionInUrl: true
-                }
-            }
-        );
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY,
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+        }
+    }
+);
 
 
-    /* ============================================================
-       YEAR
-       ============================================================ */
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
 
-    document.getElementById("brandYear").textContent =
-        new Date().getFullYear();
+const loginForm = document.getElementById("loginForm");
+const loginButton = document.getElementById("loginButton");
+const alertBox = document.getElementById("alert");
 
-
-    /* ============================================================
-       ELEMENTS
-       ============================================================ */
-
-    const password =
-        document.getElementById("password");
-
-    const passwordToggle =
-        document.getElementById("passwordToggle");
-
-    const form =
-        document.getElementById("loginForm");
-
-    const message =
-        document.getElementById("message");
-
-    const submitBtn =
-        document.getElementById("submitBtn");
-
-    const emailInput =
-        document.getElementById("email");
-
-    const rememberInput =
-        document.getElementById("remember");
+document.getElementById("year").textContent =
+    new Date().getFullYear();
 
 
-    /* ============================================================
-       PASSWORD VISIBILITY
-       ============================================================ */
+/* =========================================================
+   ALERT
+   ========================================================= */
 
-    passwordToggle.addEventListener("click", () => {
+function showAlert(message, type = "error") {
 
-        const isPassword =
-            password.type === "password";
+    alertBox.textContent = message;
 
-        password.type =
-            isPassword ? "text" : "password";
+    alertBox.className =
+        "alert show " + type;
 
-        passwordToggle.textContent =
-            isPassword ? "Hide" : "Show";
-
-        passwordToggle.setAttribute(
-            "aria-label",
-            isPassword
-                ? "Hide password"
-                : "Show password"
-        );
-
-    });
+}
 
 
-    /* ============================================================
-       MESSAGE HELPERS
-       ============================================================ */
+/* =========================================================
+   CLEAR ALERT
+   ========================================================= */
 
-    function showMessage(text, type = "error") {
+function clearAlert() {
 
-        message.textContent = text;
+    alertBox.textContent = "";
 
-        message.className =
-            "message show " + type;
+    alertBox.className = "alert";
+
+}
+
+
+/* =========================================================
+   ROLE ROUTING
+   ========================================================= */
+
+function getDashboard(role) {
+
+    switch (role) {
+
+        case "admin":
+            return "admin/dashboard.html";
+
+        case "merchant":
+            return "merchant/dashboard.html";
+
+        case "gate_staff":
+            return "gate/scan.html";
+
+        case "customer":
+            return "customer/dashboard.html";
+
+        default:
+            return null;
     }
 
-
-    function clearMessage() {
-
-        message.textContent = "";
-
-        message.className = "message";
-    }
+}
 
 
-    /* ============================================================
-       SUPABASE ERROR TRANSLATION
-       ============================================================ */
+/* =========================================================
+   LOAD PROFILE
+   ========================================================= */
 
-    function friendlyAuthError(error) {
+async function loadProfile(userId) {
 
-        const text =
-            String(error?.message || "")
-                .toLowerCase();
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("profiles")
+        .select(
+            "id, full_name, phone, role, is_active"
+        )
+        .eq("id", userId)
+        .maybeSingle();
 
+    if (error) {
 
-        if (
-            text.includes("invalid login credentials")
-        ) {
-            return "Incorrect email or password.";
-        }
-
-
-        if (
-            text.includes("email not confirmed")
-        ) {
-            return "Please confirm your email address before signing in.";
-        }
-
-
-        if (
-            text.includes("too many requests")
-        ) {
-            return "Too many login attempts. Please wait a moment and try again.";
-        }
-
-
-        if (
-            text.includes("network")
-        ) {
-            return "Network error. Please check your internet connection.";
-        }
-
-
-        return error?.message ||
-            "Unable to sign in. Please try again.";
-    }
-
-
-    /* ============================================================
-       ROLE ROUTING
-       ============================================================ */
-
-    async function redirectByRole(user) {
-
-        if (!user?.id) {
-
-            throw new Error(
-                "No authenticated user was found."
-            );
-        }
-
-
-        const {
-            data: profile,
+        console.error(
+            "PROFILE QUERY ERROR:",
             error
-        } = await supabaseClient
-            .from("profiles")
-            .select(
-                "id, full_name, phone, role, is_active"
-            )
-            .eq("id", user.id)
-            .maybeSingle();
-
-
-        if (error) {
-
-            console.error(
-                "Profile lookup error:",
-                error
-            );
-
-            throw new Error(
-                "Your account was authenticated, but your K-Tickets profile could not be loaded."
-            );
-        }
-
-
-        if (!profile) {
-
-            await supabaseClient.auth.signOut();
-
-            throw new Error(
-                "Your K-Tickets profile has not been created yet."
-            );
-        }
-
-
-        if (!profile.is_active) {
-
-            await supabaseClient.auth.signOut();
-
-            throw new Error(
-                "Your K-Tickets account is currently inactive."
-            );
-        }
-
-
-        /* ========================================================
-           SAVE SESSION INFORMATION
-           ======================================================== */
-
-        sessionStorage.setItem(
-            "kt_user_id",
-            profile.id
         );
 
-        sessionStorage.setItem(
-            "kt_user_name",
-            profile.full_name || ""
+        throw new Error(
+            "Profile query failed: " +
+            error.message
         );
 
-        sessionStorage.setItem(
-            "kt_user_role",
-            profile.role
+    }
+
+    if (!data) {
+
+        throw new Error(
+            "No K-Tickets profile exists for this account yet."
         );
 
+    }
 
-        /* ========================================================
-           ROLE ROUTING
-           ======================================================== */
+    return data;
 
-        switch (profile.role) {
-
-            case "admin":
-
-                window.location.href =
-                    "admin/dashboard.html";
-
-                break;
+}
 
 
-            case "merchant":
+/* =========================================================
+   ROUTE USER
+   ========================================================= */
 
-                window.location.href =
-                    "merchant/dashboard.html";
+async function routeUser(session) {
 
-                break;
+    if (!session || !session.user) {
+        return;
+    }
 
+    const user = session.user;
 
-            case "gate_staff":
-
-                window.location.href =
-                    "gate/scan.html";
-
-                break;
-
-
-            case "customer":
-
-                window.location.href =
-                    "customer/dashboard.html";
-
-                break;
+    const profile =
+        await loadProfile(user.id);
 
 
-            default:
+    if (!profile.is_active) {
 
-                await supabaseClient.auth.signOut();
+        await supabaseClient.auth.signOut();
 
-                throw new Error(
-                    "Your account has an unsupported K-Tickets role."
-                );
-        }
+        throw new Error(
+            "This K-Tickets account is currently inactive."
+        );
+
     }
 
 
-    /* ============================================================
-       EXISTING SESSION
-       ============================================================ */
+    const dashboard =
+        getDashboard(profile.role);
 
-    async function checkExistingSession() {
+
+    if (!dashboard) {
+
+        await supabaseClient.auth.signOut();
+
+        throw new Error(
+            "Your account has an unsupported K-Tickets role."
+        );
+
+    }
+
+
+    /* Store only non-sensitive UI information */
+
+    sessionStorage.setItem(
+        "kt_user_id",
+        profile.id
+    );
+
+    sessionStorage.setItem(
+        "kt_user_name",
+        profile.full_name || user.email
+    );
+
+    sessionStorage.setItem(
+        "kt_user_role",
+        profile.role
+    );
+
+
+    window.location.replace(dashboard);
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+loginForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        clearAlert();
+
+        const email =
+            document.getElementById("email")
+                .value
+                .trim();
+
+        const password =
+            document.getElementById("password")
+                .value;
+
+        if (!email || !password) {
+
+            showAlert(
+                "Please enter your email and password."
+            );
+
+            return;
+        }
+
+
+        loginButton.disabled = true;
+
+        loginButton.textContent =
+            "Signing in...";
+
 
         try {
 
             const {
                 data,
                 error
-            } = await supabaseClient.auth.getSession();
+            } = await supabaseClient.auth.signInWithPassword({
+                email,
+                password
+            });
 
 
             if (error) {
+
                 throw error;
+
             }
 
 
-            if (data?.session?.user) {
+            if (!data.session) {
 
-                await redirectByRole(
-                    data.session.user
+                throw new Error(
+                    "Authentication succeeded but no session was returned."
                 );
 
-                return;
             }
+
+
+            await routeUser(
+                data.session
+            );
+
 
         } catch (error) {
 
             console.error(
-                "Session check:",
+                "LOGIN ERROR:",
                 error
             );
 
-            /*
-              Don't show an existing-session error immediately.
-              The user can still use the login form.
-            */
-        }
-    }
 
+            let message =
+                error.message ||
+                "Unable to sign in.";
 
-    /* ============================================================
-       LOGIN
-       ============================================================ */
-
-    form.addEventListener(
-        "submit",
-        async (event) => {
-
-            event.preventDefault();
-
-            clearMessage();
-
-
-            const email =
-                emailInput.value.trim();
-
-            const passwordValue =
-                password.value;
-
-
-            if (!email) {
-
-                showMessage(
-                    "Please enter your email address."
-                );
-
-                emailInput.focus();
-
-                return;
-            }
-
-
-            if (!email.includes("@")) {
-
-                showMessage(
-                    "Please enter a valid email address."
-                );
-
-                emailInput.focus();
-
-                return;
-            }
-
-
-            if (!passwordValue) {
-
-                showMessage(
-                    "Please enter your password."
-                );
-
-                password.focus();
-
-                return;
-            }
-
-
-            submitBtn.disabled = true;
-
-            submitBtn.textContent =
-                "Signing in...";
-
-
-            try {
-
-                /*
-                  Remember me:
-                  Supabase normally persists the session.
-                  If the user doesn't want persistence,
-                  we sign out when the current browser session
-                  is closed through our session handling.
-                */
-
-                const {
-                    data,
-                    error
-                } = await supabaseClient.auth
-                    .signInWithPassword({
-                        email,
-                        password: passwordValue
-                    });
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                if (!data?.user) {
-
-                    throw new Error(
-                        "Authentication completed without a user session."
-                    );
-                }
-
-
-                showMessage(
-                    "Login successful. Opening your K-Tickets account...",
-                    "success"
-                );
-
-
-                await redirectByRole(
-                    data.user
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "K-Tickets login error:",
-                    error
-                );
-
-
-                showMessage(
-                    friendlyAuthError(error)
-                );
-
-
-                submitBtn.disabled = false;
-
-                submitBtn.textContent =
-                    "Sign in";
-            }
-
-        }
-    );
-
-
-    /* ============================================================
-       AUTH STATE LISTENER
-       ============================================================ */
-
-    supabaseClient.auth.onAuthStateChange(
-        async (event, session) => {
-
-            /*
-              We only route when a valid signed-in session
-              exists. Login itself handles the main redirect.
-            */
 
             if (
-                event === "SIGNED_IN" &&
-                session?.user
+                message.toLowerCase()
+                    .includes("invalid login credentials")
             ) {
 
-                /*
-                  Small delay prevents competing auth events
-                  from causing duplicate navigation.
-                */
+                message =
+                    "Incorrect email or password.";
 
-                setTimeout(async () => {
-
-                    try {
-
-                        await redirectByRole(
-                            session.user
-                        );
-
-                    } catch (error) {
-
-                        console.error(
-                            "Auth state routing error:",
-                            error
-                        );
-
-                    }
-
-                }, 50);
             }
+
+
+            if (
+                message.toLowerCase()
+                    .includes("email not confirmed")
+            ) {
+
+                message =
+                    "Please confirm your email before signing in.";
+
+            }
+
+
+            showAlert(
+                message,
+                "error"
+            );
+
+
+            loginButton.disabled = false;
+
+            loginButton.textContent =
+                "Sign In";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PASSWORD TOGGLE
+   ========================================================= */
+
+document
+    .getElementById("togglePassword")
+    .addEventListener(
+        "click",
+        function () {
+
+            const password =
+                document.getElementById("password");
+
+            const showing =
+                password.type === "text";
+
+            password.type =
+                showing ? "password" : "text";
+
+            this.textContent =
+                showing ? "SHOW" : "HIDE";
+
         }
     );
 
 
-    /* ============================================================
-       START
-       ============================================================ */
+/* =========================================================
+   EXISTING SESSION CHECK
+   ========================================================= */
 
-    checkExistingSession();
+(async function checkExistingSession() {
 
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient.auth.getSession();
+
+
+        if (error) {
+
+            console.error(
+                "SESSION ERROR:",
+                error
+            );
+
+            return;
+        }
+
+
+        if (data.session) {
+
+            await routeUser(
+                data.session
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "EXISTING SESSION ERROR:",
+            error
+        );
+
+    }
+
+})();
+
+
+/* =========================================================
+   AUTH STATE
+   ========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    function (event, session) {
+
+        console.log(
+            "AUTH EVENT:",
+            event
+        );
+
+    }
+);
 </script>
 
 </body>

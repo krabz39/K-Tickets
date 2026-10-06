@@ -2,879 +2,602 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Create Account | K-Tickets</title>
+    <meta charset="UTF-8">
 
     <meta
-        name="description"
-        content="Create your K-Tickets customer or merchant account."
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
     >
 
+    <meta
+        name="robots"
+        content="noindex,nofollow,noarchive,nosnippet"
+    >
+
+    <meta
+        name="referrer"
+        content="same-origin"
+    >
+
+    <title>Create Account — K-Tickets</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
     <style>
+
         :root {
             --bordo: #6C151E;
-            --bordo-dark: #541018;
             --green: #0F3D3A;
             --cream: #F5DABF;
-            --white: #FFFDF9;
-            --text: #1D2927;
-            --muted: #6D7774;
-            --border: rgba(15, 61, 58, 0.14);
-            --success: #21735D;
-            --danger: #A52835;
-            --shadow: 0 24px 70px rgba(15, 61, 58, 0.14);
+            --white: #ffffff;
+            --black: #111111;
+            --muted: #777777;
+            --border: #e8e8e8;
+            --danger: #b42318;
+            --success: #087443;
         }
+
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
 
         body {
             min-height: 100vh;
-            min-height: 100dvh;
-
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-
+            font-family: Inter, Arial, sans-serif;
             background: var(--cream);
-            color: var(--text);
+            color: var(--black);
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        button,
-        input {
-            font: inherit;
-        }
-
-        button {
-            cursor: pointer;
-        }
 
         .page {
             min-height: 100vh;
-            min-height: 100dvh;
-
             display: grid;
-            grid-template-columns: 0.75fr 1.25fr;
+            grid-template-columns: 1fr 1fr;
         }
 
-        /* =========================
-           BRAND SIDE
-        ========================= */
+
+        /* LEFT */
 
         .brand-panel {
-            position: relative;
-            overflow: hidden;
-
-            background: var(--bordo);
-            color: var(--cream);
-
-            padding: clamp(28px, 5vw, 70px);
-
+            background: var(--green);
+            color: white;
+            padding: 55px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
 
-        .brand-panel::before {
-            content: "";
-
-            position: absolute;
-
-            width: 430px;
-            height: 430px;
-
-            right: -230px;
-            bottom: -180px;
-
-            border-radius: 50%;
-
-            background: var(--green);
-        }
 
         .brand-panel::after {
             content: "";
-
             position: absolute;
-
-            width: 240px;
-            height: 240px;
-
-            left: -130px;
-            top: 25%;
-
+            width: 420px;
+            height: 420px;
             border-radius: 50%;
-
-            border:
-                1px solid rgba(245, 218, 191, 0.20);
+            background: rgba(245, 218, 191, .06);
+            right: -160px;
+            bottom: -150px;
         }
 
-        .brand,
-        .brand-content,
-        .brand-footer {
+
+        .logo {
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: 1px;
             position: relative;
             z-index: 2;
         }
 
-        .brand {
-            display: inline-flex;
-            align-items: center;
-            gap: 11px;
-
-            width: fit-content;
-
-            font-weight: 900;
-        }
-
-        .brand-mark {
-            width: 44px;
-            height: 44px;
-
-            display: grid;
-            place-items: center;
-
-            border-radius: 13px;
-
-            background: var(--cream);
-            color: var(--bordo);
-
-            font-weight: 900;
-        }
 
         .brand-content {
-            margin-top: auto;
-            margin-bottom: auto;
-
-            padding: 70px 0;
+            max-width: 500px;
+            position: relative;
+            z-index: 2;
         }
 
+
         .brand-content h1 {
-            max-width: 500px;
-
-            margin-top: 22px;
-
-            font-size: clamp(42px, 5vw, 67px);
-            line-height: 0.98;
+            font-size: clamp(45px, 6vw, 78px);
+            line-height: .95;
+            margin-bottom: 25px;
             letter-spacing: -3px;
         }
 
+
         .brand-content h1 span {
-            color: #B8D3C6;
+            color: var(--cream);
         }
+
 
         .brand-content p {
-            max-width: 480px;
-
-            margin-top: 22px;
-
-            color: rgba(245, 218, 191, 0.68);
-
-            font-size: 16px;
+            font-size: 18px;
             line-height: 1.7;
+            color: rgba(255,255,255,.75);
+            max-width: 430px;
         }
 
-        .brand-footer {
-            color: rgba(245, 218, 191, 0.55);
-            font-size: 12px;
-        }
 
-        /* =========================
-           FORM
-        ========================= */
-
-        .form-panel {
-            background: var(--white);
-
-            padding:
-                clamp(24px, 5vw, 65px);
-
+        .points {
             display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .form-container {
-            width: 100%;
-            max-width: 650px;
-        }
-
-        .mobile-brand {
-            display: none;
-        }
-
-        .heading h2 {
-            color: var(--green);
-
-            font-size: clamp(30px, 4vw, 44px);
-            line-height: 1;
-
-            letter-spacing: -1.5px;
-        }
-
-        .heading p {
-            margin-top: 11px;
-
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .form {
-            margin-top: 28px;
-        }
-
-        .message {
-            display: none;
-
-            margin-bottom: 18px;
-            padding: 13px 15px;
-
-            border-radius: 12px;
-
-            font-size: 13px;
-        }
-
-        .message.show {
-            display: block;
-        }
-
-        .message.error {
-            color: var(--danger);
-            background: rgba(165, 40, 53, 0.08);
-        }
-
-        .message.success {
-            color: var(--success);
-            background: rgba(33, 115, 93, 0.08);
-        }
-
-        /* =========================
-           ACCOUNT TYPE
-        ========================= */
-
-        .section-label {
-            margin-bottom: 10px;
-
-            color: var(--green);
-
-            font-size: 13px;
-            font-weight: 900;
-        }
-
-        .account-types {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-
-            gap: 12px;
-
-            margin-bottom: 23px;
-        }
-
-        .account-option {
+            gap: 35px;
             position: relative;
+            z-index: 2;
         }
 
-        .account-option input {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
+
+        .point {
+            max-width: 150px;
         }
 
-        .account-card {
-            min-height: 108px;
 
-            padding: 18px;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 15px;
-
-            background: #FFFCF8;
-
-            cursor: pointer;
-
-            transition:
-                border-color 0.2s ease,
-                background 0.2s ease,
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-        .account-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(108, 21, 30, 0.35);
-        }
-
-        .account-option input:checked + .account-card {
-            border-color: var(--bordo);
-
-            background: rgba(108, 21, 30, 0.045);
-
-            box-shadow:
-                0 0 0 3px rgba(108, 21, 30, 0.07);
-        }
-
-        .account-card strong {
-            color: var(--green);
-
+        .point strong {
+            display: block;
             font-size: 15px;
+            margin-bottom: 6px;
         }
 
-        .account-card span {
-            margin-top: 5px;
 
-            color: var(--muted);
-
-            font-size: 12px;
-            line-height: 1.45;
-        }
-
-        /* =========================
-           FIELDS
-        ========================= */
-
-        .fields {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-
-            gap: 17px;
-        }
-
-        .field {
-            min-width: 0;
-        }
-
-        .field.full {
-            grid-column: 1 / -1;
-        }
-
-        label {
-            display: block;
-
-            margin-bottom: 8px;
-
-            color: var(--green);
-
+        .point span {
+            color: rgba(255,255,255,.6);
             font-size: 13px;
-            font-weight: 800;
-        }
-
-        input {
-            width: 100%;
-
-            min-height: 52px;
-
-            padding: 0 15px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 13px;
-
-            outline: none;
-
-            background: #FFFCF8;
-
-            color: var(--text);
-
-            transition:
-                border-color 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-        input:focus {
-            border-color: var(--bordo);
-
-            box-shadow:
-                0 0 0 4px rgba(108, 21, 30, 0.08);
-
-            background: white;
-        }
-
-        .password-wrap {
-            position: relative;
-        }
-
-        .password-wrap input {
-            padding-right: 64px;
-        }
-
-        .password-toggle {
-            position: absolute;
-
-            right: 9px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            border: 0;
-            background: transparent;
-
-            padding: 8px;
-
-            color: var(--green);
-
-            font-size: 12px;
-            font-weight: 800;
-        }
-
-        .password-toggle:hover {
-            color: var(--bordo);
-        }
-
-        .merchant-note {
-            display: none;
-
-            margin-top: 15px;
-            padding: 12px 14px;
-
-            border-radius: 12px;
-
-            background: rgba(15, 61, 58, 0.07);
-            color: var(--green);
-
-            font-size: 12px;
-            line-height: 1.55;
-        }
-
-        .merchant-note.show {
-            display: block;
-        }
-
-        .terms {
-            display: flex;
-            align-items: flex-start;
-
-            gap: 9px;
-
-            margin-top: 20px;
-
-            color: var(--muted);
-
-            font-size: 12px;
             line-height: 1.5;
         }
 
-        .terms input {
-            width: 16px;
-            min-width: 16px;
-            min-height: 16px;
 
-            margin-top: 2px;
+        /* RIGHT */
 
-            accent-color: var(--bordo);
+        .form-panel {
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px;
         }
+
+
+        .form-container {
+            width: 100%;
+            max-width: 440px;
+        }
+
+
+        .form-header {
+            margin-bottom: 30px;
+        }
+
+
+        .eyebrow {
+            color: var(--bordo);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+
+        .form-header h2 {
+            font-size: 38px;
+            letter-spacing: -1.5px;
+            margin-bottom: 10px;
+        }
+
+
+        .form-header p {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+
+        .alert {
+            display: none;
+            border-radius: 10px;
+            padding: 13px 15px;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+
+        .alert.show {
+            display: block;
+        }
+
+
+        .alert.error {
+            color: var(--danger);
+            background: #fff1f0;
+            border: 1px solid #f5c2c0;
+        }
+
+
+        .alert.success {
+            color: var(--success);
+            background: #eefbf4;
+            border: 1px solid #b7e3ca;
+        }
+
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+
+        .input-wrap {
+            position: relative;
+        }
+
+
+        .field input {
+            width: 100%;
+            height: 52px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 15px;
+            font-size: 15px;
+            outline: none;
+            transition: .2s;
+        }
+
+
+        .field input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15,61,58,.08);
+        }
+
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+
+        .terms {
+            display: flex;
+            gap: 9px;
+            align-items: flex-start;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+            margin: 8px 0 22px;
+        }
+
+
+        .terms input {
+            margin-top: 3px;
+            accent-color: var(--green);
+        }
+
 
         .terms a {
             color: var(--bordo);
-            font-weight: 800;
+            font-weight: 700;
         }
 
-        .submit {
+
+        .submit-btn {
             width: 100%;
-
-            min-height: 54px;
-
-            margin-top: 23px;
-
+            height: 54px;
             border: 0;
-            border-radius: 13px;
-
+            border-radius: 10px;
             background: var(--bordo);
             color: white;
-
-            font-weight: 900;
-
-            box-shadow:
-                0 12px 25px rgba(108, 21, 30, 0.18);
-
-            transition:
-                transform 0.2s ease,
-                background 0.2s ease,
-                opacity 0.2s ease;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .2s;
         }
 
-        .submit:hover {
-            background: var(--bordo-dark);
-            transform: translateY(-2px);
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            opacity: .94;
         }
 
-        .submit:disabled {
-            opacity: 0.65;
+
+        .submit-btn:disabled {
+            opacity: .65;
             cursor: not-allowed;
             transform: none;
         }
 
-        .login-prompt {
-            margin-top: 23px;
 
+        .login-link {
             text-align: center;
-
+            margin-top: 24px;
             color: var(--muted);
-
-            font-size: 13px;
+            font-size: 14px;
         }
 
-        .login-prompt a {
+
+        .login-link a {
             color: var(--bordo);
-            font-weight: 900;
+            font-weight: 800;
+            text-decoration: none;
         }
 
-        /* =========================
-           TABLET
-        ========================= */
 
-        @media (max-width: 950px) {
+        .footer {
+            text-align: center;
+            color: #aaa;
+            font-size: 11px;
+            margin-top: 30px;
+        }
+
+
+        @media (max-width: 850px) {
 
             .page {
                 grid-template-columns: 1fr;
             }
 
             .brand-panel {
+                min-height: 300px;
+                padding: 35px;
+            }
+
+            .brand-content h1 {
+                font-size: 52px;
+            }
+
+            .points {
                 display: none;
             }
 
             .form-panel {
-                min-height: 100vh;
-                min-height: 100dvh;
+                padding: 35px 22px;
             }
 
-            .mobile-brand {
-                display: flex;
-
-                align-items: center;
-
-                margin-bottom: 38px;
-            }
         }
 
-        /* =========================
-           MOBILE
-        ========================= */
 
-        @media (max-width: 620px) {
+        @media (max-width: 480px) {
 
-            .form-panel {
-                padding:
-                    25px 17px 35px;
-
-                align-items: flex-start;
+            .brand-panel {
+                min-height: 245px;
+                padding: 25px;
             }
 
-            .mobile-brand {
-                margin-bottom: 32px;
+            .brand-content h1 {
+                font-size: 43px;
             }
 
-            .fields {
-                grid-template-columns: 1fr;
-                gap: 16px;
+            .brand-content p {
+                font-size: 15px;
             }
 
-            .field.full {
-                grid-column: auto;
+            .form-header h2 {
+                font-size: 32px;
             }
 
-            .account-types {
-                grid-template-columns: 1fr;
-            }
-
-            .account-card {
-                min-height: 92px;
-            }
         }
 
-        @media (max-width: 360px) {
-
-            .form-panel {
-                padding-left: 14px;
-                padding-right: 14px;
-            }
-
-            .heading h2 {
-                font-size: 29px;
-            }
-
-            input,
-            .submit {
-                min-height: 50px;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-
-            *,
-            *::before,
-            *::after {
-                transition: none !important;
-                scroll-behavior: auto !important;
-            }
-        }
     </style>
+
 </head>
+
 
 <body>
 
+
 <div class="page">
 
-    <!-- BRAND -->
 
     <section class="brand-panel">
 
-        <a href="index.html" class="brand">
-            <span class="brand-mark">K</span>
-            <span>K-Tickets</span>
-        </a>
+        <div class="logo">
+            K-Tickets
+        </div>
+
 
         <div class="brand-content">
 
             <h1>
-                One account.
-                <span>Every experience.</span>
+                Be part of<br>
+                <span>the moment.</span>
             </h1>
 
             <p>
-                Join K-Tickets as a customer or merchant and
-                manage your events, tickets and experiences
-                from one secure account.
+                Create your K-Tickets account and discover
+                events happening across Kuwait.
             </p>
 
         </div>
 
-        <div class="brand-footer">
-            Built for events in Kuwait ·
-            © <span id="year"></span> K-Tickets
+
+        <div class="points">
+
+            <div class="point">
+                <strong>Discover</strong>
+                <span>
+                    Find events worth experiencing.
+                </span>
+            </div>
+
+
+            <div class="point">
+                <strong>Book</strong>
+                <span>
+                    Secure your tickets with ease.
+                </span>
+            </div>
+
+
+            <div class="point">
+                <strong>Experience</strong>
+                <span>
+                    Show up and enjoy the moment.
+                </span>
+            </div>
+
         </div>
 
     </section>
 
 
-    <!-- FORM -->
-
-    <main class="form-panel">
+    <section class="form-panel">
 
         <div class="form-container">
 
-            <a
-                href="index.html"
-                class="mobile-brand brand"
-            >
-                <span class="brand-mark">K</span>
-                <span>K-Tickets</span>
-            </a>
 
+            <div class="form-header">
 
-            <div class="heading">
+                <div class="eyebrow">
+                    K-Tickets
+                </div>
 
                 <h2>
-                    Create your account
+                    Create account
                 </h2>
 
                 <p>
-                    Choose how you'll use K-Tickets.
+                    Join K-Tickets and start discovering events.
                 </p>
 
             </div>
 
 
-            <form
-                class="form"
-                id="registerForm"
-                novalidate
-            >
-
-                <div
-                    class="message"
-                    id="message"
-                    role="alert"
-                    aria-live="polite"
-                ></div>
+            <div
+                id="alert"
+                class="alert"
+            ></div>
 
 
-                <div class="section-label">
-                    Account type
-                </div>
+            <form id="registerForm">
 
 
-                <div class="account-types">
+                <div class="field">
 
-                    <label class="account-option">
-
-                        <input
-                            type="radio"
-                            name="role"
-                            value="customer"
-                            checked
-                        >
-
-                        <span class="account-card">
-
-                            <strong>
-                                Customer
-                            </strong>
-
-                            <span>
-                                Discover events, purchase tickets
-                                and manage your bookings.
-                            </span>
-
-                        </span>
-
+                    <label for="fullName">
+                        Full name
                     </label>
 
+                    <input
+                        id="fullName"
+                        type="text"
+                        autocomplete="name"
+                        placeholder="Your full name"
+                        required
+                        minlength="2"
+                    >
 
-                    <label class="account-option">
+                </div>
 
-                        <input
-                            type="radio"
-                            name="role"
-                            value="merchant"
-                        >
 
-                        <span class="account-card">
+                <div class="field">
 
-                            <strong>
-                                Merchant
-                            </strong>
-
-                            <span>
-                                Create events, sell tickets,
-                                manage sales and settlements.
-                            </span>
-
-                        </span>
-
+                    <label for="email">
+                        Email
                     </label>
 
+                    <input
+                        id="email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
                 </div>
 
 
-                <div class="fields">
+                <div class="field">
 
-                    <div class="field">
+                    <label for="phone">
+                        Phone number
+                    </label>
 
-                        <label for="firstName">
-                            First name
-                        </label>
+                    <input
+                        id="phone"
+                        type="tel"
+                        autocomplete="tel"
+                        placeholder="+965..."
+                    >
 
-                        <input
-                            id="firstName"
-                            type="text"
-                            autocomplete="given-name"
-                            placeholder="First name"
-                            required
-                        >
-
-                    </div>
+                </div>
 
 
-                    <div class="field">
+                <div class="field">
 
-                        <label for="lastName">
-                            Last name
-                        </label>
+                    <label for="password">
+                        Password
+                    </label>
 
-                        <input
-                            id="lastName"
-                            type="text"
-                            autocomplete="family-name"
-                            placeholder="Last name"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="field full">
-
-                        <label for="email">
-                            Email address
-                        </label>
+                    <div class="input-wrap">
 
                         <input
-                            id="email"
-                            type="email"
-                            autocomplete="email"
-                            placeholder="you@example.com"
+                            id="password"
+                            type="password"
+                            autocomplete="new-password"
+                            placeholder="Create a password"
                             required
+                            minlength="8"
                         >
 
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="phone">
-                            Phone number
-                        </label>
-
-                        <input
-                            id="phone"
-                            type="tel"
-                            autocomplete="tel"
-                            placeholder="+965 ..."
-                            required
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="togglePassword"
                         >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="password">
-                            Password
-                        </label>
-
-                        <div class="password-wrap">
-
-                            <input
-                                id="password"
-                                type="password"
-                                autocomplete="new-password"
-                                placeholder="Create password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                id="passwordToggle"
-                            >
-                                Show
-                            </button>
-
-                        </div>
+                            SHOW
+                        </button>
 
                     </div>
 
                 </div>
 
 
-                <div
-                    class="merchant-note"
-                    id="merchantNote"
-                >
-                    Merchant accounts may require approval before
-                    event creation and ticket sales are enabled.
+                <div class="field">
+
+                    <label for="confirmPassword">
+                        Confirm password
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            autocomplete="new-password"
+                            placeholder="Repeat your password"
+                            required
+                            minlength="8"
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="toggleConfirm"
+                        >
+                            SHOW
+                        </button>
+
+                    </div>
+
                 </div>
 
 
@@ -887,14 +610,8 @@
                     >
 
                     <span>
-                        I agree to the K-Tickets
-                        <a href="#">
-                            Terms of Service
-                        </a>
-                        and
-                        <a href="#">
-                            Privacy Policy
-                        </a>.
+                        I agree to the K-Tickets terms and understand
+                        that new accounts are created as customer accounts.
                     </span>
 
                 </label>
@@ -902,16 +619,17 @@
 
                 <button
                     type="submit"
-                    class="submit"
-                    id="submitButton"
+                    class="submit-btn"
+                    id="registerButton"
                 >
-                    Create account
+                    Create Account
                 </button>
+
 
             </form>
 
 
-            <p class="login-prompt">
+            <div class="login-link">
 
                 Already have an account?
 
@@ -919,147 +637,226 @@
                     Sign in
                 </a>
 
-            </p>
+            </div>
+
+
+            <div class="footer">
+
+                © <span id="year"></span> K-Tickets
+
+            </div>
+
 
         </div>
 
-    </main>
+    </section>
 
 </div>
 
 
 <script>
 
-    document.getElementById("year").textContent =
-        new Date().getFullYear();
+/* =========================================================
+   K-TICKETS SUPABASE CLIENT
+   ========================================================= */
+
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 
-    const password =
-        document.getElementById("password");
-
-    const passwordToggle =
-        document.getElementById("passwordToggle");
-
-    passwordToggle.addEventListener("click", () => {
-
-        const show =
-            password.type === "password";
-
-        password.type =
-            show ? "text" : "password";
-
-        passwordToggle.textContent =
-            show ? "Hide" : "Show";
-
-    });
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
+        }
+    );
 
 
-    const roleInputs =
-        document.querySelectorAll(
-            'input[name="role"]'
-        );
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
 
-    const merchantNote =
-        document.getElementById("merchantNote");
+const registerForm =
+    document.getElementById("registerForm");
 
+const registerButton =
+    document.getElementById("registerButton");
 
-    roleInputs.forEach(input => {
-
-        input.addEventListener("change", () => {
-
-            merchantNote.classList.toggle(
-                "show",
-                input.value === "merchant" &&
-                input.checked
-            );
-
-        });
-
-    });
+const alertBox =
+    document.getElementById("alert");
 
 
-    const form =
-        document.getElementById("registerForm");
-
-    const message =
-        document.getElementById("message");
-
-    const submitButton =
-        document.getElementById("submitButton");
+document.getElementById("year").textContent =
+    new Date().getFullYear();
 
 
-    function showMessage(text, type) {
+/* =========================================================
+   ALERT
+   ========================================================= */
 
-        message.textContent = text;
+function showAlert(
+    message,
+    type = "error"
+) {
 
-        message.className =
-            "message show " + type;
+    alertBox.textContent =
+        message;
 
-    }
+    alertBox.className =
+        "alert show " + type;
+
+}
 
 
-    form.addEventListener("submit", event => {
+/* =========================================================
+   PASSWORD TOGGLE
+   ========================================================= */
+
+document
+    .getElementById("togglePassword")
+    .addEventListener(
+        "click",
+        function () {
+
+            const input =
+                document.getElementById("password");
+
+            const showing =
+                input.type === "text";
+
+            input.type =
+                showing ? "password" : "text";
+
+            this.textContent =
+                showing ? "SHOW" : "HIDE";
+
+        }
+    );
+
+
+document
+    .getElementById("toggleConfirm")
+    .addEventListener(
+        "click",
+        function () {
+
+            const input =
+                document.getElementById("confirmPassword");
+
+            const showing =
+                input.type === "text";
+
+            input.type =
+                showing ? "password" : "text";
+
+            this.textContent =
+                showing ? "SHOW" : "HIDE";
+
+        }
+    );
+
+
+/* =========================================================
+   REGISTRATION
+   ========================================================= */
+
+registerForm.addEventListener(
+    "submit",
+    async function (event) {
 
         event.preventDefault();
 
-        message.className = "message";
+        alertBox.className = "alert";
+        alertBox.textContent = "";
 
-        const firstName =
-            document.getElementById("firstName")
-            .value.trim();
 
-        const lastName =
-            document.getElementById("lastName")
-            .value.trim();
+        const fullName =
+            document
+                .getElementById("fullName")
+                .value
+                .trim();
+
 
         const email =
-            document.getElementById("email")
-            .value.trim();
+            document
+                .getElementById("email")
+                .value
+                .trim()
+                .toLowerCase();
+
 
         const phone =
-            document.getElementById("phone")
-            .value.trim();
+            document
+                .getElementById("phone")
+                .value
+                .trim();
 
-        const passwordValue =
-            password.value;
+
+        const password =
+            document
+                .getElementById("password")
+                .value;
+
+
+        const confirmPassword =
+            document
+                .getElementById("confirmPassword")
+                .value;
+
 
         const terms =
-            document.getElementById("terms").checked;
+            document
+                .getElementById("terms")
+                .checked;
 
 
-        if (
-            !firstName ||
-            !lastName ||
-            !email ||
-            !phone ||
-            !passwordValue
-        ) {
+        /* -----------------------------------------
+           Validation
+           ----------------------------------------- */
 
-            showMessage(
-                "Please complete all required fields.",
-                "error"
+        if (fullName.length < 2) {
+
+            showAlert(
+                "Please enter your full name."
             );
 
             return;
         }
 
 
-        if (!email.includes("@")) {
+        if (!email) {
 
-            showMessage(
-                "Please enter a valid email address.",
-                "error"
+            showAlert(
+                "Please enter your email address."
             );
 
             return;
         }
 
 
-        if (passwordValue.length < 8) {
+        if (password.length < 8) {
 
-            showMessage(
-                "Your password must contain at least 8 characters.",
-                "error"
+            showAlert(
+                "Password must contain at least 8 characters."
+            );
+
+            return;
+        }
+
+
+        if (password !== confirmPassword) {
+
+            showAlert(
+                "Passwords do not match."
             );
 
             return;
@@ -1068,40 +865,315 @@
 
         if (!terms) {
 
-            showMessage(
-                "Please accept the Terms of Service and Privacy Policy.",
-                "error"
+            showAlert(
+                "Please accept the terms to continue."
             );
 
             return;
         }
 
 
-        submitButton.disabled = true;
+        registerButton.disabled =
+            true;
 
-        submitButton.textContent =
+        registerButton.textContent =
             "Creating account...";
 
 
-        /*
-            SUPABASE AUTH WILL BE CONNECTED HERE.
-        */
+        try {
 
-        setTimeout(() => {
+            /* -----------------------------------------
+               CREATE SUPABASE AUTH USER
+               ----------------------------------------- */
 
-            submitButton.disabled = false;
+            const {
+                data,
+                error
+            } = await supabaseClient.auth.signUp({
 
-            submitButton.textContent =
-                "Create account";
+                email: email,
 
-            showMessage(
-                "Your K-Tickets account will be created once Supabase authentication is connected.",
+                password: password,
+
+                options: {
+
+                    data: {
+
+                        full_name:
+                            fullName,
+
+                        phone:
+                            phone || null
+
+                    }
+
+                }
+
+            });
+
+
+            if (error) {
+
+                throw error;
+
+            }
+
+
+            if (!data.user) {
+
+                throw new Error(
+                    "Supabase did not return a user."
+                );
+
+            }
+
+
+            /*
+             * IMPORTANT:
+             *
+             * We DO NOT insert into profiles here.
+             *
+             * The database trigger:
+             *
+             * handle_new_user()
+             *
+             * creates:
+             *
+             * role = customer
+             *
+             * automatically.
+             */
+
+
+            if (!data.session) {
+
+                showAlert(
+                    "Account created successfully. Please check your email to confirm your account before signing in.",
+                    "success"
+                );
+
+
+                registerForm.reset();
+
+                registerButton.disabled =
+                    false;
+
+                registerButton.textContent =
+                    "Create Account";
+
+                return;
+
+            }
+
+
+            /* -----------------------------------------
+               Session exists immediately
+               ----------------------------------------- */
+
+            const user =
+                data.user;
+
+
+            /*
+             * Give the database trigger a moment
+             * before reading the profile.
+             */
+
+            let profile = null;
+
+
+            for (
+                let attempt = 0;
+                attempt < 5;
+                attempt++
+            ) {
+
+                const result =
+                    await supabaseClient
+                        .from("profiles")
+                        .select(
+                            "id, full_name, phone, role, is_active"
+                        )
+                        .eq("id", user.id)
+                        .maybeSingle();
+
+
+                if (result.error) {
+
+                    console.error(
+                        "PROFILE LOAD ERROR:",
+                        result.error
+                    );
+
+                }
+
+
+                if (result.data) {
+
+                    profile =
+                        result.data;
+
+                    break;
+
+                }
+
+
+                await new Promise(
+                    resolve =>
+                        setTimeout(
+                            resolve,
+                            400
+                        )
+                );
+
+            }
+
+
+            if (!profile) {
+
+                throw new Error(
+                    "Account was created, but the K-Tickets profile was not created yet. Please sign in again."
+                );
+
+            }
+
+
+            if (!profile.is_active) {
+
+                await supabaseClient.auth.signOut();
+
+                throw new Error(
+                    "Your account was created but is currently inactive."
+                );
+
+            }
+
+
+            /*
+             * A public registration can ONLY
+             * become a customer.
+             *
+             * Never trust role from the browser.
+             */
+
+            if (profile.role !== "customer") {
+
+                console.warn(
+                    "Unexpected signup role:",
+                    profile.role
+                );
+
+            }
+
+
+            sessionStorage.setItem(
+                "kt_user_id",
+                profile.id
+            );
+
+
+            sessionStorage.setItem(
+                "kt_user_name",
+                profile.full_name || fullName
+            );
+
+
+            sessionStorage.setItem(
+                "kt_user_role",
+                profile.role
+            );
+
+
+            showAlert(
+                "Account created. Welcome to K-Tickets!",
                 "success"
             );
 
-        }, 700);
 
-    });
+            setTimeout(
+                function () {
+
+                    window.location.replace(
+                        "customer/dashboard.html"
+                    );
+
+                },
+                700
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "REGISTRATION ERROR:",
+                error
+            );
+
+
+            let message =
+                error.message ||
+                "Unable to create your account.";
+
+
+            const lower =
+                message.toLowerCase();
+
+
+            if (
+                lower.includes(
+                    "user already registered"
+                )
+            ) {
+
+                message =
+                    "An account with this email already exists. Please sign in instead.";
+
+            }
+
+
+            if (
+                lower.includes(
+                    "password"
+                ) &&
+                lower.includes(
+                    "weak"
+                )
+            ) {
+
+                message =
+                    "Please choose a stronger password.";
+
+            }
+
+
+            if (
+                lower.includes(
+                    "rate limit"
+                )
+            ) {
+
+                message =
+                    "Too many attempts. Please wait a moment and try again.";
+
+            }
+
+
+            showAlert(
+                message,
+                "error"
+            );
+
+
+            registerButton.disabled =
+                false;
+
+            registerButton.textContent =
+                "Create Account";
+
+        }
+
+    }
+);
 
 </script>
 
