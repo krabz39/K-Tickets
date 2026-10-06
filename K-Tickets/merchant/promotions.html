@@ -1,0 +1,4227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Tickets — Promotions</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --bordo-dark: #521017;
+            --green: #0F3D3A;
+            --green-dark: #092d2b;
+            --cream: #F5DABF;
+            --cream-light: #fff8f1;
+            --white: #fff;
+            --text: #241817;
+            --muted: #766b67;
+            --border: #eadbd0;
+            --success: #24734e;
+            --warning: #a66b00;
+            --danger: #a52b34;
+            --shadow: 0 12px 35px rgba(36,24,23,.08);
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f8f3ed;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* =========================
+           APP
+        ========================= */
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: 260px;
+            background: var(--green);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform .25s ease;
+        }
+
+        .brand {
+            padding: 25px 22px 22px;
+            border-bottom: 1px solid rgba(255,255,255,.10);
+        }
+
+        .brand-mark {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 43px;
+            height: 43px;
+            border-radius: 13px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-family: Georgia, serif;
+            font-weight: 800;
+            font-size: 19px;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 15px;
+            letter-spacing: .08em;
+        }
+
+        .brand-text span {
+            display: block;
+            color: rgba(255,255,255,.58);
+            font-size: 11px;
+            margin-top: 4px;
+            letter-spacing: .08em;
+        }
+
+        .nav {
+            flex: 1;
+            padding: 18px 12px;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            color: rgba(255,255,255,.38);
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: .13em;
+            padding: 12px 12px 8px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 45px;
+            padding: 10px 13px;
+            border-radius: 11px;
+            margin-bottom: 4px;
+            color: rgba(255,255,255,.70);
+            font-size: 13px;
+            transition: .2s ease;
+        }
+
+        .nav a:hover {
+            color: #fff;
+            background: rgba(255,255,255,.07);
+        }
+
+        .nav a.active {
+            color: #fff;
+            background: var(--bordo);
+            box-shadow: 0 8px 20px rgba(0,0,0,.12);
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid rgba(255,255,255,.10);
+        }
+
+        .merchant-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.05);
+        }
+
+        .merchant-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .merchant-mini-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .merchant-mini-info strong {
+            display: block;
+            font-size: 12px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .merchant-mini-info span {
+            display: block;
+            font-size: 10px;
+            color: rgba(255,255,255,.45);
+            margin-top: 2px;
+        }
+
+        .signout {
+            border: 0;
+            background: transparent;
+            color: rgba(255,255,255,.65);
+            padding: 6px;
+            font-size: 16px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 260px;
+            min-width: 0;
+            width: calc(100% - 260px);
+        }
+
+        .topbar {
+            height: 72px;
+            background: rgba(255,255,255,.93);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            backdrop-filter: blur(14px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .mobile-menu {
+            display: none;
+            border: 0;
+            background: transparent;
+            font-size: 24px;
+            color: var(--green);
+        }
+
+        .crumb {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .crumb strong {
+            color: var(--text);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .online-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            background: #42a56e;
+            border-radius: 50%;
+        }
+
+        .notification-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            position: relative;
+            display: grid;
+            place-items: center;
+            color: var(--green);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 50px;
+            background: var(--bordo);
+            color: #fff;
+            font-size: 9px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .content {
+            padding: 30px;
+            max-width: 1700px;
+            margin: auto;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .eyebrow {
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        h1 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(28px, 4vw, 39px);
+            line-height: 1.05;
+            color: var(--green);
+        }
+
+        .page-header p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px;
+            max-width: 650px;
+            line-height: 1.6;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            min-height: 42px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 11px;
+            padding: 0 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 700;
+            transition: .2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(36,24,23,.07);
+        }
+
+        .btn-primary {
+            background: var(--bordo);
+            color: #fff;
+            border-color: var(--bordo);
+        }
+
+        .btn-primary:hover {
+            background: var(--bordo-dark);
+        }
+
+        .btn-danger {
+            color: var(--danger);
+        }
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 19px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-weight: 700;
+        }
+
+        .stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: #f8ebe4;
+            color: var(--bordo);
+            display: grid;
+            place-items: center;
+            font-size: 15px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--green);
+            margin-top: 14px;
+        }
+
+        .stat-note {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+           PANEL / TOOLBAR
+        ========================= */
+
+        .panel {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .toolbar {
+            padding: 17px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 9px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .search {
+            position: relative;
+            width: min(350px, 100%);
+        }
+
+        .search span {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a1938c;
+        }
+
+        .search input {
+            width: 100%;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 12px 0 34px;
+            outline: none;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .search input:focus,
+        select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15,61,58,.08);
+        }
+
+        select {
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 34px 0 11px;
+            color: var(--text);
+            background: #fff;
+            outline: none;
+            font-size: 12px;
+        }
+
+        .toolbar-note {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        th {
+            text-align: left;
+            padding: 13px 17px;
+            background: #fcf8f4;
+            border-bottom: 1px solid var(--border);
+            color: #81746d;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .09em;
+            font-weight: 800;
+        }
+
+        td {
+            padding: 14px 17px;
+            border-bottom: 1px solid #f1e8e1;
+            vertical-align: middle;
+            font-size: 12px;
+        }
+
+        tbody tr:hover {
+            background: #fffaf6;
+        }
+
+        .promo-name {
+            color: var(--green);
+            font-weight: 800;
+            max-width: 220px;
+        }
+
+        .event-name {
+            color: var(--text);
+            font-weight: 700;
+            max-width: 210px;
+        }
+
+        .secondary {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .discount {
+            color: var(--bordo);
+            font-weight: 900;
+            font-size: 13px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 9px;
+            border-radius: 50px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .badge-active {
+            color: #246b48;
+            background: #e9f5ed;
+        }
+
+        .badge-scheduled {
+            color: #705700;
+            background: #fff3cc;
+        }
+
+        .badge-ended {
+            color: #6d625e;
+            background: #eee9e5;
+        }
+
+        .badge-inactive {
+            color: #943039;
+            background: #f9e7e9;
+        }
+
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .icon-btn {
+            width: 33px;
+            height: 33px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+            color: var(--green);
+            display: grid;
+            place-items: center;
+        }
+
+        .icon-btn:hover {
+            background: var(--cream-light);
+        }
+
+        .icon-btn.danger {
+            color: var(--danger);
+        }
+
+        /* =========================
+           MOBILE CARDS
+        ========================= */
+
+        .mobile-list {
+            display: none;
+            padding: 12px;
+        }
+
+        .promo-card {
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .promo-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .promo-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .promo-card h3 {
+            color: var(--green);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .promo-event {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .promo-discount {
+            margin-top: 14px;
+            padding: 12px;
+            background: #fcf5ef;
+            border-radius: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .promo-discount span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .promo-discount strong {
+            color: var(--bordo);
+            font-size: 18px;
+        }
+
+        .promo-details {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .detail span {
+            display: block;
+            color: var(--muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            margin-bottom: 3px;
+        }
+
+        .detail strong {
+            font-size: 11px;
+            overflow-wrap: anywhere;
+        }
+
+        .promo-actions {
+            display: flex;
+            gap: 7px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .promo-actions .btn {
+            flex: 1;
+        }
+
+        /* =========================
+           MODAL
+        ========================= */
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15,25,24,.55);
+            backdrop-filter: blur(4px);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .modal {
+            width: min(680px, 100%);
+            max-height: calc(100vh - 36px);
+            overflow-y: auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(0,0,0,.25);
+        }
+
+        .modal-header {
+            padding: 21px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .modal-header h2 {
+            color: var(--green);
+            font-family: Georgia, serif;
+            font-size: 23px;
+        }
+
+        .modal-header p {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .close-modal {
+            width: 35px;
+            height: 35px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 10px;
+            color: var(--green);
+        }
+
+        .modal-body {
+            padding: 21px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-bottom: 7px;
+        }
+
+        input,
+        textarea,
+        .field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            min-height: 42px;
+            padding: 10px 12px;
+            outline: none;
+            color: var(--text);
+            background: #fff;
+            font-size: 12px;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus,
+        .field select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15,61,58,.08);
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.5;
+            margin-top: 5px;
+        }
+
+        .modal-footer {
+            padding: 16px 21px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .loading-button {
+            pointer-events: none;
+            opacity: .7;
+        }
+
+        /* =========================
+           STATES
+        ========================= */
+
+        .state {
+            padding: 55px 25px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .state-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 17px;
+            background: #f7ebe3;
+            color: var(--bordo);
+            display: grid;
+            place-items: center;
+            margin: 0 auto 14px;
+            font-size: 21px;
+        }
+
+        .state strong {
+            display: block;
+            color: var(--green);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .state p {
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .spinner {
+            width: 25px;
+            height: 25px;
+            border: 3px solid #eadbd0;
+            border-top-color: var(--bordo);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* =========================
+           TOAST
+        ========================= */
+
+        .toast-wrap {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast {
+            min-width: 260px;
+            max-width: 380px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--green);
+            border-radius: 12px;
+            padding: 13px 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,.13);
+            font-size: 12px;
+            animation: toastIn .25s ease;
+        }
+
+        .toast.error {
+            border-left-color: var(--bordo);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           OVERLAY
+        ========================= */
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.42);
+            z-index: 900;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .topbar {
+                height: 64px;
+                padding: 0 17px;
+            }
+
+            .online-status {
+                display: none;
+            }
+
+            .content {
+                padding: 21px 15px 30px;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions .btn {
+                flex: 1;
+            }
+
+            .table-wrap {
+                display: none;
+            }
+
+            .mobile-list {
+                display: block;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .stats-grid {
+                gap: 9px;
+            }
+
+            .stat-card {
+                padding: 14px;
+                border-radius: 14px;
+            }
+
+            .stat-value {
+                font-size: 21px;
+            }
+
+            .stat-icon {
+                width: 29px;
+                height: 29px;
+                font-size: 12px;
+            }
+
+            .toolbar {
+                align-items: stretch;
+            }
+
+            .toolbar-left {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search,
+            .toolbar-left select {
+                width: 100%;
+            }
+
+            .toolbar-note {
+                display: none;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .modal-body,
+            .modal-header {
+                padding: 17px;
+            }
+
+            .modal-footer {
+                padding: 14px 17px;
+            }
+
+            .toast-wrap {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+            }
+
+            .toast {
+                min-width: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-mark">
+                <div class="logo">K</div>
+
+                <div class="brand-text">
+                    <strong>K-TICKETS</strong>
+                    <span>MERCHANT CMS</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav">
+
+            <div class="nav-label">Workspace</div>
+
+            <a href="./dashboard.html">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="./events.html">
+                <span class="nav-icon">◫</span>
+                <span>My Events</span>
+            </a>
+
+            <a href="./create-event.html">
+                <span class="nav-icon">＋</span>
+                <span>Create Event</span>
+            </a>
+
+            <a href="./tickets.html">
+                <span class="nav-icon">▣</span>
+                <span>Tickets</span>
+            </a>
+
+            <a href="./promotions.html" class="active">
+                <span class="nav-icon">%</span>
+                <span>Promotions</span>
+            </a>
+
+            <a href="./sales.html">
+                <span class="nav-icon">↗</span>
+                <span>Sales</span>
+            </a>
+
+            <div class="nav-label">Finance</div>
+
+            <a href="./withdrawals.html">
+                <span class="nav-icon">◇</span>
+                <span>Withdrawals</span>
+            </a>
+
+            <div class="nav-label">Account</div>
+
+            <a href="./settings.html">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <div class="merchant-mini">
+
+                <div class="merchant-avatar" id="merchantAvatar">
+                    —
+                </div>
+
+                <div class="merchant-mini-info">
+                    <strong id="merchantName">Loading...</strong>
+                    <span>Merchant account</span>
+                </div>
+
+                <button class="signout" id="signOutBtn" title="Sign out">
+                    ↪
+                </button>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button class="mobile-menu" id="mobileMenu">
+                    ☰
+                </button>
+
+                <div class="crumb">
+                    Merchant / <strong>Promotions</strong>
+                </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <div class="online-status">
+                    <span class="online-dot"></span>
+                    CMS Online
+                </div>
+
+                <a
+                    href="../notifications.html"
+                    class="notification-btn"
+                    title="Notifications"
+                >
+                    ♢
+                    <span
+                        class="notification-count"
+                        id="notificationCount"
+                    >
+                        0
+                    </span>
+                </a>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <!-- HEADER -->
+            <div class="page-header">
+
+                <div>
+                    <div class="eyebrow">
+                        Sales & Marketing
+                    </div>
+
+                    <h1>Promotions</h1>
+
+                    <p>
+                        Create and manage promotional pricing for your
+                        events. Schedule discounts and control when
+                        offers are available to customers.
+                    </p>
+                </div>
+
+                <div class="header-actions">
+
+                    <button
+                        class="btn"
+                        id="refreshBtn"
+                    >
+                        ↻ Refresh
+                    </button>
+
+                    <button
+                        class="btn btn-primary"
+                        id="createPromotionBtn"
+                    >
+                        ＋ New Promotion
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATS -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            Total Promotions
+                        </span>
+
+                        <div class="stat-icon">
+                            %
+                        </div>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="totalPromotions"
+                    >
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        Promotions created by you
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            Active
+                        </span>
+
+                        <div class="stat-icon">
+                            ✓
+                        </div>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="activePromotions"
+                    >
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        Currently available
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            Scheduled
+                        </span>
+
+                        <div class="stat-icon">
+                            ◷
+                        </div>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="scheduledPromotions"
+                    >
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        Starting later
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            Ended
+                        </span>
+
+                        <div class="stat-icon">
+                            ×
+                        </div>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="endedPromotions"
+                    >
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        No longer active
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROMOTIONS -->
+            <div class="panel">
+
+                <div class="toolbar">
+
+                    <div class="toolbar-left">
+
+                        <div class="search">
+
+                            <span>⌕</span>
+
+                            <input
+                                type="search"
+                                id="searchInput"
+                                placeholder="Search promotion or event..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+                        <select id="statusFilter">
+
+                            <option value="">
+                                All statuses
+                            </option>
+
+                            <option value="active">
+                                Active
+                            </option>
+
+                            <option value="scheduled">
+                                Scheduled
+                            </option>
+
+                            <option value="ended">
+                                Ended
+                            </option>
+
+                            <option value="inactive">
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div
+                        class="toolbar-note"
+                        id="resultCount"
+                    >
+                        Loading promotions...
+                    </div>
+
+                </div>
+
+
+                <!-- DESKTOP TABLE -->
+                <div class="table-wrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Promotion</th>
+                                <th>Event</th>
+                                <th>Discount</th>
+                                <th>Ticket Scope</th>
+                                <th>Period</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="promotionTableBody">
+
+                            <tr>
+
+                                <td colspan="7">
+
+                                    <div class="state">
+
+                                        <div class="spinner"></div>
+
+                                        Loading promotions...
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- MOBILE -->
+                <div
+                    class="mobile-list"
+                    id="mobileList"
+                >
+
+                    <div class="state">
+
+                        <div class="spinner"></div>
+
+                        Loading promotions...
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- CREATE / EDIT MODAL -->
+<div
+    class="modal-backdrop"
+    id="promotionModal"
+>
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+                <h2 id="modalTitle">
+                    New Promotion
+                </h2>
+
+                <p>
+                    Configure a promotional offer for one
+                    of your events.
+                </p>
+            </div>
+
+            <button
+                class="close-modal"
+                id="closeModalBtn"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="promotionForm">
+
+            <div class="modal-body">
+
+                <div class="form-grid">
+
+                    <!-- EVENT -->
+                    <div class="field full">
+
+                        <label for="eventId">
+                            Event
+                        </label>
+
+                        <select
+                            id="eventId"
+                            required
+                        >
+
+                            <option value="">
+                                Loading events...
+                            </option>
+
+                        </select>
+
+                        <div class="hint">
+                            Only events belonging to your merchant
+                            account are available.
+                        </div>
+
+                    </div>
+
+
+                    <!-- NAME -->
+                    <div class="field full">
+
+                        <label for="promotionName">
+                            Promotion Name
+                        </label>
+
+                        <input
+                            id="promotionName"
+                            type="text"
+                            maxlength="120"
+                            placeholder="Enter promotion name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DISCOUNT TYPE -->
+                    <div class="field">
+
+                        <label for="discountType">
+                            Discount Type
+                        </label>
+
+                        <select
+                            id="discountType"
+                            required
+                        >
+
+                            <option value="percentage">
+                                Percentage
+                            </option>
+
+                            <option value="fixed">
+                                Fixed Amount
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DISCOUNT VALUE -->
+                    <div class="field">
+
+                        <label for="discountValue">
+                            Discount Value
+                        </label>
+
+                        <input
+                            id="discountValue"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="Enter value"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- TICKET TYPE -->
+                    <div class="field full">
+
+                        <label for="ticketTypeId">
+                            Ticket Type
+                        </label>
+
+                        <select id="ticketTypeId">
+
+                            <option value="">
+                                All ticket types
+                            </option>
+
+                        </select>
+
+                        <div class="hint">
+                            Leave as all ticket types if the promotion
+                            should apply to every ticket type for this event.
+                        </div>
+
+                    </div>
+
+
+                    <!-- START -->
+                    <div class="field">
+
+                        <label for="startsAt">
+                            Starts
+                        </label>
+
+                        <input
+                            id="startsAt"
+                            type="datetime-local"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- END -->
+                    <div class="field">
+
+                        <label for="endsAt">
+                            Ends
+                        </label>
+
+                        <input
+                            id="endsAt"
+                            type="datetime-local"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- STATUS -->
+                    <div class="field">
+
+                        <label for="promotionStatus">
+                            Status
+                        </label>
+
+                        <select
+                            id="promotionStatus"
+                            required
+                        >
+
+                            <option value="active">
+                                Active
+                            </option>
+
+                            <option value="inactive">
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CODE -->
+                    <div class="field">
+
+                        <label for="promotionCode">
+                            Promotion Code
+                        </label>
+
+                        <input
+                            id="promotionCode"
+                            type="text"
+                            maxlength="40"
+                            placeholder="Optional"
+                        >
+
+                        <div class="hint">
+                            Leave empty if the offer should be applied
+                            automatically.
+                        </div>
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+                    <div class="field full">
+
+                        <label for="promotionDescription">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="promotionDescription"
+                            maxlength="500"
+                            placeholder="Optional promotion description"
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn"
+                    id="cancelModalBtn"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="savePromotionBtn"
+                >
+                    Create Promotion
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div
+    class="toast-wrap"
+    id="toastWrap"
+></div>
+
+
+<script>
+/* ============================================================
+   K-TICKETS
+   MERCHANT PROMOTIONS CMS
+
+   Supabase is the source of truth.
+============================================================ */
+
+const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL || "";
+
+const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+let supabaseClient = null;
+
+let currentUser = null;
+let currentProfile = null;
+
+let allPromotions = [];
+let filteredPromotions = [];
+
+let merchantEvents = [];
+let currentEditingId = null;
+
+
+/* ============================================================
+   INIT
+============================================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        setupUI();
+
+        if (
+            !SUPABASE_URL ||
+            !SUPABASE_ANON_KEY
+        ) {
+
+            showFatalError(
+                "Supabase configuration is missing. Set KTICKETS_SUPABASE_URL and KTICKETS_SUPABASE_ANON_KEY before using this page."
+            );
+
+            return;
+        }
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+
+        await initializePage();
+    }
+);
+
+
+/* ============================================================
+   UI
+============================================================ */
+
+function setupUI() {
+
+    document
+        .getElementById("mobileMenu")
+        ?.addEventListener(
+            "click",
+            openSidebar
+        );
+
+    document
+        .getElementById("sidebarOverlay")
+        ?.addEventListener(
+            "click",
+            closeSidebar
+        );
+
+    document
+        .getElementById("refreshBtn")
+        ?.addEventListener(
+            "click",
+            async () => {
+
+                await loadEvents();
+                await loadPromotions();
+                await loadNotifications();
+            }
+        );
+
+    document
+        .getElementById("createPromotionBtn")
+        ?.addEventListener(
+            "click",
+            () => openCreateModal()
+        );
+
+    document
+        .getElementById("closeModalBtn")
+        ?.addEventListener(
+            "click",
+            closeModal
+        );
+
+    document
+        .getElementById("cancelModalBtn")
+        ?.addEventListener(
+            "click",
+            closeModal
+        );
+
+    document
+        .getElementById("promotionModal")
+        ?.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target.id ===
+                    "promotionModal"
+                ) {
+                    closeModal();
+                }
+            }
+        );
+
+    document
+        .getElementById("promotionForm")
+        ?.addEventListener(
+            "submit",
+            savePromotion
+        );
+
+    document
+        .getElementById("searchInput")
+        ?.addEventListener(
+            "input",
+            applyFilters
+        );
+
+    document
+        .getElementById("statusFilter")
+        ?.addEventListener(
+            "change",
+            applyFilters
+        );
+
+    document
+        .getElementById("eventId")
+        ?.addEventListener(
+            "change",
+            loadTicketTypesForSelectedEvent
+        );
+
+    document
+        .getElementById("discountType")
+        ?.addEventListener(
+            "change",
+            validateDiscountField
+        );
+
+    document
+        .getElementById("signOutBtn")
+        ?.addEventListener(
+            "click",
+            signOut
+        );
+}
+
+
+function openSidebar() {
+
+    document
+        .getElementById("sidebar")
+        ?.classList.add("open");
+
+    document
+        .getElementById("sidebarOverlay")
+        ?.classList.add("show");
+}
+
+
+function closeSidebar() {
+
+    document
+        .getElementById("sidebar")
+        ?.classList.remove("open");
+
+    document
+        .getElementById("sidebarOverlay")
+        ?.classList.remove("show");
+}
+
+
+/* ============================================================
+   AUTH
+============================================================ */
+
+async function initializePage() {
+
+    try {
+
+        const {
+            data: {
+                user
+            },
+            error
+        } =
+            await supabaseClient
+                .auth
+                .getUser();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!user) {
+
+            window.location.href =
+                "../auth/login.html?redirect=merchant/promotions.html";
+
+            return;
+        }
+
+        currentUser = user;
+
+        await loadMerchantProfile();
+
+        await loadEvents();
+
+        await Promise.all([
+            loadPromotions(),
+            loadNotifications()
+        ]);
+
+    } catch (error) {
+
+        console.error(
+            "Initialization error:",
+            error
+        );
+
+        showFatalError(
+            getErrorMessage(error)
+        );
+    }
+}
+
+
+/* ============================================================
+   PROFILE
+============================================================ */
+
+async function loadMerchantProfile() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role
+            `)
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+
+    if (!data) {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+            "../auth/login.html?error=profile_missing";
+
+        return;
+    }
+
+    if (data.role !== "merchant") {
+
+        showFatalError(
+            "This area is restricted to merchant accounts."
+        );
+
+        setTimeout(
+            () => {
+                window.location.href =
+                    "../index.html";
+            },
+            1800
+        );
+
+        return;
+    }
+
+    currentProfile = data;
+
+    const name =
+        data.full_name ||
+        currentUser.user_metadata?.full_name ||
+        currentUser.email ||
+        "Merchant";
+
+    document
+        .getElementById("merchantName")
+        .textContent = name;
+
+    document
+        .getElementById("merchantAvatar")
+        .textContent =
+        getInitials(name);
+}
+
+
+/* ============================================================
+   EVENTS
+============================================================ */
+
+async function loadEvents() {
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("events")
+                .select(`
+                    id,
+                    merchant_id,
+                    title,
+                    status,
+                    start_at,
+                    end_at
+                `)
+                .eq(
+                    "merchant_id",
+                    currentUser.id
+                )
+                .order(
+                    "start_at",
+                    {
+                        ascending: true,
+                        nullsFirst: false
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        merchantEvents =
+            data || [];
+
+        populateEventSelect();
+
+    } catch (error) {
+
+        console.error(
+            "Event loading error:",
+            error
+        );
+
+        merchantEvents = [];
+
+        populateEventSelect();
+
+        showToast(
+            "Events could not be loaded.",
+            true
+        );
+    }
+}
+
+
+/* ============================================================
+   EVENT SELECT
+============================================================ */
+
+function populateEventSelect() {
+
+    const select =
+        document.getElementById(
+            "eventId"
+        );
+
+    if (!select) {
+        return;
+    }
+
+    if (!merchantEvents.length) {
+
+        select.innerHTML = `
+            <option value="">
+                No merchant events available
+            </option>
+        `;
+
+        return;
+    }
+
+    select.innerHTML = `
+        <option value="">
+            Select an event
+        </option>
+
+        ${
+            merchantEvents
+                .map(event => `
+                    <option
+                        value="${escapeAttr(event.id)}"
+                    >
+                        ${escapeHTML(
+                            event.title ||
+                            "Untitled event"
+                        )}
+                    </option>
+                `)
+                .join("")
+        }
+    `;
+}
+
+
+/* ============================================================
+   TICKET TYPES
+============================================================ */
+
+async function loadTicketTypesForSelectedEvent() {
+
+    const eventId =
+        document
+            .getElementById("eventId")
+            ?.value;
+
+    const select =
+        document.getElementById(
+            "ticketTypeId"
+        );
+
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = `
+        <option value="">
+            All ticket types
+        </option>
+    `;
+
+    if (!eventId) {
+        return;
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("ticket_types")
+                .select(`
+                    id,
+                    event_id,
+                    name
+                `)
+                .eq(
+                    "event_id",
+                    eventId
+                )
+                .order(
+                    "name",
+                    {
+                        ascending: true
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data?.length) {
+            return;
+        }
+
+        select.innerHTML +=
+            data
+                .map(type => `
+                    <option
+                        value="${escapeAttr(type.id)}"
+                    >
+                        ${escapeHTML(
+                            type.name ||
+                            "Ticket type"
+                        )}
+                    </option>
+                `)
+                .join("");
+
+    } catch (error) {
+
+        console.error(
+            "Ticket type loading error:",
+            error
+        );
+
+        showToast(
+            "Ticket types could not be loaded.",
+            true
+        );
+    }
+}
+
+
+/* ============================================================
+   PROMOTIONS
+============================================================ */
+
+async function loadPromotions() {
+
+    setLoadingState();
+
+    try {
+
+        /*
+         * Expected promotion table:
+         *
+         * promotions
+         * - id
+         * - merchant_id
+         * - event_id
+         * - ticket_type_id
+         * - name
+         * - code
+         * - description
+         * - discount_type
+         * - discount_value
+         * - starts_at
+         * - ends_at
+         * - status
+         * - created_at
+         * - updated_at
+         *
+         * The frontend intentionally does not invent records.
+         */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("promotions")
+                .select(`
+                    id,
+                    merchant_id,
+                    event_id,
+                    ticket_type_id,
+                    name,
+                    code,
+                    description,
+                    discount_type,
+                    discount_value,
+                    starts_at,
+                    ends_at,
+                    status,
+                    created_at,
+                    updated_at
+                `)
+                .eq(
+                    "merchant_id",
+                    currentUser.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        const rows =
+            data || [];
+
+        const eventIds = [
+            ...new Set(
+                rows
+                    .map(row => row.event_id)
+                    .filter(Boolean)
+            )
+        ];
+
+        let events = [];
+
+        if (eventIds.length) {
+
+            const {
+                data: eventData,
+                error: eventError
+            } =
+                await supabaseClient
+                    .from("events")
+                    .select(`
+                        id,
+                        merchant_id,
+                        title
+                    `)
+                    .in(
+                        "id",
+                        eventIds
+                    );
+
+            if (eventError) {
+                throw eventError;
+            }
+
+            events =
+                (eventData || [])
+                    .filter(
+                        event =>
+                            event.merchant_id ===
+                            currentUser.id
+                    );
+        }
+
+
+        const ticketTypeIds = [
+            ...new Set(
+                rows
+                    .map(row =>
+                        row.ticket_type_id
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+        let ticketTypes = [];
+
+        if (ticketTypeIds.length) {
+
+            const {
+                data: typeData,
+                error: typeError
+            } =
+                await supabaseClient
+                    .from("ticket_types")
+                    .select(`
+                        id,
+                        event_id,
+                        name
+                    `)
+                    .in(
+                        "id",
+                        ticketTypeIds
+                    );
+
+            if (typeError) {
+                throw typeError;
+            }
+
+            ticketTypes =
+                typeData || [];
+        }
+
+
+        const eventMap =
+            new Map(
+                events.map(
+                    event => [
+                        event.id,
+                        event
+                    ]
+                )
+            );
+
+        const ticketTypeMap =
+            new Map(
+                ticketTypes.map(
+                    type => [
+                        type.id,
+                        type
+                    ]
+                )
+            );
+
+
+        allPromotions =
+            rows
+                .filter(row => {
+
+                    const event =
+                        eventMap.get(
+                            row.event_id
+                        );
+
+                    return Boolean(
+                        event &&
+                        event.merchant_id ===
+                            currentUser.id
+                    );
+                })
+                .map(row => ({
+                    ...row,
+                    event:
+                        eventMap.get(
+                            row.event_id
+                        ) || null,
+                    ticket_type:
+                        ticketTypeMap.get(
+                            row.ticket_type_id
+                        ) || null
+                }));
+
+
+        updateStats();
+
+        applyFilters();
+
+    } catch (error) {
+
+        console.error(
+            "Promotion loading error:",
+            error
+        );
+
+        allPromotions = [];
+
+        updateStats();
+
+        renderErrorState(
+            getErrorMessage(error)
+        );
+    }
+}
+
+
+/* ============================================================
+   STATUS CALCULATION
+============================================================ */
+
+function getEffectiveStatus(promotion) {
+
+    const status =
+        normalizeStatus(
+            promotion.status
+        );
+
+    if (
+        status === "inactive" ||
+        status === "disabled"
+    ) {
+        return "inactive";
+    }
+
+    const now =
+        Date.now();
+
+    const start =
+        promotion.starts_at
+            ? new Date(
+                promotion.starts_at
+            ).getTime()
+            : null;
+
+    const end =
+        promotion.ends_at
+            ? new Date(
+                promotion.ends_at
+            ).getTime()
+            : null;
+
+    if (
+        end &&
+        !Number.isNaN(end) &&
+        now >= end
+    ) {
+        return "ended";
+    }
+
+    if (
+        start &&
+        !Number.isNaN(start) &&
+        now < start
+    ) {
+        return "scheduled";
+    }
+
+    return "active";
+}
+
+
+/* ============================================================
+   STATS
+============================================================ */
+
+function updateStats() {
+
+    const statuses =
+        allPromotions.map(
+            getEffectiveStatus
+        );
+
+    document
+        .getElementById("totalPromotions")
+        .textContent =
+        formatNumber(
+            allPromotions.length
+        );
+
+    document
+        .getElementById("activePromotions")
+        .textContent =
+        formatNumber(
+            statuses.filter(
+                status =>
+                    status === "active"
+            ).length
+        );
+
+    document
+        .getElementById("scheduledPromotions")
+        .textContent =
+        formatNumber(
+            statuses.filter(
+                status =>
+                    status === "scheduled"
+            ).length
+        );
+
+    document
+        .getElementById("endedPromotions")
+        .textContent =
+        formatNumber(
+            statuses.filter(
+                status =>
+                    status === "ended"
+            ).length
+        );
+}
+
+
+/* ============================================================
+   FILTERS
+============================================================ */
+
+function applyFilters() {
+
+    const search =
+        document
+            .getElementById(
+                "searchInput"
+            )
+            ?.value
+            ?.trim()
+            ?.toLowerCase() || "";
+
+    const selectedStatus =
+        document
+            .getElementById(
+                "statusFilter"
+            )
+            ?.value || "";
+
+
+    filteredPromotions =
+        allPromotions.filter(
+            promotion => {
+
+                const name =
+                    promotion.name || "";
+
+                const event =
+                    promotion.event?.title ||
+                    "";
+
+                const code =
+                    promotion.code || "";
+
+                const matchesSearch =
+                    !search ||
+                    name
+                        .toLowerCase()
+                        .includes(search) ||
+                    event
+                        .toLowerCase()
+                        .includes(search) ||
+                    code
+                        .toLowerCase()
+                        .includes(search);
+
+                const effectiveStatus =
+                    getEffectiveStatus(
+                        promotion
+                    );
+
+                const matchesStatus =
+                    !selectedStatus ||
+                    effectiveStatus ===
+                        selectedStatus;
+
+                return (
+                    matchesSearch &&
+                    matchesStatus
+                );
+            }
+        );
+
+
+    renderDesktop(
+        filteredPromotions
+    );
+
+    renderMobile(
+        filteredPromotions
+    );
+
+
+    document
+        .getElementById(
+            "resultCount"
+        )
+        .textContent =
+        `${filteredPromotions.length} ${
+            filteredPromotions.length === 1
+                ? "promotion"
+                : "promotions"
+        }`;
+}
+
+
+/* ============================================================
+   DESKTOP TABLE
+============================================================ */
+
+function renderDesktop(promotions) {
+
+    const tbody =
+        document.getElementById(
+            "promotionTableBody"
+        );
+
+    if (!promotions.length) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    ${emptyStateHTML()}
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    tbody.innerHTML =
+        promotions
+            .map(promotion => {
+
+                const status =
+                    getEffectiveStatus(
+                        promotion
+                    );
+
+                return `
+                    <tr>
+
+                        <td>
+
+                            <div class="promo-name">
+                                ${escapeHTML(
+                                    promotion.name ||
+                                    "Untitled promotion"
+                                )}
+                            </div>
+
+                            ${
+                                promotion.code
+                                    ? `
+                                        <span class="secondary">
+                                            Code:
+                                            ${escapeHTML(
+                                                promotion.code
+                                            )}
+                                        </span>
+                                    `
+                                    : ""
+                            }
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="event-name">
+                                ${escapeHTML(
+                                    promotion.event?.title ||
+                                    "Event unavailable"
+                                )}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="discount">
+                                ${formatDiscount(
+                                    promotion
+                                )}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                promotion.ticket_type?.name
+                                    ? escapeHTML(
+                                        promotion
+                                            .ticket_type
+                                            .name
+                                    )
+                                    : "All ticket types"
+                            }
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="secondary">
+                                ${formatDateTime(
+                                    promotion.starts_at
+                                )}
+                            </span>
+
+                            <span class="secondary">
+                                →
+                                ${formatDateTime(
+                                    promotion.ends_at
+                                )}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+                            ${statusBadge(status)}
+                        </td>
+
+
+                        <td>
+
+                            <div class="action-group">
+
+                                <button
+                                    class="icon-btn"
+                                    title="Edit promotion"
+                                    onclick="editPromotion('${escapeAttr(promotion.id)}')"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    class="icon-btn danger"
+                                    title="Delete promotion"
+                                    onclick="deletePromotion('${escapeAttr(promotion.id)}')"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                `;
+
+            })
+            .join("");
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+function renderMobile(promotions) {
+
+    const container =
+        document.getElementById(
+            "mobileList"
+        );
+
+    if (!promotions.length) {
+
+        container.innerHTML =
+            emptyStateHTML();
+
+        return;
+    }
+
+
+    container.innerHTML =
+        promotions
+            .map(promotion => {
+
+                const status =
+                    getEffectiveStatus(
+                        promotion
+                    );
+
+                return `
+                    <article class="promo-card">
+
+                        <div class="promo-card-top">
+
+                            <div>
+
+                                <h3>
+                                    ${escapeHTML(
+                                        promotion.name ||
+                                        "Untitled promotion"
+                                    )}
+                                </h3>
+
+                                <div class="promo-event">
+                                    ${escapeHTML(
+                                        promotion.event?.title ||
+                                        "Event unavailable"
+                                    )}
+                                </div>
+
+                            </div>
+
+                            ${statusBadge(status)}
+
+                        </div>
+
+
+                        <div class="promo-discount">
+
+                            <span>
+                                Discount
+                            </span>
+
+                            <strong>
+                                ${formatDiscount(
+                                    promotion
+                                )}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="promo-details">
+
+                            <div class="detail">
+
+                                <span>
+                                    Ticket Scope
+                                </span>
+
+                                <strong>
+                                    ${
+                                        promotion
+                                            .ticket_type
+                                            ?.name
+                                            ? escapeHTML(
+                                                promotion
+                                                    .ticket_type
+                                                    .name
+                                            )
+                                            : "All ticket types"
+                                    }
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <span>
+                                    Code
+                                </span>
+
+                                <strong>
+                                    ${
+                                        promotion.code
+                                            ? escapeHTML(
+                                                promotion.code
+                                            )
+                                            : "Automatic"
+                                    }
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <span>
+                                    Starts
+                                </span>
+
+                                <strong>
+                                    ${formatDateTime(
+                                        promotion.starts_at
+                                    )}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <span>
+                                    Ends
+                                </span>
+
+                                <strong>
+                                    ${formatDateTime(
+                                        promotion.ends_at
+                                    )}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="promo-actions">
+
+                            <button
+                                class="btn"
+                                onclick="editPromotion('${escapeAttr(promotion.id)}')"
+                            >
+                                Edit
+                            </button>
+
+                            <button
+                                class="btn btn-danger"
+                                onclick="deletePromotion('${escapeAttr(promotion.id)}')"
+                            >
+                                Delete
+                            </button>
+
+                        </div>
+
+                    </article>
+                `;
+
+            })
+            .join("");
+}
+
+
+/* ============================================================
+   CREATE
+============================================================ */
+
+function openCreateModal() {
+
+    currentEditingId = null;
+
+    document
+        .getElementById("modalTitle")
+        .textContent =
+        "New Promotion";
+
+    document
+        .getElementById("savePromotionBtn")
+        .textContent =
+        "Create Promotion";
+
+    document
+        .getElementById("promotionForm")
+        .reset();
+
+    populateEventSelect();
+
+    document
+        .getElementById("promotionStatus")
+        .value =
+        "active";
+
+    document
+        .getElementById("ticketTypeId")
+        .innerHTML = `
+            <option value="">
+                All ticket types
+            </option>
+        `;
+
+    document
+        .getElementById("promotionModal")
+        .classList.add("show");
+}
+
+
+/* ============================================================
+   EDIT
+============================================================ */
+
+async function editPromotion(id) {
+
+    const promotion =
+        allPromotions.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
+
+    if (!promotion) {
+
+        showToast(
+            "Promotion could not be found.",
+            true
+        );
+
+        return;
+    }
+
+    currentEditingId =
+        promotion.id;
+
+    document
+        .getElementById("modalTitle")
+        .textContent =
+        "Edit Promotion";
+
+    document
+        .getElementById("savePromotionBtn")
+        .textContent =
+        "Save Changes";
+
+
+    populateEventSelect();
+
+
+    document
+        .getElementById("eventId")
+        .value =
+        promotion.event_id || "";
+
+
+    await loadTicketTypesForSelectedEvent();
+
+
+    document
+        .getElementById("ticketTypeId")
+        .value =
+        promotion.ticket_type_id || "";
+
+
+    document
+        .getElementById("promotionName")
+        .value =
+        promotion.name || "";
+
+
+    document
+        .getElementById("discountType")
+        .value =
+        promotion.discount_type ||
+        "percentage";
+
+
+    document
+        .getElementById("discountValue")
+        .value =
+        promotion.discount_value ??
+        "";
+
+
+    document
+        .getElementById("startsAt")
+        .value =
+        toDateTimeLocal(
+            promotion.starts_at
+        );
+
+
+    document
+        .getElementById("endsAt")
+        .value =
+        toDateTimeLocal(
+            promotion.ends_at
+        );
+
+
+    document
+        .getElementById("promotionStatus")
+        .value =
+        promotion.status ||
+        "active";
+
+
+    document
+        .getElementById("promotionCode")
+        .value =
+        promotion.code || "";
+
+
+    document
+        .getElementById("promotionDescription")
+        .value =
+        promotion.description || "";
+
+
+    document
+        .getElementById("promotionModal")
+        .classList.add("show");
+}
+
+
+/* ============================================================
+   SAVE
+============================================================ */
+
+async function savePromotion(event) {
+
+    event.preventDefault();
+
+    const saveButton =
+        document.getElementById(
+            "savePromotionBtn"
+        );
+
+    const eventId =
+        document
+            .getElementById("eventId")
+            .value;
+
+    const name =
+        document
+            .getElementById(
+                "promotionName"
+            )
+            .value
+            .trim();
+
+    const discountType =
+        document
+            .getElementById(
+                "discountType"
+            )
+            .value;
+
+    const discountValue =
+        Number(
+            document
+                .getElementById(
+                    "discountValue"
+                )
+                .value
+        );
+
+    const ticketTypeId =
+        document
+            .getElementById(
+                "ticketTypeId"
+            )
+            .value || null;
+
+    const startsAt =
+        document
+            .getElementById(
+                "startsAt"
+            )
+            .value;
+
+    const endsAt =
+        document
+            .getElementById(
+                "endsAt"
+            )
+            .value;
+
+    const status =
+        document
+            .getElementById(
+                "promotionStatus"
+            )
+            .value;
+
+    const code =
+        document
+            .getElementById(
+                "promotionCode"
+            )
+            .value
+            .trim() || null;
+
+    const description =
+        document
+            .getElementById(
+                "promotionDescription"
+            )
+            .value
+            .trim() || null;
+
+
+    /* =========================
+       VALIDATION
+    ========================= */
+
+    if (!eventId) {
+
+        showToast(
+            "Select an event.",
+            true
+        );
+
+        return;
+    }
+
+    if (!name) {
+
+        showToast(
+            "Enter a promotion name.",
+            true
+        );
+
+        return;
+    }
+
+    if (
+        !Number.isFinite(
+            discountValue
+        ) ||
+        discountValue <= 0
+    ) {
+
+        showToast(
+            "Enter a valid discount value.",
+            true
+        );
+
+        return;
+    }
+
+    if (
+        discountType ===
+            "percentage" &&
+        discountValue > 100
+    ) {
+
+        showToast(
+            "Percentage discount cannot exceed 100%.",
+            true
+        );
+
+        return;
+    }
+
+    if (!startsAt || !endsAt) {
+
+        showToast(
+            "Set the promotion start and end time.",
+            true
+        );
+
+        return;
+    }
+
+    const startDate =
+        new Date(startsAt);
+
+    const endDate =
+        new Date(endsAt);
+
+    if (
+        Number.isNaN(
+            startDate.getTime()
+        ) ||
+        Number.isNaN(
+            endDate.getTime()
+        )
+    ) {
+
+        showToast(
+            "Enter valid promotion dates.",
+            true
+        );
+
+        return;
+    }
+
+    if (
+        endDate <= startDate
+    ) {
+
+        showToast(
+            "Promotion end time must be after the start time.",
+            true
+        );
+
+        return;
+    }
+
+
+    /*
+     * Confirm the selected event belongs
+     * to the authenticated merchant.
+     */
+
+    const selectedEvent =
+        merchantEvents.find(
+            item =>
+                String(item.id) ===
+                String(eventId)
+        );
+
+    if (
+        !selectedEvent ||
+        selectedEvent.merchant_id !==
+            currentUser.id
+    ) {
+
+        showToast(
+            "You cannot create a promotion for this event.",
+            true
+        );
+
+        return;
+    }
+
+
+    saveButton.disabled = true;
+    saveButton.classList.add(
+        "loading-button"
+    );
+
+    saveButton.textContent =
+        currentEditingId
+            ? "Saving..."
+            : "Creating...";
+
+
+    try {
+
+        const payload = {
+
+            merchant_id:
+                currentUser.id,
+
+            event_id:
+                eventId,
+
+            ticket_type_id:
+                ticketTypeId,
+
+            name,
+
+            code,
+
+            description,
+
+            discount_type:
+                discountType,
+
+            discount_value:
+                discountValue,
+
+            starts_at:
+                startDate.toISOString(),
+
+            ends_at:
+                endDate.toISOString(),
+
+            status,
+
+            updated_at:
+                new Date().toISOString()
+        };
+
+
+        if (currentEditingId) {
+
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("promotions")
+                    .update(payload)
+                    .eq(
+                        "id",
+                        currentEditingId
+                    )
+                    .eq(
+                        "merchant_id",
+                        currentUser.id
+                    );
+
+            if (error) {
+                throw error;
+            }
+
+            showToast(
+                "Promotion updated successfully."
+            );
+
+        } else {
+
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("promotions")
+                    .insert({
+                        ...payload,
+                        created_at:
+                            new Date().toISOString()
+                    });
+
+            if (error) {
+                throw error;
+            }
+
+            showToast(
+                "Promotion created successfully."
+            );
+        }
+
+
+        closeModal();
+
+        await loadPromotions();
+
+    } catch (error) {
+
+        console.error(
+            "Promotion save error:",
+            error
+        );
+
+        showToast(
+            getErrorMessage(error),
+            true
+        );
+
+    } finally {
+
+        saveButton.disabled = false;
+
+        saveButton.classList.remove(
+            "loading-button"
+        );
+
+        saveButton.textContent =
+            currentEditingId
+                ? "Save Changes"
+                : "Create Promotion";
+    }
+}
+
+
+/* ============================================================
+   DELETE
+============================================================ */
+
+async function deletePromotion(id) {
+
+    const promotion =
+        allPromotions.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
+
+    if (!promotion) {
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Delete this promotion? This action cannot be undone."
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("promotions")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                )
+                .eq(
+                    "merchant_id",
+                    currentUser.id
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        showToast(
+            "Promotion deleted."
+        );
+
+        await loadPromotions();
+
+    } catch (error) {
+
+        console.error(
+            "Promotion deletion error:",
+            error
+        );
+
+        showToast(
+            getErrorMessage(error),
+            true
+        );
+    }
+}
+
+
+/* ============================================================
+   MODAL
+============================================================ */
+
+function closeModal() {
+
+    document
+        .getElementById(
+            "promotionModal"
+        )
+        .classList.remove("show");
+
+    currentEditingId = null;
+}
+
+
+function validateDiscountField() {
+
+    const type =
+        document
+            .getElementById(
+                "discountType"
+            )
+            .value;
+
+    const input =
+        document
+            .getElementById(
+                "discountValue"
+            );
+
+    if (type === "percentage") {
+
+        input.max = "100";
+
+    } else {
+
+        input.removeAttribute("max");
+    }
+}
+
+
+/* ============================================================
+   NOTIFICATIONS
+============================================================ */
+
+async function loadNotifications() {
+
+    try {
+
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select(
+                    "id",
+                    {
+                        count: "exact",
+                        head: true
+                    }
+                )
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .eq(
+                    "is_read",
+                    false
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        const badge =
+            document.getElementById(
+                "notificationCount"
+            );
+
+        if (
+            count &&
+            count > 0
+        ) {
+
+            badge.textContent =
+                count > 99
+                    ? "99+"
+                    : count;
+
+            badge.style.display =
+                "flex";
+
+        } else {
+
+            badge.style.display =
+                "none";
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Notification count unavailable:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   SIGN OUT
+============================================================ */
+
+async function signOut() {
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
+                .signOut();
+
+        if (error) {
+            throw error;
+        }
+
+        window.location.href =
+            "../auth/login.html";
+
+    } catch (error) {
+
+        showToast(
+            getErrorMessage(error),
+            true
+        );
+    }
+}
+
+
+/* ============================================================
+   STATES
+============================================================ */
+
+function setLoadingState() {
+
+    document
+        .getElementById(
+            "promotionTableBody"
+        )
+        .innerHTML = `
+            <tr>
+                <td colspan="7">
+                    <div class="state">
+                        <div class="spinner"></div>
+                        Loading promotions...
+                    </div>
+                </td>
+            </tr>
+        `;
+
+    document
+        .getElementById(
+            "mobileList"
+        )
+        .innerHTML = `
+            <div class="state">
+                <div class="spinner"></div>
+                Loading promotions...
+            </div>
+        `;
+
+    document
+        .getElementById(
+            "resultCount"
+        )
+        .textContent =
+        "Loading promotions...";
+}
+
+
+function renderErrorState(message) {
+
+    document
+        .getElementById(
+            "promotionTableBody"
+        )
+        .innerHTML = `
+            <tr>
+                <td colspan="7">
+                    <div class="state">
+                        <div class="state-icon">!</div>
+                        <strong>
+                            Unable to load promotions
+                        </strong>
+                        <p>
+                            ${escapeHTML(message)}
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        `;
+
+    document
+        .getElementById(
+            "mobileList"
+        )
+        .innerHTML = `
+            <div class="state">
+                <div class="state-icon">!</div>
+                <strong>
+                    Unable to load promotions
+                </strong>
+                <p>
+                    ${escapeHTML(message)}
+                </p>
+            </div>
+        `;
+
+    document
+        .getElementById(
+            "resultCount"
+        )
+        .textContent =
+        "Unable to load";
+}
+
+
+function showFatalError(message) {
+
+    document
+        .getElementById(
+            "promotionTableBody"
+        )
+        .innerHTML = `
+            <tr>
+                <td colspan="7">
+                    <div class="state">
+                        <div class="state-icon">!</div>
+                        <strong>
+                            Page unavailable
+                        </strong>
+                        <p>
+                            ${escapeHTML(message)}
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        `;
+
+    document
+        .getElementById(
+            "mobileList"
+        )
+        .innerHTML = `
+            <div class="state">
+                <div class="state-icon">!</div>
+                <strong>
+                    Page unavailable
+                </strong>
+                <p>
+                    ${escapeHTML(message)}
+                </p>
+            </div>
+        `;
+}
+
+
+function emptyStateHTML() {
+
+    return `
+        <div class="state">
+
+            <div class="state-icon">
+                %
+            </div>
+
+            <strong>
+                No promotions found
+            </strong>
+
+            <p>
+                Promotions you create for your events
+                will appear here.
+            </p>
+
+        </div>
+    `;
+}
+
+
+/* ============================================================
+   FORMATTING
+============================================================ */
+
+function formatDiscount(promotion) {
+
+    const value =
+        Number(
+            promotion.discount_value
+        );
+
+    if (
+        !Number.isFinite(value)
+    ) {
+        return "—";
+    }
+
+    if (
+        promotion.discount_type ===
+        "percentage"
+    ) {
+
+        return `${formatNumber(value)}%`;
+    }
+
+    return `KWD ${formatNumber(value)}`;
+}
+
+
+function statusBadge(status) {
+
+    const normalized =
+        normalizeStatus(status);
+
+    let className =
+        "badge-inactive";
+
+    let label =
+        normalized || "inactive";
+
+    if (
+        normalized === "active"
+    ) {
+
+        className =
+            "badge-active";
+
+    } else if (
+        normalized === "scheduled"
+    ) {
+
+        className =
+            "badge-scheduled";
+
+    } else if (
+        normalized === "ended"
+    ) {
+
+        className =
+            "badge-ended";
+    }
+
+    return `
+        <span class="badge ${className}">
+            ${escapeHTML(label)}
+        </span>
+    `;
+}
+
+
+function normalizeStatus(value) {
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+}
+
+
+function formatNumber(value) {
+
+    return new Intl.NumberFormat()
+        .format(
+            Number(value) || 0
+        );
+}
+
+
+function formatDateTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return "—";
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            dateStyle: "medium",
+            timeStyle: "short"
+        }
+    ).format(date);
+}
+
+
+function toDateTimeLocal(value) {
+
+    if (!value) {
+        return "";
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return "";
+    }
+
+    const pad =
+        number =>
+            String(number)
+                .padStart(2, "0");
+
+    return (
+        date.getFullYear() +
+        "-" +
+        pad(date.getMonth() + 1) +
+        "-" +
+        pad(date.getDate()) +
+        "T" +
+        pad(date.getHours()) +
+        ":" +
+        pad(date.getMinutes())
+    );
+}
+
+
+function getInitials(name) {
+
+    const clean =
+        String(name || "")
+            .trim();
+
+    if (!clean) {
+        return "M";
+    }
+
+    const parts =
+        clean
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if (parts.length === 1) {
+
+        return parts[0]
+            .slice(0, 2)
+            .toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+}
+
+
+/* ============================================================
+   SECURITY
+============================================================ */
+
+function escapeHTML(value) {
+
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+function escapeAttr(value) {
+
+    return escapeHTML(value)
+        .replace(
+            /`/g,
+            "&#096;"
+        );
+}
+
+
+/* ============================================================
+   ERROR
+============================================================ */
+
+function getErrorMessage(error) {
+
+    if (!error) {
+        return "An unexpected error occurred.";
+    }
+
+    if (
+        typeof error ===
+        "string"
+    ) {
+        return error;
+    }
+
+    return (
+        error.message ||
+        error.details ||
+        error.hint ||
+        "An unexpected error occurred."
+    );
+}
+
+
+/* ============================================================
+   TOAST
+============================================================ */
+
+function showToast(
+    message,
+    isError = false
+) {
+
+    const wrap =
+        document.getElementById(
+            "toastWrap"
+        );
+
+    const toast =
+        document.createElement(
+            "div"
+        );
+
+    toast.className =
+        `toast ${
+            isError
+                ? "error"
+                : ""
+        }`;
+
+    toast.textContent =
+        message;
+
+    wrap.appendChild(
+        toast
+    );
+
+    setTimeout(
+        () => {
+            toast.remove();
+        },
+        4000
+    );
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Payment Status | K-Tickets</title>
+
+    <meta
+        name="description"
+        content="K-Tickets payment confirmation."
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --bordo-dark: #531018;
+            --bordo-soft: #f4e5e4;
+
+            --green: #0F3D3A;
+            --green-dark: #092b29;
+            --green-soft: #e4efec;
+
+            --cream: #F5DABF;
+            --cream-light: #fff8f1;
+
+            --white: #ffffff;
+            --ink: #202020;
+            --muted: #77716d;
+            --line: #e8e1da;
+            --surface: #fbfaf8;
+
+            --shadow-sm: 0 5px 20px rgba(30, 22, 18, .06);
+            --shadow-md: 0 20px 55px rgba(30, 22, 18, .12);
+
+            --sidebar-width: 260px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--surface);
+            color: var(--ink);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            overflow-x: hidden;
+        }
+
+        button {
+            font: inherit;
+            border: 0;
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: var(--sidebar-width);
+            padding: 24px 16px;
+            background: var(--green);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 28px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 17px;
+            letter-spacing: .08em;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 2px;
+            color: rgba(255,255,255,.55);
+            font-size: 10px;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+
+        .nav-label {
+            margin: 5px 0 9px;
+            padding: 0 12px;
+            color: rgba(255,255,255,.4);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .15em;
+        }
+
+        .nav {
+            display: grid;
+            gap: 5px;
+        }
+
+        .nav-link {
+            min-height: 46px;
+            padding: 0 13px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,.7);
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--bordo);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            display: grid;
+            gap: 10px;
+        }
+
+        .support-card {
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .support-card small {
+            color: rgba(255,255,255,.5);
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .support-card strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            height: 42px;
+            border-radius: 11px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,.12);
+            color: rgba(255,255,255,.7);
+        }
+
+        .main {
+            width: calc(100% - var(--sidebar-width));
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            min-height: 78px;
+            padding: 15px 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,.93);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(16px);
+        }
+
+        .mobile-menu {
+            display: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: var(--cream-light);
+            color: var(--green);
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .breadcrumb a {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bordo);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .content {
+            min-height: calc(100vh - 78px);
+            padding: 45px 25px 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-card {
+            width: min(620px, 100%);
+            padding: 35px;
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 27px;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .status-icon {
+            width: 74px;
+            height: 74px;
+            margin: 0 auto;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: var(--green-soft);
+            color: var(--green);
+            font-size: 30px;
+            font-weight: 900;
+        }
+
+        .status-icon.pending {
+            background: var(--cream-light);
+            color: var(--warning);
+        }
+
+        .status-icon.failed {
+            background: var(--bordo-soft);
+            color: var(--bordo);
+        }
+
+        .status-card small {
+            display: block;
+            margin-top: 20px;
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+        }
+
+        .status-card h1 {
+            margin-top: 8px;
+            color: var(--green);
+            font-size: clamp(27px, 4vw, 40px);
+            line-height: 1.05;
+            letter-spacing: -.04em;
+        }
+
+        .status-card > p {
+            margin: 12px auto 0;
+            max-width: 460px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .order-box {
+            margin-top: 25px;
+            padding: 17px;
+            border-radius: 16px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            text-align: left;
+        }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 8px 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .order-row + .order-row {
+            border-top: 1px solid var(--line);
+        }
+
+        .order-row strong {
+            color: var(--green);
+            text-align: right;
+        }
+
+        .ticket-status {
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 13px;
+            background: var(--green-soft);
+            color: var(--green);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .ticket-status.pending {
+            background: var(--cream-light);
+            color: var(--warning);
+        }
+
+        .actions {
+            margin-top: 22px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            min-height: 47px;
+            flex: 1;
+            padding: 0 17px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .btn.primary {
+            background: var(--bordo);
+            color: white;
+        }
+
+        .btn.secondary {
+            background: white;
+            color: var(--green);
+            border: 1px solid var(--line);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .error {
+            color: var(--bordo);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .topbar {
+                padding: 14px 25px;
+            }
+
+            .content {
+                padding: 35px 20px 100px;
+            }
+
+            .mobile-nav {
+                position: fixed;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                height: 64px;
+                border-radius: 19px;
+                background: rgba(15,61,58,.96);
+                z-index: 90;
+            }
+
+            .mobile-nav a {
+                display: grid;
+                place-items: center;
+                align-content: center;
+                gap: 3px;
+                color: rgba(255,255,255,.55);
+                font-size: 10px;
+            }
+
+            .mobile-nav a.active {
+                color: var(--cream);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                padding: 12px 15px;
+            }
+
+            .breadcrumb {
+                display: none;
+            }
+
+            .content {
+                padding: 25px 15px 100px;
+            }
+
+            .status-card {
+                padding: 25px 17px;
+                border-radius: 21px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar" id="sidebar">
+
+        <a href="../index.html" class="brand">
+
+            <div class="brand-mark">K</div>
+
+            <div class="brand-text">
+                <strong>K-TICKETS</strong>
+                <span>Customer</span>
+            </div>
+
+        </a>
+
+        <div class="nav-label">
+            Menu
+        </div>
+
+        <nav class="nav">
+
+            <a href="dashboard.html" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+
+            <a href="events.html" class="nav-link">
+                <span class="nav-icon">◫</span>
+                Discover Events
+            </a>
+
+            <a href="my-tickets.html" class="nav-link active">
+                <span class="nav-icon">▣</span>
+                My Tickets
+            </a>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">◷</span>
+                Payment History
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="support-card">
+                <small>Need help?</small>
+                <strong>K-Tickets Support</strong>
+            </div>
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                Log out
+            </button>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <button
+                class="mobile-menu"
+                onclick="toggleSidebar()"
+            >
+                ☰
+            </button>
+
+            <div class="breadcrumb">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <span>
+                    / Payment status
+                </span>
+
+            </div>
+
+            <div
+                class="avatar"
+                id="avatar"
+            >
+                —
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div
+                class="status-card"
+                id="statusCard"
+            >
+
+                <div
+                    class="loading"
+                    id="loading"
+                >
+                    Checking payment status...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<nav class="mobile-nav">
+
+    <a href="dashboard.html">
+        <span>⌂</span>
+        <span>Home</span>
+    </a>
+
+    <a href="events.html">
+        <span>◫</span>
+        <span>Events</span>
+    </a>
+
+    <a href="my-tickets.html" class="active">
+        <span>▣</span>
+        <span>Tickets</span>
+    </a>
+
+    <a href="#">
+        <span>◎</span>
+        <span>Account</span>
+    </a>
+
+</nav>
+
+<script>
+
+    /*
+        ============================================================
+        K-TICKETS PAYMENT RESULT
+        ============================================================
+
+        This page NEVER assumes:
+
+            "customer arrived here = payment successful"
+
+        Instead:
+
+            Supabase order.payment_status
+                    +
+            ticket record
+                    =
+            actual result
+
+        Ticket should only become available after the trusted
+        backend confirms payment.
+    */
+
+    const SUPABASE_URL = "";
+    const SUPABASE_ANON_KEY = "";
+
+    let supabaseClient = null;
+    let orderId = null;
+    let order = null;
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    orderId =
+        params.get("order");
+
+    async function initialise() {
+
+        const card =
+            document.getElementById("statusCard");
+
+        try {
+
+            if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+
+                throw new Error(
+                    "Supabase configuration is not connected yet."
+                );
+            }
+
+            if (!orderId) {
+
+                throw new Error(
+                    "No order was supplied."
+                );
+            }
+
+            supabaseClient =
+                window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_ANON_KEY
+                );
+
+            const {
+                data: {
+                    user
+                }
+            } =
+                await supabaseClient.auth.getUser();
+
+            if (!user) {
+
+                window.location.href =
+                    "../auth/login.html";
+
+                return;
+            }
+
+            await loadOrder();
+            await renderStatus();
+            subscribeToOrder();
+
+        } catch (error) {
+
+            console.error(error);
+
+            card.innerHTML = `
+                <div class="status-icon failed">
+                    !
+                </div>
+
+                <small>
+                    K-Tickets
+                </small>
+
+                <h1>
+                    Unable to check payment.
+                </h1>
+
+                <p class="error">
+                    ${escapeHTML(
+                        error.message ||
+                        "Something went wrong."
+                    )}
+                </p>
+
+                <div class="actions">
+
+                    <a
+                        href="dashboard.html"
+                        class="btn primary"
+                    >
+                        Back to Dashboard
+                    </a>
+
+                    <a
+                        href="events.html"
+                        class="btn secondary"
+                    >
+                        Browse Events
+                    </a>
+
+                </div>
+            `;
+        }
+    }
+
+    async function loadOrder() {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("orders")
+                .select(`
+                    *,
+                    events(*)
+                `)
+                .eq("id", orderId)
+                .single();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data) {
+
+            throw new Error(
+                "Order could not be found."
+            );
+        }
+
+        order = data;
+    }
+
+    async function renderStatus() {
+
+        const status =
+            String(
+                order.payment_status ||
+                "pending"
+            ).toLowerCase();
+
+        const card =
+            document.getElementById(
+                "statusCard"
+            );
+
+        const event =
+            order.events || {};
+
+        /*
+            Successful payment.
+
+            The backend should already have generated
+            the ticket before setting the order as completed,
+            or the ticket generation process should be
+            independently tracked.
+        */
+
+        if (
+            status === "paid" ||
+            status === "completed"
+        ) {
+
+            const ticket =
+                await findTicket();
+
+            card.innerHTML = `
+
+                <div class="status-icon">
+                    ✓
+                </div>
+
+                <small>
+                    Payment confirmed
+                </small>
+
+                <h1>
+                    Your ticket is ready.
+                </h1>
+
+                <p>
+                    Your payment has been confirmed.
+                    ${ticket
+                        ? "Your digital ticket has been generated."
+                        : "Your ticket is being prepared."
+                    }
+                </p>
+
+                <div class="order-box">
+
+                    <div class="order-row">
+
+                        <span>
+                            Event
+                        </span>
+
+                        <strong>
+                            ${escapeHTML(
+                                event.name ||
+                                event.title ||
+                                "Event"
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <div class="order-row">
+
+                        <span>
+                            Order
+                        </span>
+
+                        <strong>
+                            ${escapeHTML(
+                                order.order_number ||
+                                order.id
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <div class="order-row">
+
+                        <span>
+                            Amount
+                        </span>
+
+                        <strong>
+                            ${money(order.total)}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <div class="ticket-status">
+                    ${ticket
+                        ? "Your QR ticket is available in My Tickets."
+                        : "Ticket generation is still processing. Your My Tickets page will update automatically."
+                    }
+                </div>
+
+                <div class="actions">
+
+                    <a
+                        href="my-tickets.html"
+                        class="btn primary"
+                    >
+                        View My Tickets
+                    </a>
+
+                    <a
+                        href="events.html"
+                        class="btn secondary"
+                    >
+                        Browse More Events
+                    </a>
+
+                </div>
+            `;
+
+            return;
+        }
+
+        /*
+            WAMD pending / M-Pesa processing.
+        */
+
+        if (
+            status === "pending" ||
+            status === "processing" ||
+            status === "verification_pending"
+        ) {
+
+            card.innerHTML = `
+
+                <div class="status-icon pending">
+                    ◷
+                </div>
+
+                <small>
+                    Payment pending
+                </small>
+
+                <h1>
+                    We're verifying your payment.
+                </h1>
+
+                <p>
+                    Your order has been received, but payment
+                    has not yet been confirmed.
+                </p>
+
+                <div class="order-box">
+
+                    <div class="order-row">
+
+                        <span>
+                            Event
+                        </span>
+
+                        <strong>
+                            ${escapeHTML(
+                                event.name ||
+                                event.title ||
+                                "Event"
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <div class="order-row">
+
+                        <span>
+                            Order
+                        </span>
+
+                        <strong>
+                            ${escapeHTML(
+                                order.order_number ||
+                                order.id
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <div class="order-row">
+
+                        <span>
+                            Amount
+                        </span>
+
+                        <strong>
+                            ${money(order.total)}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <div class="ticket-status pending">
+
+                    ${
+                        status === "verification_pending"
+                            ? "Your payment has been submitted and is waiting for verification."
+                            : "We're waiting for payment confirmation."
+                    }
+
+                </div>
+
+                <div class="actions">
+
+                    <a
+                        href="dashboard.html"
+                        class="btn primary"
+                    >
+                        Back to Dashboard
+                    </a>
+
+                    <button
+                        class="btn secondary"
+                        onclick="refreshStatus()"
+                    >
+                        Check Again
+                    </button>
+
+                </div>
+            `;
+
+            return;
+        }
+
+        /*
+            Failed / expired.
+        */
+
+        if (
+            status === "failed" ||
+            status === "expired" ||
+            status === "cancelled"
+        ) {
+
+            card.innerHTML = `
+
+                <div class="status-icon failed">
+                    ×
+                </div>
+
+                <small>
+                    Payment not completed
+                </small>
+
+                <h1>
+                    We couldn't complete this payment.
+                </h1>
+
+                <p>
+                    Your ticket order has not been confirmed.
+                    You can return to the payment page and try again
+                    if the order is still payable.
+                </p>
+
+                <div class="order-box">
+
+                    <div class="order-row">
+
+                        <span>
+                            Event
+                        </span>
+
+                        <strong>
+                            ${escapeHTML(
+                                event.name ||
+                                event.title ||
+                                "Event"
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <div class="order-row">
+
+                        <span>
+                            Order
+                        </span>
+
+                        <strong>
+                            ${escapeHTML(
+                                order.order_number ||
+                                order.id
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <div class="order-row">
+
+                        <span>
+                            Status
+                        </span>
+
+                        <strong>
+                            ${escapeHTML(
+                                formatStatus(status)
+                            )}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <div class="actions">
+
+                    <a
+                        href="payment.html?order=${encodeURIComponent(orderId)}"
+                        class="btn primary"
+                    >
+                        Return to Payment
+                    </a>
+
+                    <a
+                        href="dashboard.html"
+                        class="btn secondary"
+                    >
+                        Dashboard
+                    </a>
+
+                </div>
+            `;
+
+        }
+
+    }
+
+    async function findTicket() {
+
+        /*
+            Ticket is linked to the completed order.
+
+            RLS ensures the customer can only see their own ticket.
+        */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("tickets")
+                .select("*")
+                .eq("order_id", orderId)
+                .limit(1)
+                .maybeSingle();
+
+        if (error) {
+
+            console.warn(
+                "Ticket lookup:",
+                error
+            );
+
+            return null;
+        }
+
+        return data;
+    }
+
+    function subscribeToOrder() {
+
+        supabaseClient
+            .channel(`payment-result-${orderId}`)
+            .on(
+                "postgres_changes",
+                {
+                    event: "UPDATE",
+                    schema: "public",
+                    table: "orders",
+                    filter: `id=eq.${orderId}`
+                },
+                async payload => {
+
+                    order = {
+                        ...order,
+                        ...payload.new
+                    };
+
+                    await renderStatus();
+                }
+            )
+            .subscribe();
+
+    }
+
+    async function refreshStatus() {
+
+        try {
+
+            await loadOrder();
+            await renderStatus();
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+    function money(value) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+            return "—";
+        }
+
+        return `${Number(value).toFixed(3)} KWD`;
+    }
+
+    function formatStatus(status) {
+
+        return String(status || "")
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, char =>
+                char.toUpperCase()
+            );
+    }
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function toggleSidebar() {
+
+        document
+            .getElementById("sidebar")
+            .classList
+            .toggle("open");
+    }
+
+    async function logout() {
+
+        if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+        }
+
+        window.location.href =
+            "../auth/login.html";
+    }
+
+    initialise();
+
+</script>
+
+</body>
+</html>

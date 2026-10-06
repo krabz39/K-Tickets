@@ -1,0 +1,4084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0F3D3A">
+  <title>K-Tickets — Merchant Settings</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bordo: #6C151E;
+      --green: #0F3D3A;
+      --cream: #F5DABF;
+      --white: #fffaf5;
+      --ink: #241916;
+      --muted: #756862;
+      --line: rgba(36, 25, 22, .11);
+      --soft: rgba(15, 61, 58, .07);
+      --success: #176b50;
+      --danger: #9d2632;
+      --warning: #9a6818;
+      --shadow: 0 18px 50px rgba(36, 25, 22, .09);
+      --sidebar-width: 260px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f8eee4;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* =========================
+       APP
+    ========================== */
+
+    .app {
+      min-height: 100vh;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================== */
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: var(--sidebar-width);
+      background: var(--green);
+      color: #fff;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      z-index: 1000;
+      transition: transform .25s ease;
+    }
+
+    .brand {
+      padding: 4px 12px 26px;
+    }
+
+    .brand-name {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 27px;
+      font-weight: 700;
+      letter-spacing: .4px;
+    }
+
+    .brand-sub {
+      margin-top: 5px;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: .58;
+    }
+
+    .merchant-label {
+      margin: 0 12px 12px;
+      color: rgba(255,255,255,.45);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+    }
+
+    .nav a,
+    .nav button {
+      width: 100%;
+      min-height: 46px;
+      padding: 0 13px;
+      border: 0;
+      border-radius: 13px;
+      background: transparent;
+      color: rgba(255,255,255,.67);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      text-align: left;
+      transition: .2s ease;
+    }
+
+    .nav a:hover,
+    .nav button:hover {
+      color: #fff;
+      background: rgba(255,255,255,.08);
+    }
+
+    .nav a.active {
+      color: #fff;
+      background: rgba(245,218,191,.13);
+      box-shadow: inset 3px 0 0 var(--cream);
+    }
+
+    .nav-icon {
+      width: 21px;
+      flex: 0 0 21px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,.10);
+    }
+
+    .merchant-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 8px;
+      margin-bottom: 6px;
+    }
+
+    .mini-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--cream);
+      color: var(--green);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 900;
+      flex: 0 0 36px;
+    }
+
+    .mini-info {
+      min-width: 0;
+    }
+
+    .mini-name {
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-role {
+      margin-top: 2px;
+      color: rgba(255,255,255,.45);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* =========================
+       MAIN
+    ========================== */
+
+    .main {
+      width: calc(100% - var(--sidebar-width));
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      min-height: 74px;
+      padding: 0 34px;
+      background: rgba(255,250,245,.87);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .topbar-title {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mobile-menu {
+      display: none;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      background: #fffaf5;
+      border-radius: 12px;
+      color: var(--green);
+      font-size: 19px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .icon-button {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.7);
+      color: var(--green);
+      display: grid;
+      place-items: center;
+      transition: .2s ease;
+    }
+
+    .icon-button:hover {
+      background: #fff;
+      transform: translateY(-1px);
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 999px;
+      background: var(--bordo);
+      color: #fff;
+      font-size: 8px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+    }
+
+    .top-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--cream);
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    /* =========================
+       CONTENT
+    ========================== */
+
+    .content {
+      width: 100%;
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 34px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 25px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      margin-bottom: 8px;
+      color: var(--bordo);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      color: var(--green);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(31px, 4vw, 46px);
+      line-height: 1;
+      letter-spacing: -.8px;
+    }
+
+    .page-description {
+      max-width: 700px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    /* =========================
+       BUTTONS
+    ========================== */
+
+    .btn {
+      min-height: 43px;
+      padding: 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fffaf5;
+      color: var(--green);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(36,25,22,.07);
+    }
+
+    .btn-primary {
+      background: var(--bordo);
+      color: #fff;
+      border-color: var(--bordo);
+    }
+
+    .btn-primary:hover {
+      background: #591018;
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .btn-danger {
+      color: var(--danger);
+      border-color: rgba(157,38,50,.18);
+      background: rgba(157,38,50,.04);
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* =========================
+       SETTINGS LAYOUT
+    ========================== */
+
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .settings-nav {
+      position: sticky;
+      top: 100px;
+      padding: 9px;
+    }
+
+    .settings-nav button {
+      width: 100%;
+      min-height: 44px;
+      border: 0;
+      border-radius: 11px;
+      background: transparent;
+      color: var(--muted);
+      padding: 0 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: .2s ease;
+    }
+
+    .settings-nav button:hover {
+      color: var(--green);
+      background: var(--soft);
+    }
+
+    .settings-nav button.active {
+      color: var(--green);
+      background: var(--soft);
+      box-shadow: inset 3px 0 0 var(--bordo);
+    }
+
+    .settings-nav-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .settings-content {
+      min-width: 0;
+    }
+
+    .settings-section {
+      display: none;
+      margin-bottom: 18px;
+    }
+
+    .settings-section.active {
+      display: block;
+    }
+
+    .panel {
+      background: rgba(255,250,245,.84);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel + .panel {
+      margin-top: 18px;
+    }
+
+    .panel-header {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      color: var(--green);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+    }
+
+    .panel-description {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .panel-body {
+      padding: 22px;
+    }
+
+    /* =========================
+       PROFILE HERO
+    ========================== */
+
+    .profile-hero {
+      display: flex;
+      align-items: center;
+      gap: 17px;
+      padding: 18px;
+      background: var(--soft);
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+
+    .large-avatar {
+      width: 66px;
+      height: 66px;
+      flex: 0 0 66px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--cream);
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .profile-info {
+      min-width: 0;
+    }
+
+    .profile-name {
+      color: var(--green);
+      font-size: 17px;
+      font-weight: 900;
+      word-break: break-word;
+    }
+
+    .profile-email {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      word-break: break-word;
+    }
+
+    .role-pill {
+      display: inline-flex;
+      margin-top: 8px;
+      min-height: 23px;
+      align-items: center;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(108,21,30,.09);
+      color: var(--bordo);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 900;
+    }
+
+    /* =========================
+       FORM
+    ========================== */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .form-group {
+      min-width: 0;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .form-control {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fffdf9;
+      color: var(--ink);
+      outline: none;
+      font-size: 12px;
+    }
+
+    textarea.form-control {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    .form-control:focus {
+      border-color: rgba(15,61,58,.45);
+      box-shadow: 0 0 0 3px rgba(15,61,58,.06);
+    }
+
+    .form-control:disabled {
+      background: rgba(36,25,22,.035);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    .helper {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1.55;
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+
+    /* =========================
+       PAYOUT METHODS
+    ========================== */
+
+    .method-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .method-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fffdf9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .method-main {
+      min-width: 0;
+    }
+
+    .method-title {
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .method-detail {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .method-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 23px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 8px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      white-space: nowrap;
+    }
+
+    .method-status.active {
+      color: var(--success);
+      background: rgba(23,107,80,.09);
+    }
+
+    .method-status.inactive {
+      color: var(--muted);
+      background: rgba(36,25,22,.07);
+    }
+
+    /* =========================
+       SECURITY
+    ========================== */
+
+    .security-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 17px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .security-item:first-child {
+      padding-top: 0;
+    }
+
+    .security-item:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .security-title {
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .security-description {
+      margin-top: 4px;
+      max-width: 600px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    /* =========================
+       TOGGLE
+    ========================== */
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 25px;
+      flex: 0 0 44px;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: rgba(36,25,22,.16);
+      border-radius: 999px;
+      transition: .2s ease;
+      cursor: pointer;
+    }
+
+    .toggle-track::after {
+      content: "";
+      position: absolute;
+      width: 19px;
+      height: 19px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #fff;
+      transition: .2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,.15);
+    }
+
+    .toggle input:checked + .toggle-track {
+      background: var(--green);
+    }
+
+    .toggle input:checked + .toggle-track::after {
+      transform: translateX(19px);
+    }
+
+    /* =========================
+       DANGER ZONE
+    ========================== */
+
+    .danger-panel {
+      border-color: rgba(157,38,50,.20);
+    }
+
+    .danger-panel .panel-header {
+      background: rgba(157,38,50,.035);
+    }
+
+    .danger-panel .panel-title {
+      color: var(--danger);
+    }
+
+    /* =========================
+       LOADING
+    ========================== */
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      background: rgba(248,238,228,.72);
+      backdrop-filter: blur(5px);
+      display: grid;
+      place-items: center;
+      transition: .2s ease;
+    }
+
+    .loading-box {
+      padding: 25px;
+      background: #fffaf5;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      min-width: 190px;
+    }
+
+    .spinner {
+      width: 27px;
+      height: 27px;
+      margin: 0 auto 11px;
+      border: 2px solid rgba(15,61,58,.12);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    .loading-text {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================
+       TOAST
+    ========================== */
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 6000;
+      width: min(390px, calc(100vw - 44px));
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: var(--green);
+      color: #fff;
+      font-size: 12px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.2);
+      transform: translateY(20px);
+      opacity: 0;
+      visibility: hidden;
+      transition: .22s ease;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toast.error {
+      background: var(--bordo);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 1050px) {
+      .settings-layout {
+        grid-template-columns: 190px minmax(0, 1fr);
+      }
+
+      .content {
+        padding: 27px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      :root {
+        --sidebar-width: 245px;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        box-shadow: 20px 0 60px rgba(0,0,0,.16);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .mobile-menu {
+        display: grid;
+        place-items: center;
+      }
+
+      .topbar {
+        padding: 0 18px;
+      }
+
+      .content {
+        padding: 24px 18px;
+      }
+
+      .settings-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-nav {
+        position: static;
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        padding: 7px;
+      }
+
+      .settings-nav button {
+        width: auto;
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .content {
+        padding: 21px 13px 30px;
+      }
+
+      .topbar {
+        min-height: 66px;
+        padding: 0 13px;
+      }
+
+      .topbar-title {
+        display: none;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 21px;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .header-actions .btn {
+        flex: 1;
+      }
+
+      .panel-header,
+      .panel-body {
+        padding: 17px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .form-group.full {
+        grid-column: auto;
+      }
+
+      .profile-hero {
+        align-items: flex-start;
+      }
+
+      .security-item {
+        align-items: flex-start;
+      }
+
+      .method-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .form-footer {
+        flex-direction: column;
+      }
+
+      .form-footer .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .top-avatar,
+      .icon-button,
+      .mobile-menu {
+        width: 37px;
+        height: 37px;
+      }
+
+      .large-avatar {
+        width: 56px;
+        height: 56px;
+        flex-basis: 56px;
+      }
+
+      .profile-hero {
+        gap: 12px;
+      }
+
+      .header-actions {
+        flex-direction: column;
+      }
+
+      .header-actions .btn {
+        width: 100%;
+      }
+
+      .security-item {
+        flex-direction: column;
+      }
+
+      .security-item .btn,
+      .security-item .toggle {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+      <div class="brand">
+        <div class="brand-name">K-Tickets</div>
+        <div class="brand-sub">Merchant CMS</div>
+      </div>
+
+      <div class="merchant-label">
+        Merchant Workspace
+      </div>
+
+      <nav class="nav">
+
+        <a href="dashboard.html">
+          <span class="nav-icon">⌂</span>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="events.html">
+          <span class="nav-icon">◫</span>
+          <span>My Events</span>
+        </a>
+
+        <a href="create-event.html">
+          <span class="nav-icon">＋</span>
+          <span>Create Event</span>
+        </a>
+
+        <a href="tickets.html">
+          <span class="nav-icon">▣</span>
+          <span>Tickets</span>
+        </a>
+
+        <a href="promotions.html">
+          <span class="nav-icon">%</span>
+          <span>Promotions</span>
+        </a>
+
+        <a href="sales.html">
+          <span class="nav-icon">◈</span>
+          <span>Sales</span>
+        </a>
+
+        <a href="withdrawals.html">
+          <span class="nav-icon">↗</span>
+          <span>Withdrawals</span>
+        </a>
+
+        <a href="settings.html" class="active">
+          <span class="nav-icon">⚙</span>
+          <span>Settings</span>
+        </a>
+
+      </nav>
+
+      <div class="sidebar-bottom">
+
+        <div class="merchant-mini">
+
+          <div class="mini-avatar" id="sidebarAvatar">
+            —
+          </div>
+
+          <div class="mini-info">
+            <div class="mini-name" id="sidebarName">
+              Loading...
+            </div>
+
+            <div class="mini-role">
+              Merchant
+            </div>
+          </div>
+
+        </div>
+
+        <button
+          class="nav"
+          id="signOutBtn"
+          style="display:flex;"
+        >
+          <span class="nav-icon">↪</span>
+          <span>Sign Out</span>
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main">
+
+      <header class="topbar">
+
+        <div class="topbar-left">
+
+          <button
+            class="mobile-menu"
+            id="mobileMenuBtn"
+            aria-label="Open menu"
+          >
+            ☰
+          </button>
+
+          <span class="topbar-title">
+            Merchant CMS / Settings
+          </span>
+
+        </div>
+
+        <div class="topbar-right">
+
+          <button
+            class="icon-button"
+            id="refreshBtn"
+            title="Refresh"
+          >
+            ↻
+          </button>
+
+          <button
+            class="icon-button"
+            id="notificationBtn"
+            title="Notifications"
+          >
+            ♢
+            <span
+              class="notification-dot hidden"
+              id="notificationBadge"
+            >
+              0
+            </span>
+          </button>
+
+          <a
+            href="settings.html"
+            class="top-avatar"
+            id="topAvatar"
+          >
+            —
+          </a>
+
+        </div>
+
+      </header>
+
+
+      <section class="content">
+
+        <!-- PAGE HEADER -->
+
+        <div class="page-header">
+
+          <div>
+
+            <div class="eyebrow">
+              Merchant Account
+            </div>
+
+            <h1>Settings</h1>
+
+            <p class="page-description">
+              Manage your merchant profile, payout configuration,
+              security preferences and account settings.
+            </p>
+
+          </div>
+
+          <div class="header-actions">
+
+            <button
+              class="btn"
+              id="refreshMainBtn"
+            >
+              ↻ Refresh
+            </button>
+
+            <button
+              class="btn btn-primary"
+              id="saveHeaderBtn"
+            >
+              Save Changes
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- SETTINGS -->
+
+        <div class="settings-layout">
+
+          <!-- SETTINGS NAV -->
+
+          <aside class="panel settings-nav">
+
+            <button
+              class="active"
+              data-section="profileSection"
+            >
+              <span class="settings-nav-icon">◎</span>
+              Profile
+            </button>
+
+            <button
+              data-section="businessSection"
+            >
+              <span class="settings-nav-icon">▤</span>
+              Business
+            </button>
+
+            <button
+              data-section="payoutSection"
+            >
+              <span class="settings-nav-icon">↗</span>
+              Payouts
+            </button>
+
+            <button
+              data-section="notificationsSection"
+            >
+              <span class="settings-nav-icon">♢</span>
+              Notifications
+            </button>
+
+            <button
+              data-section="securitySection"
+            >
+              <span class="settings-nav-icon">◇</span>
+              Security
+            </button>
+
+          </aside>
+
+
+          <!-- SETTINGS CONTENT -->
+
+          <div class="settings-content">
+
+
+            <!-- =========================
+                 PROFILE
+            ========================== -->
+
+            <section
+              class="settings-section active"
+              id="profileSection"
+            >
+
+              <div class="panel">
+
+                <div class="panel-header">
+
+                  <div class="panel-title">
+                    Profile
+                  </div>
+
+                  <div class="panel-description">
+                    Your personal merchant account information.
+                  </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                  <div class="profile-hero">
+
+                    <div
+                      class="large-avatar"
+                      id="largeAvatar"
+                    >
+                      —
+                    </div>
+
+                    <div class="profile-info">
+
+                      <div
+                        class="profile-name"
+                        id="profileDisplayName"
+                      >
+                        Loading...
+                      </div>
+
+                      <div
+                        class="profile-email"
+                        id="profileDisplayEmail"
+                      >
+                        —
+                      </div>
+
+                      <div class="role-pill">
+                        Merchant Account
+                      </div>
+
+                    </div>
+
+                  </div>
+
+
+                  <form id="profileForm">
+
+                    <div class="form-grid">
+
+                      <div class="form-group">
+
+                        <label for="fullName">
+                          Full Name
+                        </label>
+
+                        <input
+                          class="form-control"
+                          id="fullName"
+                          type="text"
+                          autocomplete="name"
+                          required
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label for="phone">
+                          Phone
+                        </label>
+
+                        <input
+                          class="form-control"
+                          id="phone"
+                          type="tel"
+                          autocomplete="tel"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group full">
+
+                        <label for="email">
+                          Email Address
+                        </label>
+
+                        <input
+                          class="form-control"
+                          id="email"
+                          type="email"
+                          disabled
+                        >
+
+                        <div class="helper">
+                          Your authentication email is managed by
+                          Supabase Auth.
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                    <div class="form-footer">
+
+                      <button
+                        type="button"
+                        class="btn"
+                        id="resetProfileBtn"
+                      >
+                        Reset
+                      </button>
+
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="saveProfileBtn"
+                      >
+                        Save Profile
+                      </button>
+
+                    </div>
+
+                  </form>
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            <!-- =========================
+                 BUSINESS
+            ========================== -->
+
+            <section
+              class="settings-section"
+              id="businessSection"
+            >
+
+              <div class="panel">
+
+                <div class="panel-header">
+
+                  <div class="panel-title">
+                    Business Information
+                  </div>
+
+                  <div class="panel-description">
+                    Business information used across your merchant
+                    account and event operations.
+                  </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                  <form id="businessForm">
+
+                    <div class="form-grid">
+
+                      <div class="form-group">
+
+                        <label for="businessName">
+                          Business Name
+                        </label>
+
+                        <input
+                          class="form-control"
+                          id="businessName"
+                          type="text"
+                          autocomplete="organization"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label for="businessPhone">
+                          Business Phone
+                        </label>
+
+                        <input
+                          class="form-control"
+                          id="businessPhone"
+                          type="tel"
+                          autocomplete="tel"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label for="businessEmail">
+                          Business Email
+                        </label>
+
+                        <input
+                          class="form-control"
+                          id="businessEmail"
+                          type="email"
+                          autocomplete="email"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label for="businessWebsite">
+                          Website
+                        </label>
+
+                        <input
+                          class="form-control"
+                          id="businessWebsite"
+                          type="url"
+                          placeholder="https://"
+                          autocomplete="url"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group full">
+
+                        <label for="businessAddress">
+                          Business Address
+                        </label>
+
+                        <textarea
+                          class="form-control"
+                          id="businessAddress"
+                        ></textarea>
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label for="businessCity">
+                          City
+                        </label>
+
+                        <input
+                          class="form-control"
+                          id="businessCity"
+                          type="text"
+                          autocomplete="address-level2"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label for="businessCountry">
+                          Country
+                        </label>
+
+                        <input
+                          class="form-control"
+                          id="businessCountry"
+                          type="text"
+                          autocomplete="country-name"
+                        >
+
+                      </div>
+
+                    </div>
+
+
+                    <div class="form-footer">
+
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="saveBusinessBtn"
+                      >
+                        Save Business Information
+                      </button>
+
+                    </div>
+
+                  </form>
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            <!-- =========================
+                 PAYOUTS
+            ========================== -->
+
+            <section
+              class="settings-section"
+              id="payoutSection"
+            >
+
+              <div class="panel">
+
+                <div class="panel-header">
+
+                  <div class="panel-title">
+                    Payout Methods
+                  </div>
+
+                  <div class="panel-description">
+                    Review the payout destinations configured for
+                    your merchant account.
+                  </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                  <div
+                    class="method-list"
+                    id="payoutMethodsList"
+                  >
+
+                    <div class="loading-text">
+                      Loading payout methods...
+                    </div>
+
+                  </div>
+
+                  <div
+                    class="helper"
+                    style="margin-top:14px;"
+                  >
+                    Payout account details are controlled by your
+                    merchant settlement configuration. This page
+                    does not invent or pre-fill payout information.
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="panel">
+
+                <div class="panel-header">
+
+                  <div class="panel-title">
+                    Withdrawal Preferences
+                  </div>
+
+                  <div class="panel-description">
+                    Current payout settings available from your
+                    merchant account.
+                  </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                  <div class="form-grid">
+
+                    <div class="form-group">
+
+                      <label for="preferredCurrency">
+                        Settlement Currency
+                      </label>
+
+                      <select
+                        class="form-control"
+                        id="preferredCurrency"
+                      >
+                        <option value="">
+                          Select from account configuration
+                        </option>
+                      </select>
+
+                      <div class="helper">
+                        Available currencies are loaded from
+                        your merchant configuration where supported.
+                      </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                      <label for="minimumWithdrawal">
+                        Minimum Withdrawal
+                      </label>
+
+                      <input
+                        class="form-control"
+                        id="minimumWithdrawal"
+                        type="text"
+                        disabled
+                        value="—"
+                      >
+
+                      <div class="helper">
+                        Displayed from platform configuration when
+                        available.
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            <!-- =========================
+                 NOTIFICATIONS
+            ========================== -->
+
+            <section
+              class="settings-section"
+              id="notificationsSection"
+            >
+
+              <div class="panel">
+
+                <div class="panel-header">
+
+                  <div class="panel-title">
+                    Notifications
+                  </div>
+
+                  <div class="panel-description">
+                    Control which merchant account notifications
+                    you receive when supported by the platform.
+                  </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                  <div class="security-item">
+
+                    <div>
+
+                      <div class="security-title">
+                        Order Notifications
+                      </div>
+
+                      <div class="security-description">
+                        Receive notifications when a ticket order
+                        related to your events changes state.
+                      </div>
+
+                    </div>
+
+                    <label class="toggle">
+                      <input
+                        type="checkbox"
+                        id="notifyOrders"
+                        checked
+                      >
+                      <span class="toggle-track"></span>
+                    </label>
+
+                  </div>
+
+
+                  <div class="security-item">
+
+                    <div>
+
+                      <div class="security-title">
+                        Payment Notifications
+                      </div>
+
+                      <div class="security-description">
+                        Receive notifications about payment
+                        confirmation and payment status changes.
+                      </div>
+
+                    </div>
+
+                    <label class="toggle">
+                      <input
+                        type="checkbox"
+                        id="notifyPayments"
+                        checked
+                      >
+                      <span class="toggle-track"></span>
+                    </label>
+
+                  </div>
+
+
+                  <div class="security-item">
+
+                    <div>
+
+                      <div class="security-title">
+                        Withdrawal Notifications
+                      </div>
+
+                      <div class="security-description">
+                        Receive updates when withdrawal requests
+                        are reviewed, processed or completed.
+                      </div>
+
+                    </div>
+
+                    <label class="toggle">
+                      <input
+                        type="checkbox"
+                        id="notifyWithdrawals"
+                        checked
+                      >
+                      <span class="toggle-track"></span>
+                    </label>
+
+                  </div>
+
+
+                  <div class="security-item">
+
+                    <div>
+
+                      <div class="security-title">
+                        Event Notifications
+                      </div>
+
+                      <div class="security-description">
+                        Receive operational updates related to
+                        your events and ticket inventory.
+                      </div>
+
+                    </div>
+
+                    <label class="toggle">
+                      <input
+                        type="checkbox"
+                        id="notifyEvents"
+                        checked
+                      >
+                      <span class="toggle-track"></span>
+                    </label>
+
+                  </div>
+
+
+                  <div class="form-footer">
+
+                    <button
+                      class="btn btn-primary"
+                      id="saveNotificationsBtn"
+                      type="button"
+                    >
+                      Save Notification Preferences
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            <!-- =========================
+                 SECURITY
+            ========================== -->
+
+            <section
+              class="settings-section"
+              id="securitySection"
+            >
+
+              <div class="panel">
+
+                <div class="panel-header">
+
+                  <div class="panel-title">
+                    Security
+                  </div>
+
+                  <div class="panel-description">
+                    Manage authentication and account security.
+                  </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                  <div class="security-item">
+
+                    <div>
+
+                      <div class="security-title">
+                        Email Address
+                      </div>
+
+                      <div
+                        class="security-description"
+                        id="securityEmail"
+                      >
+                        —
+                      </div>
+
+                    </div>
+
+                    <span class="method-status active">
+                      Authenticated
+                    </span>
+
+                  </div>
+
+
+                  <div class="security-item">
+
+                    <div>
+
+                      <div class="security-title">
+                        Change Password
+                      </div>
+
+                      <div class="security-description">
+                        Request a password reset through the
+                        authenticated Supabase account.
+                      </div>
+
+                    </div>
+
+                    <button
+                      class="btn btn-green"
+                      id="changePasswordBtn"
+                      type="button"
+                    >
+                      Change Password
+                    </button>
+
+                  </div>
+
+
+                  <div class="security-item">
+
+                    <div>
+
+                      <div class="security-title">
+                        Sign Out
+                      </div>
+
+                      <div class="security-description">
+                        End the current merchant session on this
+                        device.
+                      </div>
+
+                    </div>
+
+                    <button
+                      class="btn btn-danger"
+                      id="securitySignOutBtn"
+                      type="button"
+                    >
+                      Sign Out
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="panel danger-panel">
+
+                <div class="panel-header">
+
+                  <div class="panel-title">
+                    Account Actions
+                  </div>
+
+                  <div class="panel-description">
+                    Sensitive account actions should be handled
+                    through platform support and verified
+                    procedures.
+                  </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                  <div class="security-item">
+
+                    <div>
+
+                      <div class="security-title">
+                        Request Account Closure
+                      </div>
+
+                      <div class="security-description">
+                        Account closure should not be performed
+                        directly from the browser. Contact platform
+                        support so outstanding orders, tickets and
+                        settlements can be reviewed first.
+                      </div>
+
+                    </div>
+
+                    <button
+                      class="btn btn-danger"
+                      id="accountClosureBtn"
+                      type="button"
+                    >
+                      Contact Support
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </section>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================
+       LOADING
+  ========================== -->
+
+  <div
+    class="loading-overlay"
+    id="loadingOverlay"
+  >
+
+    <div class="loading-box">
+
+      <div class="spinner"></div>
+
+      <div class="loading-text">
+        Loading merchant settings...
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       TOAST
+  ========================== -->
+
+  <div
+    class="toast"
+    id="toast"
+  ></div>
+
+
+  <script>
+    /* =========================================================
+       K-TICKETS MERCHANT SETTINGS
+       Supabase-driven
+    ========================================================== */
+
+    const SUPABASE_URL =
+      window.KTICKETS_SUPABASE_URL || "";
+
+    const SUPABASE_ANON_KEY =
+      window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+    let supabaseClient = null;
+
+    if (
+      SUPABASE_URL &&
+      SUPABASE_ANON_KEY
+    ) {
+      supabaseClient =
+        window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY
+        );
+    }
+
+
+    /* =========================================================
+       STATE
+    ========================================================== */
+
+    let currentUser = null;
+    let currentProfile = null;
+
+    let originalProfile = null;
+    let businessData = null;
+    let payoutMethods = [];
+
+    let settingsTableName = null;
+    let merchantSettings = null;
+
+
+    const POSSIBLE_SETTINGS_TABLES = [
+      "merchant_settings",
+      "business_settings",
+      "merchant_profiles"
+    ];
+
+    const POSSIBLE_PAYOUT_TABLES = [
+      "merchant_payout_methods",
+      "payout_methods"
+    ];
+
+
+    /* =========================================================
+       ELEMENTS
+    ========================================================== */
+
+    const sidebar =
+      document.getElementById("sidebar");
+
+    const mobileMenuBtn =
+      document.getElementById("mobileMenuBtn");
+
+    const loadingOverlay =
+      document.getElementById("loadingOverlay");
+
+    const toast =
+      document.getElementById("toast");
+
+    const sidebarName =
+      document.getElementById("sidebarName");
+
+    const sidebarAvatar =
+      document.getElementById("sidebarAvatar");
+
+    const topAvatar =
+      document.getElementById("topAvatar");
+
+    const largeAvatar =
+      document.getElementById("largeAvatar");
+
+    const profileDisplayName =
+      document.getElementById("profileDisplayName");
+
+    const profileDisplayEmail =
+      document.getElementById("profileDisplayEmail");
+
+    const securityEmail =
+      document.getElementById("securityEmail");
+
+    const notificationBadge =
+      document.getElementById("notificationBadge");
+
+    const profileForm =
+      document.getElementById("profileForm");
+
+    const businessForm =
+      document.getElementById("businessForm");
+
+    const payoutMethodsList =
+      document.getElementById("payoutMethodsList");
+
+
+    /* =========================================================
+       HELPERS
+    ========================================================== */
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+
+    function initials(name) {
+
+      if (!name) {
+        return "—";
+      }
+
+      const parts =
+        String(name)
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean);
+
+      if (!parts.length) {
+        return "—";
+      }
+
+      if (parts.length === 1) {
+        return parts[0]
+          .slice(0, 2)
+          .toUpperCase();
+      }
+
+      return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+      ).toUpperCase();
+    }
+
+
+    function toastMessage(
+      message,
+      isError = false
+    ) {
+
+      toast.textContent = message;
+
+      toast.classList.toggle(
+        "error",
+        isError
+      );
+
+      toast.classList.add("show");
+
+      clearTimeout(
+        window.__ktToastTimer
+      );
+
+      window.__ktToastTimer =
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3500);
+    }
+
+
+    function showLoading() {
+      loadingOverlay.classList.remove(
+        "hidden"
+      );
+    }
+
+
+    function hideLoading() {
+      loadingOverlay.classList.add(
+        "hidden"
+      );
+    }
+
+
+    function formatError(error) {
+
+      return (
+        error?.message ||
+        error?.details ||
+        error?.hint ||
+        "Something went wrong."
+      );
+    }
+
+
+    function closeSidebar() {
+      sidebar.classList.remove("open");
+    }
+
+
+    /* =========================================================
+       AUTHENTICATION
+    ========================================================== */
+
+    async function requireMerchant() {
+
+      if (!supabaseClient) {
+
+        hideLoading();
+
+        toastMessage(
+          "Supabase is not configured on this page.",
+          true
+        );
+
+        return false;
+      }
+
+      const {
+        data: {
+          user
+        },
+        error
+      } =
+        await supabaseClient.auth.getUser();
+
+      if (
+        error ||
+        !user
+      ) {
+
+        window.location.href =
+          "../auth/login.html";
+
+        return false;
+      }
+
+      currentUser = user;
+
+
+      const {
+        data: profile,
+        error: profileError
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(
+            "id, full_name, phone, role"
+          )
+          .eq("id", user.id)
+          .maybeSingle();
+
+
+      if (profileError) {
+
+        console.error(
+          profileError
+        );
+
+        hideLoading();
+
+        toastMessage(
+          "Unable to load your merchant profile.",
+          true
+        );
+
+        return false;
+      }
+
+
+      if (
+        !profile ||
+        profile.role !== "merchant"
+      ) {
+
+        hideLoading();
+
+        toastMessage(
+          "This page is available to merchant accounts only.",
+          true
+        );
+
+        setTimeout(() => {
+
+          window.location.href =
+            "../index.html";
+
+        }, 1200);
+
+        return false;
+      }
+
+
+      currentProfile =
+        profile;
+
+      originalProfile =
+        JSON.parse(
+          JSON.stringify(profile)
+        );
+
+
+      renderProfile();
+
+      return true;
+    }
+
+
+    /* =========================================================
+       PROFILE
+    ========================================================== */
+
+    function renderProfile() {
+
+      const name =
+        currentProfile?.full_name ||
+        currentUser?.user_metadata?.full_name ||
+        currentUser?.email ||
+        "Merchant";
+
+      const email =
+        currentUser?.email ||
+        "—";
+
+      const avatar =
+        initials(name);
+
+
+      sidebarName.textContent =
+        name;
+
+      sidebarAvatar.textContent =
+        avatar;
+
+      topAvatar.textContent =
+        avatar;
+
+      largeAvatar.textContent =
+        avatar;
+
+      profileDisplayName.textContent =
+        name;
+
+      profileDisplayEmail.textContent =
+        email;
+
+      securityEmail.textContent =
+        email;
+
+
+      document.getElementById(
+        "fullName"
+      ).value =
+        currentProfile?.full_name || "";
+
+      document.getElementById(
+        "phone"
+      ).value =
+        currentProfile?.phone || "";
+
+      document.getElementById(
+        "email"
+      ).value =
+        email;
+    }
+
+
+    /* =========================================================
+       NOTIFICATIONS
+    ========================================================== */
+
+    async function loadNotifications() {
+
+      if (
+        !supabaseClient ||
+        !currentUser
+      ) {
+        return;
+      }
+
+      try {
+
+        const {
+          count,
+          error
+        } =
+          await supabaseClient
+            .from("notifications")
+            .select(
+              "id",
+              {
+                count: "exact",
+                head: true
+              }
+            )
+            .eq(
+              "user_id",
+              currentUser.id
+            )
+            .eq(
+              "is_read",
+              false
+            );
+
+
+        if (error) {
+
+          console.warn(
+            "Notification count unavailable:",
+            error.message
+          );
+
+          notificationBadge.classList.add(
+            "hidden"
+          );
+
+          return;
+        }
+
+
+        const total =
+          Number(count || 0);
+
+
+        if (total > 0) {
+
+          notificationBadge.textContent =
+            total > 99
+              ? "99+"
+              : total;
+
+          notificationBadge.classList.remove(
+            "hidden"
+          );
+
+        } else {
+
+          notificationBadge.classList.add(
+            "hidden"
+          );
+
+        }
+
+      } catch (error) {
+
+        console.warn(error);
+
+      }
+    }
+
+
+    /* =========================================================
+       SETTINGS TABLE DISCOVERY
+    ========================================================== */
+
+    async function findSettingsTable() {
+
+      if (
+        !supabaseClient ||
+        !currentUser
+      ) {
+        return null;
+      }
+
+
+      for (
+        const tableName
+        of POSSIBLE_SETTINGS_TABLES
+      ) {
+
+        try {
+
+          const {
+            data,
+            error
+          } =
+            await supabaseClient
+              .from(tableName)
+              .select("*")
+              .eq(
+                "merchant_id",
+                currentUser.id
+              )
+              .limit(1);
+
+
+          if (!error) {
+            return tableName;
+          }
+
+        } catch (error) {
+
+          console.warn(
+            `Unable to inspect ${tableName}`,
+            error
+          );
+
+        }
+      }
+
+
+      return null;
+    }
+
+
+    /* =========================================================
+       LOAD MERCHANT SETTINGS
+    ========================================================== */
+
+    async function loadMerchantSettings() {
+
+      settingsTableName =
+        await findSettingsTable();
+
+
+      if (!settingsTableName) {
+
+        merchantSettings = null;
+        businessData = null;
+
+        renderBusinessForm();
+
+        return;
+      }
+
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from(settingsTableName)
+            .select("*")
+            .eq(
+              "merchant_id",
+              currentUser.id
+            )
+            .limit(1)
+            .maybeSingle();
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        merchantSettings =
+          data || null;
+
+        businessData =
+          data || null;
+
+        renderBusinessForm();
+
+      } catch (error) {
+
+        console.error(error);
+
+        toastMessage(
+          "Unable to load business settings: " +
+          formatError(error),
+          true
+        );
+
+      }
+    }
+
+
+    /* =========================================================
+       BUSINESS FORM
+    ========================================================== */
+
+    function firstAvailable(
+      object,
+      fields
+    ) {
+
+      for (
+        const field
+        of fields
+      ) {
+
+        if (
+          object &&
+          object[field] !== null &&
+          object[field] !== undefined
+        ) {
+          return object[field];
+        }
+      }
+
+      return "";
+    }
+
+
+    function renderBusinessForm() {
+
+      const data =
+        businessData || {};
+
+
+      document.getElementById(
+        "businessName"
+      ).value =
+        firstAvailable(
+          data,
+          [
+            "business_name",
+            "company_name",
+            "merchant_name",
+            "name"
+          ]
+        );
+
+
+      document.getElementById(
+        "businessPhone"
+      ).value =
+        firstAvailable(
+          data,
+          [
+            "business_phone",
+            "phone",
+            "contact_phone"
+          ]
+        );
+
+
+      document.getElementById(
+        "businessEmail"
+      ).value =
+        firstAvailable(
+          data,
+          [
+            "business_email",
+            "email",
+            "contact_email"
+          ]
+        );
+
+
+      document.getElementById(
+        "businessWebsite"
+      ).value =
+        firstAvailable(
+          data,
+          [
+            "website",
+            "website_url"
+          ]
+        );
+
+
+      document.getElementById(
+        "businessAddress"
+      ).value =
+        firstAvailable(
+          data,
+          [
+            "business_address",
+            "address"
+          ]
+        );
+
+
+      document.getElementById(
+        "businessCity"
+      ).value =
+        firstAvailable(
+          data,
+          [
+            "city",
+            "business_city"
+          ]
+        );
+
+
+      document.getElementById(
+        "businessCountry"
+      ).value =
+        firstAvailable(
+          data,
+          [
+            "country",
+            "business_country"
+          ]
+        );
+
+
+      loadCurrencyOptions();
+    }
+
+
+    /* =========================================================
+       PAYOUT METHODS
+    ========================================================== */
+
+    async function findPayoutTable() {
+
+      if (
+        !supabaseClient ||
+        !currentUser
+      ) {
+        return null;
+      }
+
+
+      for (
+        const tableName
+        of POSSIBLE_PAYOUT_TABLES
+      ) {
+
+        try {
+
+          const {
+            data,
+            error
+          } =
+            await supabaseClient
+              .from(tableName)
+              .select("*")
+              .eq(
+                "merchant_id",
+                currentUser.id
+              )
+              .limit(1);
+
+
+          if (!error) {
+            return tableName;
+          }
+
+        } catch (error) {
+
+          console.warn(
+            `Unable to inspect ${tableName}`,
+            error
+          );
+
+        }
+      }
+
+
+      return null;
+    }
+
+
+    async function loadPayoutMethods() {
+
+      payoutMethodsList.innerHTML =
+        `
+          <div class="loading-text">
+            Loading payout methods...
+          </div>
+        `;
+
+
+      const tableName =
+        await findPayoutTable();
+
+
+      if (!tableName) {
+
+        payoutMethods = [];
+
+        renderPayoutMethods();
+
+        return;
+      }
+
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from(tableName)
+            .select("*")
+            .eq(
+              "merchant_id",
+              currentUser.id
+            )
+            .order(
+              "created_at",
+              {
+                ascending: false
+              }
+            );
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        payoutMethods =
+          Array.isArray(data)
+            ? data
+            : [];
+
+
+        renderPayoutMethods();
+
+      } catch (error) {
+
+        console.error(error);
+
+        payoutMethods = [];
+
+        payoutMethodsList.innerHTML =
+          `
+            <div class="loading-text">
+              Unable to load payout methods.
+            </div>
+          `;
+
+        toastMessage(
+          "Unable to load payout methods: " +
+          formatError(error),
+          true
+        );
+      }
+    }
+
+
+    function renderPayoutMethods() {
+
+      if (!payoutMethods.length) {
+
+        payoutMethodsList.innerHTML =
+          `
+            <div
+              style="
+                padding:28px 18px;
+                border:1px dashed rgba(36,25,22,.16);
+                border-radius:15px;
+                text-align:center;
+                color:var(--muted);
+                font-size:11px;
+              "
+            >
+              No payout methods are currently configured
+              for this merchant account.
+            </div>
+          `;
+
+        return;
+      }
+
+
+      payoutMethodsList.innerHTML =
+        payoutMethods
+          .map(method => {
+
+            const title =
+              method.name ||
+              method.label ||
+              method.channel ||
+              method.method ||
+              "Payout Method";
+
+            const detail =
+              method.destination ||
+              method.account_reference ||
+              method.account ||
+              method.phone ||
+              method.email ||
+              "Configured payout destination";
+
+
+            const enabled =
+              method.is_active !== undefined
+                ? Boolean(method.is_active)
+                : method.enabled !== undefined
+                  ? Boolean(method.enabled)
+                  : true;
+
+
+            return `
+              <div class="method-card">
+
+                <div class="method-main">
+
+                  <div class="method-title">
+                    ${escapeHtml(title)}
+                  </div>
+
+                  <div class="method-detail">
+                    ${escapeHtml(detail)}
+                  </div>
+
+                </div>
+
+                <span
+                  class="method-status ${
+                    enabled
+                      ? "active"
+                      : "inactive"
+                  }"
+                >
+                  ${
+                    enabled
+                      ? "Active"
+                      : "Inactive"
+                  }
+                </span>
+
+              </div>
+            `;
+
+          })
+          .join("");
+    }
+
+
+    /* =========================================================
+       CURRENCY OPTIONS
+    ========================================================== */
+
+    async function loadCurrencyOptions() {
+
+      const select =
+        document.getElementById(
+          "preferredCurrency"
+        );
+
+
+      const currencies =
+        new Set();
+
+
+      if (
+        merchantSettings?.currency
+      ) {
+        currencies.add(
+          String(
+            merchantSettings.currency
+          ).toUpperCase()
+        );
+      }
+
+
+      if (
+        merchantSettings?.settlement_currency
+      ) {
+        currencies.add(
+          String(
+            merchantSettings.settlement_currency
+          ).toUpperCase()
+        );
+      }
+
+
+      payoutMethods.forEach(method => {
+
+        const currency =
+          method.currency ||
+          method.settlement_currency ||
+          method.payout_currency;
+
+        if (currency) {
+          currencies.add(
+            String(currency)
+              .toUpperCase()
+          );
+        }
+      });
+
+
+      select.innerHTML =
+        `<option value="">
+          ${
+            currencies.size
+              ? "Select currency"
+              : "No currency configured"
+          }
+        </option>`;
+
+
+      [...currencies]
+        .sort()
+        .forEach(currency => {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+          option.value =
+            currency;
+
+          option.textContent =
+            currency;
+
+          select.appendChild(
+            option
+          );
+
+        });
+
+
+      const selected =
+        merchantSettings?.settlement_currency ||
+        merchantSettings?.currency ||
+        "";
+
+
+      if (selected) {
+        select.value =
+          String(selected)
+            .toUpperCase();
+      }
+
+
+      const minimum =
+        merchantSettings?.minimum_withdrawal ??
+        merchantSettings?.min_withdrawal ??
+        merchantSettings?.minimum_payout;
+
+
+      document.getElementById(
+        "minimumWithdrawal"
+      ).value =
+        minimum !== undefined &&
+        minimum !== null
+          ? String(minimum)
+          : "—";
+    }
+
+
+    /* =========================================================
+       SAVE PROFILE
+    ========================================================== */
+
+    async function saveProfile(
+      event
+    ) {
+
+      event.preventDefault();
+
+
+      if (
+        !supabaseClient ||
+        !currentUser
+      ) {
+        return;
+      }
+
+
+      const fullName =
+        document.getElementById(
+          "fullName"
+        ).value.trim();
+
+
+      const phone =
+        document.getElementById(
+          "phone"
+        ).value.trim();
+
+
+      if (!fullName) {
+
+        toastMessage(
+          "Full name is required.",
+          true
+        );
+
+        return;
+      }
+
+
+      const button =
+        document.getElementById(
+          "saveProfileBtn"
+        );
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "Saving...";
+
+
+      try {
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("profiles")
+            .update({
+              full_name: fullName,
+              phone: phone || null
+            })
+            .eq(
+              "id",
+              currentUser.id
+            );
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        await supabaseClient.auth.updateUser({
+          data: {
+            full_name: fullName
+          }
+        });
+
+
+        currentProfile.full_name =
+          fullName;
+
+        currentProfile.phone =
+          phone || null;
+
+
+        originalProfile =
+          JSON.parse(
+            JSON.stringify(
+              currentProfile
+            )
+          );
+
+
+        renderProfile();
+
+
+        toastMessage(
+          "Profile updated successfully."
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        toastMessage(
+          "Unable to save profile: " +
+          formatError(error),
+          true
+        );
+
+      } finally {
+
+        button.disabled = false;
+
+        button.textContent =
+          "Save Profile";
+      }
+    }
+
+
+    /* =========================================================
+       RESET PROFILE
+    ========================================================== */
+
+    function resetProfile() {
+
+      if (!originalProfile) {
+        return;
+      }
+
+
+      currentProfile =
+        JSON.parse(
+          JSON.stringify(
+            originalProfile
+          )
+        );
+
+
+      renderProfile();
+
+      toastMessage(
+        "Profile changes reset."
+      );
+    }
+
+
+    /* =========================================================
+       SAVE BUSINESS
+    ========================================================== */
+
+    async function saveBusiness(
+      event
+    ) {
+
+      event.preventDefault();
+
+
+      if (
+        !supabaseClient ||
+        !currentUser
+      ) {
+        return;
+      }
+
+
+      if (!settingsTableName) {
+
+        toastMessage(
+          "The merchant settings table is not available yet.",
+          true
+        );
+
+        return;
+      }
+
+
+      const businessName =
+        document.getElementById(
+          "businessName"
+        ).value.trim();
+
+
+      const businessPhone =
+        document.getElementById(
+          "businessPhone"
+        ).value.trim();
+
+
+      const businessEmail =
+        document.getElementById(
+          "businessEmail"
+        ).value.trim();
+
+
+      const website =
+        document.getElementById(
+          "businessWebsite"
+        ).value.trim();
+
+
+      const address =
+        document.getElementById(
+          "businessAddress"
+        ).value.trim();
+
+
+      const city =
+        document.getElementById(
+          "businessCity"
+        ).value.trim();
+
+
+      const country =
+        document.getElementById(
+          "businessCountry"
+        ).value.trim();
+
+
+      const button =
+        document.getElementById(
+          "saveBusinessBtn"
+        );
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "Saving...";
+
+
+      /*
+        The expected production schema can use:
+
+        merchant_settings:
+          merchant_id
+          business_name
+          business_phone
+          business_email
+          website
+          business_address
+          city
+          country
+
+        This payload deliberately does not write arbitrary
+        financial or payout fields.
+      */
+
+      const payload = {
+        merchant_id: currentUser.id,
+        business_name:
+          businessName || null,
+        business_phone:
+          businessPhone || null,
+        business_email:
+          businessEmail || null,
+        website:
+          website || null,
+        business_address:
+          address || null,
+        city:
+          city || null,
+        country:
+          country || null
+      };
+
+
+      try {
+
+        let result;
+
+
+        if (merchantSettings?.id) {
+
+          result =
+            await supabaseClient
+              .from(settingsTableName)
+              .update(payload)
+              .eq(
+                "id",
+                merchantSettings.id
+              )
+              .eq(
+                "merchant_id",
+                currentUser.id
+              );
+
+        } else {
+
+          result =
+            await supabaseClient
+              .from(settingsTableName)
+              .insert(payload);
+
+        }
+
+
+        if (result.error) {
+          throw result.error;
+        }
+
+
+        await loadMerchantSettings();
+
+
+        toastMessage(
+          "Business information saved."
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        toastMessage(
+          "Unable to save business information: " +
+          formatError(error),
+          true
+        );
+
+      } finally {
+
+        button.disabled = false;
+
+        button.textContent =
+          "Save Business Information";
+      }
+    }
+
+
+    /* =========================================================
+       NOTIFICATION PREFERENCES
+    ========================================================== */
+
+    async function saveNotificationPreferences() {
+
+      if (
+        !supabaseClient ||
+        !currentUser
+      ) {
+        return;
+      }
+
+
+      const values = {
+        orders:
+          document.getElementById(
+            "notifyOrders"
+          ).checked,
+
+        payments:
+          document.getElementById(
+            "notifyPayments"
+          ).checked,
+
+        withdrawals:
+          document.getElementById(
+            "notifyWithdrawals"
+          ).checked,
+
+        events:
+          document.getElementById(
+            "notifyEvents"
+          ).checked
+      };
+
+
+      const button =
+        document.getElementById(
+          "saveNotificationsBtn"
+        );
+
+
+      /*
+        Notification preferences are stored only when the final
+        merchant settings schema supports them.
+
+        We first use an existing settings record if available.
+      */
+
+      if (!settingsTableName) {
+
+        toastMessage(
+          "Merchant settings storage is not configured yet.",
+          true
+        );
+
+        return;
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "Saving...";
+
+
+      try {
+
+        const payload = {
+          merchant_id:
+            currentUser.id,
+
+          notification_preferences:
+            values
+        };
+
+
+        let result;
+
+
+        if (merchantSettings?.id) {
+
+          result =
+            await supabaseClient
+              .from(settingsTableName)
+              .update(payload)
+              .eq(
+                "id",
+                merchantSettings.id
+              )
+              .eq(
+                "merchant_id",
+                currentUser.id
+              );
+
+        } else {
+
+          result =
+            await supabaseClient
+              .from(settingsTableName)
+              .insert(payload);
+
+        }
+
+
+        if (result.error) {
+          throw result.error;
+        }
+
+
+        await loadMerchantSettings();
+
+
+        toastMessage(
+          "Notification preferences saved."
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        toastMessage(
+          "Unable to save notification preferences: " +
+          formatError(error),
+          true
+        );
+
+      } finally {
+
+        button.disabled = false;
+
+        button.textContent =
+          "Save Notification Preferences";
+      }
+    }
+
+
+    /* =========================================================
+       LOAD NOTIFICATION PREFERENCES
+    ========================================================== */
+
+    function loadNotificationPreferences() {
+
+      const preferences =
+        merchantSettings?.notification_preferences;
+
+
+      if (
+        !preferences ||
+        typeof preferences !== "object"
+      ) {
+        return;
+      }
+
+
+      if (
+        typeof preferences.orders === "boolean"
+      ) {
+        document.getElementById(
+          "notifyOrders"
+        ).checked =
+          preferences.orders;
+      }
+
+
+      if (
+        typeof preferences.payments === "boolean"
+      ) {
+        document.getElementById(
+          "notifyPayments"
+        ).checked =
+          preferences.payments;
+      }
+
+
+      if (
+        typeof preferences.withdrawals === "boolean"
+      ) {
+        document.getElementById(
+          "notifyWithdrawals"
+        ).checked =
+          preferences.withdrawals;
+      }
+
+
+      if (
+        typeof preferences.events === "boolean"
+      ) {
+        document.getElementById(
+          "notifyEvents"
+        ).checked =
+          preferences.events;
+      }
+    }
+
+
+    /* =========================================================
+       PASSWORD RESET
+    ========================================================== */
+
+    async function changePassword() {
+
+      if (
+        !supabaseClient ||
+        !currentUser?.email
+      ) {
+        toastMessage(
+          "Your authenticated email is unavailable.",
+          true
+        );
+
+        return;
+      }
+
+
+      const confirmed =
+        window.confirm(
+          "Send a password reset link to your authenticated email?"
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      try {
+
+        const {
+          error
+        } =
+          await supabaseClient.auth.resetPasswordForEmail(
+            currentUser.email,
+            {
+              redirectTo:
+                `${window.location.origin}/auth/reset-password.html`
+            }
+          );
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        toastMessage(
+          "Password reset instructions have been sent."
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        toastMessage(
+          "Unable to send password reset email: " +
+          formatError(error),
+          true
+        );
+      }
+    }
+
+
+    /* =========================================================
+       SIGN OUT
+    ========================================================== */
+
+    async function signOut() {
+
+      if (!supabaseClient) {
+        return;
+      }
+
+
+      try {
+
+        await supabaseClient.auth.signOut();
+
+      } finally {
+
+        window.location.href =
+          "../auth/login.html";
+
+      }
+    }
+
+
+    /* =========================================================
+       SETTINGS NAVIGATION
+    ========================================================== */
+
+    function initSettingsNavigation() {
+
+      const buttons =
+        document.querySelectorAll(
+          ".settings-nav button"
+        );
+
+
+      buttons.forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const sectionId =
+              button.dataset.section;
+
+
+            buttons.forEach(item => {
+
+              item.classList.remove(
+                "active"
+              );
+
+            });
+
+
+            button.classList.add(
+              "active"
+            );
+
+
+            document
+              .querySelectorAll(
+                ".settings-section"
+              )
+              .forEach(section => {
+
+                section.classList.toggle(
+                  "active",
+                  section.id === sectionId
+                );
+
+              });
+
+          }
+        );
+
+      });
+    }
+
+
+    /* =========================================================
+       SAVE HEADER
+    ========================================================== */
+
+    async function saveCurrentSection() {
+
+      const activeSection =
+        document.querySelector(
+          ".settings-section.active"
+        );
+
+
+      if (!activeSection) {
+        return;
+      }
+
+
+      if (
+        activeSection.id ===
+        "profileSection"
+      ) {
+
+        await saveProfile(
+          {
+            preventDefault: () => {}
+          }
+        );
+
+        return;
+      }
+
+
+      if (
+        activeSection.id ===
+        "businessSection"
+      ) {
+
+        await saveBusiness(
+          {
+            preventDefault: () => {}
+          }
+        );
+
+        return;
+      }
+
+
+      if (
+        activeSection.id ===
+        "notificationsSection"
+      ) {
+
+        await saveNotificationPreferences();
+
+        return;
+      }
+
+
+      toastMessage(
+        "There are no unsaved changes in this section."
+      );
+    }
+
+
+    /* =========================================================
+       SUPPORT / ACCOUNT CLOSURE
+    ========================================================== */
+
+    function contactSupport() {
+
+      /*
+        No support address is hardcoded here.
+
+        When the final platform settings table exposes a support
+        email or support URL, this button can route dynamically.
+      */
+
+      toastMessage(
+        "Support contact details will be provided by the platform configuration."
+      );
+    }
+
+
+    /* =========================================================
+       REFRESH
+    ========================================================== */
+
+    async function refreshSettings() {
+
+      showLoading();
+
+      try {
+
+        await Promise.all([
+          loadMerchantSettings(),
+          loadPayoutMethods(),
+          loadNotifications()
+        ]);
+
+        loadNotificationPreferences();
+
+        toastMessage(
+          "Merchant settings refreshed."
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        toastMessage(
+          "Unable to refresh settings.",
+          true
+        );
+
+      } finally {
+
+        hideLoading();
+
+      }
+    }
+
+
+    /* =========================================================
+       EVENTS
+    ========================================================== */
+
+    mobileMenuBtn.addEventListener(
+      "click",
+      () => {
+
+        sidebar.classList.toggle(
+          "open"
+        );
+
+      }
+    );
+
+
+    document.getElementById(
+      "refreshBtn"
+    ).addEventListener(
+      "click",
+      refreshSettings
+    );
+
+
+    document.getElementById(
+      "refreshMainBtn"
+    ).addEventListener(
+      "click",
+      refreshSettings
+    );
+
+
+    document.getElementById(
+      "saveHeaderBtn"
+    ).addEventListener(
+      "click",
+      saveCurrentSection
+    );
+
+
+    profileForm.addEventListener(
+      "submit",
+      saveProfile
+    );
+
+
+    businessForm.addEventListener(
+      "submit",
+      saveBusiness
+    );
+
+
+    document.getElementById(
+      "resetProfileBtn"
+    ).addEventListener(
+      "click",
+      resetProfile
+    );
+
+
+    document.getElementById(
+      "saveNotificationsBtn"
+    ).addEventListener(
+      "click",
+      saveNotificationPreferences
+    );
+
+
+    document.getElementById(
+      "changePasswordBtn"
+    ).addEventListener(
+      "click",
+      changePassword
+    );
+
+
+    document.getElementById(
+      "securitySignOutBtn"
+    ).addEventListener(
+      "click",
+      signOut
+    );
+
+
+    document.getElementById(
+      "accountClosureBtn"
+    ).addEventListener(
+      "click",
+      contactSupport
+    );
+
+
+    document.getElementById(
+      "notificationBtn"
+    ).addEventListener(
+      "click",
+      () => {
+
+        window.location.href =
+          "dashboard.html#notifications";
+
+      }
+    );
+
+
+    document.getElementById(
+      "signOutBtn"
+    ).addEventListener(
+      "click",
+      signOut
+    );
+
+
+    /* =========================================================
+       INIT
+    ========================================================== */
+
+    async function init() {
+
+      showLoading();
+
+
+      const authenticated =
+        await requireMerchant();
+
+
+      if (!authenticated) {
+        return;
+      }
+
+
+      try {
+
+        await Promise.all([
+          loadMerchantSettings(),
+          loadPayoutMethods(),
+          loadNotifications()
+        ]);
+
+
+        loadNotificationPreferences();
+
+      } catch (error) {
+
+        console.error(error);
+
+        toastMessage(
+          "Some merchant settings could not be loaded.",
+          true
+        );
+
+      } finally {
+
+        hideLoading();
+
+      }
+    }
+
+
+    init();
+
+  </script>
+
+</body>
+</html>

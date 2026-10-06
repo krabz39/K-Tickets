@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>K-Tickets Order Confirmation</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5dabf;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #24302f;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .wrapper {
+            width: 100%;
+            background: #f5dabf;
+            padding: 32px 12px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #6c151e;
+            padding: 28px 32px;
+        }
+
+        .brand {
+            color: #ffffff;
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .brand-sub {
+            color: #f5dabf;
+            font-size: 12px;
+            margin-top: 5px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .content {
+            padding: 34px 32px;
+        }
+
+        .success-icon {
+            width: 52px;
+            height: 52px;
+            line-height: 52px;
+            border-radius: 50%;
+            text-align: center;
+            background: #0f3d3a;
+            color: #ffffff;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        h1 {
+            color: #0f3d3a;
+            font-size: 30px;
+            line-height: 1.2;
+            margin: 18px 0 10px;
+        }
+
+        .intro {
+            color: #68706e;
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 0 0 26px;
+        }
+
+        .summary {
+            border: 1px solid #ead9ca;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .summary-head {
+            background: #0f3d3a;
+            color: #ffffff;
+            padding: 17px 20px;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .row {
+            border-bottom: 1px solid #eee4db;
+        }
+
+        .row:last-child {
+            border-bottom: 0;
+        }
+
+        .label {
+            color: #858b89;
+            font-size: 12px;
+            padding: 15px 18px;
+            width: 45%;
+        }
+
+        .value {
+            color: #27312f;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: right;
+            padding: 15px 18px;
+        }
+
+        .total {
+            background: #fbf2ea;
+        }
+
+        .total .label,
+        .total .value {
+            color: #6c151e;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #e6f0ed;
+            color: #0f3d3a;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .next {
+            margin-top: 24px;
+            padding: 18px 20px;
+            background: #fffaf6;
+            border: 1px solid #ead9ca;
+            border-radius: 14px;
+        }
+
+        .next-title {
+            color: #6c151e;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .next-text {
+            color: #626a68;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: #0f3d3a;
+            color: #dce8e5;
+            text-align: center;
+            padding: 26px 24px;
+        }
+
+        .footer-brand {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .wrapper {
+                padding: 12px 6px;
+            }
+
+            .header,
+            .content {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+
+            .label,
+            .value {
+                padding: 13px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<table role="presentation" width="100%" class="wrapper">
+    <tr>
+        <td align="center">
+
+            <table role="presentation" class="container">
+
+                <!-- HEADER -->
+                <tr>
+                    <td class="header">
+                        <div class="brand">K-TICKETS</div>
+                        <div class="brand-sub">Your ticket. Your moment.</div>
+                    </td>
+                </tr>
+
+                <!-- CONTENT -->
+                <tr>
+                    <td class="content">
+
+                        <div class="success-icon">✓</div>
+
+                        <h1>Payment confirmed.</h1>
+
+                        <p class="intro">
+                            Hi {{customer_name}}, your order has been successfully
+                            confirmed. Thank you for choosing K-Tickets.
+                        </p>
+
+                        <!-- ORDER SUMMARY -->
+                        <table role="presentation" width="100%" class="summary">
+
+                            <tr>
+                                <td colspan="2" class="summary-head">
+                                    Order Summary
+                                </td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">Order ID</td>
+                                <td class="value">{{order_id}}</td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">Event</td>
+                                <td class="value">{{event_title}}</td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">Ticket Type</td>
+                                <td class="value">{{ticket_type}}</td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">Quantity</td>
+                                <td class="value">{{quantity}}</td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">Payment Method</td>
+                                <td class="value">{{payment_method}}</td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">Payment Reference</td>
+                                <td class="value">{{payment_reference}}</td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">Payment Status</td>
+                                <td class="value">
+                                    <span class="status">{{payment_status}}</span>
+                                </td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">Subtotal</td>
+                                <td class="value">
+                                    {{currency}} {{subtotal}}
+                                </td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">Service Fee</td>
+                                <td class="value">
+                                    {{currency}} {{service_fee}}
+                                </td>
+                            </tr>
+
+                            <tr class="row total">
+                                <td class="label">Total Paid</td>
+                                <td class="value">
+                                    {{currency}} {{total}}
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <div class="next">
+
+                            <div class="next-title">
+                                What happens next?
+                            </div>
+
+                            <div class="next-text">
+                                Your ticket will be available through your K-Tickets
+                                account. If this order includes multiple tickets,
+                                each ticket will have its own ticket code and QR code.
+                            </div>
+
+                        </div>
+
+                        <div class="next">
+
+                            <div class="next-title">
+                                Event information
+                            </div>
+
+                            <div class="next-text">
+                                <strong>{{event_title}}</strong><br>
+                                {{event_date}} at {{event_time}}<br>
+                                {{venue}}, {{city}}
+                            </div>
+
+                        </div>
+
+                    </td>
+                </tr>
+
+                <!-- FOOTER -->
+                <tr>
+                    <td class="footer">
+
+                        <div class="footer-brand">
+                            K-TICKETS
+                        </div>
+
+                        <div class="footer-text">
+                            Need help with your order?<br>
+                            {{support_email}}
+                        </div>
+
+                        <div class="footer-text">
+                            © {{current_year}} K-Tickets. All rights reserved.
+                        </div>
+
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

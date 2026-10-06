@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Event Details | K-Tickets</title>
+
+    <meta
+        name="description"
+        content="View event details and purchase tickets on K-Tickets."
+    >
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --bordo-dark: #531018;
+            --bordo-soft: #f4e5e4;
+
+            --green: #0F3D3A;
+            --green-dark: #092b29;
+            --green-soft: #e4efec;
+
+            --cream: #F5DABF;
+            --cream-light: #fff8f1;
+
+            --white: #ffffff;
+            --ink: #202020;
+            --muted: #77716d;
+            --line: #e8e1da;
+            --surface: #fbfaf8;
+
+            --shadow-sm: 0 5px 20px rgba(30, 22, 18, .06);
+            --shadow-md: 0 20px 55px rgba(30, 22, 18, .12);
+
+            --sidebar-width: 260px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--surface);
+            color: var(--ink);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            overflow-x: hidden;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: var(--sidebar-width);
+            background: var(--green);
+            color: white;
+            z-index: 100;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 28px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: var(--cream);
+            color: var(--green);
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 17px;
+            letter-spacing: .08em;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 2px;
+            color: rgba(255,255,255,.55);
+            font-size: 10px;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+
+        .nav-label {
+            margin: 5px 0 9px;
+            padding: 0 12px;
+            color: rgba(255,255,255,.4);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .15em;
+        }
+
+        .nav {
+            display: grid;
+            gap: 5px;
+        }
+
+        .nav-link {
+            min-height: 46px;
+            padding: 0 13px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,.7);
+            font-size: 14px;
+            transition: .2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--bordo);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            display: grid;
+            gap: 10px;
+        }
+
+        .support-card {
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .support-card small {
+            color: rgba(255,255,255,.5);
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .support-card strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            height: 42px;
+            border-radius: 11px;
+            border: 1px solid rgba(255,255,255,.12);
+            background: transparent;
+            color: rgba(255,255,255,.7);
+        }
+
+        /* MAIN */
+
+        .main {
+            width: calc(100% - var(--sidebar-width));
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            min-height: 78px;
+            padding: 15px 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,.93);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(16px);
+        }
+
+        .mobile-menu {
+            display: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: var(--cream-light);
+            color: var(--green);
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .breadcrumb a {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: white;
+            border: 1px solid var(--line);
+            color: var(--green);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bordo);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* CONTENT */
+
+        .content {
+            max-width: 1500px;
+            margin: auto;
+            padding: 35px;
+        }
+
+        /* HERO */
+
+        .event-hero {
+            min-height: 380px;
+            border-radius: 27px;
+            overflow: hidden;
+            position: relative;
+            padding: 32px;
+            display: flex;
+            align-items: flex-end;
+            background:
+                radial-gradient(
+                    circle at 80% 20%,
+                    rgba(245,218,191,.45),
+                    transparent 25%
+                ),
+                linear-gradient(
+                    125deg,
+                    var(--green),
+                    var(--bordo)
+                );
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .event-hero::before {
+            content: "K";
+            position: absolute;
+            right: 7%;
+            top: -65px;
+            font-size: 410px;
+            font-weight: 900;
+            line-height: 1;
+            color: rgba(255,255,255,.045);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 750px;
+        }
+
+        .event-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .event-badge {
+            padding: 7px 10px;
+            border-radius: 50px;
+            background: rgba(255,255,255,.13);
+            border: 1px solid rgba(255,255,255,.13);
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .event-badge.promo {
+            background: var(--cream);
+            color: var(--green);
+            border-color: var(--cream);
+        }
+
+        .hero-content h1 {
+            margin-top: 15px;
+            font-size: clamp(32px, 4vw, 55px);
+            line-height: 1;
+            letter-spacing: -.05em;
+        }
+
+        .hero-content p {
+            max-width: 650px;
+            margin-top: 12px;
+            color: rgba(255,255,255,.73);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .hero-meta {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .hero-meta span {
+            padding: 8px 11px;
+            border-radius: 10px;
+            background: rgba(0,0,0,.15);
+            color: rgba(255,255,255,.9);
+            font-size: 10px;
+        }
+
+        /* LAYOUT */
+
+        .event-layout {
+            margin-top: 22px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(340px, .65fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .left-column {
+            display: grid;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card h2 {
+            color: var(--green);
+            font-size: 19px;
+        }
+
+        .description {
+            margin-top: 14px;
+            color: #625d59;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        /* INFO GRID */
+
+        .info-grid {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 11px;
+        }
+
+        .info-box {
+            padding: 15px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface);
+        }
+
+        .info-box small {
+            display: block;
+            color: var(--muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-top: 7px;
+            color: var(--green);
+            font-size: 12px;
+        }
+
+        /* ORGANIZER */
+
+        .organizer {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line);
+        }
+
+        .organizer-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            background: var(--cream);
+            color: var(--green);
+            font-weight: 900;
+        }
+
+        .organizer small {
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .organizer strong {
+            display: block;
+            margin-top: 3px;
+            color: var(--green);
+            font-size: 13px;
+        }
+
+        /* TICKETS */
+
+        .ticket-section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 16px;
+        }
+
+        .ticket-section-head span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .ticket-option {
+            padding: 17px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            transition: .2s ease;
+        }
+
+        .ticket-option + .ticket-option {
+            margin-top: 10px;
+        }
+
+        .ticket-option.selected {
+            border-color: var(--bordo);
+            box-shadow: 0 0 0 2px rgba(108,21,30,.07);
+        }
+
+        .ticket-option-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .ticket-option h3 {
+            color: var(--green);
+            font-size: 14px;
+        }
+
+        .ticket-option p {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .ticket-price {
+            white-space: nowrap;
+            text-align: right;
+        }
+
+        .ticket-price strong {
+            color: var(--green);
+            font-size: 15px;
+        }
+
+        .ticket-price del {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .ticket-bottom {
+            margin-top: 13px;
+            padding-top: 13px;
+            border-top: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .availability {
+            color: var(--green);
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .quantity button {
+            width: 34px;
+            height: 34px;
+            background: var(--surface);
+            color: var(--green);
+            font-weight: 800;
+        }
+
+        .quantity button:hover {
+            background: var(--green-soft);
+        }
+
+        .quantity span {
+            width: 35px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* CHECKOUT CARD */
+
+        .checkout-card {
+            position: sticky;
+            top: 100px;
+        }
+
+        .checkout-card h2 {
+            font-size: 20px;
+        }
+
+        .selected-summary {
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 14px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+        }
+
+        .selected-summary small {
+            color: var(--muted);
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        .selected-summary strong {
+            display: block;
+            margin-top: 5px;
+            color: var(--green);
+            font-size: 13px;
+        }
+
+        .summary-row {
+            margin-top: 17px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .summary-row + .summary-row {
+            margin-top: 9px;
+        }
+
+        .summary-row strong {
+            color: var(--ink);
+        }
+
+        .summary-divider {
+            height: 1px;
+            background: var(--line);
+            margin: 18px 0;
+        }
+
+        .total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .total-row span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .total-row strong {
+            color: var(--green);
+            font-size: 21px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            height: 51px;
+            margin-top: 19px;
+            border-radius: 13px;
+            background: var(--bordo);
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+            transition: .2s ease;
+        }
+
+        .buy-btn:hover {
+            background: var(--bordo-dark);
+            transform: translateY(-1px);
+        }
+
+        .secure-note {
+            margin-top: 12px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .promotion {
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 13px;
+            background: var(--cream-light);
+            border: 1px solid #ead9c8;
+        }
+
+        .promotion strong {
+            color: var(--bordo);
+            font-size: 10px;
+        }
+
+        .promotion p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        /* MOBILE */
+
+        .mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 1100px) {
+
+            .event-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-card {
+                position: static;
+            }
+
+        }
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .topbar {
+                padding: 14px 25px;
+            }
+
+            .content {
+                padding: 25px;
+                padding-bottom: 100px;
+            }
+
+            .mobile-nav {
+                position: fixed;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                height: 64px;
+                border-radius: 19px;
+                background: rgba(15,61,58,.96);
+                z-index: 90;
+                box-shadow: var(--shadow-md);
+                backdrop-filter: blur(12px);
+            }
+
+            .mobile-nav a {
+                display: grid;
+                place-items: center;
+                align-content: center;
+                gap: 3px;
+                color: rgba(255,255,255,.55);
+                font-size: 10px;
+            }
+
+            .mobile-nav a span:first-child {
+                font-size: 17px;
+            }
+
+            .mobile-nav a.active {
+                color: var(--cream);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                padding: 12px 15px;
+            }
+
+            .breadcrumb {
+                display: none;
+            }
+
+            .content {
+                padding: 18px 15px 100px;
+            }
+
+            .event-hero {
+                min-height: 390px;
+                padding: 23px;
+                border-radius: 20px;
+            }
+
+            .event-hero::before {
+                font-size: 270px;
+            }
+
+            .hero-content h1 {
+                font-size: 34px;
+            }
+
+            .card {
+                padding: 17px;
+                border-radius: 18px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ticket-option-top {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .ticket-price {
+                text-align: left;
+            }
+
+            .ticket-bottom {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .quantity {
+                align-self: stretch;
+                justify-content: space-between;
+            }
+
+            .quantity button {
+                width: 45%;
+            }
+
+            .quantity span {
+                flex: 1;
+            }
+
+            .checkout-card {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar" id="sidebar">
+
+        <a href="../index.html" class="brand">
+            <div class="brand-mark">K</div>
+
+            <div class="brand-text">
+                <strong>K-TICKETS</strong>
+                <span>Customer</span>
+            </div>
+        </a>
+
+        <div class="nav-label">Menu</div>
+
+        <nav class="nav">
+
+            <a href="dashboard.html" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+
+            <a href="events.html" class="nav-link active">
+                <span class="nav-icon">◫</span>
+                Discover Events
+            </a>
+
+            <a href="my-tickets.html" class="nav-link">
+                <span class="nav-icon">▣</span>
+                My Tickets
+            </a>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">◷</span>
+                Payment History
+            </a>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">♡</span>
+                Saved Events
+            </a>
+
+            <div class="nav-label" style="margin-top:20px;">
+                Account
+            </div>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">◎</span>
+                Profile
+            </a>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">⚙</span>
+                Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="support-card">
+                <small>Need help?</small>
+                <strong>K-Tickets Support</strong>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">
+                Log out
+            </button>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <button
+                class="mobile-menu"
+                onclick="toggleSidebar()"
+                aria-label="Open menu"
+            >
+                ☰
+            </button>
+
+            <div class="breadcrumb">
+                <a href="events.html">Events</a>
+                <span> / </span>
+                <span id="breadcrumbTitle">
+                    Event details
+                </span>
+            </div>
+
+            <div class="top-actions">
+
+                <button class="icon-btn">
+                    ♢
+                </button>
+
+                <div class="avatar">
+                    EK
+                </div>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <!-- EVENT HERO -->
+
+            <section class="event-hero">
+
+                <div class="hero-content">
+
+                    <div class="event-badges">
+
+                        <span class="event-badge">
+                            Coffee
+                        </span>
+
+                        <span class="event-badge promo">
+                            Early access available
+                        </span>
+
+                    </div>
+
+                    <h1 id="eventTitle">
+                        Kuwait Coffee Festival 2026
+                    </h1>
+
+                    <p id="eventShortDescription">
+                        A celebration of coffee, people and culture
+                        bringing together coffee lovers, creators
+                        and professionals.
+                    </p>
+
+                    <div class="hero-meta">
+
+                        <span id="heroDate">
+                            30 Oct 2026
+                        </span>
+
+                        <span id="heroTime">
+                            4:00 PM – 10:00 PM
+                        </span>
+
+                        <span id="heroLocation">
+                            Kuwait City
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <div class="event-layout">
+
+                <!-- LEFT -->
+
+                <div class="left-column">
+
+                    <section class="card">
+
+                        <h2>About this event</h2>
+
+                        <p class="description" id="description">
+
+                            Experience a curated celebration of coffee
+                            culture in Kuwait. Meet coffee professionals,
+                            discover new flavours, connect with creators
+                            and enjoy an evening built around great coffee
+                            and even better conversations.
+
+                            <br><br>
+
+                            Whether you're a coffee professional, enthusiast
+                            or simply curious, this event is designed to
+                            give you a memorable experience.
+
+                        </p>
+
+                        <div class="info-grid">
+
+                            <div class="info-box">
+                                <small>Date</small>
+                                <strong id="infoDate">
+                                    Friday, 30 October 2026
+                                </strong>
+                            </div>
+
+                            <div class="info-box">
+                                <small>Time</small>
+                                <strong id="infoTime">
+                                    4:00 PM – 10:00 PM
+                                </strong>
+                            </div>
+
+                            <div class="info-box">
+                                <small>Location</small>
+                                <strong id="infoLocation">
+                                    Kuwait City, Kuwait
+                                </strong>
+                            </div>
+
+                            <div class="info-box">
+                                <small>Entry</small>
+                                <strong>
+                                    Digital QR ticket
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="organizer">
+
+                            <div class="organizer-avatar">
+                                K
+                            </div>
+
+                            <div>
+                                <small>Organized by</small>
+                                <strong>
+                                    Kuwait Coffee Community
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- TICKETS -->
+
+                    <section class="card">
+
+                        <div class="ticket-section-head">
+
+                            <h2>Select tickets</h2>
+
+                            <span>
+                                Secure your spot
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="ticket-option selected"
+                            data-ticket="standard"
+                        >
+
+                            <div class="ticket-option-top">
+
+                                <div>
+
+                                    <h3>
+                                        Standard Entry
+                                    </h3>
+
+                                    <p>
+                                        General event access.
+                                    </p>
+
+                                </div>
+
+                                <div class="ticket-price">
+
+                                    <strong>
+                                        4.500 KWD
+                                    </strong>
+
+                                    <del>
+                                        5.000 KWD
+                                    </del>
+
+                                </div>
+
+                            </div>
+
+                            <div class="ticket-bottom">
+
+                                <span class="availability">
+                                    146 tickets remaining
+                                </span>
+
+                                <div class="quantity">
+
+                                    <button
+                                        onclick="changeQuantity('standard', -1)"
+                                    >
+                                        −
+                                    </button>
+
+                                    <span id="standardQty">
+                                        0
+                                    </span>
+
+                                    <button
+                                        onclick="changeQuantity('standard', 1)"
+                                    >
+                                        +
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="ticket-option"
+                            data-ticket="vip"
+                        >
+
+                            <div class="ticket-option-top">
+
+                                <div>
+
+                                    <h3>
+                                        VIP Experience
+                                    </h3>
+
+                                    <p>
+                                        Priority access plus VIP benefits.
+                                    </p>
+
+                                </div>
+
+                                <div class="ticket-price">
+
+                                    <strong>
+                                        9.500 KWD
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                            <div class="ticket-bottom">
+
+                                <span class="availability">
+                                    32 tickets remaining
+                                </span>
+
+                                <div class="quantity">
+
+                                    <button
+                                        onclick="changeQuantity('vip', -1)"
+                                    >
+                                        −
+                                    </button>
+
+                                    <span id="vipQty">
+                                        0
+                                    </span>
+
+                                    <button
+                                        onclick="changeQuantity('vip', 1)"
+                                    >
+                                        +
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <!-- CHECKOUT -->
+
+                <aside class="card checkout-card">
+
+                    <h2>Your order</h2>
+
+                    <div class="selected-summary">
+
+                        <small>Event</small>
+
+                        <strong id="summaryEvent">
+                            Kuwait Coffee Festival 2026
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Standard ×
+                            <span id="summaryStandardQty">
+                                0
+                            </span>
+                        </span>
+
+                        <strong id="summaryStandard">
+                            0.000 KWD
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            VIP ×
+                            <span id="summaryVipQty">
+                                0
+                            </span>
+                        </span>
+
+                        <strong id="summaryVip">
+                            0.000 KWD
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-row">
+
+                        <span>Subtotal</span>
+
+                        <strong id="subtotal">
+                            0.000 KWD
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>Service fee</span>
+
+                        <strong id="serviceFee">
+                            0.000 KWD
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="total-row">
+
+                        <span>Total</span>
+
+                        <strong id="total">
+                            0.000 KWD
+                        </strong>
+
+                    </div>
+
+                    <button
+                        class="buy-btn"
+                        onclick="continueToCheckout()"
+                    >
+                        Continue to Checkout
+                    </button>
+
+                    <p class="secure-note">
+                        Secure checkout · Digital ticket delivery
+                    </p>
+
+                    <div class="promotion">
+
+                        <strong>
+                            Promotion active
+                        </strong>
+
+                        <p>
+                            Early-access pricing is currently available
+                            on selected ticket types.
+                        </p>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- MOBILE NAV -->
+
+<nav class="mobile-nav">
+
+    <a href="dashboard.html">
+        <span>⌂</span>
+        <span>Home</span>
+    </a>
+
+    <a href="events.html" class="active">
+        <span>◫</span>
+        <span>Events</span>
+    </a>
+
+    <a href="my-tickets.html">
+        <span>▣</span>
+        <span>Tickets</span>
+    </a>
+
+    <a href="#">
+        <span>◎</span>
+        <span>Account</span>
+    </a>
+
+</nav>
+
+<script>
+
+    /*
+        K-TICKETS EVENT DETAILS
+
+        This page currently uses demonstration event data.
+
+        Later:
+
+        1. Read event ID from URL.
+        2. Query Supabase.
+        3. Load published event.
+        4. Load ticket types.
+        5. Load merchant.
+        6. Check real inventory.
+        7. Apply active promotion.
+        8. Continue to checkout.
+
+        IMPORTANT:
+
+        Inventory must be revalidated server-side when checkout
+        is created. Never trust the quantity calculated only
+        in this browser.
+    */
+
+    const eventData = {
+
+        id: "coffee-festival-2026",
+
+        title: "Kuwait Coffee Festival 2026",
+
+        description:
+            "Experience a curated celebration of coffee culture " +
+            "in Kuwait. Meet coffee professionals, discover new " +
+            "flavours, connect with creators and enjoy an evening " +
+            "built around great coffee and even better conversations.",
+
+        date: "30 Oct 2026",
+
+        fullDate: "Friday, 30 October 2026",
+
+        time: "4:00 PM – 10:00 PM",
+
+        location: "Kuwait City",
+
+        organizer: "Kuwait Coffee Community",
+
+        tickets: {
+
+            standard: {
+                name: "Standard Entry",
+                price: 4.5,
+                inventory: 146,
+                max: 10
+            },
+
+            vip: {
+                name: "VIP Experience",
+                price: 9.5,
+                inventory: 32,
+                max: 6
+            }
+
+        }
+
+    };
+
+    const quantities = {
+        standard: 0,
+        vip: 0
+    };
+
+    /*
+        K-Tickets admin-configurable service fee.
+
+        This will eventually come from Supabase settings,
+        for example:
+
+        service_fee_percentage = 2.00
+    */
+
+    const SERVICE_FEE_PERCENT = 2;
+
+    function changeQuantity(type, change) {
+
+        const ticket = eventData.tickets[type];
+
+        const next =
+            quantities[type] + change;
+
+        if (next < 0) return;
+
+        if (next > ticket.max) {
+
+            showMessage(
+                `Maximum ${ticket.max} ${ticket.name} tickets per order.`
+            );
+
+            return;
+        }
+
+        if (next > ticket.inventory) {
+
+            showMessage(
+                "There are not enough tickets available."
+            );
+
+            return;
+        }
+
+        quantities[type] = next;
+
+        updateQuantityUI();
+        updateSummary();
+
+    }
+
+    function updateQuantityUI() {
+
+        document.getElementById("standardQty")
+            .textContent = quantities.standard;
+
+        document.getElementById("vipQty")
+            .textContent = quantities.vip;
+
+    }
+
+    function updateSummary() {
+
+        const standardTotal =
+            quantities.standard *
+            eventData.tickets.standard.price;
+
+        const vipTotal =
+            quantities.vip *
+            eventData.tickets.vip.price;
+
+        const subtotal =
+            standardTotal +
+            vipTotal;
+
+        const serviceFee =
+            subtotal *
+            (SERVICE_FEE_PERCENT / 100);
+
+        const total =
+            subtotal +
+            serviceFee;
+
+        document.getElementById("summaryStandardQty")
+            .textContent = quantities.standard;
+
+        document.getElementById("summaryVipQty")
+            .textContent = quantities.vip;
+
+        document.getElementById("summaryStandard")
+            .textContent =
+            `${standardTotal.toFixed(3)} KWD`;
+
+        document.getElementById("summaryVip")
+            .textContent =
+            `${vipTotal.toFixed(3)} KWD`;
+
+        document.getElementById("subtotal")
+            .textContent =
+            `${subtotal.toFixed(3)} KWD`;
+
+        document.getElementById("serviceFee")
+            .textContent =
+            `${serviceFee.toFixed(3)} KWD`;
+
+        document.getElementById("total")
+            .textContent =
+            `${total.toFixed(3)} KWD`;
+
+    }
+
+    function continueToCheckout() {
+
+        const totalTickets =
+            quantities.standard +
+            quantities.vip;
+
+        if (totalTickets === 0) {
+
+            showMessage(
+                "Please select at least one ticket."
+            );
+
+            return;
+        }
+
+        /*
+            Later we can pass only an order/session ID instead
+            of trusting prices from the URL.
+
+            Example:
+
+            const { data, error } = await supabase
+                .from("orders")
+                .insert(...)
+                .select()
+                .single();
+
+            Then:
+
+            window.location.href =
+                `checkout.html?order=${data.id}`;
+        */
+
+        const params =
+            new URLSearchParams();
+
+        params.set("event", eventData.id);
+        params.set(
+            "standard",
+            quantities.standard
+        );
+        params.set(
+            "vip",
+            quantities.vip
+        );
+
+        window.location.href =
+            `checkout.html?${params.toString()}`;
+    }
+
+    function showMessage(message) {
+
+        let toast =
+            document.getElementById("toast");
+
+        if (!toast) {
+
+            toast =
+                document.createElement("div");
+
+            toast.id = "toast";
+
+            toast.style.position = "fixed";
+            toast.style.left = "50%";
+            toast.style.bottom = "90px";
+            toast.style.transform = "translateX(-50%)";
+            toast.style.zIndex = "9999";
+            toast.style.padding = "12px 16px";
+            toast.style.borderRadius = "12px";
+            toast.style.background = "#0F3D3A";
+            toast.style.color = "white";
+            toast.style.fontSize = "12px";
+            toast.style.fontWeight = "700";
+            toast.style.boxShadow =
+                "0 15px 35px rgba(0,0,0,.2)";
+
+            document.body.appendChild(toast);
+        }
+
+        toast.textContent = message;
+        toast.style.opacity = "1";
+
+        clearTimeout(window.toastTimer);
+
+        window.toastTimer =
+            setTimeout(() => {
+
+                toast.style.opacity = "0";
+
+            }, 2600);
+    }
+
+    function toggleSidebar() {
+
+        document
+            .getElementById("sidebar")
+            .classList
+            .toggle("open");
+
+    }
+
+    function logout() {
+
+        /*
+            Later:
+
+            await supabase.auth.signOut();
+        */
+
+        window.location.href =
+            "../auth/login.html";
+
+    }
+
+    /*
+        EVENT URL
+
+        Example:
+
+        event.html?id=coffee-festival-2026
+
+        Later the ID will be used to fetch the actual event.
+    */
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const eventId =
+        params.get("id");
+
+    /*
+        For now the demonstration page renders the
+        default event regardless of ID.
+    */
+
+    document.getElementById("eventTitle")
+        .textContent = eventData.title;
+
+    document.getElementById("summaryEvent")
+        .textContent = eventData.title;
+
+    document.getElementById("breadcrumbTitle")
+        .textContent = eventData.title;
+
+    document.getElementById("heroDate")
+        .textContent = eventData.date;
+
+    document.getElementById("heroTime")
+        .textContent = eventData.time;
+
+    document.getElementById("heroLocation")
+        .textContent = eventData.location;
+
+    document.getElementById("infoDate")
+        .textContent = eventData.fullDate;
+
+    document.getElementById("infoTime")
+        .textContent = eventData.time;
+
+    document.getElementById("infoLocation")
+        .textContent =
+            `${eventData.location}, Kuwait`;
+
+    document.getElementById("description")
+        .textContent =
+            eventData.description;
+
+    updateQuantityUI();
+    updateSummary();
+
+</script>
+
+</body>
+</html>

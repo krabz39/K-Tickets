@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Verify Ticket | K-Tickets</title>
+
+    <meta
+        name="description"
+        content="K-Tickets ticket verification."
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+
+        :root {
+            --bordo: #6C151E;
+            --green: #0F3D3A;
+            --cream: #F5DABF;
+            --white: #ffffff;
+            --dark: #171414;
+            --muted: #756b67;
+            --border: rgba(15,61,58,.12);
+            --success: #0F3D3A;
+            --danger: #6C151E;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at top,
+                    #fffaf5,
+                    #f4ebe2
+                );
+            color: var(--dark);
+            font-family: Inter, Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: 72px;
+            background: var(--green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .brand-mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+        }
+
+        .brand strong {
+            font-size: 17px;
+        }
+
+        .account-link {
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255,255,255,.8);
+        }
+
+        .content {
+            width: min(720px, calc(100% - 28px));
+            margin: auto;
+            padding: 50px 0;
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            color: var(--green);
+            font-family: Georgia, serif;
+            font-size: clamp(32px, 6vw, 48px);
+        }
+
+        .heading p {
+            color: var(--muted);
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .verification-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 27px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(15,61,58,.12);
+        }
+
+        .result {
+            padding: 35px 25px;
+            text-align: center;
+        }
+
+        .result-icon {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 17px;
+            font-size: 31px;
+            font-weight: 900;
+        }
+
+        .result.valid .result-icon {
+            background: #e5f1ed;
+            color: var(--green);
+        }
+
+        .result.used .result-icon,
+        .result.invalid .result-icon {
+            background: #f5e3e4;
+            color: var(--bordo);
+        }
+
+        .result h2 {
+            font-family: Georgia, serif;
+            font-size: 32px;
+            color: var(--green);
+        }
+
+        .result.used h2,
+        .result.invalid h2 {
+            color: var(--bordo);
+        }
+
+        .result-message {
+            max-width: 470px;
+            margin: 9px auto 0;
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        .ticket-details {
+            border-top: 1px solid var(--border);
+            padding: 27px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .detail {
+            min-width: 0;
+        }
+
+        .label {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+        }
+
+        .value {
+            margin-top: 6px;
+            color: var(--green);
+            font-weight: 800;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+        }
+
+        .gate-actions {
+            border-top: 1px solid var(--border);
+            padding: 23px;
+            display: none;
+            gap: 10px;
+        }
+
+        .gate-actions.show {
+            display: grid;
+        }
+
+        .btn {
+            border: 0;
+            padding: 14px 17px;
+            border-radius: 13px;
+            font-weight: 800;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--bordo);
+            color: white;
+        }
+
+        .btn-light {
+            background: var(--cream);
+            color: var(--green);
+        }
+
+        .state {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 55px 25px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(15,61,58,.08);
+        }
+
+        .state h2 {
+            color: var(--green);
+            font-family: Georgia, serif;
+        }
+
+        .state p {
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 10px auto 20px;
+        }
+
+        .loader {
+            width: 38px;
+            height: 38px;
+            border: 3px solid rgba(15,61,58,.12);
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin: 0 auto 17px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .notice {
+            margin: 20px 25px 0;
+            padding: 13px 15px;
+            border-radius: 12px;
+            background: #fff5e9;
+            color: #775735;
+            font-size: 12px;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .notice.show {
+            display: block;
+        }
+
+        @media (max-width: 560px) {
+
+            .topbar {
+                padding: 0 16px;
+            }
+
+            .content {
+                width: min(100% - 18px, 720px);
+                padding: 30px 0;
+            }
+
+            .ticket-details {
+                grid-template-columns: 1fr;
+                padding: 22px;
+                gap: 15px;
+            }
+
+            .result {
+                padding: 30px 20px;
+            }
+
+            .gate-actions {
+                padding: 20px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="page">
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                K
+            </div>
+
+            <strong>
+                K-Tickets
+            </strong>
+
+        </div>
+
+        <a
+            class="account-link"
+            href="dashboard.html"
+        >
+            Customer Portal
+        </a>
+
+    </header>
+
+    <main class="content">
+
+        <div class="heading">
+
+            <h1>
+                Ticket Verification
+            </h1>
+
+            <p>
+                Checking the ticket against K-Tickets records.
+            </p>
+
+        </div>
+
+        <div
+            class="state"
+            id="loadingState"
+        >
+
+            <div class="loader"></div>
+
+            <h2>
+                Verifying ticket
+            </h2>
+
+            <p>
+                Please wait while the ticket is checked.
+            </p>
+
+        </div>
+
+        <div
+            class="state hidden"
+            id="errorState"
+        >
+
+            <h2>
+                Verification unavailable
+            </h2>
+
+            <p id="errorMessage">
+                This ticket could not be verified.
+            </p>
+
+            <a
+                class="btn btn-primary"
+                href="dashboard.html"
+            >
+                Customer Dashboard
+            </a>
+
+        </div>
+
+        <section
+            class="verification-card hidden"
+            id="verificationCard"
+        >
+
+            <div
+                class="result valid"
+                id="result"
+            >
+
+                <div
+                    class="result-icon"
+                    id="resultIcon"
+                >
+                    ✓
+                </div>
+
+                <h2 id="resultTitle">
+                    Valid Ticket
+                </h2>
+
+                <p
+                    class="result-message"
+                    id="resultMessage"
+                >
+                    Ticket verification result.
+                </p>
+
+            </div>
+
+            <div
+                class="notice"
+                id="gateNotice"
+            >
+                Gate check-in is restricted to authorized
+                event staff.
+            </div>
+
+            <div class="ticket-details">
+
+                <div class="detail">
+
+                    <div class="label">
+                        Event
+                    </div>
+
+                    <div
+                        class="value"
+                        id="eventTitle"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="detail">
+
+                    <div class="label">
+                        Ticket Type
+                    </div>
+
+                    <div
+                        class="value"
+                        id="ticketType"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="detail">
+
+                    <div class="label">
+                        Date
+                    </div>
+
+                    <div
+                        class="value"
+                        id="eventDate"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="detail">
+
+                    <div class="label">
+                        Venue
+                    </div>
+
+                    <div
+                        class="value"
+                        id="eventVenue"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="detail">
+
+                    <div class="label">
+                        Ticket Code
+                    </div>
+
+                    <div
+                        class="value"
+                        id="ticketCode"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="detail">
+
+                    <div class="label">
+                        Ticket Status
+                    </div>
+
+                    <div
+                        class="value"
+                        id="ticketStatus"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="detail">
+
+                    <div class="label">
+                        Issued
+                    </div>
+
+                    <div
+                        class="value"
+                        id="issuedAt"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="detail">
+
+                    <div class="label">
+                        Checked In
+                    </div>
+
+                    <div
+                        class="value"
+                        id="checkedInAt"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div
+                class="gate-actions"
+                id="gateActions"
+            >
+
+                <button
+                    class="btn btn-primary"
+                    id="checkInBtn"
+                >
+                    Check In Ticket
+                </button>
+
+                <button
+                    class="btn btn-light"
+                    id="refreshBtn"
+                >
+                    Refresh Status
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+
+    const SUPABASE_URL =
+        window.KTICKETS_SUPABASE_URL || "";
+
+    const SUPABASE_ANON_KEY =
+        window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+    let supabaseClient = null;
+
+    let ticket = null;
+    let event = null;
+    let ticketType = null;
+    let currentUser = null;
+    let canGateCheckIn = false;
+
+    const loadingState =
+        document.getElementById("loadingState");
+
+    const errorState =
+        document.getElementById("errorState");
+
+    const verificationCard =
+        document.getElementById("verificationCard");
+
+    function initializeSupabase() {
+
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+            throw new Error(
+                "Supabase configuration has not been added yet."
+            );
+        }
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+    }
+
+    function formatDate(value) {
+
+        if (!value) {
+            return "Not available";
+        }
+
+        const date =
+            new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return "Not available";
+        }
+
+        return new Intl.DateTimeFormat(
+            undefined,
+            {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }
+        ).format(date);
+    }
+
+    function formatStatus(value) {
+
+        return String(value || "unknown")
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function getTicketId() {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        return params.get("id");
+    }
+
+    async function getSessionUser() {
+
+        const {
+            data,
+            error
+        } = await supabaseClient.auth.getUser();
+
+        if (error) {
+            throw error;
+        }
+
+        return data.user || null;
+    }
+
+    async function loadTicket() {
+
+        const ticketId =
+            getTicketId();
+
+        if (!ticketId) {
+            throw new Error(
+                "No ticket identifier was supplied."
+            );
+        }
+
+        /*
+         * This verification lookup intentionally does not
+         * depend on customer ownership.
+         *
+         * For production gate verification, expose this
+         * through a tightly controlled RPC or Edge Function
+         * rather than allowing arbitrary public ticket reads.
+         */
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("tickets")
+            .select(`
+                id,
+                user_id,
+                event_id,
+                ticket_type_id,
+                ticket_code,
+                status,
+                issued_at,
+                checked_in_at
+            `)
+            .eq("id", ticketId)
+            .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data) {
+            throw new Error(
+                "This ticket does not exist."
+            );
+        }
+
+        ticket = data;
+
+        if (ticket.event_id) {
+
+            const response =
+                await supabaseClient
+                    .from("events")
+                    .select(`
+                        id,
+                        title,
+                        venue,
+                        city,
+                        start_at,
+                        end_at,
+                        status
+                    `)
+                    .eq("id", ticket.event_id)
+                    .maybeSingle();
+
+            if (response.error) {
+                throw response.error;
+            }
+
+            event = response.data;
+        }
+
+        if (ticket.ticket_type_id) {
+
+            const response =
+                await supabaseClient
+                    .from("ticket_types")
+                    .select(`
+                        id,
+                        event_id,
+                        name
+                    `)
+                    .eq("id", ticket.ticket_type_id)
+                    .maybeSingle();
+
+            if (response.error) {
+                throw response.error;
+            }
+
+            ticketType =
+                response.data;
+        }
+    }
+
+    async function checkGatePermission() {
+
+        currentUser =
+            await getSessionUser();
+
+        if (!currentUser) {
+            return false;
+        }
+
+        /*
+         * Expected profile role values:
+         *
+         * customer
+         * merchant
+         * admin
+         * gate_staff
+         *
+         * Your actual role names should be enforced
+         * through Supabase RLS.
+         */
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("profiles")
+            .select("role")
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+        if (error) {
+            console.warn(
+                "Could not determine staff role:",
+                error
+            );
+
+            return false;
+        }
+
+        const role =
+            String(data?.role || "")
+                .toLowerCase();
+
+        canGateCheckIn = [
+            "admin",
+            "merchant",
+            "gate_staff"
+        ].includes(role);
+
+        return canGateCheckIn;
+    }
+
+    function calculateResult() {
+
+        const status =
+            String(ticket.status || "")
+                .toLowerCase();
+
+        if (
+            status === "used" ||
+            status === "checked_in" ||
+            ticket.checked_in_at
+        ) {
+            return {
+                type: "used",
+                title: "Ticket Already Used",
+                message:
+                    "This ticket has already been checked in."
+            };
+        }
+
+        if (
+            status === "cancelled" ||
+            status === "invalid" ||
+            status === "refunded"
+        ) {
+            return {
+                type: "invalid",
+                title: "Invalid Ticket",
+                message:
+                    "This ticket is not valid for entry."
+            };
+        }
+
+        if (
+            event &&
+            String(event.status || "").toLowerCase() ===
+                "cancelled"
+        ) {
+            return {
+                type: "invalid",
+                title: "Event Cancelled",
+                message:
+                    "The event associated with this ticket is cancelled."
+            };
+        }
+
+        return {
+            type: "valid",
+            title: "Valid Ticket",
+            message:
+                "This ticket is currently valid according to K-Tickets records."
+        };
+    }
+
+    function render() {
+
+        const result =
+            calculateResult();
+
+        const resultElement =
+            document.getElementById("result");
+
+        resultElement.className =
+            "result " + result.type;
+
+        document.getElementById(
+            "resultIcon"
+        ).textContent =
+            result.type === "valid"
+                ? "✓"
+                : "!";
+
+        document.getElementById(
+            "resultTitle"
+        ).textContent =
+            result.title;
+
+        document.getElementById(
+            "resultMessage"
+        ).textContent =
+            result.message;
+
+        document.getElementById(
+            "eventTitle"
+        ).textContent =
+            event?.title || "Not available";
+
+        document.getElementById(
+            "ticketType"
+        ).textContent =
+            ticketType?.name || "Not available";
+
+        document.getElementById(
+            "eventDate"
+        ).textContent =
+            formatDate(event?.start_at);
+
+        document.getElementById(
+            "eventVenue"
+        ).textContent =
+            event?.venue || "Not available";
+
+        document.getElementById(
+            "ticketCode"
+        ).textContent =
+            ticket.ticket_code ||
+            ticket.id;
+
+        document.getElementById(
+            "ticketStatus"
+        ).textContent =
+            formatStatus(ticket.status);
+
+        document.getElementById(
+            "issuedAt"
+        ).textContent =
+            formatDate(ticket.issued_at);
+
+        document.getElementById(
+            "checkedInAt"
+        ).textContent =
+            formatDate(ticket.checked_in_at);
+
+        const gateActions =
+            document.getElementById(
+                "gateActions"
+            );
+
+        const gateNotice =
+            document.getElementById(
+                "gateNotice"
+            );
+
+        if (canGateCheckIn) {
+
+            gateActions.classList.add("show");
+
+            gateNotice.classList.remove("show");
+
+            document.getElementById(
+                "checkInBtn"
+            ).disabled =
+                result.type !== "valid";
+
+        } else {
+
+            gateActions.classList.remove("show");
+
+            gateNotice.classList.add("show");
+        }
+
+        loadingState.classList.add("hidden");
+
+        errorState.classList.add("hidden");
+
+        verificationCard.classList.remove(
+            "hidden"
+        );
+    }
+
+    async function checkInTicket() {
+
+        if (!canGateCheckIn) {
+            return;
+        }
+
+        const button =
+            document.getElementById(
+                "checkInBtn"
+            );
+
+        button.disabled = true;
+        button.textContent =
+            "Checking in...";
+
+        try {
+
+            /*
+             * Recommended production implementation:
+             *
+             * supabase.rpc("check_in_ticket", {
+             *     p_ticket_id: ticket.id
+             * })
+             *
+             * The RPC should atomically:
+             *
+             * 1. Lock the ticket
+             * 2. Confirm status is valid
+             * 3. Confirm not already checked in
+             * 4. Set checked_in_at
+             * 5. Set status = checked_in
+             * 6. Return the final ticket state
+             *
+             * Do NOT use a simple frontend update for
+             * production gate admission.
+             */
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .rpc(
+                    "check_in_ticket",
+                    {
+                        p_ticket_id: ticket.id
+                    }
+                );
+
+            if (error) {
+                throw error;
+            }
+
+            /*
+             * RPC can return the updated record.
+             * If it returns nothing, refresh from database.
+             */
+
+            if (data) {
+
+                ticket = Array.isArray(data)
+                    ? data[0]
+                    : data;
+            } else {
+
+                await loadTicket();
+            }
+
+            render();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                error.message ||
+                "Unable to check in this ticket."
+            );
+
+            button.disabled = false;
+            button.textContent =
+                "Check In Ticket";
+        }
+    }
+
+    async function loadPage() {
+
+        try {
+
+            initializeSupabase();
+
+            await loadTicket();
+
+            await checkGatePermission();
+
+            render();
+
+        } catch (error) {
+
+            console.error(error);
+
+            loadingState.classList.add(
+                "hidden"
+            );
+
+            document.getElementById(
+                "errorMessage"
+            ).textContent =
+                error.message ||
+                "Ticket verification failed.";
+
+            errorState.classList.remove(
+                "hidden"
+            );
+        }
+    }
+
+    document
+        .getElementById("checkInBtn")
+        .addEventListener(
+            "click",
+            checkInTicket
+        );
+
+    document
+        .getElementById("refreshBtn")
+        .addEventListener(
+            "click",
+            loadPage
+        );
+
+    loadPage();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,3148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow,noarchive,nosnippet"
+    >
+
+    <meta
+        name="referrer"
+        content="same-origin"
+    >
+
+    <title>K-Tickets — QR Scans</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root{
+            --bordo:#6C151E;
+            --green:#0F3D3A;
+            --cream:#F5DABF;
+
+            --bg:#f7f4ef;
+            --surface:#ffffff;
+            --surface-2:#fbf9f6;
+            --text:#202020;
+            --muted:#746d67;
+            --border:#e7dfd7;
+
+            --success:#176b4d;
+            --warning:#9a6500;
+            --danger:#a3212c;
+            --info:#315f83;
+
+            --shadow:0 12px 35px rgba(34,25,20,.07);
+            --radius:18px;
+        }
+
+        *{
+            box-sizing:border-box;
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            margin:0;
+            min-height:100vh;
+            background:var(--bg);
+            color:var(--text);
+            font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        }
+
+        button,
+        input,
+        select{
+            font:inherit;
+        }
+
+        button{
+            cursor:pointer;
+        }
+
+        a{
+            color:inherit;
+            text-decoration:none;
+        }
+
+        .security-gate{
+            position:fixed;
+            inset:0;
+            z-index:99999;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:var(--green);
+            color:white;
+        }
+
+        .security-box{
+            width:min(420px,calc(100% - 32px));
+            padding:32px;
+            border-radius:24px;
+            background:rgba(255,255,255,.08);
+            border:1px solid rgba(255,255,255,.15);
+            text-align:center;
+        }
+
+        .security-logo{
+            width:58px;
+            height:58px;
+            margin:0 auto 18px;
+            display:grid;
+            place-items:center;
+            border-radius:18px;
+            background:var(--cream);
+            color:var(--bordo);
+            font-weight:900;
+            font-size:20px;
+        }
+
+        .security-box h2{
+            margin:0 0 8px;
+            font-size:22px;
+        }
+
+        .security-box p{
+            margin:0;
+            color:rgba(255,255,255,.72);
+            font-size:14px;
+            line-height:1.6;
+        }
+
+        .app{
+            display:none;
+            min-height:100vh;
+        }
+
+        .sidebar{
+            position:fixed;
+            left:0;
+            top:0;
+            bottom:0;
+            width:260px;
+            z-index:100;
+            padding:22px 16px;
+            background:var(--green);
+            color:white;
+            overflow-y:auto;
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding:5px 10px 25px;
+        }
+
+        .brand-mark{
+            width:42px;
+            height:42px;
+            display:grid;
+            place-items:center;
+            border-radius:13px;
+            background:var(--cream);
+            color:var(--bordo);
+            font-weight:900;
+            letter-spacing:-1px;
+        }
+
+        .brand-copy strong{
+            display:block;
+            font-size:15px;
+            letter-spacing:.04em;
+        }
+
+        .brand-copy span{
+            display:block;
+            margin-top:3px;
+            color:rgba(255,255,255,.55);
+            font-size:11px;
+            text-transform:uppercase;
+            letter-spacing:.13em;
+        }
+
+        .nav-label{
+            margin:10px 10px 8px;
+            color:rgba(255,255,255,.4);
+            font-size:10px;
+            font-weight:800;
+            letter-spacing:.14em;
+            text-transform:uppercase;
+        }
+
+        .nav{
+            display:grid;
+            gap:4px;
+        }
+
+        .nav a{
+            display:flex;
+            align-items:center;
+            gap:11px;
+            padding:11px 12px;
+            border-radius:12px;
+            color:rgba(255,255,255,.72);
+            font-size:13px;
+            transition:.2s ease;
+        }
+
+        .nav a:hover{
+            background:rgba(255,255,255,.07);
+            color:white;
+        }
+
+        .nav a.active{
+            background:rgba(245,218,191,.13);
+            color:var(--cream);
+        }
+
+        .nav-icon{
+            width:20px;
+            text-align:center;
+            opacity:.85;
+        }
+
+        .sidebar-footer{
+            margin-top:25px;
+            padding:14px;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:15px;
+            background:rgba(255,255,255,.035);
+        }
+
+        .sidebar-footer small{
+            display:block;
+            color:rgba(255,255,255,.42);
+            font-size:10px;
+            line-height:1.6;
+        }
+
+        .sidebar-footer strong{
+            display:block;
+            margin-top:3px;
+            font-size:12px;
+            color:rgba(255,255,255,.8);
+        }
+
+        .main{
+            margin-left:260px;
+            min-width:0;
+        }
+
+        .topbar{
+            position:sticky;
+            top:0;
+            z-index:80;
+            min-height:72px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:18px;
+            padding:12px 28px;
+            background:rgba(247,244,239,.94);
+            border-bottom:1px solid var(--border);
+            backdrop-filter:blur(16px);
+        }
+
+        .mobile-menu{
+            display:none;
+            border:0;
+            background:var(--surface);
+            width:42px;
+            height:42px;
+            border-radius:12px;
+            box-shadow:var(--shadow);
+        }
+
+        .page-heading{
+            min-width:0;
+        }
+
+        .eyebrow{
+            color:var(--bordo);
+            font-size:10px;
+            font-weight:900;
+            letter-spacing:.14em;
+            text-transform:uppercase;
+        }
+
+        .page-heading h1{
+            margin:3px 0 0;
+            font-size:22px;
+            letter-spacing:-.03em;
+        }
+
+        .top-actions{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .icon-button{
+            position:relative;
+            width:40px;
+            height:40px;
+            border:1px solid var(--border);
+            border-radius:12px;
+            background:var(--surface);
+            color:var(--green);
+        }
+
+        .notification-dot{
+            position:absolute;
+            right:8px;
+            top:7px;
+            width:7px;
+            height:7px;
+            border-radius:50%;
+            background:var(--bordo);
+        }
+
+        .admin-chip{
+            display:flex;
+            align-items:center;
+            gap:9px;
+            padding:5px 10px 5px 5px;
+            border:1px solid var(--border);
+            border-radius:999px;
+            background:white;
+        }
+
+        .avatar{
+            width:32px;
+            height:32px;
+            display:grid;
+            place-items:center;
+            border-radius:50%;
+            background:var(--green);
+            color:white;
+            font-size:11px;
+            font-weight:800;
+        }
+
+        .admin-chip span{
+            max-width:150px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+            font-size:12px;
+            font-weight:700;
+        }
+
+        .content{
+            padding:28px;
+        }
+
+        .toolbar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:16px;
+            margin-bottom:22px;
+        }
+
+        .toolbar-copy h2{
+            margin:0;
+            font-size:20px;
+        }
+
+        .toolbar-copy p{
+            margin:6px 0 0;
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .toolbar-actions{
+            display:flex;
+            gap:9px;
+            flex-wrap:wrap;
+        }
+
+        .btn{
+            min-height:40px;
+            padding:0 14px;
+            border:1px solid var(--border);
+            border-radius:11px;
+            background:white;
+            color:var(--green);
+            font-size:12px;
+            font-weight:800;
+        }
+
+        .btn:hover{
+            border-color:#d5c8bd;
+        }
+
+        .btn.primary{
+            background:var(--green);
+            border-color:var(--green);
+            color:white;
+        }
+
+        .btn.danger{
+            color:var(--danger);
+        }
+
+        .stats{
+            display:grid;
+            grid-template-columns:repeat(4,minmax(0,1fr));
+            gap:14px;
+            margin-bottom:20px;
+        }
+
+        .stat{
+            min-width:0;
+            padding:18px;
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            background:var(--surface);
+            box-shadow:var(--shadow);
+        }
+
+        .stat-top{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+        }
+
+        .stat-label{
+            color:var(--muted);
+            font-size:11px;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.07em;
+        }
+
+        .stat-icon{
+            width:34px;
+            height:34px;
+            display:grid;
+            place-items:center;
+            border-radius:10px;
+            background:var(--cream);
+            color:var(--bordo);
+        }
+
+        .stat-value{
+            margin-top:14px;
+            font-size:26px;
+            font-weight:900;
+            letter-spacing:-.04em;
+        }
+
+        .stat-note{
+            margin-top:5px;
+            color:var(--muted);
+            font-size:11px;
+        }
+
+        .filters{
+            display:grid;
+            grid-template-columns:minmax(180px,1.5fr) repeat(4,minmax(130px,1fr)) auto;
+            gap:9px;
+            margin-bottom:16px;
+        }
+
+        .field{
+            position:relative;
+        }
+
+        .field input,
+        .field select{
+            width:100%;
+            min-height:43px;
+            padding:0 12px;
+            border:1px solid var(--border);
+            border-radius:11px;
+            outline:none;
+            background:white;
+            color:var(--text);
+            font-size:12px;
+        }
+
+        .field input:focus,
+        .field select:focus{
+            border-color:var(--green);
+            box-shadow:0 0 0 3px rgba(15,61,58,.08);
+        }
+
+        .panel{
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            background:white;
+            box-shadow:var(--shadow);
+            overflow:hidden;
+        }
+
+        .panel-head{
+            min-height:62px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            padding:16px 18px;
+            border-bottom:1px solid var(--border);
+        }
+
+        .panel-title{
+            font-size:14px;
+            font-weight:900;
+        }
+
+        .panel-meta{
+            color:var(--muted);
+            font-size:11px;
+        }
+
+        .table-wrap{
+            width:100%;
+            overflow-x:auto;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            min-width:950px;
+        }
+
+        th,
+        td{
+            padding:14px 16px;
+            text-align:left;
+            border-bottom:1px solid #eee7e0;
+            vertical-align:middle;
+        }
+
+        th{
+            color:#827a73;
+            font-size:10px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            background:#fcfaf8;
+        }
+
+        td{
+            font-size:12px;
+        }
+
+        tbody tr:hover{
+            background:#fdfbf9;
+        }
+
+        tbody tr:last-child td{
+            border-bottom:0;
+        }
+
+        .scan-code{
+            font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+            color:var(--green);
+            font-weight:800;
+            word-break:break-all;
+        }
+
+        .primary-text{
+            font-weight:800;
+        }
+
+        .secondary-text{
+            margin-top:3px;
+            color:var(--muted);
+            font-size:10px;
+        }
+
+        .badge{
+            display:inline-flex;
+            align-items:center;
+            min-height:25px;
+            padding:0 9px;
+            border-radius:999px;
+            font-size:10px;
+            font-weight:900;
+            text-transform:capitalize;
+        }
+
+        .badge.valid,
+        .badge.success,
+        .badge.checked-in{
+            color:var(--success);
+            background:#e8f5ee;
+        }
+
+        .badge.invalid,
+        .badge.failed,
+        .badge.rejected{
+            color:var(--danger);
+            background:#f9e9ea;
+        }
+
+        .badge.pending{
+            color:var(--warning);
+            background:#fff4d9;
+        }
+
+        .badge.info{
+            color:var(--info);
+            background:#eaf2f8;
+        }
+
+        .row-actions{
+            display:flex;
+            gap:6px;
+        }
+
+        .small-btn{
+            min-height:31px;
+            padding:0 9px;
+            border:1px solid var(--border);
+            border-radius:8px;
+            background:white;
+            color:var(--green);
+            font-size:10px;
+            font-weight:800;
+        }
+
+        .mobile-list{
+            display:none;
+        }
+
+        .empty{
+            padding:50px 20px;
+            text-align:center;
+            color:var(--muted);
+        }
+
+        .empty-icon{
+            width:50px;
+            height:50px;
+            margin:0 auto 12px;
+            display:grid;
+            place-items:center;
+            border-radius:15px;
+            background:var(--cream);
+            color:var(--bordo);
+            font-size:20px;
+        }
+
+        .empty strong{
+            display:block;
+            color:var(--text);
+            margin-bottom:5px;
+        }
+
+        .drawer-backdrop{
+            position:fixed;
+            inset:0;
+            z-index:300;
+            display:none;
+            background:rgba(20,18,16,.42);
+            backdrop-filter:blur(4px);
+        }
+
+        .drawer{
+            position:absolute;
+            right:0;
+            top:0;
+            bottom:0;
+            width:min(520px,100%);
+            padding:25px;
+            background:white;
+            overflow-y:auto;
+            box-shadow:-20px 0 50px rgba(0,0,0,.15);
+        }
+
+        .drawer-head{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:16px;
+            padding-bottom:20px;
+            border-bottom:1px solid var(--border);
+        }
+
+        .drawer-head h3{
+            margin:0;
+            font-size:19px;
+        }
+
+        .drawer-head p{
+            margin:5px 0 0;
+            color:var(--muted);
+            font-size:11px;
+        }
+
+        .drawer-close{
+            width:36px;
+            height:36px;
+            border:1px solid var(--border);
+            border-radius:10px;
+            background:white;
+        }
+
+        .detail-grid{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:11px;
+            margin-top:20px;
+        }
+
+        .detail{
+            padding:13px;
+            border:1px solid var(--border);
+            border-radius:12px;
+            background:var(--surface-2);
+        }
+
+        .detail.full{
+            grid-column:1/-1;
+        }
+
+        .detail label{
+            display:block;
+            color:var(--muted);
+            font-size:9px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+        }
+
+        .detail div{
+            margin-top:6px;
+            font-size:12px;
+            font-weight:750;
+            word-break:break-word;
+        }
+
+        .notice{
+            margin-top:18px;
+            padding:13px;
+            border-radius:12px;
+            background:#f7f4ef;
+            color:var(--muted);
+            font-size:11px;
+            line-height:1.6;
+        }
+
+        .toast{
+            position:fixed;
+            right:20px;
+            bottom:20px;
+            z-index:500;
+            max-width:360px;
+            display:none;
+            padding:13px 15px;
+            border-radius:12px;
+            background:var(--green);
+            color:white;
+            box-shadow:var(--shadow);
+            font-size:12px;
+        }
+
+        .toast.error{
+            background:var(--danger);
+        }
+
+        .loading{
+            opacity:.55;
+            pointer-events:none;
+        }
+
+        @media(max-width:1180px){
+            .filters{
+                grid-template-columns:repeat(3,minmax(0,1fr));
+            }
+
+            .stats{
+                grid-template-columns:repeat(2,minmax(0,1fr));
+            }
+        }
+
+        @media(max-width:900px){
+            .sidebar{
+                transform:translateX(-100%);
+                transition:.25s ease;
+            }
+
+            .sidebar.open{
+                transform:translateX(0);
+            }
+
+            .main{
+                margin-left:0;
+            }
+
+            .mobile-menu{
+                display:block;
+            }
+
+            .topbar{
+                padding:12px 16px;
+            }
+
+            .content{
+                padding:20px 16px;
+            }
+
+            .toolbar{
+                align-items:flex-start;
+                flex-direction:column;
+            }
+
+            .admin-chip span{
+                display:none;
+            }
+        }
+
+        @media(max-width:700px){
+            .stats{
+                grid-template-columns:1fr 1fr;
+            }
+
+            .filters{
+                grid-template-columns:1fr 1fr;
+            }
+
+            .table-wrap{
+                display:none;
+            }
+
+            .mobile-list{
+                display:grid;
+            }
+
+            .scan-card{
+                padding:15px;
+                border-bottom:1px solid var(--border);
+            }
+
+            .scan-card:last-child{
+                border-bottom:0;
+            }
+
+            .scan-card-head{
+                display:flex;
+                align-items:flex-start;
+                justify-content:space-between;
+                gap:10px;
+            }
+
+            .scan-card-title{
+                min-width:0;
+            }
+
+            .scan-card-grid{
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:10px;
+                margin-top:13px;
+            }
+
+            .scan-mini{
+                min-width:0;
+            }
+
+            .scan-mini label{
+                display:block;
+                color:var(--muted);
+                font-size:9px;
+                font-weight:900;
+                text-transform:uppercase;
+                letter-spacing:.06em;
+            }
+
+            .scan-mini div{
+                margin-top:4px;
+                font-size:11px;
+                font-weight:700;
+                word-break:break-word;
+            }
+
+            .scan-card-actions{
+                display:flex;
+                gap:7px;
+                margin-top:13px;
+            }
+        }
+
+        @media(max-width:480px){
+            .content{
+                padding:16px 12px;
+            }
+
+            .stats{
+                gap:9px;
+            }
+
+            .stat{
+                padding:14px;
+            }
+
+            .stat-value{
+                font-size:21px;
+            }
+
+            .filters{
+                grid-template-columns:1fr;
+            }
+
+            .page-heading h1{
+                font-size:18px;
+            }
+
+            .top-actions{
+                gap:5px;
+            }
+
+            .toolbar-actions{
+                width:100%;
+            }
+
+            .toolbar-actions .btn{
+                flex:1;
+            }
+
+            .detail-grid{
+                grid-template-columns:1fr;
+            }
+
+            .detail.full{
+                grid-column:auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="security-gate" id="securityGate">
+    <div class="security-box">
+        <div class="security-logo">KT</div>
+        <h2>Securing Admin Area</h2>
+        <p id="securityMessage">
+            Verifying your K-Tickets administrator session…
+        </p>
+    </div>
+</div>
+
+<div class="app" id="app">
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-mark">KT</div>
+            <div class="brand-copy">
+                <strong>K-Tickets</strong>
+                <span>Admin CMS</span>
+            </div>
+        </div>
+
+        <div class="nav-label">Platform</div>
+
+        <nav class="nav">
+
+            <a href="./dashboard.html">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="./events.html">
+                <span class="nav-icon">◫</span>
+                <span>Events</span>
+            </a>
+
+            <a href="./merchants.html">
+                <span class="nav-icon">♟</span>
+                <span>Merchants</span>
+            </a>
+
+            <a href="./customers.html">
+                <span class="nav-icon">♙</span>
+                <span>Customers</span>
+            </a>
+
+            <a href="./orders.html">
+                <span class="nav-icon">▤</span>
+                <span>Orders</span>
+            </a>
+
+            <a href="./payments.html">
+                <span class="nav-icon">◆</span>
+                <span>Payments</span>
+            </a>
+
+            <a href="./mpesa.html">
+                <span class="nav-icon">M</span>
+                <span>M-Pesa</span>
+            </a>
+
+            <a href="./wamd.html">
+                <span class="nav-icon">↔</span>
+                <span>WAMD</span>
+            </a>
+
+            <a href="./withdrawals.html">
+                <span class="nav-icon">↓</span>
+                <span>Withdrawals</span>
+            </a>
+
+            <a href="./fees.html">
+                <span class="nav-icon">%</span>
+                <span>Fees</span>
+            </a>
+
+            <a href="./promotions.html">
+                <span class="nav-icon">★</span>
+                <span>Promotions</span>
+            </a>
+
+            <a href="./qr-scans.html" class="active">
+                <span class="nav-icon">▦</span>
+                <span>QR Scans</span>
+            </a>
+
+            <a href="./reports.html">
+                <span class="nav-icon">▥</span>
+                <span>Reports</span>
+            </a>
+
+        </nav>
+
+        <div class="nav-label">Security</div>
+
+        <nav class="nav">
+
+            <a href="./audit-logs.html">
+                <span class="nav-icon">◉</span>
+                <span>Audit Logs</span>
+            </a>
+
+            <a href="./settings.html">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <small>ADMIN ACCESS</small>
+            <strong id="sidebarAdminName">Verifying…</strong>
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+
+                <button
+                    class="mobile-menu"
+                    id="mobileMenu"
+                    aria-label="Open menu"
+                >☰</button>
+
+                <div class="page-heading">
+                    <div class="eyebrow">Gate Operations</div>
+                    <h1>QR Scans</h1>
+                </div>
+
+            </div>
+
+            <div class="top-actions">
+
+                <button
+                    class="icon-button"
+                    id="refreshButton"
+                    title="Refresh"
+                    aria-label="Refresh"
+                >
+                    ↻
+                </button>
+
+                <button
+                    class="icon-button"
+                    id="notificationButton"
+                    title="Notifications"
+                    aria-label="Notifications"
+                >
+                    ♢
+                    <span
+                        class="notification-dot"
+                        id="notificationDot"
+                        style="display:none;"
+                    ></span>
+                </button>
+
+                <div class="admin-chip">
+                    <div class="avatar" id="adminAvatar">A</div>
+                    <span id="adminName">Admin</span>
+                </div>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="toolbar">
+
+                <div class="toolbar-copy">
+                    <h2>Ticket scan activity</h2>
+                    <p>
+                        Monitor QR ticket verification and check-in activity
+                        from the platform.
+                    </p>
+                </div>
+
+                <div class="toolbar-actions">
+
+                    <button
+                        class="btn"
+                        id="exportButton"
+                    >
+                        Export CSV
+                    </button>
+
+                    <button
+                        class="btn primary"
+                        id="refreshButton2"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+            </div>
+
+            <section class="stats">
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div class="stat-label">Total Scans</div>
+                        <div class="stat-icon">▦</div>
+                    </div>
+                    <div class="stat-value" id="totalScans">0</div>
+                    <div class="stat-note">Records returned</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div class="stat-label">Successful</div>
+                        <div class="stat-icon">✓</div>
+                    </div>
+                    <div class="stat-value" id="successfulScans">0</div>
+                    <div class="stat-note">Valid / checked-in scans</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div class="stat-label">Rejected</div>
+                        <div class="stat-icon">!</div>
+                    </div>
+                    <div class="stat-value" id="rejectedScans">0</div>
+                    <div class="stat-note">Invalid or rejected scans</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div class="stat-label">Today</div>
+                        <div class="stat-icon">◷</div>
+                    </div>
+                    <div class="stat-value" id="todayScans">0</div>
+                    <div class="stat-note">Scans recorded today</div>
+                </div>
+
+            </section>
+
+            <section class="filters">
+
+                <div class="field">
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="Search ticket, event, holder, scanner…"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="field">
+                    <select id="statusFilter">
+                        <option value="">All statuses</option>
+                        <option value="success">Successful</option>
+                        <option value="checked-in">Checked in</option>
+                        <option value="valid">Valid</option>
+                        <option value="invalid">Invalid</option>
+                        <option value="failed">Failed</option>
+                        <option value="pending">Pending</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <select id="periodFilter">
+                        <option value="all">All time</option>
+                        <option value="today">Today</option>
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <select id="eventFilter">
+                        <option value="">All events</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <select id="sourceFilter">
+                        <option value="">All sources</option>
+                        <option value="gate">Gate</option>
+                        <option value="merchant">Merchant</option>
+                        <option value="admin">Admin</option>
+                        <option value="system">System</option>
+                    </select>
+                </div>
+
+                <button class="btn" id="clearFilters">
+                    Clear
+                </button>
+
+            </section>
+
+            <section class="panel">
+
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-title">Scan records</div>
+                        <div class="panel-meta" id="resultMeta">
+                            Loading…
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket</th>
+                                <th>Event</th>
+                                <th>Holder</th>
+                                <th>Status</th>
+                                <th>Scanner</th>
+                                <th>Source</th>
+                                <th>Scanned</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="mobile-list" id="mobileList"></div>
+
+                <div
+                    class="empty"
+                    id="emptyState"
+                    style="display:none;"
+                >
+                    <div class="empty-icon">▦</div>
+                    <strong>No QR scan records</strong>
+                    <span id="emptyText">
+                        No scan records match the current filters.
+                    </span>
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop">
+
+    <aside class="drawer">
+
+        <div class="drawer-head">
+
+            <div>
+                <h3>Scan details</h3>
+                <p id="drawerSubtitle">
+                    QR verification record
+                </p>
+            </div>
+
+            <button
+                class="drawer-close"
+                id="drawerClose"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="detail-grid">
+
+            <div class="detail">
+                <label>Scan ID</label>
+                <div id="dScanId">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Status</label>
+                <div id="dStatus">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Ticket Code</label>
+                <div id="dTicketCode">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Scanned At</label>
+                <div id="dScannedAt">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Event</label>
+                <div id="dEvent">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Ticket Type</label>
+                <div id="dTicketType">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Ticket Holder</label>
+                <div id="dHolder">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Scanner</label>
+                <div id="dScanner">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Scanner Role</label>
+                <div id="dScannerRole">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Source</label>
+                <div id="dSource">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Ticket Status</label>
+                <div id="dTicketStatus">—</div>
+            </div>
+
+            <div class="detail">
+                <label>Checked In At</label>
+                <div id="dCheckedInAt">—</div>
+            </div>
+
+            <div class="detail full">
+                <label>Notes / Result</label>
+                <div id="dNotes">—</div>
+            </div>
+
+        </div>
+
+        <div class="notice">
+            QR scan records are displayed for monitoring and audit purposes.
+            This page intentionally contains no client-side check-in mutation
+            controls. Ticket validation and check-in must be performed through
+            server-side authorization, RLS and a protected RPC or Edge
+            Function.
+        </div>
+
+    </aside>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/*
+|--------------------------------------------------------------------------
+| K-TICKETS ADMIN QR SCANS
+|--------------------------------------------------------------------------
+|
+| SECURITY MODEL
+|
+| 1. This page uses only the Supabase anonymous browser key.
+| 2. NEVER place a Supabase service-role key here.
+| 3. NEVER place a database password here.
+| 4. Admin authorization must be enforced by Supabase RLS.
+| 5. QR check-in mutations must be protected by RPC / Edge Function.
+| 6. The UI is NOT the security boundary.
+| 7. This page is intentionally read-only.
+|
+| IMPORTANT:
+| The exact production QR scan table has not been permanently locked.
+| The reader below attempts common schema names and normalizes records.
+| Once the final schema is confirmed, replace the tolerant reader with
+| an explicit approved-column query.
+|--------------------------------------------------------------------------
+*/
+
+const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL || "";
+
+const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
+
+let scanRows = [];
+let filteredRows = [];
+let notifications = [];
+let currentDrawerRow = null;
+
+const securityGate = document.getElementById("securityGate");
+const securityMessage = document.getElementById("securityMessage");
+const app = document.getElementById("app");
+
+const tableBody = document.getElementById("tableBody");
+const mobileList = document.getElementById("mobileList");
+const emptyState = document.getElementById("emptyState");
+const emptyText = document.getElementById("emptyText");
+
+const searchInput = document.getElementById("searchInput");
+const statusFilter = document.getElementById("statusFilter");
+const periodFilter = document.getElementById("periodFilter");
+const eventFilter = document.getElementById("eventFilter");
+const sourceFilter = document.getElementById("sourceFilter");
+
+const drawerBackdrop = document.getElementById("drawerBackdrop");
+
+function $(id){
+    return document.getElementById(id);
+}
+
+function escapeHtml(value){
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function safeValue(value, fallback = "—"){
+    if(value === null || value === undefined || value === ""){
+        return fallback;
+    }
+
+    return String(value);
+}
+
+function initials(name){
+    const value = String(name || "Admin").trim();
+
+    if(!value){
+        return "A";
+    }
+
+    const parts = value.split(/\s+/).filter(Boolean);
+
+    if(parts.length === 1){
+        return parts[0].slice(0,2).toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+}
+
+function formatDate(value){
+    if(!value){
+        return "—";
+    }
+
+    const date = new Date(value);
+
+    if(Number.isNaN(date.getTime())){
+        return String(value);
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            dateStyle:"medium",
+            timeStyle:"short"
+        }
+    ).format(date);
+}
+
+function formatShortDate(value){
+    if(!value){
+        return "—";
+    }
+
+    const date = new Date(value);
+
+    if(Number.isNaN(date.getTime())){
+        return String(value);
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            dateStyle:"medium",
+            timeStyle:"short"
+        }
+    ).format(date);
+}
+
+function normalizeStatus(value){
+    const raw = String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g,"-")
+        .replace(/_/g,"-");
+
+    if(
+        [
+            "success",
+            "successful",
+            "valid",
+            "checked-in",
+            "checkedin",
+            "accepted",
+            "approved"
+        ].includes(raw)
+    ){
+        if(raw === "checkedin"){
+            return "checked-in";
+        }
+
+        if(
+            raw === "successful" ||
+            raw === "accepted" ||
+            raw === "approved"
+        ){
+            return "success";
+        }
+
+        return raw;
+    }
+
+    if(
+        [
+            "invalid",
+            "failed",
+            "rejected",
+            "declined",
+            "denied"
+        ].includes(raw)
+    ){
+        if(
+            raw === "declined" ||
+            raw === "denied"
+        ){
+            return "rejected";
+        }
+
+        return raw;
+    }
+
+    if(
+        [
+            "pending",
+            "processing",
+            "waiting"
+        ].includes(raw)
+    ){
+        return "pending";
+    }
+
+    return raw || "unknown";
+}
+
+function statusClass(value){
+    const normalized = normalizeStatus(value);
+
+    if(
+        [
+            "success",
+            "checked-in",
+            "valid"
+        ].includes(normalized)
+    ){
+        return normalized;
+    }
+
+    if(
+        [
+            "invalid",
+            "failed",
+            "rejected"
+        ].includes(normalized)
+    ){
+        return normalized;
+    }
+
+    if(normalized === "pending"){
+        return "pending";
+    }
+
+    return "info";
+}
+
+function humanStatus(value){
+    const raw = String(value || "Unknown")
+        .replace(/[_-]+/g," ");
+
+    return raw
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function showToast(message, isError = false){
+    const toast = $("toast");
+
+    toast.textContent = message;
+    toast.classList.toggle("error", isError);
+    toast.style.display = "block";
+
+    clearTimeout(showToast.timer);
+
+    showToast.timer = setTimeout(() => {
+        toast.style.display = "none";
+    }, 4000);
+}
+
+function redirectLogin(){
+    window.location.replace(
+        "../auth/login.html?error=admin_session_required"
+    );
+}
+
+async function safeSignOut(){
+    try{
+        if(supabaseClient){
+            await supabaseClient.auth.signOut();
+        }
+    }catch(error){
+        console.warn("Sign out failed:", error);
+    }
+}
+
+function setSecurityMessage(message){
+    securityMessage.textContent = message;
+}
+
+function openApp(){
+    securityGate.style.display = "none";
+    app.style.display = "block";
+}
+
+function normalizeScan(row){
+    const raw = row || {};
+
+    const ticket =
+        raw.tickets ||
+        raw.ticket ||
+        {};
+
+    const event =
+        raw.events ||
+        raw.event ||
+        ticket.events ||
+        ticket.event ||
+        {};
+
+    const ticketType =
+        raw.ticket_types ||
+        raw.ticket_type ||
+        ticket.ticket_types ||
+        ticket.ticket_type ||
+        {};
+
+    const scanner =
+        raw.scanner ||
+        raw.scanner_profile ||
+        raw.profiles ||
+        raw.profile ||
+        {};
+
+    const scannedAt =
+        raw.scanned_at ||
+        raw.scan_time ||
+        raw.scan_at ||
+        raw.created_at ||
+        raw.timestamp ||
+        raw.occurred_at;
+
+    const status =
+        raw.status ||
+        raw.result ||
+        raw.scan_status ||
+        raw.verification_status ||
+        "unknown";
+
+    return {
+        raw,
+
+        id:
+            raw.id ||
+            raw.scan_id ||
+            raw.log_id ||
+            "",
+
+        ticketId:
+            raw.ticket_id ||
+            ticket.id ||
+            "",
+
+        ticketCode:
+            raw.ticket_code ||
+            raw.code ||
+            ticket.ticket_code ||
+            "",
+
+        eventId:
+            raw.event_id ||
+            event.id ||
+            ticket.event_id ||
+            "",
+
+        eventTitle:
+            raw.event_title ||
+            raw.event_name ||
+            event.title ||
+            "",
+
+        venue:
+            raw.venue ||
+            event.venue ||
+            "",
+
+        ticketType:
+            raw.ticket_type_name ||
+            raw.ticket_type ||
+            ticketType.name ||
+            "",
+
+        holderName:
+            raw.holder_name ||
+            raw.ticket_holder_name ||
+            raw.customer_name ||
+            raw.user_name ||
+            "",
+
+        holderId:
+            raw.user_id ||
+            raw.customer_id ||
+            ticket.user_id ||
+            "",
+
+        scannerId:
+            raw.scanned_by ||
+            raw.scanner_id ||
+            raw.actor_id ||
+            raw.user_id ||
+            "",
+
+        scannerName:
+            raw.scanner_name ||
+            raw.scanned_by_name ||
+            raw.actor_name ||
+            scanner.full_name ||
+            "",
+
+        scannerRole:
+            raw.scanner_role ||
+            raw.actor_role ||
+            scanner.role ||
+            "",
+
+        source:
+            raw.source ||
+            raw.origin ||
+            raw.channel ||
+            raw.scan_source ||
+            "",
+
+        status:
+            normalizeStatus(status),
+
+        ticketStatus:
+            raw.ticket_status ||
+            ticket.status ||
+            "",
+
+        scannedAt,
+
+        checkedInAt:
+            raw.checked_in_at ||
+            ticket.checked_in_at ||
+            "",
+
+        notes:
+            raw.notes ||
+            raw.message ||
+            raw.description ||
+            raw.reason ||
+            raw.result_message ||
+            "",
+
+        ipAddress:
+            raw.ip_address ||
+            raw.client_ip ||
+            raw.remote_ip ||
+            ""
+    };
+}
+
+async function loadAdmin(){
+    if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
+        setSecurityMessage(
+            "Supabase configuration is missing."
+        );
+
+        throw new Error(
+            "Missing KTICKETS_SUPABASE_URL or KTICKETS_SUPABASE_ANON_KEY."
+        );
+    }
+
+    supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
+        }
+    );
+
+    setSecurityMessage(
+        "Checking authenticated administrator…"
+    );
+
+    const {
+        data,
+        error
+    } = await supabaseClient.auth.getSession();
+
+    if(error){
+        throw error;
+    }
+
+    if(!data?.session?.user){
+        redirectLogin();
+        return false;
+    }
+
+    currentUser = data.session.user;
+
+    setSecurityMessage(
+        "Verifying administrator permissions…"
+    );
+
+    const {
+        data:profile,
+        error:profileError
+    } = await supabaseClient
+        .from("profiles")
+        .select(`
+            id,
+            full_name,
+            phone,
+            role
+        `)
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+    if(profileError){
+        throw profileError;
+    }
+
+    if(
+        !profile ||
+        String(profile.role || "").toLowerCase() !== "admin"
+    ){
+        await safeSignOut();
+
+        window.location.replace(
+            "../auth/login.html?error=unauthorized"
+        );
+
+        return false;
+    }
+
+    currentProfile = profile;
+
+    updateAdminIdentity();
+
+    supabaseClient.auth.onAuthStateChange(
+        async (event, session) => {
+
+            if(
+                event === "SIGNED_OUT" ||
+                !session?.user
+            ){
+                window.location.replace(
+                    "../auth/login.html?error=session_expired"
+                );
+            }
+        }
+    );
+
+    return true;
+}
+
+function updateAdminIdentity(){
+    const name =
+        currentProfile?.full_name ||
+        currentUser?.user_metadata?.full_name ||
+        currentUser?.email ||
+        "Administrator";
+
+    $("adminName").textContent = name;
+    $("sidebarAdminName").textContent = name;
+    $("adminAvatar").textContent = initials(name);
+}
+
+async function loadNotifications(){
+    try{
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("notifications")
+            .select("*")
+            .eq("user_id", currentUser.id)
+            .order("created_at",{
+                ascending:false
+            })
+            .limit(20);
+
+        if(error){
+            return;
+        }
+
+        notifications = data || [];
+
+        const unread = notifications.some(
+            item =>
+                !item.read &&
+                !item.is_read
+        );
+
+        $("notificationDot").style.display =
+            unread ? "block" : "none";
+
+    }catch(error){
+        console.warn(
+            "Notifications unavailable:",
+            error
+        );
+    }
+}
+
+async function loadScans(){
+    setLoading(true);
+
+    try{
+
+        /*
+         * The final production table should preferably be named
+         * `qr_scans` with explicit columns.
+         *
+         * This tolerant query keeps the frontend from crashing while
+         * the schema is being finalized.
+         */
+
+        let result =
+            await supabaseClient
+                .from("qr_scans")
+                .select("*")
+                .order("created_at",{
+                    ascending:false
+                })
+                .limit(5000);
+
+        if(
+            result.error &&
+            (
+                result.error.code === "42P01" ||
+                /does not exist/i.test(
+                    result.error.message || ""
+                )
+            )
+        ){
+            result =
+                await supabaseClient
+                    .from("qr_scan_logs")
+                    .select("*")
+                    .order("created_at",{
+                        ascending:false
+                    })
+                    .limit(5000);
+        }
+
+        if(result.error){
+            throw result.error;
+        }
+
+        scanRows =
+            (result.data || [])
+                .map(normalizeScan)
+                .filter(Boolean);
+
+        await enrichScanRows();
+
+        populateEventFilter();
+        applyFilters();
+
+    }catch(error){
+
+        console.error(
+            "QR scans load failed:",
+            error
+        );
+
+        scanRows = [];
+        filteredRows = [];
+
+        renderRows();
+
+        $("resultMeta").textContent =
+            "QR scan table unavailable or blocked by RLS.";
+
+        showToast(
+            "QR scan data could not be loaded. Check the final table name and RLS policy.",
+            true
+        );
+
+    }finally{
+        setLoading(false);
+    }
+}
+
+async function enrichScanRows(){
+
+    /*
+     * Enrichment is deliberately best-effort.
+     * Missing optional relationships never create fake values.
+     */
+
+    const eventIds = [
+        ...new Set(
+            scanRows
+                .map(row => row.eventId)
+                .filter(Boolean)
+        )
+    ];
+
+    const ticketIds = [
+        ...new Set(
+            scanRows
+                .map(row => row.ticketId)
+                .filter(Boolean)
+        )
+    ];
+
+    if(eventIds.length){
+
+        try{
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("events")
+                .select(`
+                    id,
+                    title,
+                    venue,
+                    city
+                `)
+                .in("id",eventIds);
+
+            if(!error && data){
+
+                const map =
+                    new Map(
+                        data.map(event => [
+                            event.id,
+                            event
+                        ])
+                    );
+
+                scanRows.forEach(row => {
+
+                    const event =
+                        map.get(row.eventId);
+
+                    if(!event){
+                        return;
+                    }
+
+                    if(!row.eventTitle){
+                        row.eventTitle =
+                            event.title || "";
+                    }
+
+                    if(!row.venue){
+                        row.venue =
+                            event.venue || "";
+                    }
+                });
+            }
+
+        }catch(error){
+            console.warn(
+                "Event enrichment unavailable:",
+                error
+            );
+        }
+    }
+
+    if(ticketIds.length){
+
+        try{
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("tickets")
+                .select(`
+                    id,
+                    ticket_code,
+                    user_id,
+                    event_id,
+                    ticket_type_id,
+                    status,
+                    checked_in_at
+                `)
+                .in("id",ticketIds);
+
+            if(!error && data){
+
+                const map =
+                    new Map(
+                        data.map(ticket => [
+                            ticket.id,
+                            ticket
+                        ])
+                    );
+
+                scanRows.forEach(row => {
+
+                    const ticket =
+                        map.get(row.ticketId);
+
+                    if(!ticket){
+                        return;
+                    }
+
+                    if(!row.ticketCode){
+                        row.ticketCode =
+                            ticket.ticket_code || "";
+                    }
+
+                    if(!row.holderId){
+                        row.holderId =
+                            ticket.user_id || "";
+                    }
+
+                    if(!row.eventId){
+                        row.eventId =
+                            ticket.event_id || "";
+                    }
+
+                    if(!row.ticketStatus){
+                        row.ticketStatus =
+                            ticket.status || "";
+                    }
+
+                    if(!row.checkedInAt){
+                        row.checkedInAt =
+                            ticket.checked_in_at || "";
+                    }
+                });
+            }
+
+        }catch(error){
+            console.warn(
+                "Ticket enrichment unavailable:",
+                error
+            );
+        }
+    }
+
+    const holderIds = [
+        ...new Set(
+            scanRows
+                .map(row => row.holderId)
+                .filter(Boolean)
+        )
+    ];
+
+    if(holderIds.length){
+
+        try{
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("profiles")
+                .select(`
+                    id,
+                    full_name,
+                    role
+                `)
+                .in("id",holderIds);
+
+            if(!error && data){
+
+                const map =
+                    new Map(
+                        data.map(profile => [
+                            profile.id,
+                            profile
+                        ])
+                    );
+
+                scanRows.forEach(row => {
+
+                    const profile =
+                        map.get(row.holderId);
+
+                    if(
+                        profile &&
+                        !row.holderName
+                    ){
+                        row.holderName =
+                            profile.full_name || "";
+                    }
+                });
+            }
+
+        }catch(error){
+            console.warn(
+                "Holder enrichment unavailable:",
+                error
+            );
+        }
+    }
+
+    const scannerIds = [
+        ...new Set(
+            scanRows
+                .map(row => row.scannerId)
+                .filter(Boolean)
+        )
+    ];
+
+    if(scannerIds.length){
+
+        try{
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("profiles")
+                .select(`
+                    id,
+                    full_name,
+                    role
+                `)
+                .in("id",scannerIds);
+
+            if(!error && data){
+
+                const map =
+                    new Map(
+                        data.map(profile => [
+                            profile.id,
+                            profile
+                        ])
+                    );
+
+                scanRows.forEach(row => {
+
+                    const profile =
+                        map.get(row.scannerId);
+
+                    if(
+                        profile &&
+                        !row.scannerName
+                    ){
+                        row.scannerName =
+                            profile.full_name || "";
+                    }
+
+                    if(
+                        profile &&
+                        !row.scannerRole
+                    ){
+                        row.scannerRole =
+                            profile.role || "";
+                    }
+                });
+            }
+
+        }catch(error){
+            console.warn(
+                "Scanner enrichment unavailable:",
+                error
+            );
+        }
+    }
+}
+
+function populateEventFilter(){
+
+    const current =
+        eventFilter.value;
+
+    const events =
+        [...new Map(
+            scanRows
+                .filter(row => row.eventId || row.eventTitle)
+                .map(row => [
+                    row.eventId || row.eventTitle,
+                    {
+                        id:row.eventId || row.eventTitle,
+                        title:
+                            row.eventTitle ||
+                            row.eventId
+                    }
+                ])
+        ).values()]
+        .sort((a,b) =>
+            String(a.title)
+                .localeCompare(
+                    String(b.title)
+                )
+        );
+
+    eventFilter.innerHTML =
+        `<option value="">All events</option>` +
+        events.map(event => `
+            <option value="${escapeHtml(event.id)}">
+                ${escapeHtml(event.title)}
+            </option>
+        `).join("");
+
+    if(
+        events.some(
+            event => String(event.id) === String(current)
+        )
+    ){
+        eventFilter.value = current;
+    }
+}
+
+function applyFilters(){
+
+    const search =
+        searchInput.value
+            .trim()
+            .toLowerCase();
+
+    const status =
+        statusFilter.value;
+
+    const period =
+        periodFilter.value;
+
+    const eventId =
+        eventFilter.value;
+
+    const source =
+        sourceFilter.value;
+
+    const now = Date.now();
+
+    filteredRows =
+        scanRows.filter(row => {
+
+            if(status){
+
+                const normalized =
+                    normalizeStatus(row.status);
+
+                if(normalized !== status){
+                    return false;
+                }
+            }
+
+            if(eventId){
+
+                if(
+                    String(row.eventId) !==
+                    String(eventId)
+                ){
+                    return false;
+                }
+            }
+
+            if(source){
+
+                const rowSource =
+                    String(row.source || "")
+                        .toLowerCase();
+
+                if(
+                    rowSource !==
+                    source.toLowerCase()
+                ){
+                    return false;
+                }
+            }
+
+            if(period !== "all"){
+
+                const date =
+                    row.scannedAt
+                        ? new Date(row.scannedAt)
+                        : null;
+
+                if(
+                    !date ||
+                    Number.isNaN(date.getTime())
+                ){
+                    return false;
+                }
+
+                const start =
+                    new Date();
+
+                if(period === "today"){
+                    start.setHours(0,0,0,0);
+                }else{
+                    start.setDate(
+                        start.getDate() -
+                        Number(period)
+                    );
+                }
+
+                if(
+                    date.getTime() <
+                    start.getTime()
+                ){
+                    return false;
+                }
+            }
+
+            if(search){
+
+                const haystack = [
+                    row.id,
+                    row.ticketId,
+                    row.ticketCode,
+                    row.eventId,
+                    row.eventTitle,
+                    row.venue,
+                    row.ticketType,
+                    row.holderName,
+                    row.holderId,
+                    row.scannerId,
+                    row.scannerName,
+                    row.scannerRole,
+                    row.source,
+                    row.status,
+                    row.ticketStatus,
+                    row.notes
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase();
+
+                if(!haystack.includes(search)){
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+    renderRows();
+    updateStats();
+}
+
+function renderRows(){
+
+    tableBody.innerHTML = "";
+    mobileList.innerHTML = "";
+
+    if(!filteredRows.length){
+
+        emptyState.style.display = "block";
+
+        emptyText.textContent =
+            scanRows.length
+                ? "No scan records match the current filters."
+                : "No QR scan records are available from the configured source.";
+
+        $("resultMeta").textContent =
+            "0 records";
+
+        return;
+    }
+
+    emptyState.style.display = "none";
+
+    $("resultMeta").textContent =
+        `${filteredRows.length.toLocaleString()} of ${scanRows.length.toLocaleString()} records`;
+
+    filteredRows.forEach((row,index) => {
+
+        const tr =
+            document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>
+                <div class="scan-code">
+                    ${escapeHtml(
+                        safeValue(
+                            row.ticketCode,
+                            row.ticketId || "—"
+                        )
+                    )}
+                </div>
+                <div class="secondary-text">
+                    ${escapeHtml(
+                        row.id || ""
+                    )}
+                </div>
+            </td>
+
+            <td>
+                <div class="primary-text">
+                    ${escapeHtml(
+                        safeValue(
+                            row.eventTitle
+                        )
+                    )}
+                </div>
+                <div class="secondary-text">
+                    ${escapeHtml(
+                        row.venue || ""
+                    )}
+                </div>
+            </td>
+
+            <td>
+                <div class="primary-text">
+                    ${escapeHtml(
+                        safeValue(
+                            row.holderName
+                        )
+                    )}
+                </div>
+                <div class="secondary-text">
+                    ${escapeHtml(
+                        row.holderId || ""
+                    )}
+                </div>
+            </td>
+
+            <td>
+                <span class="badge ${statusClass(row.status)}">
+                    ${escapeHtml(
+                        humanStatus(row.status)
+                    )}
+                </span>
+            </td>
+
+            <td>
+                <div class="primary-text">
+                    ${escapeHtml(
+                        safeValue(
+                            row.scannerName,
+                            row.scannerId || "—"
+                        )
+                    )}
+                </div>
+                <div class="secondary-text">
+                    ${escapeHtml(
+                        row.scannerRole || ""
+                    )}
+                </div>
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    humanStatus(
+                        row.source || "—"
+                    )
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    formatShortDate(
+                        row.scannedAt
+                    )
+                )}
+            </td>
+
+            <td>
+                <div class="row-actions">
+                    <button
+                        class="small-btn"
+                        data-index="${index}"
+                        data-action="view"
+                    >
+                        View
+                    </button>
+                </div>
+            </td>
+        `;
+
+        tableBody.appendChild(tr);
+
+        const card =
+            document.createElement("article");
+
+        card.className = "scan-card";
+
+        card.innerHTML = `
+            <div class="scan-card-head">
+
+                <div class="scan-card-title">
+                    <div class="scan-code">
+                        ${escapeHtml(
+                            safeValue(
+                                row.ticketCode,
+                                row.ticketId || "—"
+                            )
+                        )}
+                    </div>
+
+                    <div class="secondary-text">
+                        ${escapeHtml(
+                            safeValue(
+                                row.eventTitle
+                            )
+                        )}
+                    </div>
+                </div>
+
+                <span class="badge ${statusClass(row.status)}">
+                    ${escapeHtml(
+                        humanStatus(row.status)
+                    )}
+                </span>
+
+            </div>
+
+            <div class="scan-card-grid">
+
+                <div class="scan-mini">
+                    <label>Holder</label>
+                    <div>
+                        ${escapeHtml(
+                            safeValue(row.holderName)
+                        )}
+                    </div>
+                </div>
+
+                <div class="scan-mini">
+                    <label>Scanner</label>
+                    <div>
+                        ${escapeHtml(
+                            safeValue(
+                                row.scannerName,
+                                row.scannerId || "—"
+                            )
+                        )}
+                    </div>
+                </div>
+
+                <div class="scan-mini">
+                    <label>Source</label>
+                    <div>
+                        ${escapeHtml(
+                            humanStatus(
+                                row.source || "—"
+                            )
+                        )}
+                    </div>
+                </div>
+
+                <div class="scan-mini">
+                    <label>Scanned</label>
+                    <div>
+                        ${escapeHtml(
+                            formatShortDate(
+                                row.scannedAt
+                            )
+                        )}
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="scan-card-actions">
+
+                <button
+                    class="small-btn"
+                    data-index="${index}"
+                    data-action="view"
+                >
+                    View details
+                </button>
+
+            </div>
+        `;
+
+        mobileList.appendChild(card);
+    });
+}
+
+function updateStats(){
+
+    const total =
+        scanRows.length;
+
+    const successful =
+        scanRows.filter(row =>
+            [
+                "success",
+                "valid",
+                "checked-in"
+            ].includes(
+                normalizeStatus(row.status)
+            )
+        ).length;
+
+    const rejected =
+        scanRows.filter(row =>
+            [
+                "invalid",
+                "failed",
+                "rejected"
+            ].includes(
+                normalizeStatus(row.status)
+            )
+        ).length;
+
+    const today =
+        scanRows.filter(row => {
+
+            if(!row.scannedAt){
+                return false;
+            }
+
+            const date =
+                new Date(row.scannedAt);
+
+            if(Number.isNaN(date.getTime())){
+                return false;
+            }
+
+            const now =
+                new Date();
+
+            return (
+                date.getFullYear() ===
+                    now.getFullYear() &&
+                date.getMonth() ===
+                    now.getMonth() &&
+                date.getDate() ===
+                    now.getDate()
+            );
+        }).length;
+
+    $("totalScans").textContent =
+        total.toLocaleString();
+
+    $("successfulScans").textContent =
+        successful.toLocaleString();
+
+    $("rejectedScans").textContent =
+        rejected.toLocaleString();
+
+    $("todayScans").textContent =
+        today.toLocaleString();
+}
+
+function openDrawer(row){
+
+    currentDrawerRow = row;
+
+    $("dScanId").textContent =
+        safeValue(row.id);
+
+    $("dStatus").innerHTML = `
+        <span class="badge ${statusClass(row.status)}">
+            ${escapeHtml(
+                humanStatus(row.status)
+            )}
+        </span>
+    `;
+
+    $("dTicketCode").textContent =
+        safeValue(
+            row.ticketCode,
+            row.ticketId || "—"
+        );
+
+    $("dScannedAt").textContent =
+        formatDate(row.scannedAt);
+
+    $("dEvent").textContent =
+        safeValue(
+            row.eventTitle,
+            row.eventId || "—"
+        );
+
+    $("dTicketType").textContent =
+        safeValue(row.ticketType);
+
+    $("dHolder").textContent =
+        safeValue(
+            row.holderName,
+            row.holderId || "—"
+        );
+
+    $("dScanner").textContent =
+        safeValue(
+            row.scannerName,
+            row.scannerId || "—"
+        );
+
+    $("dScannerRole").textContent =
+        safeValue(row.scannerRole);
+
+    $("dSource").textContent =
+        humanStatus(
+            row.source || "—"
+        );
+
+    $("dTicketStatus").textContent =
+        humanStatus(
+            row.ticketStatus || "—"
+        );
+
+    $("dCheckedInAt").textContent =
+        formatDate(row.checkedInAt);
+
+    $("dNotes").textContent =
+        safeValue(row.notes);
+
+    $("drawerSubtitle").textContent =
+        row.ticketCode
+            ? `Ticket ${row.ticketCode}`
+            : "QR verification record";
+
+    drawerBackdrop.style.display = "block";
+}
+
+function closeDrawer(){
+    drawerBackdrop.style.display = "none";
+    currentDrawerRow = null;
+}
+
+function exportCsv(){
+
+    if(!filteredRows.length){
+
+        showToast(
+            "There are no scan records to export.",
+            true
+        );
+
+        return;
+    }
+
+    const headers = [
+        "Scan ID",
+        "Ticket ID",
+        "Ticket Code",
+        "Event ID",
+        "Event",
+        "Venue",
+        "Ticket Type",
+        "Holder",
+        "Holder ID",
+        "Scanner",
+        "Scanner ID",
+        "Scanner Role",
+        "Source",
+        "Status",
+        "Ticket Status",
+        "Scanned At",
+        "Checked In At",
+        "Notes"
+    ];
+
+    const rows =
+        filteredRows.map(row => [
+            row.id,
+            row.ticketId,
+            row.ticketCode,
+            row.eventId,
+            row.eventTitle,
+            row.venue,
+            row.ticketType,
+            row.holderName,
+            row.holderId,
+            row.scannerName,
+            row.scannerId,
+            row.scannerRole,
+            row.source,
+            row.status,
+            row.ticketStatus,
+            row.scannedAt,
+            row.checkedInAt,
+            row.notes
+        ]);
+
+    const csv = [
+        headers,
+        ...rows
+    ]
+        .map(row =>
+            row.map(value =>
+                `"${String(value ?? "")
+                    .replace(/"/g,'""')}"`
+            ).join(",")
+        )
+        .join("\n");
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type:"text/csv;charset=utf-8;"
+            }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        `k-tickets-qr-scans-${new Date()
+            .toISOString()
+            .slice(0,10)}.csv`;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+}
+
+function setLoading(isLoading){
+
+    document.body.classList.toggle(
+        "loading",
+        isLoading
+    );
+}
+
+function clearFilters(){
+
+    searchInput.value = "";
+    statusFilter.value = "";
+    periodFilter.value = "all";
+    eventFilter.value = "";
+    sourceFilter.value = "";
+
+    applyFilters();
+}
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const target =
+            event.target.closest(
+                "[data-action]"
+            );
+
+        if(!target){
+            return;
+        }
+
+        if(
+            target.dataset.action === "view"
+        ){
+
+            const index =
+                Number(target.dataset.index);
+
+            const row =
+                filteredRows[index];
+
+            if(row){
+                openDrawer(row);
+            }
+        }
+    }
+);
+
+searchInput.addEventListener(
+    "input",
+    applyFilters
+);
+
+statusFilter.addEventListener(
+    "change",
+    applyFilters
+);
+
+periodFilter.addEventListener(
+    "change",
+    applyFilters
+);
+
+eventFilter.addEventListener(
+    "change",
+    applyFilters
+);
+
+sourceFilter.addEventListener(
+    "change",
+    applyFilters
+);
+
+$("clearFilters").addEventListener(
+    "click",
+    clearFilters
+);
+
+$("exportButton").addEventListener(
+    "click",
+    exportCsv
+);
+
+$("refreshButton").addEventListener(
+    "click",
+    async () => {
+        await loadScans();
+        await loadNotifications();
+    }
+);
+
+$("refreshButton2").addEventListener(
+    "click",
+    async () => {
+        await loadScans();
+        await loadNotifications();
+    }
+);
+
+$("drawerClose").addEventListener(
+    "click",
+    closeDrawer
+);
+
+drawerBackdrop.addEventListener(
+    "click",
+    event => {
+        if(event.target === drawerBackdrop){
+            closeDrawer();
+        }
+    }
+);
+
+$("mobileMenu").addEventListener(
+    "click",
+    () => {
+        $("sidebar").classList.toggle("open");
+    }
+);
+
+$("notificationButton").addEventListener(
+    "click",
+    () => {
+
+        if(notifications.length){
+            showToast(
+                `${notifications.length} notification record(s) available.`
+            );
+        }else{
+            showToast(
+                "No notification records available."
+            );
+        }
+    }
+);
+
+async function boot(){
+
+    try{
+
+        const authenticated =
+            await loadAdmin();
+
+        if(!authenticated){
+            return;
+        }
+
+        await Promise.all([
+            loadScans(),
+            loadNotifications()
+        ]);
+
+        openApp();
+
+    }catch(error){
+
+        console.error(
+            "K-Tickets admin QR scans boot error:",
+            error
+        );
+
+        setSecurityMessage(
+            "Unable to verify this administrator session."
+        );
+
+        setTimeout(() => {
+            redirectLogin();
+        },1500);
+    }
+}
+
+boot();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Admin CMS security / indexing metadata -->
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+    <meta name="referrer" content="same-origin">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F3D3A">
+
+    <title>Audit Logs | K-Tickets Admin</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --green: #0F3D3A;
+            --cream: #F5DABF;
+            --white: #ffffff;
+            --ink: #17201f;
+            --muted: #697371;
+            --line: #e7ded5;
+            --soft: #faf7f3;
+            --success: #176b4d;
+            --warning: #9a6800;
+            --danger: #a42632;
+            --info: #315d78;
+            --shadow: 0 18px 45px rgba(15, 61, 58, .08);
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            color: var(--ink);
+            background: #f7f3ef;
+            overflow-x: hidden;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .security-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(circle at top, rgba(245,218,191,.22), transparent 38%),
+                var(--green);
+            color: var(--cream);
+        }
+
+        .security-gate.hidden {
+            display: none;
+        }
+
+        .security-box {
+            width: min(420px, calc(100% - 32px));
+            padding: 34px;
+            border: 1px solid rgba(245,218,191,.18);
+            border-radius: 24px;
+            background: rgba(255,255,255,.06);
+            box-shadow: 0 25px 80px rgba(0,0,0,.25);
+            text-align: center;
+        }
+
+        .security-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            border-radius: 18px;
+            background: var(--cream);
+            color: var(--green);
+            font-size: 24px;
+        }
+
+        .security-box h2 {
+            margin-bottom: 8px;
+            font-size: 21px;
+        }
+
+        .security-box p {
+            color: rgba(245,218,191,.72);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .app {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 1000;
+            width: 260px;
+            padding: 22px 15px;
+            background: var(--green);
+            color: var(--cream);
+            overflow-y: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 7px 10px 24px;
+            border-bottom: 1px solid rgba(245,218,191,.13);
+            margin-bottom: 18px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 42px;
+            border-radius: 13px;
+            background: var(--cream);
+            color: var(--green);
+            font-weight: 900;
+            font-size: 16px;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 14px;
+            letter-spacing: .08em;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 3px;
+            color: rgba(245,218,191,.58);
+            font-size: 10px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .nav-section {
+            margin: 19px 10px 8px;
+            color: rgba(245,218,191,.42);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-height: 43px;
+            margin: 3px 0;
+            padding: 0 12px;
+            border-radius: 12px;
+            color: rgba(245,218,191,.74);
+            font-size: 13px;
+            transition: .18s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(245,218,191,.08);
+            color: var(--cream);
+        }
+
+        .nav-link.active {
+            background: var(--cream);
+            color: var(--green);
+            font-weight: 800;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .sidebar-bottom {
+            margin-top: 22px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(245,218,191,.13);
+        }
+
+        .signout {
+            width: 100%;
+            border: 1px solid rgba(245,218,191,.16);
+            background: transparent;
+            color: rgba(245,218,191,.78);
+            border-radius: 12px;
+            padding: 11px 12px;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .signout:hover {
+            background: rgba(245,218,191,.08);
+            color: var(--cream);
+        }
+
+        .main {
+            min-width: 0;
+            margin-left: 260px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            min-height: 76px;
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            background: rgba(247,243,239,.94);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(16px);
+        }
+
+        .page-heading h1 {
+            font-size: clamp(20px, 2vw, 27px);
+            letter-spacing: -.03em;
+        }
+
+        .page-heading p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--bordo);
+            color: var(--cream);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .admin-user-text strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .admin-user-text span {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        .security-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 22px;
+            padding: 15px 17px;
+            border: 1px solid rgba(15,61,58,.12);
+            border-radius: 15px;
+            background: rgba(15,61,58,.045);
+        }
+
+        .security-note-icon {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            background: var(--green);
+            color: var(--cream);
+            font-size: 12px;
+        }
+
+        .security-note strong {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+
+        .security-note p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.55;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            min-width: 0;
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            margin-top: 10px;
+            color: var(--green);
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: -.04em;
+        }
+
+        .stat-value.danger {
+            color: var(--danger);
+        }
+
+        .stat-value.warning {
+            color: var(--warning);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: minmax(200px, 1.6fr) repeat(4, minmax(130px, 1fr)) auto;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding: 15px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            height: 42px;
+            padding: 0 12px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            outline: none;
+            background: #fffdfa;
+            color: var(--ink);
+            font-size: 12px;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15,61,58,.08);
+        }
+
+        .btn {
+            height: 42px;
+            border: 0;
+            border-radius: 11px;
+            padding: 0 14px;
+            font-size: 11px;
+            font-weight: 800;
+            transition: .18s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: var(--cream);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            filter: brightness(.94);
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--line);
+            background: var(--white);
+            color: var(--green);
+        }
+
+        .btn-secondary:hover {
+            background: var(--soft);
+        }
+
+        .table-card {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .table-header {
+            min-height: 62px;
+            padding: 15px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .table-header h2 {
+            font-size: 14px;
+        }
+
+        .table-header p {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .table-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 980px;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 12px 15px;
+            background: #fcfaf7;
+            color: var(--muted);
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #eee7e0;
+            vertical-align: middle;
+            font-size: 11px;
+        }
+
+        tbody tr {
+            transition: .15s ease;
+        }
+
+        tbody tr:hover {
+            background: #fffcf9;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .event-action {
+            border: 0;
+            background: transparent;
+            color: var(--green);
+            font-weight: 800;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .event-action:hover {
+            text-decoration: underline;
+        }
+
+        .id-text {
+            display: block;
+            max-width: 190px;
+            overflow: hidden;
+            color: var(--ink);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .actor {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 150px;
+        }
+
+        .actor-avatar {
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 28px;
+            border-radius: 9px;
+            background: var(--cream);
+            color: var(--green);
+            font-size: 9px;
+            font-weight: 900;
+        }
+
+        .actor-name {
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .actor-role {
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 23px;
+            padding: 0 8px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .badge-success {
+            background: #e5f4ed;
+            color: var(--success);
+        }
+
+        .badge-danger {
+            background: #f9e7e9;
+            color: var(--danger);
+        }
+
+        .badge-warning {
+            background: #fff2d5;
+            color: var(--warning);
+        }
+
+        .badge-info {
+            background: #e8f0f5;
+            color: var(--info);
+        }
+
+        .badge-neutral {
+            background: #efeeeb;
+            color: #66635e;
+        }
+
+        .empty {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 13px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: var(--soft);
+            color: var(--green);
+            font-weight: 900;
+        }
+
+        .empty h3 {
+            font-size: 14px;
+        }
+
+        .empty p {
+            max-width: 440px;
+            margin: 7px auto 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .mobile-list {
+            display: none;
+            padding: 12px;
+        }
+
+        .mobile-log {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: #fffdfa;
+        }
+
+        .mobile-log:last-child {
+            margin-bottom: 0;
+        }
+
+        .mobile-log-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .mobile-action {
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .mobile-log-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .meta-item span {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+        }
+
+        .meta-item strong {
+            display: block;
+            overflow: hidden;
+            font-size: 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 1500;
+            display: none;
+            background: rgba(13, 24, 23, .48);
+            backdrop-filter: blur(3px);
+        }
+
+        .drawer-backdrop.open {
+            display: block;
+        }
+
+        .drawer {
+            position: fixed;
+            inset: 0 0 0 auto;
+            z-index: 1600;
+            width: min(560px, 100%);
+            padding: 24px;
+            background: #fffdfa;
+            box-shadow: -20px 0 70px rgba(0,0,0,.18);
+            transform: translateX(100%);
+            transition: transform .24s ease;
+            overflow-y: auto;
+        }
+
+        .drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .drawer-header h2 {
+            font-size: 19px;
+        }
+
+        .drawer-header p {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--white);
+            color: var(--green);
+            font-weight: 900;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .detail {
+            min-width: 0;
+            padding: 13px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: var(--white);
+        }
+
+        .detail.full {
+            grid-column: 1 / -1;
+        }
+
+        .detail label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+        }
+
+        .detail strong,
+        .detail pre {
+            display: block;
+            max-width: 100%;
+            color: var(--ink);
+            font-size: 11px;
+            line-height: 1.55;
+            overflow-wrap: anywhere;
+        }
+
+        .detail pre {
+            max-height: 280px;
+            margin: 0;
+            padding: 11px;
+            overflow: auto;
+            border-radius: 10px;
+            background: #f5f1ec;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 10px;
+        }
+
+        .drawer-warning {
+            margin-top: 16px;
+            padding: 13px;
+            border: 1px solid #ead8b1;
+            border-radius: 12px;
+            background: #fff8e8;
+            color: #75550c;
+            font-size: 10px;
+            line-height: 1.55;
+        }
+
+        .toast {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 5000;
+            max-width: min(380px, calc(100vw - 44px));
+            padding: 13px 15px;
+            border-radius: 13px;
+            background: var(--green);
+            color: var(--cream);
+            box-shadow: 0 16px 40px rgba(0,0,0,.2);
+            font-size: 11px;
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .2s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 1180px) {
+            .filters {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .filters .search-field {
+                grid-column: 1 / -1;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .22s ease;
+                box-shadow: 20px 0 50px rgba(0,0,0,.18);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: grid;
+                width: 39px;
+                height: 39px;
+                place-items: center;
+                border: 1px solid var(--line);
+                border-radius: 11px;
+                background: var(--white);
+                color: var(--green);
+                font-weight: 900;
+            }
+
+            .topbar {
+                padding: 12px 17px;
+            }
+
+            .content {
+                padding: 19px;
+            }
+
+            .table-wrap {
+                display: none;
+            }
+
+            .mobile-list {
+                display: block;
+            }
+
+            .table-card {
+                overflow: visible;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .admin-user-text {
+                display: none;
+            }
+
+            .page-heading p {
+                display: none;
+            }
+
+            .content {
+                padding: 14px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 9px;
+            }
+
+            .stat {
+                padding: 14px;
+                border-radius: 15px;
+            }
+
+            .stat-value {
+                font-size: 21px;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+                padding: 12px;
+            }
+
+            .filters .search-field {
+                grid-column: auto;
+            }
+
+            .table-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .table-actions {
+                width: 100%;
+            }
+
+            .table-actions .btn {
+                flex: 1;
+            }
+
+            .security-note {
+                padding: 13px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail.full {
+                grid-column: auto;
+            }
+
+            .drawer {
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .mobile-log-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Security verification screen -->
+<div class="security-gate" id="securityGate">
+    <div class="security-box">
+        <div class="security-icon">⌁</div>
+        <h2>Securing Admin Session</h2>
+        <p>
+            Verifying authentication and administrator privileges before
+            loading audit information.
+        </p>
+    </div>
+</div>
+
+<div class="app" id="app" hidden>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-mark">KT</div>
+            <div class="brand-text">
+                <strong>K-TICKETS</strong>
+                <span>Admin CMS</span>
+            </div>
+        </div>
+
+        <div class="nav-section">Overview</div>
+
+        <a class="nav-link" href="./dashboard.html">
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
+
+        <div class="nav-section">Platform</div>
+
+        <a class="nav-link" href="./events.html">
+            <span class="nav-icon">◫</span>
+            Events
+        </a>
+
+        <a class="nav-link" href="./merchants.html">
+            <span class="nav-icon">♙</span>
+            Merchants
+        </a>
+
+        <a class="nav-link" href="./customers.html">
+            <span class="nav-icon">♧</span>
+            Customers
+        </a>
+
+        <a class="nav-link" href="./orders.html">
+            <span class="nav-icon">▤</span>
+            Orders
+        </a>
+
+        <a class="nav-link" href="./payments.html">
+            <span class="nav-icon">◈</span>
+            Payments
+        </a>
+
+        <a class="nav-link" href="./wamd.html">
+            <span class="nav-icon">↔</span>
+            WAMD
+        </a>
+
+        <a class="nav-link" href="./withdrawals.html">
+            <span class="nav-icon">⇧</span>
+            Withdrawals
+        </a>
+
+        <a class="nav-link" href="./fees.html">
+            <span class="nav-icon">%</span>
+            Fees
+        </a>
+
+        <div class="nav-section">Control</div>
+
+        <a class="nav-link" href="./reports.html">
+            <span class="nav-icon">▥</span>
+            Reports
+        </a>
+
+        <a class="nav-link" href="./settings.html">
+            <span class="nav-icon">⚙</span>
+            Settings
+        </a>
+
+        <a class="nav-link active" href="./audit-logs.html">
+            <span class="nav-icon">◉</span>
+            Audit Logs
+        </a>
+
+        <div class="sidebar-bottom">
+            <button class="signout" id="signOutBtn">
+                ⇥ &nbsp; Sign Out
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+                <button
+                    class="mobile-menu"
+                    id="mobileMenuBtn"
+                    aria-label="Open admin menu"
+                >☰</button>
+
+                <div class="page-heading">
+                    <h1>Audit Logs</h1>
+                    <p>Security and administrative activity history</p>
+                </div>
+            </div>
+
+            <div class="admin-user">
+                <div class="admin-avatar" id="adminAvatar">A</div>
+
+                <div class="admin-user-text">
+                    <strong id="adminName">Administrator</strong>
+                    <span>Platform Administrator</span>
+                </div>
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="security-note">
+                <div class="security-note-icon">✓</div>
+
+                <div>
+                    <strong>Immutable security record</strong>
+                    <p>
+                        Audit records are displayed from the database only.
+                        This interface does not provide browser-side edit or
+                        delete controls. Creation, modification and retention
+                        rules must be enforced by database policies, triggers,
+                        RPCs or trusted Edge Functions.
+                    </p>
+                </div>
+            </div>
+
+            <!-- STATS -->
+            <div class="stats">
+
+                <div class="stat">
+                    <div class="stat-label">Total Logs</div>
+                    <div class="stat-value" id="totalLogs">—</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Admin Actions</div>
+                    <div class="stat-value" id="adminActions">—</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Security Events</div>
+                    <div class="stat-value danger" id="securityEvents">—</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Failed Actions</div>
+                    <div class="stat-value warning" id="failedActions">—</div>
+                </div>
+
+            </div>
+
+            <!-- FILTERS -->
+            <div class="filters">
+
+                <div class="field search-field">
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Search action, actor, entity, ID or description..."
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="field">
+                    <select id="actionFilter">
+                        <option value="">All actions</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <select id="severityFilter">
+                        <option value="">All severity</option>
+                        <option value="info">Info</option>
+                        <option value="success">Success</option>
+                        <option value="warning">Warning</option>
+                        <option value="danger">Danger</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <select id="actorFilter">
+                        <option value="">All actors</option>
+                        <option value="admin">Admin</option>
+                        <option value="merchant">Merchant</option>
+                        <option value="gate_staff">Gate Staff</option>
+                        <option value="customer">Customer</option>
+                        <option value="system">System</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <select id="periodFilter">
+                        <option value="">All time</option>
+                        <option value="today">Today</option>
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-secondary" id="clearFiltersBtn">
+                    Clear
+                </button>
+
+            </div>
+
+            <!-- TABLE -->
+            <div class="table-card">
+
+                <div class="table-header">
+
+                    <div>
+                        <h2>Activity History</h2>
+                        <p id="resultCount">Loading audit records...</p>
+                    </div>
+
+                    <div class="table-actions">
+
+                        <button
+                            class="btn btn-secondary"
+                            id="refreshBtn"
+                        >
+                            ↻ Refresh
+                        </button>
+
+                        <button
+                            class="btn btn-primary"
+                            id="exportBtn"
+                        >
+                            ↓ Export CSV
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="table-wrap">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Action</th>
+                                <th>Actor</th>
+                                <th>Entity</th>
+                                <th>Severity</th>
+                                <th>Source</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="logsTableBody"></tbody>
+                    </table>
+
+                </div>
+
+                <div class="mobile-list" id="mobileLogs"></div>
+
+                <div class="empty" id="emptyState" hidden>
+                    <div class="empty-icon">◉</div>
+                    <h3>No audit records found</h3>
+                    <p>
+                        There are no records matching the current filters,
+                        or the audit log table is not yet available.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+<aside class="drawer" id="detailDrawer">
+
+    <div class="drawer-header">
+
+        <div>
+            <h2>Audit Record</h2>
+            <p>Read-only security activity details.</p>
+        </div>
+
+        <button class="close-btn" id="closeDrawerBtn">×</button>
+
+    </div>
+
+    <div class="detail-grid">
+
+        <div class="detail">
+            <label>Log ID</label>
+            <strong id="detailId">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Created</label>
+            <strong id="detailCreated">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Action</label>
+            <strong id="detailAction">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Severity</label>
+            <strong id="detailSeverity">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Actor</label>
+            <strong id="detailActor">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Actor Role</label>
+            <strong id="detailRole">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Entity Type</label>
+            <strong id="detailEntityType">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Entity ID</label>
+            <strong id="detailEntityId">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Source</label>
+            <strong id="detailSource">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>IP Address</label>
+            <strong id="detailIp">—</strong>
+        </div>
+
+        <div class="detail full">
+            <label>Description</label>
+            <strong id="detailDescription">—</strong>
+        </div>
+
+        <div class="detail full">
+            <label>Metadata</label>
+            <pre id="detailMetadata">{}</pre>
+        </div>
+
+    </div>
+
+    <div class="drawer-warning">
+        Audit records are intentionally read-only from this CMS.
+        Administrative audit mutations should be performed only by trusted
+        server-side infrastructure with authorization and audit-of-audit
+        controls.
+    </div>
+
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/*
+|--------------------------------------------------------------------------
+| K-TICKETS ADMIN AUDIT LOGS
+|--------------------------------------------------------------------------
+|
+| SECURITY MODEL
+|
+| 1. Browser contains only Supabase ANON key.
+| 2. No service-role key is ever exposed here.
+| 3. Admin role is checked after authentication.
+| 4. Database RLS MUST independently enforce admin read access.
+| 5. Audit records should preferably be INSERTed by:
+|      - PostgreSQL triggers
+|      - SECURITY DEFINER RPCs
+|      - trusted Edge Functions
+|      - trusted backend services
+| 6. Browser does not expose INSERT / UPDATE / DELETE audit controls.
+| 7. Never trust hidden UI elements as an authorization mechanism.
+|
+| IMPORTANT:
+| The exact audit_logs schema has not been finalized. This page supports
+| common field names and normalizes them defensively. Once the final schema
+| is locked, use an explicit SELECT list instead of relying on "*".
+|
+|--------------------------------------------------------------------------
+*/
+
+const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL || "";
+
+const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
+
+let allLogs = [];
+let filteredLogs = [];
+let selectedLog = null;
+
+const $ = (id) => document.getElementById(id);
+
+const securityGate = $("securityGate");
+const app = $("app");
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function safeText(value, fallback = "—") {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return fallback;
+    }
+
+    return String(value);
+}
+
+function initials(name) {
+    const value = String(name || "Admin").trim();
+
+    if (!value) {
+        return "A";
+    }
+
+    return value
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(part => part.charAt(0))
+        .join("")
+        .toUpperCase();
+}
+
+function showToast(message, type = "") {
+    const toast = $("toast");
+
+    toast.textContent = message;
+    toast.className = "toast show " + type;
+
+    clearTimeout(showToast.timer);
+
+    showToast.timer = setTimeout(() => {
+        toast.className = "toast";
+    }, 3500);
+}
+
+function redirectLogin(reason = "") {
+    const target =
+        "../auth/login.html" +
+        (reason ? "?error=" + encodeURIComponent(reason) : "");
+
+    window.location.replace(target);
+}
+
+async function safeSignOut() {
+    try {
+        if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+        }
+    } catch (error) {
+        console.warn("Sign-out error:", error);
+    }
+}
+
+function normalizeRole(role) {
+    return String(role || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+}
+
+function normalizeSeverity(log) {
+    const raw = String(
+        log.severity ??
+        log.level ??
+        log.risk_level ??
+        ""
+    ).toLowerCase().trim();
+
+    if (
+        raw === "critical" ||
+        raw === "danger" ||
+        raw === "error"
+    ) {
+        return "danger";
+    }
+
+    if (
+        raw === "warning" ||
+        raw === "warn"
+    ) {
+        return "warning";
+    }
+
+    if (
+        raw === "success" ||
+        raw === "successful"
+    ) {
+        return "success";
+    }
+
+    return "info";
+}
+
+function normalizeLog(row) {
+
+    const actorProfile =
+        Array.isArray(row.actor_profile)
+            ? row.actor_profile[0]
+            : row.actor_profile;
+
+    const profile =
+        actorProfile ||
+        (
+            Array.isArray(row.profiles)
+                ? row.profiles[0]
+                : row.profiles
+        ) ||
+        {};
+
+    const actorId =
+        row.actor_id ??
+        row.user_id ??
+        row.performed_by ??
+        row.created_by ??
+        profile.id ??
+        null;
+
+    const actorName =
+        row.actor_name ??
+        row.performed_by_name ??
+        profile.full_name ??
+        null;
+
+    const actorRole =
+        row.actor_role ??
+        profile.role ??
+        row.role ??
+        null;
+
+    const entityId =
+        row.entity_id ??
+        row.resource_id ??
+        row.target_id ??
+        null;
+
+    const entityType =
+        row.entity_type ??
+        row.resource_type ??
+        row.target_type ??
+        null;
+
+    const action =
+        row.action ??
+        row.event ??
+        row.action_name ??
+        row.operation ??
+        "unknown";
+
+    const source =
+        row.source ??
+        row.origin ??
+        row.channel ??
+        row.request_source ??
+        "system";
+
+    const description =
+        row.description ??
+        row.message ??
+        row.details ??
+        row.reason ??
+        "";
+
+    const metadata =
+        row.metadata ??
+        row.meta ??
+        row.context ??
+        {};
+
+    const createdAt =
+        row.created_at ??
+        row.timestamp ??
+        row.occurred_at ??
+        row.logged_at ??
+        null;
+
+    const ipAddress =
+        row.ip_address ??
+        row.client_ip ??
+        row.remote_ip ??
+        null;
+
+    return {
+        raw: row,
+        id: row.id ?? row.log_id ?? null,
+        action: String(action),
+        actorId,
+        actorName,
+        actorRole,
+        entityId,
+        entityType,
+        source,
+        description,
+        metadata,
+        severity: normalizeSeverity(row),
+        createdAt,
+        ipAddress
+    };
+}
+
+function formatDate(value) {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return safeText(value);
+    }
+
+    return date.toLocaleString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
+function relativeDate(value) {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return safeText(value);
+    }
+
+    const diff =
+        Math.floor((Date.now() - date.getTime()) / 1000);
+
+    if (diff < 60) return "Just now";
+    if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+    if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+    if (diff < 604800) return Math.floor(diff / 86400) + "d ago";
+
+    return formatDate(value);
+}
+
+function badgeClass(severity) {
+    switch (severity) {
+        case "danger":
+            return "badge-danger";
+
+        case "warning":
+            return "badge-warning";
+
+        case "success":
+            return "badge-success";
+
+        case "info":
+        default:
+            return "badge-info";
+    }
+}
+
+function prettyValue(value) {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return "—";
+    }
+
+    return String(value)
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function safeJson(value) {
+    try {
+        return JSON.stringify(value ?? {}, null, 2);
+    } catch {
+        return "{}";
+    }
+}
+
+function populateActionFilter() {
+
+    const select = $("actionFilter");
+
+    const current = select.value;
+
+    const actions = [
+        ...new Set(
+            allLogs
+                .map(log => String(log.action || "").trim())
+                .filter(Boolean)
+        )
+    ].sort((a, b) =>
+        a.localeCompare(b)
+    );
+
+    select.innerHTML =
+        '<option value="">All actions</option>';
+
+    actions.forEach(action => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = action;
+        option.textContent = prettyValue(action);
+
+        select.appendChild(option);
+    });
+
+    if (
+        actions.includes(current)
+    ) {
+        select.value = current;
+    }
+}
+
+function updateStats(logs) {
+
+    $("totalLogs").textContent =
+        logs.length.toLocaleString();
+
+    const adminCount =
+        logs.filter(log =>
+            normalizeRole(log.actorRole) === "admin"
+        ).length;
+
+    const securityCount =
+        logs.filter(log =>
+            ["danger", "warning"].includes(log.severity)
+        ).length;
+
+    const failedCount =
+        logs.filter(log => {
+
+            const action =
+                String(log.action || "").toLowerCase();
+
+            const description =
+                String(log.description || "").toLowerCase();
+
+            return (
+                action.includes("fail") ||
+                action.includes("reject") ||
+                action.includes("denied") ||
+                action.includes("unauthor") ||
+                description.includes("failed") ||
+                description.includes("denied")
+            );
+        }).length;
+
+    $("adminActions").textContent =
+        adminCount.toLocaleString();
+
+    $("securityEvents").textContent =
+        securityCount.toLocaleString();
+
+    $("failedActions").textContent =
+        failedCount.toLocaleString();
+}
+
+function matchesPeriod(log, period) {
+
+    if (!period || !log.createdAt) {
+        return true;
+    }
+
+    const date =
+        new Date(log.createdAt);
+
+    if (Number.isNaN(date.getTime())) {
+        return true;
+    }
+
+    const now = new Date();
+
+    if (period === "today") {
+        return (
+            date.getFullYear() === now.getFullYear() &&
+            date.getMonth() === now.getMonth() &&
+            date.getDate() === now.getDate()
+        );
+    }
+
+    const days =
+        Number(period);
+
+    if (!Number.isFinite(days)) {
+        return true;
+    }
+
+    const cutoff =
+        Date.now() -
+        days * 24 * 60 * 60 * 1000;
+
+    return date.getTime() >= cutoff;
+}
+
+function applyFilters() {
+
+    const search =
+        $("searchInput").value
+            .trim()
+            .toLowerCase();
+
+    const action =
+        $("actionFilter").value;
+
+    const severity =
+        $("severityFilter").value;
+
+    const actorRole =
+        $("actorFilter").value;
+
+    const period =
+        $("periodFilter").value;
+
+    filteredLogs =
+        allLogs.filter(log => {
+
+            if (
+                action &&
+                log.action !== action
+            ) {
+                return false;
+            }
+
+            if (
+                severity &&
+                log.severity !== severity
+            ) {
+                return false;
+            }
+
+            if (
+                actorRole &&
+                normalizeRole(log.actorRole) !== actorRole
+            ) {
+                return false;
+            }
+
+            if (
+                !matchesPeriod(log, period)
+            ) {
+                return false;
+            }
+
+            if (search) {
+
+                const haystack = [
+                    log.id,
+                    log.action,
+                    log.actorId,
+                    log.actorName,
+                    log.actorRole,
+                    log.entityId,
+                    log.entityType,
+                    log.source,
+                    log.description,
+                    safeJson(log.metadata)
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase();
+
+                if (!haystack.includes(search)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+    updateStats(filteredLogs);
+    renderLogs(filteredLogs);
+
+    $("resultCount").textContent =
+        `${filteredLogs.length.toLocaleString()} record` +
+        `${filteredLogs.length === 1 ? "" : "s"} shown`;
+}
+
+function renderLogs(logs) {
+
+    const tbody =
+        $("logsTableBody");
+
+    const mobile =
+        $("mobileLogs");
+
+    tbody.innerHTML = "";
+    mobile.innerHTML = "";
+
+    $("emptyState").hidden =
+        logs.length !== 0;
+
+    if (!logs.length) {
+        return;
+    }
+
+    logs.forEach(log => {
+
+        const row =
+            document.createElement("tr");
+
+        const actorName =
+            safeText(log.actorName, "System");
+
+        const actorRole =
+            prettyValue(log.actorRole || "system");
+
+        const actorInitials =
+            initials(actorName);
+
+        row.innerHTML = `
+            <td title="${escapeHtml(formatDate(log.createdAt))}">
+                ${escapeHtml(relativeDate(log.createdAt))}
+            </td>
+
+            <td>
+                <button
+                    class="event-action"
+                    data-log-id="${escapeHtml(log.id)}"
+                >
+                    ${escapeHtml(prettyValue(log.action))}
+                </button>
+            </td>
+
+            <td>
+                <div class="actor">
+                    <div class="actor-avatar">
+                        ${escapeHtml(actorInitials)}
+                    </div>
+
+                    <div>
+                        <div class="actor-name">
+                            ${escapeHtml(actorName)}
+                        </div>
+
+                        <div class="actor-role">
+                            ${escapeHtml(actorRole)}
+                        </div>
+                    </div>
+                </div>
+            </td>
+
+            <td>
+                <span class="id-text">
+                    ${
+                        escapeHtml(
+                            log.entityType
+                                ? prettyValue(log.entityType)
+                                : "—"
+                        )
+                    }
+                </span>
+
+                <span
+                    class="id-text muted"
+                    title="${escapeHtml(log.entityId || "")}"
+                >
+                    ${escapeHtml(log.entityId || "—")}
+                </span>
+            </td>
+
+            <td>
+                <span class="badge ${badgeClass(log.severity)}">
+                    ${escapeHtml(prettyValue(log.severity))}
+                </span>
+            </td>
+
+            <td>
+                ${escapeHtml(prettyValue(log.source))}
+            </td>
+
+            <td>
+                <button
+                    class="btn btn-secondary view-log"
+                    data-log-id="${escapeHtml(log.id)}"
+                    style="height:34px;padding:0 10px;"
+                >
+                    View
+                </button>
+            </td>
+        `;
+
+        tbody.appendChild(row);
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "mobile-log";
+
+        card.innerHTML = `
+            <div class="mobile-log-top">
+
+                <div>
+                    <div class="mobile-action">
+                        ${escapeHtml(prettyValue(log.action))}
+                    </div>
+
+                    <div class="muted" style="margin-top:4px;font-size:9px;">
+                        ${escapeHtml(relativeDate(log.createdAt))}
+                    </div>
+                </div>
+
+                <span class="badge ${badgeClass(log.severity)}">
+                    ${escapeHtml(prettyValue(log.severity))}
+                </span>
+
+            </div>
+
+            <div class="mobile-log-meta">
+
+                <div class="meta-item">
+                    <span>Actor</span>
+                    <strong>
+                        ${escapeHtml(actorName)}
+                    </strong>
+                </div>
+
+                <div class="meta-item">
+                    <span>Role</span>
+                    <strong>
+                        ${escapeHtml(actorRole)}
+                    </strong>
+                </div>
+
+                <div class="meta-item">
+                    <span>Entity</span>
+                    <strong>
+                        ${escapeHtml(
+                            prettyValue(log.entityType || "—")
+                        )}
+                    </strong>
+                </div>
+
+                <div class="meta-item">
+                    <span>Source</span>
+                    <strong>
+                        ${escapeHtml(
+                            prettyValue(log.source)
+                        )}
+                    </strong>
+                </div>
+
+            </div>
+
+            <button
+                class="btn btn-secondary view-log"
+                data-log-id="${escapeHtml(log.id)}"
+                style="width:100%;margin-top:13px;"
+            >
+                View Audit Record
+            </button>
+        `;
+
+        mobile.appendChild(card);
+    });
+
+    document
+        .querySelectorAll(".view-log, .event-action")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => openLog(button.dataset.logId)
+            );
+        });
+}
+
+function findLog(id) {
+
+    return allLogs.find(
+        log => String(log.id) === String(id)
+    );
+}
+
+function openLog(id) {
+
+    const log =
+        findLog(id);
+
+    if (!log) {
+        showToast(
+            "Audit record could not be found.",
+            "error"
+        );
+        return;
+    }
+
+    selectedLog = log;
+
+    $("detailId").textContent =
+        safeText(log.id);
+
+    $("detailCreated").textContent =
+        formatDate(log.createdAt);
+
+    $("detailAction").textContent =
+        prettyValue(log.action);
+
+    $("detailSeverity").textContent =
+        prettyValue(log.severity);
+
+    $("detailActor").textContent =
+        safeText(log.actorName, "System");
+
+    $("detailRole").textContent =
+        prettyValue(log.actorRole || "system");
+
+    $("detailEntityType").textContent =
+        prettyValue(log.entityType || "—");
+
+    $("detailEntityId").textContent =
+        safeText(log.entityId);
+
+    $("detailSource").textContent =
+        prettyValue(log.source);
+
+    $("detailIp").textContent =
+        safeText(log.ipAddress);
+
+    $("detailDescription").textContent =
+        safeText(log.description);
+
+    $("detailMetadata").textContent =
+        safeJson(log.metadata);
+
+    $("drawerBackdrop")
+        .classList.add("open");
+
+    $("detailDrawer")
+        .classList.add("open");
+
+    document.body.style.overflow =
+        "hidden";
+}
+
+function closeDrawer() {
+
+    $("drawerBackdrop")
+        .classList.remove("open");
+
+    $("detailDrawer")
+        .classList.remove("open");
+
+    document.body.style.overflow =
+        "";
+}
+
+function csvEscape(value) {
+
+    const text =
+        String(value ?? "");
+
+    return '"' +
+        text.replace(/"/g, '""') +
+        '"';
+}
+
+function exportCsv() {
+
+    if (!filteredLogs.length) {
+        showToast(
+            "There are no audit records to export.",
+            "error"
+        );
+        return;
+    }
+
+    const headers = [
+        "Log ID",
+        "Created At",
+        "Action",
+        "Actor ID",
+        "Actor Name",
+        "Actor Role",
+        "Entity Type",
+        "Entity ID",
+        "Severity",
+        "Source",
+        "IP Address",
+        "Description",
+        "Metadata"
+    ];
+
+    const rows =
+        filteredLogs.map(log => [
+            log.id,
+            log.createdAt,
+            log.action,
+            log.actorId,
+            log.actorName,
+            log.actorRole,
+            log.entityType,
+            log.entityId,
+            log.severity,
+            log.source,
+            log.ipAddress,
+            log.description,
+            safeJson(log.metadata)
+        ]);
+
+    const csv =
+        [
+            headers.map(csvEscape).join(","),
+            ...rows.map(row =>
+                row.map(csvEscape).join(",")
+            )
+        ].join("\n");
+
+    const blob =
+        new Blob(
+            [csv],
+            { type: "text/csv;charset=utf-8;" }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        "k-tickets-audit-logs-" +
+        new Date()
+            .toISOString()
+            .slice(0, 10) +
+        ".csv";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+
+    showToast(
+        `${filteredLogs.length} audit record(s) exported.`,
+        "success"
+    );
+}
+
+async function loadAdminProfile() {
+
+    const {
+        data: sessionData,
+        error: sessionError
+    } = await supabaseClient.auth.getSession();
+
+    if (
+        sessionError ||
+        !sessionData?.session?.user
+    ) {
+        redirectLogin("session_required");
+        return false;
+    }
+
+    currentUser =
+        sessionData.session.user;
+
+    const {
+        data: profile,
+        error: profileError
+    } = await supabaseClient
+        .from("profiles")
+        .select(`
+            id,
+            full_name,
+            phone,
+            role
+        `)
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+    if (
+        profileError ||
+        !profile ||
+        normalizeRole(profile.role) !== "admin"
+    ) {
+
+        await safeSignOut();
+
+        redirectLogin("unauthorized");
+
+        return false;
+    }
+
+    currentProfile =
+        profile;
+
+    $("adminName").textContent =
+        safeText(
+            profile.full_name,
+            "Administrator"
+        );
+
+    $("adminAvatar").textContent =
+        initials(profile.full_name);
+
+    return true;
+}
+
+async function loadAuditLogs() {
+
+    /*
+     * NOTE:
+     * The final audit_logs schema is not yet locked.
+     *
+     * This first attempts a broad read so the page can tolerate common
+     * audit-log schemas during development.
+     *
+     * For production, replace "*" with the exact approved column list.
+     */
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("audit_logs")
+        .select("*")
+        .order("created_at", {
+            ascending: false
+        })
+        .limit(5000);
+
+    if (error) {
+
+        console.error(
+            "Audit log query failed:",
+            error
+        );
+
+        allLogs = [];
+        filteredLogs = [];
+
+        updateStats([]);
+
+        $("resultCount").textContent =
+            "Audit log data unavailable";
+
+        renderLogs([]);
+
+        showToast(
+            "Audit logs could not be loaded. Check the audit_logs table and RLS policy.",
+            "error"
+        );
+
+        return;
+    }
+
+    allLogs =
+        (data || [])
+            .map(normalizeLog);
+
+    populateActionFilter();
+    applyFilters();
+}
+
+async function refreshLogs() {
+
+    $("refreshBtn").disabled = true;
+    $("refreshBtn").textContent = "Loading...";
+
+    try {
+        await loadAuditLogs();
+
+        showToast(
+            "Audit logs refreshed.",
+            "success"
+        );
+
+    } finally {
+
+        $("refreshBtn").disabled = false;
+        $("refreshBtn").textContent = "↻ Refresh";
+    }
+}
+
+function clearFilters() {
+
+    $("searchInput").value = "";
+    $("actionFilter").value = "";
+    $("severityFilter").value = "";
+    $("actorFilter").value = "";
+    $("periodFilter").value = "";
+
+    applyFilters();
+}
+
+function setupFilters() {
+
+    [
+        "searchInput",
+        "actionFilter",
+        "severityFilter",
+        "actorFilter",
+        "periodFilter"
+    ].forEach(id => {
+
+        $(id).addEventListener(
+            id === "searchInput"
+                ? "input"
+                : "change",
+            applyFilters
+        );
+    });
+
+    $("clearFiltersBtn")
+        .addEventListener(
+            "click",
+            clearFilters
+        );
+
+    $("refreshBtn")
+        .addEventListener(
+            "click",
+            refreshLogs
+        );
+
+    $("exportBtn")
+        .addEventListener(
+            "click",
+            exportCsv
+        );
+}
+
+function setupDrawer() {
+
+    $("closeDrawerBtn")
+        .addEventListener(
+            "click",
+            closeDrawer
+        );
+
+    $("drawerBackdrop")
+        .addEventListener(
+            "click",
+            closeDrawer
+        );
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape"
+            ) {
+                closeDrawer();
+            }
+        }
+    );
+}
+
+function setupMobileMenu() {
+
+    const sidebar =
+        $("sidebar");
+
+    $("mobileMenuBtn")
+        .addEventListener(
+            "click",
+            () => {
+                sidebar.classList.toggle("open");
+            }
+        );
+
+    document
+        .querySelectorAll(".nav-link")
+        .forEach(link => {
+
+            link.addEventListener(
+                "click",
+                () => {
+                    sidebar.classList.remove("open");
+                }
+            );
+        });
+}
+
+function setupSignOut() {
+
+    $("signOutBtn")
+        .addEventListener(
+            "click",
+            async () => {
+
+                $("signOutBtn").disabled = true;
+                $("signOutBtn").textContent =
+                    "Signing out...";
+
+                await safeSignOut();
+
+                redirectLogin(
+                    "signed_out"
+                );
+            }
+        );
+}
+
+async function initialize() {
+
+    if (
+        !SUPABASE_URL ||
+        !SUPABASE_ANON_KEY
+    ) {
+
+        securityGate.innerHTML = `
+            <div class="security-box">
+                <div class="security-icon">!</div>
+                <h2>Configuration Required</h2>
+                <p>
+                    Supabase configuration is missing.
+                    No administrator data has been loaded.
+                </p>
+            </div>
+        `;
+
+        return;
+    }
+
+    try {
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY,
+                {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true
+                    }
+                }
+            );
+
+        const authorized =
+            await loadAdminProfile();
+
+        if (!authorized) {
+            return;
+        }
+
+        setupFilters();
+        setupDrawer();
+        setupMobileMenu();
+        setupSignOut();
+
+        await loadAuditLogs();
+
+        app.hidden = false;
+        securityGate.classList.add("hidden");
+
+        /*
+         * If the session disappears while the page is open,
+         * immediately leave the protected admin area.
+         */
+        supabaseClient.auth.onAuthStateChange(
+            (event, session) => {
+
+                if (
+                    event === "SIGNED_OUT" ||
+                    !session?.user
+                ) {
+                    redirectLogin(
+                        "session_expired"
+                    );
+                }
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Admin audit initialization failed:",
+            error
+        );
+
+        securityGate.innerHTML = `
+            <div class="security-box">
+                <div class="security-icon">!</div>
+                <h2>Security Verification Failed</h2>
+                <p>
+                    The administrator session could not be verified.
+                    Please sign in again.
+                </p>
+            </div>
+        `;
+    }
+}
+
+initialize();
+</script>
+
+</body>
+</html>

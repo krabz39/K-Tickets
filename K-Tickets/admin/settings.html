@@ -1,0 +1,3023 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
+
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+    <meta name="referrer" content="same-origin">
+
+    <title>K-Tickets Admin — Settings</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root{
+            --bordo:#6C151E;
+            --green:#0F3D3A;
+            --cream:#F5DABF;
+            --white:#fff;
+            --ink:#18211f;
+            --muted:#6d7774;
+            --line:#e8e3dc;
+            --soft:#f8f5f1;
+            --success:#176b4d;
+            --warning:#9a6811;
+            --danger:#a72c35;
+            --shadow:0 18px 50px rgba(15,61,58,.08);
+            --radius:18px;
+        }
+
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            background:#f7f5f2;
+            color:var(--ink);
+            min-height:100vh;
+        }
+
+        button,
+        input,
+        select,
+        textarea{
+            font:inherit;
+        }
+
+        button{
+            cursor:pointer;
+        }
+
+        a{
+            color:inherit;
+            text-decoration:none;
+        }
+
+        .app{
+            min-height:100vh;
+            display:flex;
+        }
+
+        /* SIDEBAR */
+        .sidebar{
+            width:270px;
+            background:var(--green);
+            color:#fff;
+            position:fixed;
+            inset:0 auto 0 0;
+            z-index:100;
+            display:flex;
+            flex-direction:column;
+            overflow-y:auto;
+        }
+
+        .brand{
+            padding:27px 23px 23px;
+            border-bottom:1px solid rgba(255,255,255,.10);
+        }
+
+        .brand-mark{
+            width:42px;
+            height:42px;
+            border-radius:13px;
+            background:var(--cream);
+            color:var(--green);
+            display:grid;
+            place-items:center;
+            font-weight:900;
+            margin-bottom:13px;
+        }
+
+        .brand h1{
+            font-size:17px;
+            letter-spacing:.08em;
+            font-weight:900;
+        }
+
+        .brand p{
+            color:rgba(255,255,255,.58);
+            font-size:11px;
+            margin-top:5px;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+        }
+
+        .nav{
+            padding:17px 12px;
+            flex:1;
+        }
+
+        .nav-label{
+            color:rgba(255,255,255,.38);
+            font-size:10px;
+            font-weight:800;
+            letter-spacing:.14em;
+            text-transform:uppercase;
+            padding:12px 12px 8px;
+        }
+
+        .nav a{
+            display:flex;
+            align-items:center;
+            gap:11px;
+            padding:11px 12px;
+            border-radius:11px;
+            margin-bottom:3px;
+            color:rgba(255,255,255,.72);
+            font-size:13px;
+            transition:.18s ease;
+        }
+
+        .nav a:hover{
+            background:rgba(255,255,255,.07);
+            color:#fff;
+        }
+
+        .nav a.active{
+            background:var(--bordo);
+            color:#fff;
+            box-shadow:0 8px 22px rgba(108,21,30,.25);
+        }
+
+        .nav-icon{
+            width:19px;
+            text-align:center;
+            opacity:.9;
+        }
+
+        .sidebar-footer{
+            padding:15px;
+            border-top:1px solid rgba(255,255,255,.10);
+        }
+
+        .admin-mini{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:9px;
+            border-radius:12px;
+            background:rgba(255,255,255,.055);
+        }
+
+        .avatar{
+            width:35px;
+            height:35px;
+            border-radius:50%;
+            display:grid;
+            place-items:center;
+            background:var(--cream);
+            color:var(--green);
+            font-weight:900;
+            font-size:12px;
+            flex:none;
+        }
+
+        .admin-mini strong{
+            display:block;
+            font-size:12px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            max-width:170px;
+        }
+
+        .admin-mini span{
+            display:block;
+            color:rgba(255,255,255,.48);
+            font-size:10px;
+            margin-top:2px;
+        }
+
+        /* MAIN */
+        .main{
+            width:calc(100% - 270px);
+            margin-left:270px;
+            min-width:0;
+        }
+
+        .topbar{
+            min-height:78px;
+            background:#fff;
+            border-bottom:1px solid var(--line);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:18px;
+            padding:15px 28px;
+            position:sticky;
+            top:0;
+            z-index:60;
+        }
+
+        .topbar-left{
+            min-width:0;
+        }
+
+        .eyebrow{
+            color:var(--bordo);
+            font-size:10px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.14em;
+            margin-bottom:4px;
+        }
+
+        .topbar h2{
+            font-size:22px;
+            line-height:1.1;
+        }
+
+        .topbar-right{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .menu-btn{
+            display:none;
+            width:42px;
+            height:42px;
+            border:1px solid var(--line);
+            background:#fff;
+            border-radius:11px;
+        }
+
+        .admin-greeting{
+            text-align:right;
+        }
+
+        .admin-greeting strong{
+            display:block;
+            font-size:12px;
+        }
+
+        .admin-greeting span{
+            color:var(--muted);
+            font-size:10px;
+        }
+
+        .page{
+            padding:28px;
+            max-width:1500px;
+            margin:auto;
+        }
+
+        /* PAGE GRID */
+        .settings-layout{
+            display:grid;
+            grid-template-columns:230px minmax(0,1fr);
+            gap:20px;
+            align-items:start;
+        }
+
+        .settings-nav{
+            background:#fff;
+            border:1px solid var(--line);
+            border-radius:var(--radius);
+            padding:10px;
+            box-shadow:var(--shadow);
+            position:sticky;
+            top:100px;
+        }
+
+        .settings-nav button{
+            width:100%;
+            text-align:left;
+            border:0;
+            background:transparent;
+            color:var(--muted);
+            border-radius:11px;
+            padding:11px 12px;
+            font-size:12px;
+            font-weight:800;
+            margin-bottom:3px;
+        }
+
+        .settings-nav button:hover{
+            background:#f5f2ee;
+            color:var(--green);
+        }
+
+        .settings-nav button.active{
+            background:var(--green);
+            color:#fff;
+        }
+
+        .settings-content{
+            min-width:0;
+        }
+
+        .settings-section{
+            display:none;
+        }
+
+        .settings-section.active{
+            display:block;
+        }
+
+        /* PANEL */
+        .panel{
+            background:#fff;
+            border:1px solid var(--line);
+            border-radius:var(--radius);
+            box-shadow:var(--shadow);
+            margin-bottom:20px;
+            overflow:hidden;
+        }
+
+        .panel-header{
+            padding:20px;
+            border-bottom:1px solid var(--line);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+        }
+
+        .panel-title{
+            font-size:14px;
+            font-weight:900;
+        }
+
+        .panel-subtitle{
+            color:var(--muted);
+            font-size:10px;
+            line-height:1.5;
+            margin-top:4px;
+        }
+
+        .panel-body{
+            padding:20px;
+        }
+
+        .section-title{
+            font-size:12px;
+            font-weight:900;
+            margin-bottom:14px;
+        }
+
+        /* FORM */
+        .form-grid{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:15px;
+        }
+
+        .form-group{
+            min-width:0;
+        }
+
+        .form-group.full{
+            grid-column:1 / -1;
+        }
+
+        .form-group label{
+            display:block;
+            color:#4e5956;
+            font-size:10px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            margin-bottom:7px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea{
+            width:100%;
+            border:1px solid #ddd8d0;
+            background:#fff;
+            border-radius:10px;
+            padding:11px 12px;
+            outline:none;
+            color:var(--ink);
+        }
+
+        .form-group input,
+        .form-group select{
+            height:43px;
+        }
+
+        .form-group textarea{
+            min-height:105px;
+            resize:vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus{
+            border-color:var(--green);
+            box-shadow:0 0 0 3px rgba(15,61,58,.08);
+        }
+
+        .help{
+            color:var(--muted);
+            font-size:9px;
+            line-height:1.5;
+            margin-top:5px;
+        }
+
+        .form-actions{
+            margin-top:20px;
+            padding-top:17px;
+            border-top:1px solid var(--line);
+            display:flex;
+            justify-content:flex-end;
+            gap:9px;
+        }
+
+        .btn{
+            border:0;
+            min-height:42px;
+            padding:0 15px;
+            border-radius:10px;
+            font-weight:800;
+            font-size:12px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:7px;
+            transition:.18s ease;
+        }
+
+        .btn-primary{
+            background:var(--green);
+            color:#fff;
+        }
+
+        .btn-primary:hover{
+            transform:translateY(-1px);
+        }
+
+        .btn-soft{
+            background:#f1eeea;
+            color:var(--green);
+        }
+
+        .btn-danger{
+            background:#f9e8e9;
+            color:var(--danger);
+        }
+
+        .btn:disabled{
+            opacity:.55;
+            cursor:not-allowed;
+            transform:none;
+        }
+
+        /* TOGGLE */
+        .setting-list{
+            display:flex;
+            flex-direction:column;
+        }
+
+        .setting-row{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:18px;
+            padding:15px 0;
+            border-bottom:1px solid #efebe6;
+        }
+
+        .setting-row:last-child{
+            border-bottom:0;
+        }
+
+        .setting-copy{
+            min-width:0;
+        }
+
+        .setting-copy strong{
+            display:block;
+            font-size:12px;
+        }
+
+        .setting-copy p{
+            color:var(--muted);
+            font-size:10px;
+            line-height:1.5;
+            margin-top:4px;
+            max-width:680px;
+        }
+
+        .switch{
+            width:48px;
+            height:27px;
+            border:0;
+            border-radius:999px;
+            background:#d8d6d1;
+            position:relative;
+            flex:none;
+            transition:.2s;
+        }
+
+        .switch::after{
+            content:"";
+            position:absolute;
+            width:21px;
+            height:21px;
+            background:#fff;
+            border-radius:50%;
+            top:3px;
+            left:3px;
+            box-shadow:0 2px 6px rgba(0,0,0,.15);
+            transition:.2s;
+        }
+
+        .switch.active{
+            background:var(--green);
+        }
+
+        .switch.active::after{
+            left:24px;
+        }
+
+        /* STATUS */
+        .status-box{
+            display:flex;
+            align-items:flex-start;
+            gap:12px;
+            padding:14px;
+            border-radius:12px;
+            background:#edf5f2;
+            border:1px solid #d7e8e3;
+            margin-bottom:17px;
+        }
+
+        .status-icon{
+            width:32px;
+            height:32px;
+            border-radius:9px;
+            display:grid;
+            place-items:center;
+            background:var(--green);
+            color:#fff;
+            flex:none;
+        }
+
+        .status-box strong{
+            display:block;
+            font-size:11px;
+        }
+
+        .status-box p{
+            color:#53615e;
+            font-size:10px;
+            line-height:1.55;
+            margin-top:3px;
+        }
+
+        /* ACCOUNT */
+        .identity{
+            display:flex;
+            align-items:center;
+            gap:13px;
+            margin-bottom:20px;
+        }
+
+        .large-avatar{
+            width:58px;
+            height:58px;
+            border-radius:17px;
+            background:var(--cream);
+            color:var(--green);
+            display:grid;
+            place-items:center;
+            font-size:17px;
+            font-weight:900;
+            flex:none;
+        }
+
+        .identity strong{
+            display:block;
+            font-size:15px;
+        }
+
+        .identity span{
+            display:block;
+            color:var(--muted);
+            font-size:10px;
+            margin-top:4px;
+        }
+
+        /* DANGER */
+        .danger-box{
+            border:1px solid #efd3d5;
+            background:#fff8f8;
+            border-radius:14px;
+            padding:16px;
+        }
+
+        .danger-box strong{
+            display:block;
+            color:var(--danger);
+            font-size:12px;
+        }
+
+        .danger-box p{
+            color:#76595b;
+            font-size:10px;
+            line-height:1.55;
+            margin:5px 0 13px;
+        }
+
+        /* SECURITY */
+        .security{
+            background:#edf5f2;
+            border:1px solid #d7e8e3;
+            border-radius:var(--radius);
+            padding:15px 17px;
+            display:flex;
+            align-items:flex-start;
+            gap:12px;
+            margin-top:20px;
+        }
+
+        .security-icon{
+            width:30px;
+            height:30px;
+            border-radius:9px;
+            background:var(--green);
+            color:#fff;
+            display:grid;
+            place-items:center;
+            flex:none;
+            font-size:12px;
+        }
+
+        .security strong{
+            display:block;
+            font-size:11px;
+        }
+
+        .security p{
+            color:#53615e;
+            font-size:10px;
+            line-height:1.55;
+            margin-top:3px;
+        }
+
+        /* TOAST / LOADING */
+        .loading{
+            position:fixed;
+            inset:0;
+            z-index:999;
+            background:rgba(247,245,242,.88);
+            display:grid;
+            place-items:center;
+        }
+
+        .loading.hidden{
+            display:none;
+        }
+
+        .loading-box{
+            background:#fff;
+            border:1px solid var(--line);
+            border-radius:15px;
+            padding:20px 25px;
+            box-shadow:var(--shadow);
+            text-align:center;
+        }
+
+        .spinner{
+            width:28px;
+            height:28px;
+            border:3px solid #e5e0da;
+            border-top-color:var(--green);
+            border-radius:50%;
+            animation:spin .8s linear infinite;
+            margin:0 auto 10px;
+        }
+
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
+            }
+        }
+
+        .toast{
+            position:fixed;
+            right:20px;
+            bottom:20px;
+            background:var(--green);
+            color:#fff;
+            padding:12px 15px;
+            border-radius:11px;
+            font-size:11px;
+            font-weight:800;
+            opacity:0;
+            transform:translateY(12px);
+            pointer-events:none;
+            transition:.2s;
+            z-index:1000;
+            max-width:360px;
+        }
+
+        .toast.show{
+            opacity:1;
+            transform:translateY(0);
+        }
+
+        .toast.error{
+            background:var(--danger);
+        }
+
+        /* MOBILE */
+        @media(max-width:1100px){
+            .settings-layout{
+                grid-template-columns:190px minmax(0,1fr);
+            }
+        }
+
+        @media(max-width:900px){
+
+            .sidebar{
+                transform:translateX(-100%);
+                transition:.25s ease;
+            }
+
+            .sidebar.open{
+                transform:translateX(0);
+            }
+
+            .main{
+                width:100%;
+                margin-left:0;
+            }
+
+            .menu-btn{
+                display:grid;
+                place-items:center;
+            }
+
+            .topbar{
+                padding:13px 16px;
+            }
+
+            .page{
+                padding:18px 14px;
+            }
+
+            .admin-greeting{
+                display:none;
+            }
+
+            .settings-layout{
+                grid-template-columns:1fr;
+            }
+
+            .settings-nav{
+                position:static;
+                display:flex;
+                overflow-x:auto;
+                gap:5px;
+                padding:7px;
+            }
+
+            .settings-nav button{
+                width:auto;
+                flex:none;
+                white-space:nowrap;
+            }
+        }
+
+        @media(max-width:650px){
+
+            .form-grid{
+                grid-template-columns:1fr;
+            }
+
+            .form-group.full{
+                grid-column:auto;
+            }
+
+            .panel-header,
+            .panel-body{
+                padding:16px;
+            }
+
+            .setting-row{
+                align-items:flex-start;
+            }
+
+            .form-actions{
+                flex-direction:column-reverse;
+            }
+
+            .form-actions .btn{
+                width:100%;
+            }
+
+            .security{
+                padding:13px;
+            }
+        }
+
+        @media(max-width:430px){
+
+            .topbar h2{
+                font-size:19px;
+            }
+
+            .identity{
+                align-items:flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="loading" id="loading">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <strong>Securing admin session…</strong>
+    </div>
+</div>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-mark">K</div>
+            <h1>K-TICKETS</h1>
+            <p>Administration CMS</p>
+        </div>
+
+        <nav class="nav">
+
+            <div class="nav-label">Overview</div>
+
+            <a href="./dashboard.html">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+
+            <a href="./reports.html">
+                <span class="nav-icon">▥</span>
+                Reports
+            </a>
+
+            <div class="nav-label">Management</div>
+
+            <a href="./events.html">
+                <span class="nav-icon">◫</span>
+                Events
+            </a>
+
+            <a href="./merchants.html">
+                <span class="nav-icon">♙</span>
+                Merchants
+            </a>
+
+            <a href="./customers.html">
+                <span class="nav-icon">♧</span>
+                Customers
+            </a>
+
+            <a href="./orders.html">
+                <span class="nav-icon">▤</span>
+                Orders
+            </a>
+
+            <div class="nav-label">Finance</div>
+
+            <a href="./payments.html">
+                <span class="nav-icon">¤</span>
+                Payments
+            </a>
+
+            <a href="./mpesa.html">
+                <span class="nav-icon">M</span>
+                M-Pesa
+            </a>
+
+            <a href="./wamd.html">
+                <span class="nav-icon">W</span>
+                WAMD
+            </a>
+
+            <a href="./withdrawals.html">
+                <span class="nav-icon">↗</span>
+                Withdrawals
+            </a>
+
+            <a href="./refunds.html">
+                <span class="nav-icon">↩</span>
+                Refunds
+            </a>
+
+            <div class="nav-label">Platform</div>
+
+            <a href="./fees.html">
+                <span class="nav-icon">%</span>
+                Fees
+            </a>
+
+            <a href="./promotions.html">
+                <span class="nav-icon">✦</span>
+                Promotions
+            </a>
+
+            <a href="./qr-scans.html">
+                <span class="nav-icon">▦</span>
+                QR Scans
+            </a>
+
+            <a href="./audit-logs.html">
+                <span class="nav-icon">◷</span>
+                Audit Logs
+            </a>
+
+            <a href="./settings.html" class="active">
+                <span class="nav-icon">⚙</span>
+                Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-mini">
+
+                <div class="avatar" id="sideAvatar">
+                    A
+                </div>
+
+                <div>
+                    <strong id="sideName">
+                        Administrator
+                    </strong>
+
+                    <span>
+                        Administrator
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    class="menu-btn"
+                    id="menuBtn"
+                    aria-label="Open navigation"
+                >
+                    ☰
+                </button>
+
+                <div style="display:inline-block;margin-left:10px;">
+                    <div class="eyebrow">
+                        K-Tickets Control Centre
+                    </div>
+
+                    <h2>Settings</h2>
+                </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <div class="admin-greeting">
+
+                    <strong id="adminName">
+                        Administrator
+                    </strong>
+
+                    <span id="greeting">
+                        Admin control centre
+                    </span>
+
+                </div>
+
+                <div class="avatar" id="topAvatar">
+                    A
+                </div>
+
+            </div>
+
+        </header>
+
+        <section class="page">
+
+            <div class="settings-layout">
+
+                <!-- SETTINGS NAV -->
+                <aside class="settings-nav">
+
+                    <button
+                        class="active"
+                        data-section="general"
+                    >
+                        General
+                    </button>
+
+                    <button
+                        data-section="operations"
+                    >
+                        Operations
+                    </button>
+
+                    <button
+                        data-section="notifications"
+                    >
+                        Notifications
+                    </button>
+
+                    <button
+                        data-section="security"
+                    >
+                        Security
+                    </button>
+
+                    <button
+                        data-section="account"
+                    >
+                        My Account
+                    </button>
+
+                </aside>
+
+                <div class="settings-content">
+
+                    <!-- GENERAL -->
+                    <section
+                        class="settings-section active"
+                        id="section-general"
+                    >
+
+                        <div class="panel">
+
+                            <div class="panel-header">
+                                <div>
+                                    <div class="panel-title">
+                                        Platform Information
+                                    </div>
+
+                                    <div class="panel-subtitle">
+                                        Public-facing configuration for K-Tickets.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+
+                                <div class="status-box">
+
+                                    <div class="status-icon">
+                                        ✓
+                                    </div>
+
+                                    <div>
+                                        <strong>
+                                            Configuration is loaded from Supabase
+                                        </strong>
+
+                                        <p>
+                                            Values displayed here are loaded from the
+                                            platform settings table when available.
+                                            Empty fields mean the corresponding setting
+                                            has not been configured.
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-grid">
+
+                                    <div class="form-group">
+                                        <label>
+                                            Platform Name
+                                        </label>
+
+                                        <input
+                                            id="platformName"
+                                            type="text"
+                                            placeholder="K-Tickets"
+                                        >
+
+                                        <div class="help">
+                                            The platform name used in administrative
+                                            and customer-facing communication.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>
+                                            Support Email
+                                        </label>
+
+                                        <input
+                                            id="supportEmail"
+                                            type="email"
+                                            placeholder="Support email"
+                                        >
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>
+                                            Support Phone
+                                        </label>
+
+                                        <input
+                                            id="supportPhone"
+                                            type="tel"
+                                            placeholder="Support phone"
+                                        >
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>
+                                            Default Currency
+                                        </label>
+
+                                        <input
+                                            id="defaultCurrency"
+                                            type="text"
+                                            placeholder="Currency"
+                                            maxlength="10"
+                                        >
+
+                                        <div class="help">
+                                            Only change this if the application's
+                                            financial model is configured for the
+                                            selected currency.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group full">
+                                        <label>
+                                            Platform Description
+                                        </label>
+
+                                        <textarea
+                                            id="platformDescription"
+                                            placeholder="Platform description"
+                                        ></textarea>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-actions">
+
+                                    <button
+                                        class="btn btn-soft"
+                                        id="generalReset"
+                                    >
+                                        Reset
+                                    </button>
+
+                                    <button
+                                        class="btn btn-primary"
+                                        id="generalSave"
+                                    >
+                                        Save General Settings
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- OPERATIONS -->
+                    <section
+                        class="settings-section"
+                        id="section-operations"
+                    >
+
+                        <div class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <div class="panel-title">
+                                        Platform Operations
+                                    </div>
+
+                                    <div class="panel-subtitle">
+                                        Operational switches affecting how the
+                                        platform behaves.
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="panel-body">
+
+                                <div class="setting-list">
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                New Event Publishing
+                                            </strong>
+
+                                            <p>
+                                                Allow merchants to publish new events.
+                                                Disabling this should be enforced
+                                                server-side as well as in the UI.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="allow_event_publishing"
+                                            aria-label="Toggle new event publishing"
+                                        ></button>
+
+                                    </div>
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                Customer Ticket Sales
+                                            </strong>
+
+                                            <p>
+                                                Controls whether new customer ticket
+                                                purchases are permitted.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="allow_ticket_sales"
+                                            aria-label="Toggle customer ticket sales"
+                                        ></button>
+
+                                    </div>
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                Merchant Withdrawals
+                                            </strong>
+
+                                            <p>
+                                                Controls whether merchants can submit
+                                                new withdrawal claims.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="allow_withdrawals"
+                                            aria-label="Toggle merchant withdrawals"
+                                        ></button>
+
+                                    </div>
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                WAMD Payments
+                                            </strong>
+
+                                            <p>
+                                                Controls availability of WAMD manual
+                                                payment submissions. Verification must
+                                                still happen through a protected admin
+                                                process.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="allow_wamd"
+                                            aria-label="Toggle WAMD payments"
+                                        ></button>
+
+                                    </div>
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                M-Pesa Payments
+                                            </strong>
+
+                                            <p>
+                                                Controls availability of M-Pesa
+                                                payment initiation. Gateway credentials
+                                                must never be stored in this page.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="allow_mpesa"
+                                            aria-label="Toggle M-Pesa payments"
+                                        ></button>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-actions">
+
+                                    <button
+                                        class="btn btn-primary"
+                                        id="operationsSave"
+                                    >
+                                        Save Operational Settings
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- NOTIFICATIONS -->
+                    <section
+                        class="settings-section"
+                        id="section-notifications"
+                    >
+
+                        <div class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <div class="panel-title">
+                                        Notification Preferences
+                                    </div>
+
+                                    <div class="panel-subtitle">
+                                        Configure administrative notification behaviour.
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="panel-body">
+
+                                <div class="setting-list">
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                New Order Alerts
+                                            </strong>
+
+                                            <p>
+                                                Notify the configured administration
+                                                channel when a new order is created.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="notify_new_orders"
+                                            aria-label="Toggle new order alerts"
+                                        ></button>
+
+                                    </div>
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                Payment Alerts
+                                            </strong>
+
+                                            <p>
+                                                Notify administrators about payment
+                                                status changes.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="notify_payments"
+                                            aria-label="Toggle payment alerts"
+                                        ></button>
+
+                                    </div>
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                WAMD Verification Alerts
+                                            </strong>
+
+                                            <p>
+                                                Notify administrators when a WAMD
+                                                transaction requires review.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="notify_wamd"
+                                            aria-label="Toggle WAMD alerts"
+                                        ></button>
+
+                                    </div>
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                Withdrawal Alerts
+                                            </strong>
+
+                                            <p>
+                                                Notify administrators when a merchant
+                                                submits a withdrawal claim.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="notify_withdrawals"
+                                            aria-label="Toggle withdrawal alerts"
+                                        ></button>
+
+                                    </div>
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                Refund Alerts
+                                            </strong>
+
+                                            <p>
+                                                Notify administrators when a refund
+                                                request is created or processed.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="notify_refunds"
+                                            aria-label="Toggle refund alerts"
+                                        ></button>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-actions">
+
+                                    <button
+                                        class="btn btn-primary"
+                                        id="notificationsSave"
+                                    >
+                                        Save Notification Settings
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- SECURITY -->
+                    <section
+                        class="settings-section"
+                        id="section-security"
+                    >
+
+                        <div class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <div class="panel-title">
+                                        Security Controls
+                                    </div>
+
+                                    <div class="panel-subtitle">
+                                        Administrative security preferences.
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="panel-body">
+
+                                <div class="setting-list">
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                Require MFA for Admins
+                                            </strong>
+
+                                            <p>
+                                                Recommended for production. MFA
+                                                enforcement should ultimately be
+                                                configured through your authentication
+                                                provider and server-side policies.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="require_admin_mfa"
+                                            aria-label="Toggle admin MFA"
+                                        ></button>
+
+                                    </div>
+
+                                    <div class="setting-row">
+
+                                        <div class="setting-copy">
+                                            <strong>
+                                                Security Audit Logging
+                                            </strong>
+
+                                            <p>
+                                                Keep administrative security actions
+                                                recorded in the audit system.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            class="switch"
+                                            data-setting="security_audit_logging"
+                                            aria-label="Toggle security audit logging"
+                                        ></button>
+
+                                    </div>
+
+                                </div>
+
+                                <div
+                                    class="status-box"
+                                    style="margin-top:18px;"
+                                >
+
+                                    <div class="status-icon">
+                                        !
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            Sensitive credentials are not editable here
+                                        </strong>
+
+                                        <p>
+                                            Supabase service-role keys, database
+                                            passwords, M-Pesa credentials, WAMD
+                                            credentials, SMTP passwords and other
+                                            secrets must remain in server-side
+                                            environment variables or secret storage.
+                                            Never place them in HTML or browser
+                                            JavaScript.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-actions">
+
+                                    <button
+                                        class="btn btn-primary"
+                                        id="securitySave"
+                                    >
+                                        Save Security Settings
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <div class="panel-title">
+                                        Session
+                                    </div>
+
+                                    <div class="panel-subtitle">
+                                        End this browser's authenticated admin session.
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="panel-body">
+
+                                <button
+                                    class="btn btn-danger"
+                                    id="logoutBtn"
+                                >
+                                    Sign Out
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ACCOUNT -->
+                    <section
+                        class="settings-section"
+                        id="section-account"
+                    >
+
+                        <div class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <div class="panel-title">
+                                        Administrator Account
+                                    </div>
+
+                                    <div class="panel-subtitle">
+                                        Your authenticated K-Tickets administrator profile.
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="panel-body">
+
+                                <div class="identity">
+
+                                    <div
+                                        class="large-avatar"
+                                        id="largeAvatar"
+                                    >
+                                        A
+                                    </div>
+
+                                    <div>
+
+                                        <strong id="accountName">
+                                            Administrator
+                                        </strong>
+
+                                        <span id="accountEmail">
+                                            —
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-grid">
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Full Name
+                                        </label>
+
+                                        <input
+                                            id="accountFullName"
+                                            type="text"
+                                            autocomplete="name"
+                                        >
+
+                                    </div>
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Phone
+                                        </label>
+
+                                        <input
+                                            id="accountPhone"
+                                            type="tel"
+                                            autocomplete="tel"
+                                        >
+
+                                    </div>
+
+                                    <div class="form-group full">
+
+                                        <label>
+                                            Role
+                                        </label>
+
+                                        <input
+                                            id="accountRole"
+                                            type="text"
+                                            readonly
+                                        >
+
+                                        <div class="help">
+                                            Administrator role cannot be changed from
+                                            this browser page.
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-actions">
+
+                                    <button
+                                        class="btn btn-primary"
+                                        id="accountSave"
+                                    >
+                                        Save Profile
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <div class="panel-title">
+                                        Password
+                                    </div>
+
+                                    <div class="panel-subtitle">
+                                        Request a password reset email through Supabase
+                                        Auth.
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="panel-body">
+
+                                <button
+                                    class="btn btn-soft"
+                                    id="resetPasswordBtn"
+                                >
+                                    Send Password Reset Email
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <div class="panel-title">
+                                        High-Risk Account Actions
+                                    </div>
+
+                                    <div class="panel-subtitle">
+                                        Destructive identity changes are deliberately
+                                        not exposed from this page.
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="panel-body">
+
+                                <div class="danger-box">
+
+                                    <strong>
+                                        Account deletion / role changes
+                                    </strong>
+
+                                    <p>
+                                        Do not perform privileged account deletion,
+                                        role elevation, ownership transfer or similar
+                                        actions directly from client-side JavaScript.
+                                        These operations require a protected backend
+                                        workflow with explicit authorization and audit
+                                        logging.
+                                    </p>
+
+                                    <button
+                                        class="btn btn-danger"
+                                        id="requestSecurityReview"
+                                    >
+                                        Request Security Review
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- SECURITY NOTE -->
+                    <div class="security">
+
+                        <div class="security-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                K-Tickets settings are secure-by-design
+                            </strong>
+
+                            <p>
+                                The browser uses only the Supabase anon key and the
+                                authenticated administrator session. Sensitive
+                                credentials are never exposed here. Production
+                                deployments should enforce all important settings
+                                through PostgreSQL RLS, protected RPCs or Edge
+                                Functions, with audit logging for privileged changes.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   K-TICKETS ADMIN SETTINGS
+   Secure-by-design settings interface
+   ============================================================ */
+
+const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL || "";
+
+const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
+        }
+    );
+
+/* ------------------------------------------------------------
+   STATE
+------------------------------------------------------------ */
+
+let currentUser = null;
+let adminProfile = null;
+
+let settingsTableAvailable = true;
+let loadedSettings = {};
+
+/* ------------------------------------------------------------
+   DOM
+------------------------------------------------------------ */
+
+const loading =
+    document.getElementById("loading");
+
+const sidebar =
+    document.getElementById("sidebar");
+
+const menuBtn =
+    document.getElementById("menuBtn");
+
+const toast =
+    document.getElementById("toast");
+
+/* ------------------------------------------------------------
+   HELPERS
+------------------------------------------------------------ */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function showToast(message,isError=false){
+
+    toast.textContent =
+        message;
+
+    toast.classList.toggle(
+        "error",
+        isError
+    );
+
+    toast.classList.add("show");
+
+    clearTimeout(
+        showToast.timer
+    );
+
+    showToast.timer =
+        setTimeout(()=>{
+            toast.classList.remove("show");
+        },3500);
+}
+
+function hideLoading(){
+    loading.classList.add("hidden");
+}
+
+function initials(name){
+
+    if(!name){
+        return "A";
+    }
+
+    return name
+        .trim()
+        .split(/\s+/)
+        .slice(0,2)
+        .map(part=>part[0])
+        .join("")
+        .toUpperCase();
+}
+
+function salutation(){
+
+    const hour =
+        new Date().getHours();
+
+    if(hour < 12){
+        return "Good morning";
+    }
+
+    if(hour < 17){
+        return "Good afternoon";
+    }
+
+    return "Good evening";
+}
+
+function getSettingValue(key, fallback=null){
+
+    if(
+        Object.prototype.hasOwnProperty.call(
+            loadedSettings,
+            key
+        )
+    ){
+        return loadedSettings[key];
+    }
+
+    return fallback;
+}
+
+function asBoolean(value){
+
+    if(
+        value === true ||
+        value === 1 ||
+        value === "1" ||
+        value === "true" ||
+        value === "TRUE" ||
+        value === "yes" ||
+        value === "on"
+    ){
+        return true;
+    }
+
+    return false;
+}
+
+/* ------------------------------------------------------------
+   AUTH
+------------------------------------------------------------ */
+
+async function requireAdmin(){
+
+    const {
+        data:{
+            session
+        },
+        error
+    } =
+        await supabaseClient.auth.getSession();
+
+    if(
+        error ||
+        !session
+    ){
+
+        window.location.href =
+            "../auth/login.html?error=unauthorized";
+
+        return false;
+    }
+
+    currentUser =
+        session.user;
+
+    const {
+        data:profile,
+        error:profileError
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role
+            `)
+            .eq("id",currentUser.id)
+            .maybeSingle();
+
+    if(
+        profileError ||
+        !profile ||
+        profile.role !== "admin"
+    ){
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+            "../auth/login.html?error=unauthorized";
+
+        return false;
+    }
+
+    adminProfile =
+        profile;
+
+    applyIdentity();
+
+    return true;
+}
+
+function applyIdentity(){
+
+    const name =
+        adminProfile?.full_name ||
+        currentUser?.email?.split("@")[0] ||
+        "Administrator";
+
+    document.getElementById(
+        "adminName"
+    ).textContent = name;
+
+    document.getElementById(
+        "sideName"
+    ).textContent = name;
+
+    document.getElementById(
+        "topAvatar"
+    ).textContent =
+        initials(name);
+
+    document.getElementById(
+        "sideAvatar"
+    ).textContent =
+        initials(name);
+
+    document.getElementById(
+        "largeAvatar"
+    ).textContent =
+        initials(name);
+
+    document.getElementById(
+        "greeting"
+    ).textContent =
+        `${salutation()}, ${name.split(/\s+/)[0]}`;
+
+    document.getElementById(
+        "accountName"
+    ).textContent =
+        name;
+
+    document.getElementById(
+        "accountEmail"
+    ).textContent =
+        currentUser?.email || "—";
+
+    document.getElementById(
+        "accountFullName"
+    ).value =
+        adminProfile?.full_name || "";
+
+    document.getElementById(
+        "accountPhone"
+    ).value =
+        adminProfile?.phone || "";
+
+    document.getElementById(
+        "accountRole"
+    ).value =
+        adminProfile?.role || "admin";
+}
+
+/* ------------------------------------------------------------
+   SETTINGS TABLE
+   ------------------------------------------------------------
+
+   Supported flexible schemas:
+
+   Option A:
+   site_settings
+   - key
+   - value
+
+   Option B:
+   site_settings
+   - setting_key
+   - setting_value
+
+   The page first tries key/value, then setting_key/
+   setting_value.
+
+   If the table does not exist yet, the UI remains usable but
+   does not pretend that settings were persisted.
+------------------------------------------------------------ */
+
+async function loadSettings(){
+
+    loadedSettings = {};
+
+    settingsTableAvailable = true;
+
+    let response =
+        await supabaseClient
+            .from("site_settings")
+            .select("*")
+            .limit(500);
+
+    if(response.error){
+
+        console.warn(
+            "site_settings query failed:",
+            response.error
+        );
+
+        settingsTableAvailable = false;
+
+        clearSettingsUI();
+
+        return;
+    }
+
+    const rows =
+        Array.isArray(response.data)
+            ? response.data
+            : [];
+
+    rows.forEach(row=>{
+
+        const key =
+            row.key ??
+            row.setting_key ??
+            row.name;
+
+        let value =
+            row.value ??
+            row.setting_value ??
+            row.data;
+
+        if(
+            typeof value === "string"
+        ){
+
+            const trimmed =
+                value.trim();
+
+            if(
+                trimmed === "true" ||
+                trimmed === "false"
+            ){
+                value =
+                    trimmed === "true";
+            }
+            else if(
+                (
+                    trimmed.startsWith("{") &&
+                    trimmed.endsWith("}")
+                ) ||
+                (
+                    trimmed.startsWith("[") &&
+                    trimmed.endsWith("]")
+                )
+            ){
+
+                try{
+                    value =
+                        JSON.parse(trimmed);
+                }catch{
+                    /* Keep original string */
+                }
+            }
+        }
+
+        if(key){
+            loadedSettings[key] =
+                value;
+        }
+    });
+
+    applySettingsToUI();
+}
+
+function clearSettingsUI(){
+
+    document.getElementById(
+        "platformName"
+    ).value = "";
+
+    document.getElementById(
+        "supportEmail"
+    ).value = "";
+
+    document.getElementById(
+        "supportPhone"
+    ).value = "";
+
+    document.getElementById(
+        "defaultCurrency"
+    ).value = "";
+
+    document.getElementById(
+        "platformDescription"
+    ).value = "";
+
+    document.querySelectorAll(
+        ".switch"
+    ).forEach(button=>{
+        button.classList.remove("active");
+    });
+}
+
+function applySettingsToUI(){
+
+    document.getElementById(
+        "platformName"
+    ).value =
+        getSettingValue(
+            "platform_name",
+            ""
+        ) || "";
+
+    document.getElementById(
+        "supportEmail"
+    ).value =
+        getSettingValue(
+            "support_email",
+            ""
+        ) || "";
+
+    document.getElementById(
+        "supportPhone"
+    ).value =
+        getSettingValue(
+            "support_phone",
+            ""
+        ) || "";
+
+    document.getElementById(
+        "defaultCurrency"
+    ).value =
+        getSettingValue(
+            "default_currency",
+            ""
+        ) || "";
+
+    document.getElementById(
+        "platformDescription"
+    ).value =
+        getSettingValue(
+            "platform_description",
+            ""
+        ) || "";
+
+    document.querySelectorAll(
+        ".switch"
+    ).forEach(button=>{
+
+        const key =
+            button.dataset.setting;
+
+        const enabled =
+            asBoolean(
+                getSettingValue(
+                    key,
+                    false
+                )
+            );
+
+        button.classList.toggle(
+            "active",
+            enabled
+        );
+
+        button.setAttribute(
+            "aria-pressed",
+            enabled ? "true" : "false"
+        );
+    });
+}
+
+/* ------------------------------------------------------------
+   SETTINGS SAVE
+------------------------------------------------------------ */
+
+async function saveSetting(
+    key,
+    value
+){
+
+    /*
+      Do not silently claim success if the settings table is
+      unavailable.
+    */
+
+    if(!settingsTableAvailable){
+
+        throw new Error(
+            "The site_settings table is not available or cannot be accessed by this admin session."
+        );
+    }
+
+    /*
+      Try canonical key/value schema first.
+    */
+
+    let response =
+        await supabaseClient
+            .from("site_settings")
+            .upsert(
+                {
+                    key,
+                    value:
+                        typeof value === "string"
+                            ? value
+                            : JSON.stringify(value)
+                },
+                {
+                    onConflict:"key"
+                }
+            );
+
+    if(!response.error){
+
+        loadedSettings[key] =
+            value;
+
+        return;
+    }
+
+    /*
+      Fallback for setting_key / setting_value schema.
+    */
+
+    response =
+        await supabaseClient
+            .from("site_settings")
+            .upsert(
+                {
+                    setting_key:key,
+                    setting_value:
+                        typeof value === "string"
+                            ? value
+                            : JSON.stringify(value)
+                },
+                {
+                    onConflict:"setting_key"
+                }
+            );
+
+    if(response.error){
+
+        throw response.error;
+    }
+
+    loadedSettings[key] =
+        value;
+}
+
+/* ------------------------------------------------------------
+   GENERAL SAVE
+------------------------------------------------------------ */
+
+document.getElementById(
+    "generalSave"
+).addEventListener(
+    "click",
+    async ()=>{
+
+        const button =
+            document.getElementById(
+                "generalSave"
+            );
+
+        button.disabled = true;
+        button.textContent =
+            "Saving…";
+
+        try{
+
+            await saveSetting(
+                "platform_name",
+                document.getElementById(
+                    "platformName"
+                ).value.trim()
+            );
+
+            await saveSetting(
+                "support_email",
+                document.getElementById(
+                    "supportEmail"
+                ).value.trim()
+            );
+
+            await saveSetting(
+                "support_phone",
+                document.getElementById(
+                    "supportPhone"
+                ).value.trim()
+            );
+
+            await saveSetting(
+                "default_currency",
+                document.getElementById(
+                    "defaultCurrency"
+                ).value.trim()
+            );
+
+            await saveSetting(
+                "platform_description",
+                document.getElementById(
+                    "platformDescription"
+                ).value.trim()
+            );
+
+            showToast(
+                "General settings saved."
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            showToast(
+                error.message ||
+                "Unable to save general settings.",
+                true
+            );
+
+        }finally{
+
+            button.disabled = false;
+            button.textContent =
+                "Save General Settings";
+        }
+    }
+);
+
+/* ------------------------------------------------------------
+   GENERAL RESET
+------------------------------------------------------------ */
+
+document.getElementById(
+    "generalReset"
+).addEventListener(
+    "click",
+    ()=>{
+        applySettingsToUI();
+
+        showToast(
+            "Unsaved general changes were reset."
+        );
+    }
+);
+
+/* ------------------------------------------------------------
+   TOGGLES
+------------------------------------------------------------ */
+
+document.querySelectorAll(
+    ".switch"
+).forEach(button=>{
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            const active =
+                button.classList.toggle(
+                    "active"
+                );
+
+            button.setAttribute(
+                "aria-pressed",
+                active ? "true" : "false"
+            );
+        }
+    );
+});
+
+async function saveSwitchGroup(
+    buttonId,
+    keys
+){
+
+    const button =
+        document.getElementById(
+            buttonId
+        );
+
+    button.disabled = true;
+    button.textContent =
+        "Saving…";
+
+    try{
+
+        for(const key of keys){
+
+            const switchButton =
+                document.querySelector(
+                    `.switch[data-setting="${key}"]`
+                );
+
+            if(!switchButton){
+                continue;
+            }
+
+            const enabled =
+                switchButton.classList.contains(
+                    "active"
+                );
+
+            await saveSetting(
+                key,
+                enabled
+            );
+        }
+
+        showToast(
+            "Settings saved."
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message ||
+            "Unable to save settings.",
+            true
+        );
+
+    }finally{
+
+        button.disabled = false;
+
+        if(
+            buttonId === "operationsSave"
+        ){
+            button.textContent =
+                "Save Operational Settings";
+        }
+        else{
+            button.textContent =
+                "Save Notification Settings";
+        }
+    }
+}
+
+document.getElementById(
+    "operationsSave"
+).addEventListener(
+    "click",
+    ()=>{
+        saveSwitchGroup(
+            "operationsSave",
+            [
+                "allow_event_publishing",
+                "allow_ticket_sales",
+                "allow_withdrawals",
+                "allow_wamd",
+                "allow_mpesa"
+            ]
+        );
+    }
+);
+
+document.getElementById(
+    "notificationsSave"
+).addEventListener(
+    "click",
+    ()=>{
+        saveSwitchGroup(
+            "notificationsSave",
+            [
+                "notify_new_orders",
+                "notify_payments",
+                "notify_wamd",
+                "notify_withdrawals",
+                "notify_refunds"
+            ]
+        );
+    }
+);
+
+document.getElementById(
+    "securitySave"
+).addEventListener(
+    "click",
+    ()=>{
+        saveSwitchGroup(
+            "securitySave",
+            [
+                "require_admin_mfa",
+                "security_audit_logging"
+            ]
+        );
+    }
+);
+
+/* ------------------------------------------------------------
+   ACCOUNT PROFILE
+------------------------------------------------------------ */
+
+document.getElementById(
+    "accountSave"
+).addEventListener(
+    "click",
+    async ()=>{
+
+        const button =
+            document.getElementById(
+                "accountSave"
+            );
+
+        const fullName =
+            document.getElementById(
+                "accountFullName"
+            ).value.trim();
+
+        const phone =
+            document.getElementById(
+                "accountPhone"
+            ).value.trim();
+
+        if(!fullName){
+
+            showToast(
+                "Full name is required.",
+                true
+            );
+
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent =
+            "Saving…";
+
+        try{
+
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("profiles")
+                    .update({
+                        full_name:fullName,
+                        phone:phone || null
+                    })
+                    .eq(
+                        "id",
+                        currentUser.id
+                    );
+
+            if(error){
+                throw error;
+            }
+
+            adminProfile.full_name =
+                fullName;
+
+            adminProfile.phone =
+                phone;
+
+            applyIdentity();
+
+            showToast(
+                "Administrator profile updated."
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            showToast(
+                error.message ||
+                "Unable to update administrator profile.",
+                true
+            );
+
+        }finally{
+
+            button.disabled = false;
+            button.textContent =
+                "Save Profile";
+        }
+    }
+);
+
+/* ------------------------------------------------------------
+   PASSWORD RESET
+------------------------------------------------------------ */
+
+document.getElementById(
+    "resetPasswordBtn"
+).addEventListener(
+    "click",
+    async ()=>{
+
+        if(!currentUser?.email){
+
+            showToast(
+                "No authenticated email address is available.",
+                true
+            );
+
+            return;
+        }
+
+        const button =
+            document.getElementById(
+                "resetPasswordBtn"
+            );
+
+        button.disabled = true;
+        button.textContent =
+            "Sending…";
+
+        try{
+
+            const {
+                error
+            } =
+                await supabaseClient.auth
+                    .resetPasswordForEmail(
+                        currentUser.email,
+                        {
+                            redirectTo:
+                                `${window.location.origin}/auth/reset-password.html`
+                        }
+                    );
+
+            if(error){
+                throw error;
+            }
+
+            showToast(
+                "Password reset email sent."
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            showToast(
+                error.message ||
+                "Unable to send password reset email.",
+                true
+            );
+
+        }finally{
+
+            button.disabled = false;
+            button.textContent =
+                "Send Password Reset Email";
+        }
+    }
+);
+
+/* ------------------------------------------------------------
+   LOGOUT
+------------------------------------------------------------ */
+
+document.getElementById(
+    "logoutBtn"
+).addEventListener(
+    "click",
+    async ()=>{
+
+        try{
+
+            await supabaseClient.auth.signOut();
+
+        }finally{
+
+            window.location.href =
+                "../auth/login.html";
+        }
+    }
+);
+
+/* ------------------------------------------------------------
+   SECURITY REVIEW
+------------------------------------------------------------ */
+
+document.getElementById(
+    "requestSecurityReview"
+).addEventListener(
+    "click",
+    ()=>{
+
+        showToast(
+            "Security review requests should be routed through your protected admin workflow."
+        );
+    }
+);
+
+/* ------------------------------------------------------------
+   SETTINGS NAV
+------------------------------------------------------------ */
+
+document.querySelectorAll(
+    ".settings-nav button"
+).forEach(button=>{
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            const target =
+                button.dataset.section;
+
+            document.querySelectorAll(
+                ".settings-nav button"
+            ).forEach(item=>{
+                item.classList.toggle(
+                    "active",
+                    item === button
+                );
+            });
+
+            document.querySelectorAll(
+                ".settings-section"
+            ).forEach(section=>{
+
+                section.classList.toggle(
+                    "active",
+                    section.id ===
+                        `section-${target}`
+                );
+            });
+
+            if(
+                window.innerWidth <= 900
+            ){
+                window.scrollTo({
+                    top:0,
+                    behavior:"smooth"
+                });
+            }
+        }
+    );
+});
+
+/* ------------------------------------------------------------
+   MOBILE MENU
+------------------------------------------------------------ */
+
+menuBtn.addEventListener(
+    "click",
+    ()=>{
+        sidebar.classList.toggle(
+            "open"
+        );
+    }
+);
+
+/* ------------------------------------------------------------
+   AUTH STATE
+------------------------------------------------------------ */
+
+supabaseClient.auth.onAuthStateChange(
+    (event,session)=>{
+
+        if(
+            event === "SIGNED_OUT" ||
+            !session
+        ){
+
+            window.location.href =
+                "../auth/login.html?error=session_expired";
+        }
+    }
+);
+
+/* ------------------------------------------------------------
+   INIT
+------------------------------------------------------------ */
+
+async function init(){
+
+    try{
+
+        if(
+            !SUPABASE_URL ||
+            !SUPABASE_ANON_KEY
+        ){
+
+            throw new Error(
+                "Supabase configuration is missing."
+            );
+        }
+
+        const isAdmin =
+            await requireAdmin();
+
+        if(!isAdmin){
+            return;
+        }
+
+        await loadSettings();
+
+    }catch(error){
+
+        console.error(
+            "Settings initialization error:",
+            error
+        );
+
+        showToast(
+            error.message ||
+            "Unable to initialize settings.",
+            true
+        );
+
+    }finally{
+
+        hideLoading();
+    }
+}
+
+init();
+
+</script>
+
+</body>
+</html>

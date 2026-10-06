@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Profile | K-Tickets</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+
+        :root {
+            --bordo: #6C151E;
+            --green: #0F3D3A;
+            --cream: #F5DABF;
+            --white: #ffffff;
+            --dark: #171414;
+            --muted: #756b67;
+            --border: rgba(15,61,58,.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #fbf7f2;
+            color: var(--dark);
+            font-family: Inter, Arial, sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .topbar {
+            height: 74px;
+            background: var(--green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+        }
+
+        .back {
+            color: rgba(255,255,255,.8);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .content {
+            width: min(900px, calc(100% - 28px));
+            margin: auto;
+            padding: 45px 0 70px;
+        }
+
+        .heading {
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            color: var(--green);
+            font-family: Georgia, serif;
+            font-size: clamp(32px, 5vw, 46px);
+        }
+
+        .heading p {
+            color: var(--muted);
+            margin-top: 7px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            box-shadow: 0 18px 50px rgba(15,61,58,.08);
+            padding: 28px;
+            margin-bottom: 18px;
+        }
+
+        .card h2 {
+            color: var(--green);
+            font-family: Georgia, serif;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 18px;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+            background: #fff;
+            color: var(--dark);
+        }
+
+        input:focus {
+            border-color: var(--green);
+        }
+
+        input[readonly] {
+            background: #f8f4ef;
+            color: var(--muted);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .btn {
+            border: 0;
+            padding: 13px 17px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .primary {
+            background: var(--green);
+            color: white;
+        }
+
+        .secondary {
+            background: var(--cream);
+            color: var(--green);
+        }
+
+        .danger {
+            background: #f5e3e4;
+            color: var(--bordo);
+        }
+
+        .message {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 11px;
+            margin-top: 15px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #e8f2ef;
+            color: var(--green);
+        }
+
+        .message.error {
+            background: #f5e3e4;
+            color: var(--bordo);
+        }
+
+        .security-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 17px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .security-row:last-child {
+            border-bottom: 0;
+        }
+
+        .security-title {
+            color: var(--green);
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .security-sub {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .loader {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(15,61,58,.12);
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin: 70px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                padding: 0 16px;
+            }
+
+            .content {
+                width: min(100% - 18px, 900px);
+                padding-top: 30px;
+            }
+
+            .card {
+                padding: 21px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .actions {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .actions .btn {
+                width: 100%;
+            }
+
+            .security-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="mark">
+            K
+        </div>
+
+        <strong>
+            K-Tickets
+        </strong>
+
+    </div>
+
+    <a
+        href="dashboard.html"
+        class="back"
+    >
+        ← Dashboard
+    </a>
+
+</header>
+
+<main class="content">
+
+    <section class="heading">
+
+        <h1>
+            My Profile
+        </h1>
+
+        <p>
+            Manage the account information connected
+            to your K-Tickets account.
+        </p>
+
+    </section>
+
+    <div
+        class="loader"
+        id="loader"
+    ></div>
+
+    <div
+        id="profileArea"
+        class="hidden"
+    >
+
+        <section class="card">
+
+            <h2>
+                Account Information
+            </h2>
+
+            <div
+                class="avatar"
+                id="avatar"
+            >
+                K
+            </div>
+
+            <form id="profileForm">
+
+                <div class="form-grid">
+
+                    <div class="field">
+
+                        <label for="fullName">
+                            Full Name
+                        </label>
+
+                        <input
+                            id="fullName"
+                            type="text"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="field">
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            id="email"
+                            type="email"
+                            readonly
+                        >
+
+                    </div>
+
+                    <div class="field">
+
+                        <label for="phone">
+                            Phone
+                        </label>
+
+                        <input
+                            id="phone"
+                            type="tel"
+                            autocomplete="tel"
+                        >
+
+                    </div>
+
+                    <div class="field">
+
+                        <label for="role">
+                            Account Type
+                        </label>
+
+                        <input
+                            id="role"
+                            type="text"
+                            readonly
+                        >
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="message"
+                    id="profileMessage"
+                ></div>
+
+                <div class="actions">
+
+                    <button
+                        type="submit"
+                        class="btn primary"
+                        id="saveBtn"
+                    >
+                        Save Changes
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="card">
+
+            <h2>
+                Security
+            </h2>
+
+            <div class="security-row">
+
+                <div>
+
+                    <div class="security-title">
+                        Password
+                    </div>
+
+                    <div class="security-sub">
+                        Update your account password through
+                        the secure authentication system.
+                    </div>
+
+                </div>
+
+                <button
+                    class="btn secondary"
+                    id="passwordBtn"
+                >
+                    Change Password
+                </button>
+
+            </div>
+
+            <div class="security-row">
+
+                <div>
+
+                    <div class="security-title">
+                        Sign Out
+                    </div>
+
+                    <div class="security-sub">
+                        End your current authenticated session.
+                    </div>
+
+                </div>
+
+                <button
+                    class="btn danger"
+                    id="logoutBtn"
+                >
+                    Sign Out
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<script>
+
+    const SUPABASE_URL =
+        window.KTICKETS_SUPABASE_URL || "";
+
+    const SUPABASE_ANON_KEY =
+        window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+    let supabaseClient = null;
+    let currentUser = null;
+
+    function initializeSupabase() {
+
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+
+            throw new Error(
+                "Supabase configuration has not been added yet."
+            );
+        }
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+    }
+
+    function getInitial(name) {
+
+        return (
+            String(name || "K")
+                .trim()
+                .charAt(0)
+                .toUpperCase() ||
+            "K"
+        );
+    }
+
+    function showMessage(
+        message,
+        type
+    ) {
+
+        const element =
+            document.getElementById(
+                "profileMessage"
+            );
+
+        element.textContent =
+            message;
+
+        element.className =
+            `message show ${type}`;
+    }
+
+    async function loadProfile() {
+
+        const {
+            data,
+            error
+        } = await supabaseClient.auth.getUser();
+
+        if (error) {
+            throw error;
+        }
+
+        currentUser =
+            data.user;
+
+        if (!currentUser) {
+
+            window.location.href =
+                "../auth/login.html";
+
+            return;
+        }
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role
+            `)
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+        if (profileError) {
+            throw profileError;
+        }
+
+        const record =
+            profile || {};
+
+        document.getElementById(
+            "fullName"
+        ).value =
+            record.full_name ||
+            currentUser.user_metadata?.full_name ||
+            "";
+
+        document.getElementById(
+            "email"
+        ).value =
+            currentUser.email || "";
+
+        document.getElementById(
+            "phone"
+        ).value =
+            record.phone ||
+            currentUser.user_metadata?.phone ||
+            "";
+
+        document.getElementById(
+            "role"
+        ).value =
+            record.role ||
+            "customer";
+
+        document.getElementById(
+            "avatar"
+        ).textContent =
+            getInitial(
+                record.full_name
+            );
+
+        document.getElementById(
+            "loader"
+        ).classList.add(
+            "hidden"
+        );
+
+        document.getElementById(
+            "profileArea"
+        ).classList.remove(
+            "hidden"
+        );
+    }
+
+    async function saveProfile(event) {
+
+        event.preventDefault();
+
+        if (!currentUser) {
+            return;
+        }
+
+        const saveBtn =
+            document.getElementById(
+                "saveBtn"
+            );
+
+        const fullName =
+            document.getElementById(
+                "fullName"
+            ).value
+            .trim();
+
+        const phone =
+            document.getElementById(
+                "phone"
+            ).value
+            .trim();
+
+        if (!fullName) {
+
+            showMessage(
+                "Full name is required.",
+                "error"
+            );
+
+            return;
+        }
+
+        saveBtn.disabled = true;
+
+        saveBtn.textContent =
+            "Saving...";
+
+        try {
+
+            const {
+                error
+            } = await supabaseClient
+                .from("profiles")
+                .upsert(
+                    {
+                        id: currentUser.id,
+                        full_name: fullName,
+                        phone: phone
+                    },
+                    {
+                        onConflict: "id"
+                    }
+                );
+
+            if (error) {
+                throw error;
+            }
+
+            /*
+             * Keep Auth metadata synchronized where
+             * appropriate. The database profile remains
+             * the application's source of truth.
+             */
+
+            const {
+                error: authError
+            } = await supabaseClient.auth
+                .updateUser({
+                    data: {
+                        full_name: fullName,
+                        phone: phone
+                    }
+                });
+
+            if (authError) {
+                console.warn(
+                    "Auth metadata update failed:",
+                    authError
+                );
+            }
+
+            document.getElementById(
+                "avatar"
+            ).textContent =
+                getInitial(fullName);
+
+            showMessage(
+                "Your profile has been updated.",
+                "success"
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                error.message ||
+                "Unable to save your profile.",
+                "error"
+            );
+
+        } finally {
+
+            saveBtn.disabled = false;
+
+            saveBtn.textContent =
+                "Save Changes";
+        }
+    }
+
+    async function changePassword() {
+
+        if (!currentUser?.email) {
+            return;
+        }
+
+        const button =
+            document.getElementById(
+                "passwordBtn"
+            );
+
+        button.disabled = true;
+
+        button.textContent =
+            "Sending...";
+
+        try {
+
+            const {
+                error
+            } = await supabaseClient.auth
+                .resetPasswordForEmail(
+                    currentUser.email,
+                    {
+                        redirectTo:
+                            `${window.location.origin}/auth/reset-password.html`
+                    }
+                );
+
+            if (error) {
+                throw error;
+            }
+
+            alert(
+                "A password reset email has been sent to your account."
+            );
+
+        } catch (error) {
+
+            alert(
+                error.message ||
+                "Unable to send password reset email."
+            );
+
+        } finally {
+
+            button.disabled = false;
+
+            button.textContent =
+                "Change Password";
+        }
+    }
+
+    async function logout() {
+
+        if (!supabaseClient) {
+            return;
+        }
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+            "../auth/login.html";
+    }
+
+    async function loadPage() {
+
+        try {
+
+            initializeSupabase();
+
+            await loadProfile();
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById(
+                "loader"
+            ).classList.add(
+                "hidden"
+            );
+
+            document.getElementById(
+                "profileArea"
+            ).innerHTML = `
+
+                <section class="card">
+
+                    <h2>
+                        Unable to load profile
+                    </h2>
+
+                    <p style="
+                        color:#756b67;
+                        line-height:1.6;
+                    ">
+                        ${String(
+                            error.message ||
+                            "Please try again."
+                        )
+                            .replaceAll(
+                                "<",
+                                "&lt;"
+                            )
+                            .replaceAll(
+                                ">",
+                                "&gt;"
+                            )}
+                    </p>
+
+                </section>
+            `;
+
+            document.getElementById(
+                "profileArea"
+            ).classList.remove(
+                "hidden"
+            );
+        }
+    }
+
+    document
+        .getElementById("profileForm")
+        .addEventListener(
+            "submit",
+            saveProfile
+        );
+
+    document
+        .getElementById("passwordBtn")
+        .addEventListener(
+            "click",
+            changePassword
+        );
+
+    document
+        .getElementById("logoutBtn")
+        .addEventListener(
+            "click",
+            logout
+        );
+
+    loadPage();
+
+</script>
+
+</body>
+</html>

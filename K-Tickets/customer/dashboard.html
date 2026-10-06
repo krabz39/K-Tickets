@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Customer Dashboard | K-Tickets</title>
+
+    <meta
+        name="description"
+        content="Your K-Tickets customer dashboard."
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+
+        :root {
+            --bordo: #6C151E;
+            --green: #0F3D3A;
+            --cream: #F5DABF;
+            --white: #ffffff;
+            --dark: #171414;
+            --muted: #756b67;
+            --border: rgba(15,61,58,.12);
+            --shadow: 0 18px 50px rgba(15,61,58,.08);
+            --radius: 21px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #fbf7f2;
+            color: var(--dark);
+            font-family: Inter, Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* APP */
+
+        .app {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: 260px;
+            background: var(--green);
+            color: white;
+            padding: 28px 18px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 10px 35px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            font-size: 17px;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 18px;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 3px;
+            font-size: 10px;
+            opacity: .65;
+        }
+
+        .nav {
+            display: grid;
+            gap: 7px;
+        }
+
+        .nav a {
+            padding: 13px 14px;
+            border-radius: 13px;
+            color: rgba(255,255,255,.7);
+            font-size: 14px;
+            font-weight: 700;
+            transition: .2s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255,255,255,.1);
+            color: white;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .logout {
+            width: 100%;
+            border: 1px solid rgba(255,255,255,.15);
+            background: transparent;
+            color: white;
+            border-radius: 13px;
+            padding: 13px;
+            font-weight: 700;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 78px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+        }
+
+        .mobile-menu {
+            display: none;
+            border: 0;
+            background: transparent;
+            font-size: 24px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--cream);
+            color: var(--green);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+        }
+
+        .content {
+            width: min(1350px, 100%);
+            margin: auto;
+            padding: 42px;
+        }
+
+        /* HERO */
+
+        .hero {
+            background:
+                linear-gradient(
+                    125deg,
+                    var(--green),
+                    #174b47 60%,
+                    var(--bordo)
+                );
+            border-radius: 27px;
+            padding: clamp(28px, 5vw, 55px);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 65px rgba(15,61,58,.18);
+        }
+
+        .hero::after {
+            content: "";
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,.1);
+            position: absolute;
+            right: -130px;
+            top: -130px;
+        }
+
+        .hero small {
+            opacity: .7;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            margin-top: 9px;
+            font-family: Georgia, serif;
+            font-size: clamp(30px, 5vw, 50px);
+            line-height: 1.04;
+            max-width: 750px;
+        }
+
+        .hero p {
+            margin-top: 14px;
+            color: rgba(255,255,255,.76);
+            max-width: 600px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .hero-btn {
+            border: 0;
+            border-radius: 13px;
+            padding: 13px 18px;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .hero-btn.primary {
+            background: var(--cream);
+            color: var(--green);
+        }
+
+        .hero-btn.secondary {
+            background: rgba(255,255,255,.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,.18);
+        }
+
+        /* STATS */
+
+        .stats {
+            display: grid;
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .stat-value {
+            margin-top: 9px;
+            color: var(--green);
+            font-family: Georgia, serif;
+            font-size: 31px;
+            font-weight: 800;
+        }
+
+        /* GRID */
+
+        .section {
+            margin-top: 34px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 17px;
+        }
+
+        .section-heading h2 {
+            color: var(--green);
+            font-family: Georgia, serif;
+            font-size: 27px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .section-link {
+            color: var(--bordo);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* RECENT */
+
+        .recent-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .recent-row {
+            padding: 18px 20px;
+            display: grid;
+            grid-template-columns:
+                minmax(0, 1fr)
+                auto
+                auto;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .recent-row:last-child {
+            border-bottom: 0;
+        }
+
+        .recent-title {
+            color: var(--green);
+            font-weight: 800;
+        }
+
+        .recent-sub {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .recent-date {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .view-btn {
+            background: var(--cream);
+            color: var(--green);
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* QUICK */
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0,1fr));
+            gap: 15px;
+        }
+
+        .quick-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 23px;
+            transition: .2s ease;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .quick-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 13px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-size: 19px;
+            margin-bottom: 17px;
+        }
+
+        .quick-card h3 {
+            color: var(--green);
+            font-size: 16px;
+        }
+
+        .quick-card p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-top: 7px;
+        }
+
+        .quick-card a {
+            display: inline-block;
+            color: var(--bordo);
+            font-size: 12px;
+            font-weight: 800;
+            margin-top: 15px;
+        }
+
+        /* STATES */
+
+        .empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .loading {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .error {
+            color: var(--bordo);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1000px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, minmax(0,1fr));
+            }
+
+            .quick-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0,1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .content {
+                padding: 25px 18px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .recent-row {
+                grid-template-columns: 1fr auto;
+            }
+
+            .recent-date {
+                display: none;
+            }
+
+            .user-name {
+                display: none;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                border-radius: 20px;
+            }
+
+            .hero-actions {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .hero-btn {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                K
+            </div>
+
+            <div class="brand-text">
+
+                <strong>
+                    K-Tickets
+                </strong>
+
+                <span>
+                    Customer Portal
+                </span>
+
+            </div>
+
+        </div>
+
+        <nav class="nav">
+
+            <a
+                href="dashboard.html"
+                class="active"
+            >
+                Dashboard
+            </a>
+
+            <a href="events.html">
+                Browse Events
+            </a>
+
+            <a href="my-tickets.html">
+                My Tickets
+            </a>
+
+            <a href="dashboard.html#orders">
+                Orders
+            </a>
+
+            <a href="dashboard.html#profile">
+                Profile
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <button
+                class="logout"
+                id="logoutBtn"
+            >
+                Sign Out
+            </button>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div style="display:flex;align-items:center;gap:12px;">
+
+                <button
+                    class="mobile-menu"
+                    id="mobileMenu"
+                >
+                    ☰
+                </button>
+
+                <div>
+                    <strong style="color:#0F3D3A;">
+                        Customer Dashboard
+                    </strong>
+                </div>
+
+            </div>
+
+            <div class="user-area">
+
+                <div
+                    class="user-name"
+                    id="topUserName"
+                >
+                    Account
+                </div>
+
+                <div
+                    class="avatar"
+                    id="avatar"
+                >
+                    K
+                </div>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <!-- HERO -->
+
+            <section class="hero">
+
+                <small>
+                    K-Tickets Customer Portal
+                </small>
+
+                <h1 id="greeting">
+                    Welcome
+                </h1>
+
+                <p>
+                    Discover events, manage your tickets,
+                    track purchases and keep everything
+                    connected to your K-Tickets account.
+                </p>
+
+                <div class="hero-actions">
+
+                    <a
+                        href="events.html"
+                        class="hero-btn primary"
+                    >
+                        Browse Events
+                    </a>
+
+                    <a
+                        href="my-tickets.html"
+                        class="hero-btn secondary"
+                    >
+                        My Tickets
+                    </a>
+
+                </div>
+
+            </section>
+
+            <!-- STATS -->
+
+            <section class="stats">
+
+                <div class="stat">
+
+                    <div class="stat-label">
+                        Tickets
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="ticketCount"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-label">
+                        Orders
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="orderCount"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-label">
+                        Used
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="usedCount"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-label">
+                        Upcoming
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="upcomingCount"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- RECENT TICKETS -->
+
+            <section class="section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>
+                            Recent Tickets
+                        </h2>
+
+                        <p>
+                            Your latest issued tickets.
+                        </p>
+
+                    </div>
+
+                    <a
+                        class="section-link"
+                        href="my-tickets.html"
+                    >
+                        View all
+                    </a>
+
+                </div>
+
+                <div
+                    class="recent-card"
+                    id="recentTickets"
+                >
+
+                    <div class="empty">
+                        <span class="loading">
+                            Loading tickets...
+                        </span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- QUICK ACTIONS -->
+
+            <section class="section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>
+                            Quick Access
+                        </h2>
+
+                        <p>
+                            Common customer actions.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="quick-grid">
+
+                    <article class="quick-card">
+
+                        <div class="quick-icon">
+                            🎟
+                        </div>
+
+                        <h3>
+                            Browse Events
+                        </h3>
+
+                        <p>
+                            Discover available events
+                            and tickets.
+                        </p>
+
+                        <a href="events.html">
+                            Explore →
+                        </a>
+
+                    </article>
+
+                    <article class="quick-card">
+
+                        <div class="quick-icon">
+                            QR
+                        </div>
+
+                        <h3>
+                            My Tickets
+                        </h3>
+
+                        <p>
+                            Open your issued tickets
+                            and QR codes.
+                        </p>
+
+                        <a href="my-tickets.html">
+                            Open tickets →
+                        </a>
+
+                    </article>
+
+                    <article class="quick-card">
+
+                        <div class="quick-icon">
+                            ↗
+                        </div>
+
+                        <h3>
+                            Account
+                        </h3>
+
+                        <p>
+                            Manage your K-Tickets
+                            account details.
+                        </p>
+
+                        <a href="#profile">
+                            Account →
+                        </a>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+            <!-- PROFILE -->
+
+            <section
+                class="section"
+                id="profile"
+            >
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>
+                            Account
+                        </h2>
+
+                        <p>
+                            Information connected to your
+                            authenticated account.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="recent-card"
+                    style="padding:24px;"
+                >
+
+                    <div
+                        id="profileContent"
+                        class="loading"
+                    >
+                        Loading account information...
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+
+    /*
+     * ============================================================
+     * SUPABASE CONFIGURATION
+     * ============================================================
+     *
+     * Add your real Supabase project URL and anon key.
+     *
+     * Never place the Supabase service-role key in this file.
+     */
+
+    const SUPABASE_URL =
+        window.KTICKETS_SUPABASE_URL || "";
+
+    const SUPABASE_ANON_KEY =
+        window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+    let supabaseClient = null;
+
+    function initializeSupabase() {
+
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+
+            throw new Error(
+                "Supabase configuration has not been added yet."
+            );
+        }
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+    }
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function getInitial(name) {
+
+        if (!name) {
+            return "K";
+        }
+
+        return name
+            .trim()
+            .charAt(0)
+            .toUpperCase();
+    }
+
+    function getGreeting(name) {
+
+        const hour =
+            new Date().getHours();
+
+        let greeting;
+
+        if (hour >= 5 && hour < 12) {
+            greeting = "Good morning";
+        } else if (hour >= 12 && hour < 18) {
+            greeting = "Good afternoon";
+        } else {
+            greeting = "Good evening";
+        }
+
+        return name
+            ? `${greeting}, ${name}`
+            : greeting;
+    }
+
+    function formatDate(value) {
+
+        if (!value) {
+            return "Date unavailable";
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return "Date unavailable";
+        }
+
+        return new Intl.DateTimeFormat(undefined, {
+            dateStyle: "medium",
+            timeStyle: "short"
+        }).format(date);
+    }
+
+    async function getUser() {
+
+        const {
+            data,
+            error
+        } = await supabaseClient.auth.getUser();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data.user) {
+
+            window.location.href =
+                "../auth/login.html";
+
+            return null;
+        }
+
+        return data.user;
+    }
+
+    async function loadProfile(user) {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                role
+            `)
+            .eq("id", user.id)
+            .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+
+        const profile =
+            data || {};
+
+        const name =
+            profile.full_name ||
+            user.user_metadata?.full_name ||
+            "";
+
+        document.getElementById("greeting")
+            .textContent =
+            getGreeting(name);
+
+        document.getElementById("topUserName")
+            .textContent =
+            name || "Account";
+
+        document.getElementById("avatar")
+            .textContent =
+            getInitial(name);
+
+        document.getElementById("profileContent")
+            .innerHTML = `
+
+                <div style="
+                    display:grid;
+                    grid-template-columns:
+                        repeat(auto-fit,minmax(180px,1fr));
+                    gap:20px;
+                ">
+
+                    <div>
+                        <div style="
+                            color:#756b67;
+                            font-size:11px;
+                            text-transform:uppercase;
+                            font-weight:800;
+                        ">
+                            Name
+                        </div>
+
+                        <div style="
+                            margin-top:6px;
+                            font-weight:800;
+                            color:#0F3D3A;
+                        ">
+                            ${escapeHtml(name || "Not provided")}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="
+                            color:#756b67;
+                            font-size:11px;
+                            text-transform:uppercase;
+                            font-weight:800;
+                        ">
+                            Email
+                        </div>
+
+                        <div style="
+                            margin-top:6px;
+                            font-weight:800;
+                            color:#0F3D3A;
+                            word-break:break-word;
+                        ">
+                            ${escapeHtml(user.email || "Not available")}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="
+                            color:#756b67;
+                            font-size:11px;
+                            text-transform:uppercase;
+                            font-weight:800;
+                        ">
+                            Account Type
+                        </div>
+
+                        <div style="
+                            margin-top:6px;
+                            font-weight:800;
+                            color:#0F3D3A;
+                        ">
+                            ${escapeHtml(profile.role || "customer")}
+                        </div>
+                    </div>
+
+                </div>
+            `;
+    }
+
+    async function loadTickets(user) {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("tickets")
+            .select(`
+                id,
+                event_id,
+                ticket_type_id,
+                ticket_code,
+                status,
+                issued_at
+            `)
+            .eq("user_id", user.id)
+            .order("issued_at", {
+                ascending: false
+            });
+
+        if (error) {
+            throw error;
+        }
+
+        const tickets =
+            data || [];
+
+        document.getElementById("ticketCount")
+            .textContent =
+            tickets.length;
+
+        const used =
+            tickets.filter(ticket =>
+                ["used", "checked_in"]
+                    .includes(
+                        String(ticket.status || "")
+                            .toLowerCase()
+                    )
+            );
+
+        document.getElementById("usedCount")
+            .textContent =
+            used.length;
+
+        /*
+         * Load related events.
+         */
+
+        const eventIds = [
+            ...new Set(
+                tickets
+                    .map(ticket => ticket.event_id)
+                    .filter(Boolean)
+            )
+        ];
+
+        let events = [];
+
+        if (eventIds.length) {
+
+            const response =
+                await supabaseClient
+                    .from("events")
+                    .select(`
+                        id,
+                        title,
+                        start_at,
+                        venue
+                    `)
+                    .in("id", eventIds);
+
+            if (response.error) {
+                throw response.error;
+            }
+
+            events =
+                response.data || [];
+        }
+
+        const eventMap =
+            new Map(
+                events.map(event =>
+                    [event.id, event]
+                )
+            );
+
+        const now =
+            Date.now();
+
+        const upcoming =
+            tickets.filter(ticket => {
+
+                const event =
+                    eventMap.get(ticket.event_id);
+
+                if (!event?.start_at) {
+                    return false;
+                }
+
+                return (
+                    new Date(event.start_at)
+                        .getTime() > now &&
+                    !["used", "checked_in", "cancelled"]
+                        .includes(
+                            String(ticket.status || "")
+                                .toLowerCase()
+                        )
+                );
+            });
+
+        document.getElementById("upcomingCount")
+            .textContent =
+            upcoming.length;
+
+        renderRecentTickets(
+            tickets,
+            eventMap
+        );
+    }
+
+    function renderRecentTickets(
+        tickets,
+        eventMap
+    ) {
+
+        const container =
+            document.getElementById(
+                "recentTickets"
+            );
+
+        if (!tickets.length) {
+
+            container.innerHTML = `
+                <div class="empty">
+                    You don't have any issued tickets yet.
+                    <br><br>
+
+                    <a
+                        href="events.html"
+                        style="
+                            color:#6C151E;
+                            font-weight:800;
+                        "
+                    >
+                        Browse events →
+                    </a>
+                </div>
+            `;
+
+            return;
+        }
+
+        const recent =
+            tickets.slice(0, 5);
+
+        container.innerHTML =
+            recent.map(ticket => {
+
+                const event =
+                    eventMap.get(
+                        ticket.event_id
+                    ) || {};
+
+                return `
+                    <div class="recent-row">
+
+                        <div>
+
+                            <div class="recent-title">
+                                ${escapeHtml(
+                                    event.title ||
+                                    "Event"
+                                )}
+                            </div>
+
+                            <div class="recent-sub">
+                                ${escapeHtml(
+                                    event.venue ||
+                                    "Venue unavailable"
+                                )}
+                            </div>
+
+                        </div>
+
+                        <div class="recent-date">
+                            ${escapeHtml(
+                                formatDate(
+                                    ticket.issued_at
+                                )
+                            )}
+                        </div>
+
+                        <a
+                            class="view-btn"
+                            href="ticket.html?id=${encodeURIComponent(
+                                ticket.id
+                            )}"
+                        >
+                            Open Ticket
+                        </a>
+
+                    </div>
+                `;
+
+            }).join("");
+    }
+
+    async function loadDashboard() {
+
+        try {
+
+            initializeSupabase();
+
+            const user =
+                await getUser();
+
+            if (!user) {
+                return;
+            }
+
+            await Promise.all([
+                loadProfile(user),
+                loadTickets(user)
+            ]);
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById(
+                "recentTickets"
+            ).innerHTML = `
+                <div class="empty">
+                    <div class="error">
+                        ${escapeHtml(
+                            error.message ||
+                            "Unable to load dashboard."
+                        )}
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    document
+        .getElementById("mobileMenu")
+        .addEventListener(
+            "click",
+            () => {
+
+                document
+                    .getElementById("sidebar")
+                    .classList.toggle("open");
+
+            }
+        );
+
+    document
+        .getElementById("logoutBtn")
+        .addEventListener(
+            "click",
+            async () => {
+
+                if (!supabaseClient) {
+                    return;
+                }
+
+                await supabaseClient.auth.signOut();
+
+                window.location.href =
+                    "../auth/login.html";
+            }
+        );
+
+    loadDashboard();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Ticket | K-Tickets</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- QR generator -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --green: #0F3D3A;
+            --cream: #F5DABF;
+            --white: #ffffff;
+            --dark: #171414;
+            --muted: #756b67;
+            --border: rgba(15,61,58,.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f7f1eb;
+            color: var(--dark);
+            font-family: Inter, Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        button,
+        a {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .page {
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 74px;
+            background: var(--green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .brand-mark {
+            width: 39px;
+            height: 39px;
+            border-radius: 12px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+        }
+
+        .brand strong {
+            font-size: 17px;
+        }
+
+        .back-link {
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255,255,255,.8);
+        }
+
+        .content {
+            width: min(100%, 1050px);
+            margin: 0 auto;
+            padding: 40px 22px 70px;
+        }
+
+        .page-heading {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .page-heading h1 {
+            color: var(--green);
+            font-family: Georgia, serif;
+            font-size: clamp(30px, 5vw, 46px);
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        /* TICKET */
+
+        .ticket-wrap {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 310px;
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(15,61,58,.13);
+            border: 1px solid var(--border);
+        }
+
+        .ticket-main {
+            padding: 34px;
+            position: relative;
+        }
+
+        .ticket-main::after {
+            content: "";
+            position: absolute;
+            right: -1px;
+            top: 0;
+            height: 100%;
+            border-right: 2px dashed rgba(15,61,58,.18);
+        }
+
+        .event-cover {
+            width: 100%;
+            height: 230px;
+            border-radius: 20px;
+            overflow: hidden;
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--green),
+                    var(--bordo)
+                );
+            margin-bottom: 25px;
+        }
+
+        .event-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .status {
+            display: inline-flex;
+            padding: 8px 12px;
+            background: #e8f2ef;
+            color: var(--green);
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            margin-bottom: 14px;
+        }
+
+        .status.used,
+        .status.checked_in {
+            background: #eee;
+            color: #555;
+        }
+
+        .status.cancelled,
+        .status.invalid {
+            background: #f6e4e5;
+            color: var(--bordo);
+        }
+
+        .event-title {
+            color: var(--green);
+            font-family: Georgia, serif;
+            font-size: clamp(27px, 4vw, 38px);
+            line-height: 1.05;
+        }
+
+        .ticket-type {
+            margin-top: 8px;
+            color: var(--bordo);
+            font-weight: 800;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .detail {
+            border-top: 1px solid var(--border);
+            padding-top: 13px;
+        }
+
+        .detail-label {
+            color: var(--muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            font-weight: 800;
+        }
+
+        .detail-value {
+            margin-top: 6px;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        .ticket-code {
+            margin-top: 30px;
+            padding: 17px;
+            background: var(--cream);
+            border-radius: 16px;
+        }
+
+        .ticket-code small {
+            color: var(--green);
+            display: block;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+        }
+
+        .ticket-code strong {
+            display: block;
+            color: var(--green);
+            font-family: monospace;
+            font-size: 18px;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+
+        /* QR */
+
+        .qr-side {
+            background: var(--cream);
+            padding: 34px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .qr-side h2 {
+            color: var(--green);
+            font-family: Georgia, serif;
+            font-size: 25px;
+            margin-bottom: 7px;
+        }
+
+        .qr-side p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        #qrcode {
+            background: white;
+            padding: 15px;
+            border-radius: 17px;
+            min-width: 190px;
+            min-height: 190px;
+            display: grid;
+            place-items: center;
+        }
+
+        #qrcode img,
+        #qrcode canvas {
+            display: block;
+            max-width: 100%;
+        }
+
+        .scan-note {
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 18px;
+        }
+
+        /* ACTIONS */
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 25px auto 0;
+            max-width: 900px;
+        }
+
+        .btn {
+            border: 0;
+            padding: 13px 19px;
+            border-radius: 13px;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            background: var(--bordo);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-light {
+            background: white;
+            color: var(--green);
+            border: 1px solid var(--border);
+        }
+
+        /* LOADING / ERROR */
+
+        .state {
+            background: white;
+            max-width: 650px;
+            margin: 50px auto;
+            padding: 55px 25px;
+            border-radius: 22px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(15,61,58,.08);
+        }
+
+        .state h2 {
+            color: var(--green);
+            font-family: Georgia, serif;
+        }
+
+        .state p {
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 10px auto 20px;
+        }
+
+        .loader {
+            width: 38px;
+            height: 38px;
+            margin: 0 auto 17px;
+            border-radius: 50%;
+            border: 3px solid rgba(15,61,58,.12);
+            border-top-color: var(--green);
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 780px) {
+
+            .ticket-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .ticket-main::after {
+                display: none;
+            }
+
+            .qr-side {
+                border-top: 2px dashed rgba(15,61,58,.18);
+            }
+        }
+
+        @media (max-width: 560px) {
+
+            .topbar {
+                padding: 0 16px;
+            }
+
+            .back-link {
+                font-size: 11px;
+            }
+
+            .content {
+                padding: 28px 13px 50px;
+            }
+
+            .ticket-main {
+                padding: 20px;
+            }
+
+            .qr-side {
+                padding: 28px 20px;
+            }
+
+            .event-cover {
+                height: 180px;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .actions {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* PRINT */
+
+        @media print {
+
+            body {
+                background: white;
+            }
+
+            .topbar,
+            .page-heading,
+            .actions {
+                display: none !important;
+            }
+
+            .content {
+                padding: 0;
+                width: 100%;
+            }
+
+            .ticket-wrap {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .ticket-main,
+            .qr-side {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <header class="topbar">
+
+        <div class="brand">
+            <div class="brand-mark">K</div>
+            <strong>K-Tickets</strong>
+        </div>
+
+        <a
+            class="back-link"
+            href="my-tickets.html"
+        >
+            ← My Tickets
+        </a>
+
+    </header>
+
+    <main class="content">
+
+        <div class="page-heading">
+            <h1>Your Ticket</h1>
+            <p>
+                Present the QR code at the event entrance.
+            </p>
+        </div>
+
+        <div class="state" id="loadingState">
+
+            <div class="loader"></div>
+
+            <h2>
+                Loading ticket
+            </h2>
+
+            <p>
+                We're securely retrieving your ticket.
+            </p>
+
+        </div>
+
+        <div class="state hidden" id="errorState">
+
+            <h2>
+                Ticket unavailable
+            </h2>
+
+            <p id="errorMessage">
+                This ticket could not be loaded.
+            </p>
+
+            <a
+                class="btn btn-secondary"
+                href="my-tickets.html"
+            >
+                Back to My Tickets
+            </a>
+
+        </div>
+
+        <div id="ticketContainer" class="hidden">
+
+            <section class="ticket-wrap">
+
+                <div class="ticket-main">
+
+                    <div class="event-cover">
+                        <img
+                            id="eventImage"
+                            class="hidden"
+                            alt=""
+                        >
+                    </div>
+
+                    <div
+                        class="status"
+                        id="ticketStatus"
+                    >
+                        Ticket
+                    </div>
+
+                    <h2
+                        class="event-title"
+                        id="eventTitle"
+                    >
+                        —
+                    </h2>
+
+                    <div
+                        class="ticket-type"
+                        id="ticketType"
+                    >
+                        —
+                    </div>
+
+                    <div class="details">
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Date & Time
+                            </div>
+
+                            <div
+                                class="detail-value"
+                                id="eventDate"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Venue
+                            </div>
+
+                            <div
+                                class="detail-value"
+                                id="eventVenue"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                City
+                            </div>
+
+                            <div
+                                class="detail-value"
+                                id="eventCity"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Issued
+                            </div>
+
+                            <div
+                                class="detail-value"
+                                id="issuedAt"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="ticket-code">
+
+                        <small>
+                            Ticket Code
+                        </small>
+
+                        <strong id="ticketCode">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <aside class="qr-side">
+
+                    <h2>Scan to Enter</h2>
+
+                    <p>
+                        This QR code is generated from
+                        your actual K-Tickets record.
+                    </p>
+
+                    <div id="qrcode"></div>
+
+                    <div class="scan-note">
+                        Keep this ticket ready at the gate.
+                    </div>
+
+                </aside>
+
+            </section>
+
+            <div class="actions">
+
+                <button
+                    class="btn btn-primary"
+                    id="downloadBtn"
+                >
+                    Download Ticket
+                </button>
+
+                <button
+                    class="btn btn-secondary"
+                    id="printBtn"
+                >
+                    Print / Save PDF
+                </button>
+
+                <a
+                    class="btn btn-light"
+                    href="my-tickets.html"
+                >
+                    My Tickets
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+
+    const SUPABASE_URL =
+        window.KTICKETS_SUPABASE_URL || "";
+
+    const SUPABASE_ANON_KEY =
+        window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+    let supabaseClient = null;
+
+    let ticketRecord = null;
+    let eventRecord = null;
+    let ticketTypeRecord = null;
+
+    const loadingState =
+        document.getElementById("loadingState");
+
+    const errorState =
+        document.getElementById("errorState");
+
+    const ticketContainer =
+        document.getElementById("ticketContainer");
+
+    const errorMessage =
+        document.getElementById("errorMessage");
+
+    function initializeSupabase() {
+
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+            throw new Error(
+                "Supabase configuration has not been added yet."
+            );
+        }
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+    }
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function formatDate(value) {
+
+        if (!value) {
+            return "Not specified";
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return "Not specified";
+        }
+
+        return new Intl.DateTimeFormat(undefined, {
+            dateStyle: "full",
+            timeStyle: "short"
+        }).format(date);
+    }
+
+    function formatStatus(value) {
+
+        return String(value || "unknown")
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function getTicketId() {
+
+        const params =
+            new URLSearchParams(window.location.search);
+
+        return params.get("id");
+    }
+
+    async function getUser() {
+
+        const {
+            data,
+            error
+        } = await supabaseClient.auth.getUser();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data.user) {
+            window.location.href =
+                "../auth/login.html";
+
+            return null;
+        }
+
+        return data.user;
+    }
+
+    async function loadTicket(user) {
+
+        const ticketId = getTicketId();
+
+        if (!ticketId) {
+            throw new Error(
+                "No ticket was selected."
+            );
+        }
+
+        /*
+         * IMPORTANT:
+         *
+         * user_id = authenticated user
+         *
+         * This prevents one customer from simply changing
+         * ?id=... and reading another customer's ticket,
+         * assuming Supabase RLS is correctly configured.
+         */
+
+        const {
+            data: ticket,
+            error
+        } = await supabaseClient
+            .from("tickets")
+            .select(`
+                id,
+                order_id,
+                order_item_id,
+                user_id,
+                event_id,
+                ticket_type_id,
+                ticket_code,
+                status,
+                issued_at,
+                checked_in_at
+            `)
+            .eq("id", ticketId)
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!ticket) {
+            throw new Error(
+                "This ticket does not exist or you do not have access to it."
+            );
+        }
+
+        ticketRecord = ticket;
+
+        if (ticket.event_id) {
+
+            const response =
+                await supabaseClient
+                    .from("events")
+                    .select(`
+                        id,
+                        title,
+                        venue,
+                        city,
+                        start_at,
+                        end_at,
+                        cover_image_url
+                    `)
+                    .eq("id", ticket.event_id)
+                    .maybeSingle();
+
+            if (response.error) {
+                throw response.error;
+            }
+
+            eventRecord = response.data;
+        }
+
+        if (ticket.ticket_type_id) {
+
+            const response =
+                await supabaseClient
+                    .from("ticket_types")
+                    .select(`
+                        id,
+                        event_id,
+                        name,
+                        price,
+                        currency
+                    `)
+                    .eq("id", ticket.ticket_type_id)
+                    .maybeSingle();
+
+            if (response.error) {
+                throw response.error;
+            }
+
+            ticketTypeRecord = response.data;
+        }
+
+        renderTicket();
+    }
+
+    function renderTicket() {
+
+        const event = eventRecord || {};
+        const type = ticketTypeRecord || {};
+
+        const status =
+            String(ticketRecord.status || "unknown");
+
+        document.getElementById("eventTitle")
+            .textContent =
+            event.title || "Event";
+
+        document.getElementById("ticketType")
+            .textContent =
+            type.name || "Ticket";
+
+        document.getElementById("eventDate")
+            .textContent =
+            formatDate(event.start_at);
+
+        document.getElementById("eventVenue")
+            .textContent =
+            event.venue || "Not specified";
+
+        document.getElementById("eventCity")
+            .textContent =
+            event.city || "Not specified";
+
+        document.getElementById("issuedAt")
+            .textContent =
+            formatDate(ticketRecord.issued_at);
+
+        document.getElementById("ticketCode")
+            .textContent =
+            ticketRecord.ticket_code ||
+            ticketRecord.id;
+
+        const statusElement =
+            document.getElementById("ticketStatus");
+
+        statusElement.textContent =
+            formatStatus(status);
+
+        statusElement.className =
+            "status " + status.toLowerCase();
+
+        if (event.cover_image_url) {
+
+            const image =
+                document.getElementById("eventImage");
+
+            image.src =
+                event.cover_image_url;
+
+            image.alt =
+                event.title || "Event";
+
+            image.classList.remove("hidden");
+        }
+
+        /*
+         * The QR contains a real ticket identifier.
+         *
+         * When the public verification page is created,
+         * this URL becomes the gate verification destination.
+         */
+
+        const verificationUrl =
+            new URL(
+                "../verify-ticket.html",
+                window.location.href
+            );
+
+        verificationUrl.searchParams.set(
+            "id",
+            ticketRecord.id
+        );
+
+        new QRCode(
+            document.getElementById("qrcode"),
+            {
+                text: verificationUrl.toString(),
+                width: 180,
+                height: 180,
+                correctLevel:
+                    QRCode.CorrectLevel.H
+            }
+        );
+
+        loadingState.classList.add("hidden");
+        errorState.classList.add("hidden");
+        ticketContainer.classList.remove("hidden");
+    }
+
+    function buildDownloadHtml() {
+
+        const event = eventRecord || {};
+        const type = ticketTypeRecord || {};
+
+        const ticketCode =
+            ticketRecord.ticket_code ||
+            ticketRecord.id;
+
+        const status =
+            formatStatus(ticketRecord.status);
+
+        const qrCanvas =
+            document.querySelector("#qrcode canvas");
+
+        const qrImage =
+            document.querySelector("#qrcode img");
+
+        let qrSource = "";
+
+        if (qrCanvas) {
+            qrSource =
+                qrCanvas.toDataURL("image/png");
+        } else if (qrImage) {
+            qrSource =
+                qrImage.src;
+        }
+
+        const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>K-Tickets - ${escapeHtml(event.title || "Ticket")}</title>
+
+<style>
+
+body {
+    margin: 0;
+    background: #f7f1eb;
+    color: #171414;
+    font-family: Arial, sans-serif;
+}
+
+.ticket {
+    width: min(900px, calc(100% - 30px));
+    margin: 40px auto;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(15,61,58,.12);
+}
+
+.header {
+    background: #0F3D3A;
+    color: white;
+    padding: 25px;
+}
+
+.header strong {
+    font-size: 22px;
+}
+
+.body {
+    padding: 30px;
+}
+
+h1 {
+    color: #0F3D3A;
+    font-family: Georgia, serif;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.label {
+    color: #756b67;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.value {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.qr {
+    text-align: center;
+    padding: 30px;
+    background: #F5DABF;
+}
+
+.qr img {
+    width: 200px;
+    max-width: 100%;
+}
+
+.code {
+    margin-top: 25px;
+    background: #F5DABF;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+@media(max-width:600px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .body {
+        padding: 20px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="ticket">
+
+    <div class="header">
+        <strong>K-Tickets</strong>
+    </div>
+
+    <div class="body">
+
+        <h1>
+            ${escapeHtml(event.title || "Event")}
+        </h1>
+
+        <p>
+            ${escapeHtml(type.name || "Ticket")}
+        </p>
+
+        <div class="grid">
+
+            <div>
+                <div class="label">Date & Time</div>
+                <div class="value">
+                    ${escapeHtml(formatDate(event.start_at))}
+                </div>
+            </div>
+
+            <div>
+                <div class="label">Venue</div>
+                <div class="value">
+                    ${escapeHtml(event.venue || "Not specified")}
+                </div>
+            </div>
+
+            <div>
+                <div class="label">City</div>
+                <div class="value">
+                    ${escapeHtml(event.city || "Not specified")}
+                </div>
+            </div>
+
+            <div>
+                <div class="label">Status</div>
+                <div class="value">
+                    ${escapeHtml(status)}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="code">
+
+            <div class="label">
+                Ticket Code
+            </div>
+
+            <div class="value">
+                ${escapeHtml(ticketCode)}
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="qr">
+
+        <img
+            src="${qrSource}"
+            alt="Ticket QR Code"
+        >
+
+        <p>
+            Present this QR code at the event entrance.
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+        `;
+
+        return html;
+    }
+
+    function downloadTicket() {
+
+        if (!ticketRecord) {
+            return;
+        }
+
+        const html =
+            buildDownloadHtml();
+
+        const blob =
+            new Blob(
+                [html],
+                {
+                    type: "text/html;charset=utf-8"
+                }
+            );
+
+        const url =
+            URL.createObjectURL(blob);
+
+        const anchor =
+            document.createElement("a");
+
+        anchor.href = url;
+
+        const code =
+            ticketRecord.ticket_code ||
+            ticketRecord.id;
+
+        anchor.download =
+            `k-ticket-${code}.html`;
+
+        document.body.appendChild(anchor);
+
+        anchor.click();
+
+        anchor.remove();
+
+        URL.revokeObjectURL(url);
+    }
+
+    async function loadPage() {
+
+        try {
+
+            initializeSupabase();
+
+            const user =
+                await getUser();
+
+            if (!user) {
+                return;
+            }
+
+            await loadTicket(user);
+
+        } catch (error) {
+
+            console.error(error);
+
+            loadingState.classList.add("hidden");
+
+            errorMessage.textContent =
+                error.message ||
+                "Unable to load this ticket.";
+
+            errorState.classList.remove("hidden");
+        }
+    }
+
+    document
+        .getElementById("downloadBtn")
+        .addEventListener(
+            "click",
+            downloadTicket
+        );
+
+    document
+        .getElementById("printBtn")
+        .addEventListener(
+            "click",
+            () => window.print()
+        );
+
+    loadPage();
+
+</script>
+
+</body>
+</html>

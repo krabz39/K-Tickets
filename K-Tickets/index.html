@@ -1,0 +1,613 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>K-Tickets | Kuwait's Event Ticketing Platform</title>
+
+    <meta
+      name="description"
+      content="Discover, book and manage events with K-Tickets."
+    />
+
+    <style>
+      :root {
+        --bordo: #6c151e;
+        --green: #0f3d3a;
+        --cream: #f5dabf;
+
+        --white: #fffdf9;
+        --dark: #18201f;
+        --muted: #68706d;
+
+        --radius-sm: 10px;
+        --radius-md: 18px;
+        --radius-lg: 28px;
+
+        --shadow: 0 20px 50px rgba(15, 61, 58, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family:
+          Inter,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+
+        background: var(--cream);
+        color: var(--dark);
+        line-height: 1.6;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      /* =========================
+           NAVIGATION
+        ========================= */
+
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+
+        background: rgba(245, 218, 191, 0.92);
+        backdrop-filter: blur(16px);
+
+        border-bottom: 1px solid rgba(15, 61, 58, 0.08);
+      }
+
+      .nav-inner {
+        max-width: 1200px;
+        margin: auto;
+
+        padding: 18px 24px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 30px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+
+        font-weight: 900;
+        color: var(--green);
+        letter-spacing: -0.5px;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 13px;
+
+        background: var(--bordo);
+        color: var(--cream);
+
+        font-weight: 900;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--green);
+      }
+
+      .nav-links a {
+        transition: 0.25s ease;
+      }
+
+      .nav-links a:hover {
+        color: var(--bordo);
+      }
+
+      .nav-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        border: 0;
+        cursor: pointer;
+
+        padding: 12px 18px;
+        border-radius: 12px;
+
+        font-weight: 800;
+
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--green);
+
+        border: 1px solid rgba(15, 61, 58, 0.25);
+      }
+
+      .btn-primary {
+        background: var(--bordo);
+        color: white;
+
+        box-shadow: 0 10px 24px rgba(108, 21, 30, 0.2);
+      }
+
+      .btn-primary:hover {
+        background: #561019;
+      }
+
+      /* =========================
+           HERO
+        ========================= */
+
+      .hero {
+        max-width: 1200px;
+        margin: auto;
+
+        padding: 100px 24px 80px;
+
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        align-items: center;
+
+        gap: 70px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        padding: 8px 13px;
+
+        border-radius: 999px;
+
+        background: rgba(108, 21, 30, 0.08);
+        color: var(--bordo);
+
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .hero h1 {
+        margin-top: 22px;
+
+        font-size: clamp(46px, 6vw, 76px);
+
+        line-height: 0.98;
+        letter-spacing: -3px;
+
+        color: var(--green);
+      }
+
+      .hero h1 span {
+        color: var(--bordo);
+      }
+
+      .hero p {
+        max-width: 600px;
+
+        margin-top: 24px;
+
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+
+        margin-top: 32px;
+      }
+
+      /* =========================
+           HERO CARD
+        ========================= */
+
+      .hero-card {
+        position: relative;
+
+        min-height: 440px;
+
+        padding: 28px;
+
+        border-radius: var(--radius-lg);
+
+        background: var(--green);
+
+        box-shadow: var(--shadow);
+
+        overflow: hidden;
+      }
+
+      .hero-card::before {
+        content: "";
+
+        position: absolute;
+
+        width: 280px;
+        height: 280px;
+
+        right: -100px;
+        top: -100px;
+
+        border-radius: 50%;
+
+        background: var(--bordo);
+        opacity: 0.85;
+      }
+
+      .hero-card-inner {
+        position: relative;
+        z-index: 2;
+
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .event-label {
+        display: inline-block;
+
+        width: fit-content;
+
+        padding: 7px 11px;
+
+        border-radius: 999px;
+
+        background: rgba(245, 218, 191, 0.14);
+        color: var(--cream);
+
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .hero-card h2 {
+        margin-top: 15px;
+
+        color: white;
+
+        font-size: 38px;
+        line-height: 1.05;
+      }
+
+      .hero-card p {
+        margin-top: 10px;
+
+        color: rgba(255, 255, 255, 0.72);
+      }
+
+      .event-price {
+        margin-top: 25px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        color: var(--cream);
+      }
+
+      .event-price strong {
+        font-size: 25px;
+      }
+
+      /* =========================
+           FEATURES
+        ========================= */
+
+      .features {
+        background: var(--green);
+
+        padding: 80px 24px;
+      }
+
+      .features-inner {
+        max-width: 1200px;
+        margin: auto;
+
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+
+        gap: 20px;
+      }
+
+      .feature {
+        padding: 30px;
+
+        border-radius: var(--radius-md);
+
+        background: rgba(245, 218, 191, 0.07);
+
+        border: 1px solid rgba(245, 218, 191, 0.1);
+      }
+
+      .feature-number {
+        color: var(--cream);
+        font-weight: 900;
+        font-size: 14px;
+      }
+
+      .feature h3 {
+        margin-top: 16px;
+
+        color: white;
+
+        font-size: 22px;
+      }
+
+      .feature p {
+        margin-top: 8px;
+
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 14px;
+      }
+
+      /* =========================
+           FOOTER
+        ========================= */
+
+      footer {
+        padding: 35px 24px;
+
+        background: var(--bordo);
+        color: var(--cream);
+      }
+
+      .footer-inner {
+        max-width: 1200px;
+        margin: auto;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 20px;
+      }
+
+      .footer-brand {
+        font-weight: 900;
+      }
+
+      .footer-copy {
+        font-size: 13px;
+        opacity: 0.75;
+      }
+
+      /* =========================
+           MOBILE
+        ========================= */
+
+      @media (max-width: 850px) {
+        .nav-links {
+          display: none;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+
+          padding-top: 65px;
+
+          gap: 45px;
+        }
+
+        .hero h1 {
+          letter-spacing: -2px;
+        }
+
+        .features-inner {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-card {
+          min-height: 360px;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .nav-inner {
+          padding: 14px 16px;
+        }
+
+        .nav-actions .btn-outline {
+          display: none;
+        }
+
+        .hero {
+          padding: 55px 18px 55px;
+        }
+
+        .hero h1 {
+          font-size: 48px;
+        }
+
+        .hero p {
+          font-size: 16px;
+        }
+
+        .hero-actions {
+          flex-direction: column;
+        }
+
+        .hero-actions .btn {
+          width: 100%;
+        }
+
+        .features {
+          padding: 60px 18px;
+        }
+
+        .footer-inner {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- NAVIGATION -->
+
+    <nav class="navbar">
+      <div class="nav-inner">
+        <a href="index.html" class="brand">
+          <span class="brand-mark">K</span>
+          <span>K-Tickets</span>
+        </a>
+
+        <div class="nav-links">
+          <a href="#events">Events</a>
+          <a href="#how">How it works</a>
+          <a href="#merchants">For merchants</a>
+        </div>
+
+        <div class="nav-actions">
+          <a href="login.html" class="btn btn-outline"> Sign in </a>
+
+          <a href="register.html" class="btn btn-primary"> Get started </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+
+    <main>
+      <section class="hero">
+        <div>
+          <span class="eyebrow"> Kuwait event ticketing </span>
+
+          <h1>
+            Your event.
+            <span>Your people.</span>
+            Your ticket.
+          </h1>
+
+          <p>
+            Discover events, secure your tickets and keep everything you need in
+            one simple K-Tickets account.
+          </p>
+
+          <div class="hero-actions">
+            <a href="customer/events.html" class="btn btn-primary">
+              Explore events
+            </a>
+
+            <a href="register.html" class="btn btn-outline"> Create account </a>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-card-inner">
+            <span class="event-label"> Featured event </span>
+
+            <h2>Your next experience starts here.</h2>
+
+            <p>Discover events and carry your tickets wherever you go.</p>
+
+            <div class="event-price">
+              <span> K-Tickets </span>
+
+              <strong> KWD </strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURES -->
+
+      <section class="features" id="how">
+        <div class="features-inner">
+          <article class="feature">
+            <span class="feature-number"> 01 </span>
+
+            <h3>Discover</h3>
+
+            <p>Find events and experiences happening around Kuwait.</p>
+          </article>
+
+          <article class="feature">
+            <span class="feature-number"> 02 </span>
+
+            <h3>Book securely</h3>
+
+            <p>
+              Pay through supported payment channels and receive confirmation.
+            </p>
+          </article>
+
+          <article class="feature">
+            <span class="feature-number"> 03 </span>
+
+            <h3>Enter with confidence</h3>
+
+            <p>Your unique ticket and QR code are ready when you are.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-brand">K-Tickets</div>
+
+        <div class="footer-copy">
+          © <span id="year"></span>
+          K-Tickets. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

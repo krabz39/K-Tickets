@@ -1,0 +1,4589 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
+  <meta name="referrer" content="same-origin" />
+
+  <title>K-Tickets Admin — Promotions</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bordo: #6C151E;
+      --green: #0F3D3A;
+      --cream: #F5DABF;
+
+      --bg: #f6f5f2;
+      --surface: #ffffff;
+      --surface-soft: #fbfaf8;
+      --border: #e6e1dc;
+      --text: #18201f;
+      --muted: #747a78;
+
+      --success: #237a57;
+      --warning: #9a6818;
+      --danger: #a72a32;
+      --info: #2d6578;
+
+      --sidebar: 270px;
+      --radius: 18px;
+      --shadow: 0 12px 35px rgba(15, 61, 58, .08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       SECURITY GATE
+       ========================================================= */
+
+    .security-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: grid;
+      place-items: center;
+      background: #f6f5f2;
+      padding: 24px;
+    }
+
+    .security-card {
+      width: min(420px, 100%);
+      padding: 34px 28px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .security-mark {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: var(--green);
+      color: var(--cream);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .security-card h2 {
+      margin-bottom: 8px;
+      font-size: 21px;
+    }
+
+    .security-card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .spinner {
+      width: 25px;
+      height: 25px;
+      margin: 20px auto 0;
+      border: 3px solid #e5e2dc;
+      border-top-color: var(--bordo);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================================================
+       APP
+       ========================================================= */
+
+    .app {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      z-index: 1000;
+      inset: 0 auto 0 0;
+      width: var(--sidebar);
+      display: flex;
+      flex-direction: column;
+      background: var(--green);
+      color: #fff;
+      overflow-y: auto;
+    }
+
+    .brand {
+      padding: 27px 23px 22px;
+      border-bottom: 1px solid rgba(255,255,255,.09);
+    }
+
+    .brand-main {
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: .09em;
+    }
+
+    .brand-sub {
+      margin-top: 6px;
+      color: rgba(255,255,255,.62);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      padding: 17px 12px;
+      flex: 1;
+    }
+
+    .nav-label {
+      padding: 13px 12px 8px;
+      color: rgba(255,255,255,.38);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .nav a {
+      min-height: 43px;
+      margin: 3px 0;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border-radius: 11px;
+      color: rgba(255,255,255,.72);
+      font-size: 13px;
+      font-weight: 650;
+      transition: .18s ease;
+    }
+
+    .nav a:hover {
+      background: rgba(255,255,255,.07);
+      color: #fff;
+    }
+
+    .nav a.active {
+      background: rgba(245,218,191,.13);
+      color: var(--cream);
+    }
+
+    .nav-icon {
+      width: 23px;
+      text-align: center;
+      font-size: 15px;
+      opacity: .9;
+    }
+
+    .sidebar-bottom {
+      padding: 15px 14px;
+      border-top: 1px solid rgba(255,255,255,.09);
+    }
+
+    .admin-mini {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding: 9px;
+      border-radius: 13px;
+      background: rgba(255,255,255,.06);
+    }
+
+    .avatar {
+      width: 35px;
+      height: 35px;
+      flex: 0 0 35px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--cream);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .admin-mini-text {
+      min-width: 0;
+    }
+
+    .admin-mini-name {
+      overflow: hidden;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 750;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .admin-mini-role {
+      margin-top: 2px;
+      color: rgba(255,255,255,.52);
+      font-size: 10px;
+    }
+
+    .signout {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      background: transparent;
+      color: rgba(255,255,255,.72);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .signout:hover {
+      background: rgba(255,255,255,.07);
+      color: #fff;
+    }
+
+    /* =========================================================
+       MAIN / TOPBAR
+       ========================================================= */
+
+    .main {
+      min-width: 0;
+      margin-left: var(--sidebar);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 900;
+      min-height: 74px;
+      padding: 0 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(246,245,242,.94);
+      backdrop-filter: blur(15px);
+    }
+
+    .mobile-menu {
+      display: none;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: #fff;
+      color: var(--green);
+      font-size: 20px;
+    }
+
+    .page-heading {
+      min-width: 0;
+    }
+
+    .page-heading h1 {
+      font-size: clamp(20px, 2vw, 27px);
+      letter-spacing: -.035em;
+    }
+
+    .page-heading p {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .icon-btn {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: #fff;
+      color: var(--green);
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 7px;
+      height: 7px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      background: var(--bordo);
+    }
+
+    .content {
+      width: min(1700px, 100%);
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    /* =========================================================
+       SECURITY BANNER
+       ========================================================= */
+
+    .security-banner {
+      margin-bottom: 20px;
+      padding: 13px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      border: 1px solid #dfe8e5;
+      border-radius: 13px;
+      background: #f1f7f5;
+      color: var(--green);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .security-banner strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* =========================================================
+       STATS
+       ========================================================= */
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 5px 20px rgba(15,61,58,.035);
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .stat-icon {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: #f3ece8;
+      color: var(--bordo);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .stat-value {
+      margin-top: 13px;
+      font-size: clamp(24px, 3vw, 31px);
+      font-weight: 850;
+      letter-spacing: -.045em;
+    }
+
+    .stat-note {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* =========================================================
+       PANEL
+       ========================================================= */
+
+    .panel {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 5px 20px rgba(15,61,58,.035);
+    }
+
+    .panel + .panel {
+      margin-top: 20px;
+    }
+
+    .panel-head {
+      padding: 19px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-title h2 {
+      font-size: 15px;
+      letter-spacing: -.02em;
+    }
+
+    .panel-title p {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .head-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 38px;
+      padding: 0 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 750;
+      transition: .18s ease;
+    }
+
+    .btn:hover {
+      border-color: #cfc8c0;
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      border-color: var(--green);
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: #0b302e;
+    }
+
+    .btn.danger {
+      border-color: #efd4d5;
+      color: var(--danger);
+      background: #fff8f8;
+    }
+
+    /* =========================================================
+       FILTERS
+       ========================================================= */
+
+    .filters {
+      padding: 15px 20px;
+      display: grid;
+      grid-template-columns:
+        minmax(210px, 1.7fr)
+        minmax(140px, .85fr)
+        minmax(140px, .85fr)
+        minmax(140px, .85fr)
+        auto;
+      gap: 9px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-soft);
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field label {
+      display: block;
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      min-height: 40px;
+      padding: 0 11px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(15,61,58,.08);
+    }
+
+    .filter-clear {
+      align-self: end;
+      min-height: 40px;
+    }
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1050px;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      background: #fcfbfa;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-align: left;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid #eeeae5;
+      color: var(--text);
+      font-size: 11px;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: #fcfbfa;
+    }
+
+    .primary-cell {
+      font-weight: 750;
+    }
+
+    .secondary-cell {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .mono {
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+      font-size: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 25px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 850;
+      letter-spacing: .025em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge.success {
+      background: #e8f4ee;
+      color: var(--success);
+    }
+
+    .badge.warning {
+      background: #fbf1dc;
+      color: var(--warning);
+    }
+
+    .badge.danger {
+      background: #f9e7e8;
+      color: var(--danger);
+    }
+
+    .badge.info {
+      background: #e8f1f4;
+      color: var(--info);
+    }
+
+    .badge.neutral {
+      background: #efeeeb;
+      color: #666b69;
+    }
+
+    .discount {
+      font-weight: 850;
+      color: var(--bordo);
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .small-btn {
+      min-height: 32px;
+      padding: 0 9px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .small-btn:hover {
+      border-color: #cfc8c0;
+      background: #faf8f5;
+    }
+
+    /* =========================================================
+       MOBILE LIST
+       ========================================================= */
+
+    .mobile-list {
+      display: none;
+    }
+
+    .mobile-card {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-card:last-child {
+      border-bottom: 0;
+    }
+
+    .mobile-card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .mobile-title {
+      min-width: 0;
+    }
+
+    .mobile-title strong {
+      display: block;
+      overflow: hidden;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mobile-title span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .mobile-grid {
+      margin-top: 13px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+    }
+
+    .mobile-item small {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 750;
+      text-transform: uppercase;
+    }
+
+    .mobile-item div {
+      overflow: hidden;
+      font-size: 11px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mobile-actions {
+      margin-top: 13px;
+      display: flex;
+      gap: 7px;
+    }
+
+    .mobile-actions .small-btn {
+      flex: 1;
+    }
+
+    /* =========================================================
+       EMPTY / LOADING
+       ========================================================= */
+
+    .empty {
+      padding: 65px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .empty-icon {
+      width: 45px;
+      height: 45px;
+      margin: 0 auto 13px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: #f1efec;
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .empty h3 {
+      margin-bottom: 5px;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .empty p {
+      max-width: 560px;
+      margin: auto;
+      font-size: 11px;
+      line-height: 1.65;
+    }
+
+    .loading-row {
+      padding: 38px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* =========================================================
+       PAGINATION
+       ========================================================= */
+
+    .pagination {
+      min-height: 56px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .pagination-info {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .pagination-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* =========================================================
+       DRAWER
+       ========================================================= */
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      display: none;
+      background: rgba(7,18,17,.42);
+      backdrop-filter: blur(3px);
+    }
+
+    .drawer-backdrop.open {
+      display: block;
+    }
+
+    .drawer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: min(540px, 100%);
+      height: 100%;
+      padding: 25px;
+      overflow-y: auto;
+      background: #fff;
+      box-shadow: -20px 0 55px rgba(0,0,0,.15);
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      padding-bottom: 19px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .drawer-head h2 {
+      font-size: 19px;
+      letter-spacing: -.03em;
+    }
+
+    .drawer-head p {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .close-btn {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 36px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--green);
+      font-size: 17px;
+    }
+
+    .drawer-section {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .drawer-section:last-child {
+      border-bottom: 0;
+    }
+
+    .drawer-section h3 {
+      margin-bottom: 13px;
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .detail-item label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .detail-item div {
+      color: var(--text);
+      font-size: 11px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .notice {
+      padding: 13px 14px;
+      border: 1px solid #eadfd7;
+      border-radius: 11px;
+      background: #fcf8f4;
+      color: #6c554a;
+      font-size: 10px;
+      line-height: 1.65;
+    }
+
+    /* =========================================================
+       TOAST
+       ========================================================= */
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 5000;
+      max-width: min(400px, calc(100vw - 44px));
+      padding: 13px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 14px 40px rgba(0,0,0,.14);
+      color: var(--text);
+      font-size: 11px;
+      line-height: 1.5;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: .22s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success {
+      border-color: #cfe4d9;
+    }
+
+    .toast.error {
+      border-color: #ecd0d2;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 1180px) {
+      :root {
+        --sidebar: 230px;
+      }
+
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filter-clear {
+        align-self: stretch;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform .22s ease;
+        box-shadow: 20px 0 45px rgba(0,0,0,.12);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .mobile-menu {
+        display: block;
+      }
+
+      .topbar {
+        padding: 0 18px;
+      }
+
+      .content {
+        padding: 22px 18px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .table-wrap {
+        display: none;
+      }
+
+      .mobile-list {
+        display: block;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        min-height: 68px;
+      }
+
+      .page-heading p {
+        display: none;
+      }
+
+      .top-actions .icon-btn {
+        display: none;
+      }
+
+      .content {
+        padding: 17px 12px 28px;
+      }
+
+      .security-banner {
+        padding: 12px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+
+      .stat {
+        padding: 15px;
+        border-radius: 14px;
+      }
+
+      .stat-value {
+        margin-top: 9px;
+        font-size: 23px;
+      }
+
+      .stat-note {
+        font-size: 9px;
+      }
+
+      .panel-head {
+        padding: 16px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .head-actions {
+        width: 100%;
+      }
+
+      .head-actions .btn {
+        flex: 1;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+        padding: 14px 16px;
+      }
+
+      .mobile-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .pagination {
+        padding: 10px 14px;
+      }
+
+      .drawer {
+        padding: 20px 16px;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toast {
+        right: 12px;
+        bottom: 12px;
+        max-width: calc(100vw - 24px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================================
+       SECURITY GATE
+       ========================================================= -->
+
+  <div class="security-gate" id="securityGate">
+
+    <div class="security-card">
+
+      <div class="security-mark">K</div>
+
+      <h2>
+        Securing Admin Area
+      </h2>
+
+      <p>
+        Verifying your authenticated session and administrator
+        permissions.
+      </p>
+
+      <div class="spinner"></div>
+
+    </div>
+
+  </div>
+
+  <!-- =========================================================
+       APPLICATION
+       ========================================================= -->
+
+  <div class="app" id="app">
+
+    <!-- =======================================================
+         SIDEBAR
+         ======================================================= -->
+
+    <aside class="sidebar" id="sidebar">
+
+      <div class="brand">
+
+        <div class="brand-main">
+          K-TICKETS
+        </div>
+
+        <div class="brand-sub">
+          Administration CMS
+        </div>
+
+      </div>
+
+      <nav class="nav">
+
+        <div class="nav-label">
+          Overview
+        </div>
+
+        <a href="./dashboard.html">
+          <span class="nav-icon">⌂</span>
+          Dashboard
+        </a>
+
+        <div class="nav-label">
+          Platform
+        </div>
+
+        <a href="./events.html">
+          <span class="nav-icon">◫</span>
+          Events
+        </a>
+
+        <a href="./merchants.html">
+          <span class="nav-icon">♙</span>
+          Merchants
+        </a>
+
+        <a href="./customers.html">
+          <span class="nav-icon">♧</span>
+          Customers
+        </a>
+
+        <a href="./orders.html">
+          <span class="nav-icon">▤</span>
+          Orders
+        </a>
+
+        <div class="nav-label">
+          Payments
+        </div>
+
+        <a href="./payments.html">
+          <span class="nav-icon">◉</span>
+          Payments
+        </a>
+
+        <a href="./mpesa.html">
+          <span class="nav-icon">M</span>
+          M-Pesa
+        </a>
+
+        <a href="./wamd.html">
+          <span class="nav-icon">W</span>
+          WAMD
+        </a>
+
+        <a href="./withdrawals.html">
+          <span class="nav-icon">↗</span>
+          Withdrawals
+        </a>
+
+        <div class="nav-label">
+          Controls
+        </div>
+
+        <a href="./fees.html">
+          <span class="nav-icon">%</span>
+          Fees
+        </a>
+
+        <a href="./promotions.html" class="active">
+          <span class="nav-icon">✦</span>
+          Promotions
+        </a>
+
+        <a href="./reports.html">
+          <span class="nav-icon">▥</span>
+          Reports
+        </a>
+
+        <a href="./settings.html">
+          <span class="nav-icon">⚙</span>
+          Settings
+        </a>
+
+        <a href="./audit-logs.html">
+          <span class="nav-icon">≡</span>
+          Audit Logs
+        </a>
+
+      </nav>
+
+      <div class="sidebar-bottom">
+
+        <div class="admin-mini">
+
+          <div class="avatar" id="sidebarAvatar">
+            A
+          </div>
+
+          <div class="admin-mini-text">
+
+            <div
+              class="admin-mini-name"
+              id="sidebarAdminName"
+            >
+              Administrator
+            </div>
+
+            <div class="admin-mini-role">
+              Platform Administrator
+            </div>
+
+          </div>
+
+        </div>
+
+        <button
+          class="signout"
+          id="signOutBtn"
+        >
+          Sign out
+        </button>
+
+      </div>
+
+    </aside>
+
+    <!-- =======================================================
+         MAIN
+         ======================================================= -->
+
+    <main class="main">
+
+      <header class="topbar">
+
+        <div
+          style="display:flex;align-items:center;gap:12px;min-width:0;"
+        >
+
+          <button
+            class="mobile-menu"
+            id="mobileMenu"
+            aria-label="Open navigation"
+          >
+            ☰
+          </button>
+
+          <div class="page-heading">
+
+            <h1>
+              Promotions
+            </h1>
+
+            <p>
+              Monitor merchant promotions and ticket pricing campaigns.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="top-actions">
+
+          <button
+            class="icon-btn"
+            id="refreshBtn"
+            title="Refresh"
+            aria-label="Refresh"
+          >
+            ↻
+          </button>
+
+          <button
+            class="icon-btn"
+            id="notificationBtn"
+            title="Notifications"
+            aria-label="Notifications"
+          >
+            ♧
+            <span
+              class="notification-dot"
+              id="notificationDot"
+              hidden
+            ></span>
+          </button>
+
+        </div>
+
+      </header>
+
+      <section class="content">
+
+        <!-- ===================================================
+             SECURITY NOTICE
+             =================================================== -->
+
+        <div class="security-banner">
+
+          <div>
+            ◆
+          </div>
+
+          <div>
+
+            <strong>
+              Promotion controls are server-authorized.
+            </strong>
+
+            This browser never receives service-role credentials
+            and does not directly modify promotion records.
+            Creation, editing, activation, pricing validation and
+            deletion should be performed through protected
+            Supabase RPCs or Edge Functions with audit logging.
+
+          </div>
+
+        </div>
+
+        <!-- ===================================================
+             STATS
+             =================================================== -->
+
+        <section class="stats">
+
+          <article class="stat">
+
+            <div class="stat-top">
+
+              <div class="stat-label">
+                Promotions
+              </div>
+
+              <div class="stat-icon">
+                ✦
+              </div>
+
+            </div>
+
+            <div
+              class="stat-value"
+              id="statTotal"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Promotion records
+            </div>
+
+          </article>
+
+          <article class="stat">
+
+            <div class="stat-top">
+
+              <div class="stat-label">
+                Active
+              </div>
+
+              <div class="stat-icon">
+                ✓
+              </div>
+
+            </div>
+
+            <div
+              class="stat-value"
+              id="statActive"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Currently active campaigns
+            </div>
+
+          </article>
+
+          <article class="stat">
+
+            <div class="stat-top">
+
+              <div class="stat-label">
+                Scheduled
+              </div>
+
+              <div class="stat-icon">
+                ◷
+              </div>
+
+            </div>
+
+            <div
+              class="stat-value"
+              id="statScheduled"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Future campaigns
+            </div>
+
+          </article>
+
+          <article class="stat">
+
+            <div class="stat-top">
+
+              <div class="stat-label">
+                Ended
+              </div>
+
+              <div class="stat-icon">
+                —
+              </div>
+
+            </div>
+
+            <div
+              class="stat-value"
+              id="statEnded"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Expired campaigns
+            </div>
+
+          </article>
+
+        </section>
+
+        <!-- ===================================================
+             PROMOTIONS TABLE
+             =================================================== -->
+
+        <section class="panel">
+
+          <div class="panel-head">
+
+            <div class="panel-title">
+
+              <h2>
+                Promotion Campaigns
+              </h2>
+
+              <p>
+                Promotion records provided by the Supabase database.
+              </p>
+
+            </div>
+
+            <div class="head-actions">
+
+              <button
+                class="btn"
+                id="refreshDataBtn"
+              >
+                ↻ Refresh
+              </button>
+
+              <button
+                class="btn primary"
+                id="exportBtn"
+              >
+                ↓ Export CSV
+              </button>
+
+            </div>
+
+          </div>
+
+          <!-- FILTERS -->
+
+          <div class="filters">
+
+            <div class="field">
+
+              <label for="searchInput">
+                Search
+              </label>
+
+              <input
+                id="searchInput"
+                class="input"
+                type="search"
+                autocomplete="off"
+                placeholder="Promotion, event, merchant or code..."
+              />
+
+            </div>
+
+            <div class="field">
+
+              <label for="statusFilter">
+                Status
+              </label>
+
+              <select
+                id="statusFilter"
+                class="select"
+              >
+                <option value="">
+                  All statuses
+                </option>
+
+                <option value="active">
+                  Active
+                </option>
+
+                <option value="scheduled">
+                  Scheduled
+                </option>
+
+                <option value="ended">
+                  Ended
+                </option>
+
+                <option value="disabled">
+                  Disabled
+                </option>
+
+                <option value="draft">
+                  Draft
+                </option>
+              </select>
+
+            </div>
+
+            <div class="field">
+
+              <label for="discountFilter">
+                Discount
+              </label>
+
+              <select
+                id="discountFilter"
+                class="select"
+              >
+                <option value="">
+                  All discounts
+                </option>
+
+                <option value="percentage">
+                  Percentage
+                </option>
+
+                <option value="fixed">
+                  Fixed amount
+                </option>
+
+              </select>
+
+            </div>
+
+            <div class="field">
+
+              <label for="periodFilter">
+                Period
+              </label>
+
+              <select
+                id="periodFilter"
+                class="select"
+              >
+                <option value="">
+                  All time
+                </option>
+
+                <option value="today">
+                  Today
+                </option>
+
+                <option value="7">
+                  Last 7 days
+                </option>
+
+                <option value="30">
+                  Last 30 days
+                </option>
+
+                <option value="90">
+                  Last 90 days
+                </option>
+
+              </select>
+
+            </div>
+
+            <button
+              class="btn filter-clear"
+              id="clearFiltersBtn"
+            >
+              Clear
+            </button>
+
+          </div>
+
+          <!-- DESKTOP -->
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Promotion
+                  </th>
+
+                  <th>
+                    Event
+                  </th>
+
+                  <th>
+                    Merchant
+                  </th>
+
+                  <th>
+                    Discount
+                  </th>
+
+                  <th>
+                    Validity
+                  </th>
+
+                  <th>
+                    Status
+                  </th>
+
+                  <th>
+                    Created
+                  </th>
+
+                  <th></th>
+
+                </tr>
+
+              </thead>
+
+              <tbody id="tableBody">
+
+                <tr>
+
+                  <td colspan="8">
+
+                    <div class="loading-row">
+                      Loading promotions...
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+          <!-- MOBILE -->
+
+          <div
+            class="mobile-list"
+            id="mobileList"
+          ></div>
+
+          <div
+            class="pagination"
+            id="pagination"
+            hidden
+          >
+
+            <div
+              class="pagination-info"
+              id="paginationInfo"
+            >
+              —
+            </div>
+
+            <div class="pagination-actions">
+
+              <button
+                class="small-btn"
+                id="prevPageBtn"
+              >
+                Previous
+              </button>
+
+              <button
+                class="small-btn"
+                id="nextPageBtn"
+              >
+                Next
+              </button>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- =========================================================
+       DRAWER
+       ========================================================= -->
+
+  <div
+    class="drawer-backdrop"
+    id="drawerBackdrop"
+    aria-hidden="true"
+  >
+
+    <aside
+      class="drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Promotion details"
+    >
+
+      <div class="drawer-head">
+
+        <div>
+
+          <h2>
+            Promotion Details
+          </h2>
+
+          <p id="drawerSubtitle">
+            Promotion campaign
+          </p>
+
+        </div>
+
+        <button
+          class="close-btn"
+          id="closeDrawerBtn"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div>
+
+        <div class="drawer-section">
+
+          <h3>
+            Promotion
+          </h3>
+
+          <div class="detail-grid">
+
+            <div class="detail-item">
+
+              <label>
+                Promotion ID
+              </label>
+
+              <div
+                class="mono"
+                id="dId"
+              >
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Status
+              </label>
+
+              <div id="dStatus">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Name
+              </label>
+
+              <div id="dName">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Code
+              </label>
+
+              <div
+                class="mono"
+                id="dCode"
+              >
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Discount Type
+              </label>
+
+              <div id="dDiscountType">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Discount
+              </label>
+
+              <div id="dDiscount">
+                —
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="drawer-section">
+
+          <h3>
+            Event
+          </h3>
+
+          <div class="detail-grid">
+
+            <div class="detail-item">
+
+              <label>
+                Event
+              </label>
+
+              <div id="dEvent">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Event ID
+              </label>
+
+              <div
+                class="mono"
+                id="dEventId"
+              >
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Merchant
+              </label>
+
+              <div id="dMerchant">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Merchant ID
+              </label>
+
+              <div
+                class="mono"
+                id="dMerchantId"
+              >
+                —
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="drawer-section">
+
+          <h3>
+            Validity
+          </h3>
+
+          <div class="detail-grid">
+
+            <div class="detail-item">
+
+              <label>
+                Starts
+              </label>
+
+              <div id="dStarts">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Ends
+              </label>
+
+              <div id="dEnds">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Created
+              </label>
+
+              <div id="dCreated">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Updated
+              </label>
+
+              <div id="dUpdated">
+                —
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="drawer-section">
+
+          <h3>
+            Limits
+          </h3>
+
+          <div class="detail-grid">
+
+            <div class="detail-item">
+
+              <label>
+                Usage Limit
+              </label>
+
+              <div id="dUsageLimit">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Usage Count
+              </label>
+
+              <div id="dUsageCount">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Minimum Order
+              </label>
+
+              <div id="dMinimumOrder">
+                —
+              </div>
+
+            </div>
+
+            <div class="detail-item">
+
+              <label>
+                Maximum Discount
+              </label>
+
+              <div id="dMaximumDiscount">
+                —
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="drawer-section">
+
+          <div class="notice">
+
+            This page is intentionally read-only from the browser.
+            Promotion pricing, activation, expiry, usage limits and
+            deletion must be validated server-side. The server should
+            also prevent negative prices, excessive discounts, expired
+            campaigns, unauthorized merchant access and promotion
+            manipulation.
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- =========================================================
+       TOAST
+       ========================================================= -->
+
+  <div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+  <script>
+    /*
+      ============================================================
+      K-TICKETS ADMIN — PROMOTIONS
+      ============================================================
+
+      SECURITY MODEL
+      ------------------------------------------------------------
+      • Supabase ANON/PUBLIC key only.
+      • NEVER expose service-role key.
+      • NEVER expose database password.
+      • NEVER expose payment credentials.
+      • NEVER expose gateway secrets.
+      • Browser UI is not a security boundary.
+      • Supabase Auth + RLS must enforce admin access.
+      • Promotion mutations should use protected RPCs/Edge Functions.
+      • Promotion pricing must be validated server-side.
+      • Promotion activation/deactivation must be audited.
+      • No fake promotion records are created by this page.
+
+      EXPECTED / FLEXIBLE TABLE
+      ------------------------------------------------------------
+      Expected table:
+        promotions
+
+      Common fields supported:
+        id
+        event_id
+        merchant_id
+        name
+        title
+        description
+        code
+        discount_type
+        type
+        discount_value
+        value
+        starts_at
+        start_at
+        ends_at
+        end_at
+        status
+        usage_limit
+        max_uses
+        usage_count
+        used_count
+        minimum_order
+        min_order
+        minimum_amount
+        maximum_discount
+        max_discount
+        created_at
+        updated_at
+
+      Relationship support:
+        events(...)
+        profiles(...)
+
+      Once the production schema is finalized, replace the
+      development-tolerant query with the exact approved columns.
+    */
+
+    const SUPABASE_URL =
+      window.KTICKETS_SUPABASE_URL || "";
+
+    const SUPABASE_ANON_KEY =
+      window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+    let supabaseClient = null;
+
+    let currentUser = null;
+    let currentProfile = null;
+
+    let allPromotions = [];
+    let filteredPromotions = [];
+
+    let currentPage = 1;
+
+    const PAGE_SIZE = 30;
+
+    /* =========================================================
+       HELPERS
+       ========================================================= */
+
+    const $ = id =>
+      document.getElementById(id);
+
+    function escapeHtml(value) {
+
+      if (
+        value === null ||
+        value === undefined
+      ) {
+        return "";
+      }
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function safeText(value) {
+
+      if (
+        value === null ||
+        value === undefined ||
+        value === ""
+      ) {
+        return "—";
+      }
+
+      return String(value);
+    }
+
+    function firstValue(
+      object,
+      keys,
+      fallback = null
+    ) {
+
+      for (const key of keys) {
+
+        if (
+          object &&
+          object[key] !== undefined &&
+          object[key] !== null &&
+          object[key] !== ""
+        ) {
+          return object[key];
+        }
+
+      }
+
+      return fallback;
+    }
+
+    function showToast(
+      message,
+      type = ""
+    ) {
+
+      const toast =
+        $("toast");
+
+      toast.textContent =
+        message;
+
+      toast.className =
+        "toast show " + type;
+
+      clearTimeout(
+        window.__toastTimer
+      );
+
+      window.__toastTimer =
+        setTimeout(
+          () => {
+            toast.className =
+              "toast";
+          },
+          3500
+        );
+    }
+
+    async function safeSignOut() {
+
+      try {
+
+        if (supabaseClient) {
+          await supabaseClient.auth.signOut();
+        }
+
+      } catch (_) {}
+
+      window.location.replace(
+        "../auth/login.html?error=signed_out"
+      );
+    }
+
+    function redirectLogin(reason = "") {
+
+      const suffix =
+        reason
+          ? "?error=" +
+            encodeURIComponent(reason)
+          : "";
+
+      window.location.replace(
+        "../auth/login.html" +
+        suffix
+      );
+    }
+
+    /* =========================================================
+       FORMATTERS
+       ========================================================= */
+
+    function formatDate(value) {
+
+      if (!value) {
+        return "—";
+      }
+
+      const date =
+        new Date(value);
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return safeText(value);
+      }
+
+      return new Intl.DateTimeFormat(
+        undefined,
+        {
+          dateStyle: "medium",
+          timeStyle: "short"
+        }
+      ).format(date);
+    }
+
+    function formatDateShort(value) {
+
+      if (!value) {
+        return "—";
+      }
+
+      const date =
+        new Date(value);
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return safeText(value);
+      }
+
+      return new Intl.DateTimeFormat(
+        undefined,
+        {
+          dateStyle: "medium"
+        }
+      ).format(date);
+    }
+
+    function normalizeStatus(
+      promotion
+    ) {
+
+      const explicit =
+        firstValue(
+          promotion,
+          [
+            "status",
+            "state"
+          ],
+          null
+        );
+
+      if (explicit) {
+
+        const value =
+          String(explicit)
+            .toLowerCase()
+            .trim();
+
+        if (
+          [
+            "active",
+            "scheduled",
+            "ended",
+            "disabled",
+            "draft"
+          ].includes(value)
+        ) {
+          return value;
+        }
+
+      }
+
+      const starts =
+        firstValue(
+          promotion,
+          [
+            "starts_at",
+            "start_at",
+            "starts_on",
+            "start_date"
+          ],
+          null
+        );
+
+      const ends =
+        firstValue(
+          promotion,
+          [
+            "ends_at",
+            "end_at",
+            "ends_on",
+            "end_date"
+          ],
+          null
+        );
+
+      const now =
+        Date.now();
+
+      const startTime =
+        starts
+          ? new Date(starts).getTime()
+          : null;
+
+      const endTime =
+        ends
+          ? new Date(ends).getTime()
+          : null;
+
+      if (
+        startTime &&
+        now < startTime
+      ) {
+        return "scheduled";
+      }
+
+      if (
+        endTime &&
+        now > endTime
+      ) {
+        return "ended";
+      }
+
+      if (
+        startTime &&
+        now >= startTime &&
+        (!endTime || now <= endTime)
+      ) {
+        return "active";
+      }
+
+      return "unknown";
+    }
+
+    function statusLabel(
+      status
+    ) {
+
+      const labels = {
+        active: "Active",
+        scheduled: "Scheduled",
+        ended: "Ended",
+        disabled: "Disabled",
+        draft: "Draft",
+        unknown: "Unknown"
+      };
+
+      return (
+        labels[status] ||
+        status ||
+        "Unknown"
+      );
+    }
+
+    function statusClass(
+      status
+    ) {
+
+      if (
+        status === "active"
+      ) {
+        return "success";
+      }
+
+      if (
+        status === "scheduled"
+      ) {
+        return "info";
+      }
+
+      if (
+        status === "ended"
+      ) {
+        return "neutral";
+      }
+
+      if (
+        status === "disabled" ||
+        status === "draft"
+      ) {
+        return "warning";
+      }
+
+      return "neutral";
+    }
+
+    function statusBadge(
+      status
+    ) {
+
+      return `
+        <span class="badge ${statusClass(status)}">
+          ${escapeHtml(
+            statusLabel(status)
+          )}
+        </span>
+      `;
+    }
+
+    function normalizeDiscountType(
+      promotion
+    ) {
+
+      const raw =
+        firstValue(
+          promotion,
+          [
+            "discount_type",
+            "type",
+            "promotion_type"
+          ],
+          ""
+        );
+
+      const value =
+        String(raw)
+          .toLowerCase()
+          .trim();
+
+      if (
+        value.includes("percent") ||
+        value === "%"
+      ) {
+        return "percentage";
+      }
+
+      if (
+        value.includes("fixed") ||
+        value.includes("amount") ||
+        value.includes("flat")
+      ) {
+        return "fixed";
+      }
+
+      /*
+        If the schema does not identify the type,
+        keep the raw value for visibility.
+      */
+
+      return value || "unknown";
+    }
+
+    function formatDiscount(
+      promotion
+    ) {
+
+      const value =
+        firstValue(
+          promotion,
+          [
+            "discount_value",
+            "value",
+            "discount",
+            "amount"
+          ],
+          null
+        );
+
+      if (
+        value === null ||
+        value === undefined ||
+        value === ""
+      ) {
+        return "—";
+      }
+
+      const numeric =
+        Number(value);
+
+      const type =
+        normalizeDiscountType(
+          promotion
+        );
+
+      if (
+        Number.isFinite(numeric)
+      ) {
+
+        if (
+          type === "percentage"
+        ) {
+          return (
+            numeric.toLocaleString(
+              undefined,
+              {
+                maximumFractionDigits: 2
+              }
+            ) +
+            "%"
+          );
+        }
+
+        return numeric.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }
+        );
+      }
+
+      return String(value);
+    }
+
+    function normalizePromotion(
+      row
+    ) {
+
+      const eventRelation =
+        row.events ||
+        row.event ||
+        null;
+
+      const profileRelation =
+        row.profiles ||
+        row.profile ||
+        null;
+
+      const event =
+        Array.isArray(eventRelation)
+          ? eventRelation[0]
+          : eventRelation;
+
+      const profile =
+        Array.isArray(profileRelation)
+          ? profileRelation[0]
+          : profileRelation;
+
+      const promotion = {
+        raw: row,
+
+        id:
+          firstValue(
+            row,
+            [
+              "id",
+              "promotion_id"
+            ],
+            ""
+          ),
+
+        eventId:
+          firstValue(
+            row,
+            [
+              "event_id"
+            ],
+            event?.id || ""
+          ),
+
+        merchantId:
+          firstValue(
+            row,
+            [
+              "merchant_id"
+            ],
+            ""
+          ),
+
+        name:
+          firstValue(
+            row,
+            [
+              "name",
+              "title",
+              "promotion_name"
+            ],
+            ""
+          ),
+
+        description:
+          firstValue(
+            row,
+            [
+              "description",
+              "details"
+            ],
+            ""
+          ),
+
+        code:
+          firstValue(
+            row,
+            [
+              "code",
+              "promo_code",
+              "coupon_code"
+            ],
+            ""
+          ),
+
+        discountType:
+          normalizeDiscountType(row),
+
+        discountValue:
+          firstValue(
+            row,
+            [
+              "discount_value",
+              "value",
+              "discount",
+              "amount"
+            ],
+            null
+          ),
+
+        startsAt:
+          firstValue(
+            row,
+            [
+              "starts_at",
+              "start_at",
+              "starts_on",
+              "start_date"
+            ],
+            null
+          ),
+
+        endsAt:
+          firstValue(
+            row,
+            [
+              "ends_at",
+              "end_at",
+              "ends_on",
+              "end_date"
+            ],
+            null
+          ),
+
+        status:
+          normalizeStatus(row),
+
+        usageLimit:
+          firstValue(
+            row,
+            [
+              "usage_limit",
+              "max_uses",
+              "maximum_uses"
+            ],
+            null
+          ),
+
+        usageCount:
+          firstValue(
+            row,
+            [
+              "usage_count",
+              "used_count",
+              "uses"
+            ],
+            null
+          ),
+
+        minimumOrder:
+          firstValue(
+            row,
+            [
+              "minimum_order",
+              "min_order",
+              "minimum_amount"
+            ],
+            null
+          ),
+
+        maximumDiscount:
+          firstValue(
+            row,
+            [
+              "maximum_discount",
+              "max_discount"
+            ],
+            null
+          ),
+
+        createdAt:
+          firstValue(
+            row,
+            [
+              "created_at"
+            ],
+            null
+          ),
+
+        updatedAt:
+          firstValue(
+            row,
+            [
+              "updated_at"
+            ],
+            null
+          ),
+
+        eventTitle:
+          event
+            ? firstValue(
+                event,
+                [
+                  "title",
+                  "name"
+                ],
+                ""
+              )
+            : "",
+
+        merchantName:
+          profile
+            ? firstValue(
+                profile,
+                [
+                  "full_name",
+                  "name"
+                ],
+                ""
+              )
+            : ""
+      };
+
+      return promotion;
+    }
+
+    /* =========================================================
+       SUPABASE
+       ========================================================= */
+
+    async function initializeSupabase() {
+
+      if (
+        !SUPABASE_URL ||
+        !SUPABASE_ANON_KEY
+      ) {
+        throw new Error(
+          "Supabase configuration is missing."
+        );
+      }
+
+      if (
+        !window.supabase ||
+        !window.supabase.createClient
+      ) {
+        throw new Error(
+          "Supabase client failed to load."
+        );
+      }
+
+      supabaseClient =
+        window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY,
+          {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          }
+        );
+    }
+
+    /* =========================================================
+       ADMIN VERIFICATION
+       ========================================================= */
+
+    async function verifyAdmin() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+      if (error) {
+        throw error;
+      }
+
+      const session =
+        data?.session;
+
+      if (!session?.user) {
+
+        redirectLogin(
+          "login_required"
+        );
+
+        return false;
+      }
+
+      currentUser =
+        session.user;
+
+      const {
+        data: profile,
+        error: profileError
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(`
+            id,
+            full_name,
+            phone,
+            role
+          `)
+          .eq(
+            "id",
+            currentUser.id
+          )
+          .maybeSingle();
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      if (
+        !profile ||
+        profile.role !== "admin"
+      ) {
+
+        await safeSignOut();
+
+        return false;
+      }
+
+      currentProfile =
+        profile;
+
+      updateAdminIdentity();
+
+      return true;
+    }
+
+    function getInitials(
+      name
+    ) {
+
+      const value =
+        String(
+          name || "A"
+        ).trim();
+
+      if (!value) {
+        return "A";
+      }
+
+      const parts =
+        value
+          .split(/\s+/)
+          .filter(Boolean);
+
+      if (
+        parts.length === 1
+      ) {
+
+        return parts[0]
+          .slice(0, 2)
+          .toUpperCase();
+      }
+
+      return (
+        parts[0][0] +
+        parts[
+          parts.length - 1
+        ][0]
+      ).toUpperCase();
+    }
+
+    function updateAdminIdentity() {
+
+      const name =
+        currentProfile?.full_name ||
+        currentUser?.email ||
+        "Administrator";
+
+      $("sidebarAdminName")
+        .textContent =
+        name;
+
+      $("sidebarAvatar")
+        .textContent =
+        getInitials(name);
+    }
+
+    /* =========================================================
+       LOAD PROMOTIONS
+       ========================================================= */
+
+    async function loadPromotions() {
+
+      setLoadingState();
+
+      /*
+        This query deliberately uses common promotion fields.
+        Once the production schema is locked, reduce this to
+        an explicit approved column list.
+
+        Important:
+        RLS must ensure only admins can read the promotions.
+      */
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("promotions")
+          .select(`
+            id,
+            event_id,
+            merchant_id,
+            name,
+            title,
+            promotion_name,
+            description,
+            code,
+            promo_code,
+            coupon_code,
+            discount_type,
+            promotion_type,
+            type,
+            discount_value,
+            value,
+            discount,
+            amount,
+            starts_at,
+            start_at,
+            starts_on,
+            start_date,
+            ends_at,
+            end_at,
+            ends_on,
+            end_date,
+            status,
+            usage_limit,
+            max_uses,
+            maximum_uses,
+            usage_count,
+            used_count,
+            uses,
+            minimum_order,
+            min_order,
+            minimum_amount,
+            maximum_discount,
+            max_discount,
+            created_at,
+            updated_at,
+            events(
+              id,
+              title
+            )
+          `)
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          )
+          .limit(5000);
+
+      if (error) {
+
+        console.error(
+          "Promotions query failed:",
+          error
+        );
+
+        allPromotions = [];
+
+        updateStats();
+
+        renderEmptyState(
+          "Promotions unavailable",
+          "The promotions table may not match the current frontend schema, or Supabase RLS may be blocking this administrator."
+        );
+
+        throw error;
+      }
+
+      allPromotions =
+        (Array.isArray(data)
+          ? data
+          : []
+        ).map(
+          normalizePromotion
+        );
+
+      /*
+        Merchant names are intentionally enriched separately
+        from profiles using only non-sensitive profile fields.
+      */
+
+      await enrichMerchantNames();
+
+      updateStats();
+      applyFilters();
+    }
+
+    async function enrichMerchantNames() {
+
+      const merchantIds =
+        [
+          ...new Set(
+            allPromotions
+              .map(
+                promotion =>
+                  promotion.merchantId
+              )
+              .filter(Boolean)
+          )
+        ];
+
+      if (!merchantIds.length) {
+        return;
+      }
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("profiles")
+            .select(`
+              id,
+              full_name,
+              role
+            `)
+            .in(
+              "id",
+              merchantIds
+            )
+            .eq(
+              "role",
+              "merchant"
+            );
+
+        if (error) {
+          return;
+        }
+
+        const map =
+          new Map(
+            (data || []).map(
+              profile => [
+                profile.id,
+                profile.full_name
+              ]
+            )
+          );
+
+        allPromotions.forEach(
+          promotion => {
+
+            if (
+              !promotion.merchantName &&
+              promotion.merchantId
+            ) {
+
+              promotion.merchantName =
+                map.get(
+                  promotion.merchantId
+                ) || "";
+            }
+
+          }
+        );
+
+      } catch (_) {}
+
+    }
+
+    /* =========================================================
+       STATS
+       ========================================================= */
+
+    function updateStats() {
+
+      const total =
+        allPromotions.length;
+
+      const active =
+        allPromotions.filter(
+          promotion =>
+            promotion.status === "active"
+        ).length;
+
+      const scheduled =
+        allPromotions.filter(
+          promotion =>
+            promotion.status === "scheduled"
+        ).length;
+
+      const ended =
+        allPromotions.filter(
+          promotion =>
+            promotion.status === "ended"
+        ).length;
+
+      $("statTotal")
+        .textContent =
+        total.toLocaleString();
+
+      $("statActive")
+        .textContent =
+        active.toLocaleString();
+
+      $("statScheduled")
+        .textContent =
+        scheduled.toLocaleString();
+
+      $("statEnded")
+        .textContent =
+        ended.toLocaleString();
+    }
+
+    /* =========================================================
+       FILTERS
+       ========================================================= */
+
+    function applyFilters() {
+
+      const search =
+        $("searchInput")
+          .value
+          .trim()
+          .toLowerCase();
+
+      const status =
+        $("statusFilter")
+          .value;
+
+      const discount =
+        $("discountFilter")
+          .value;
+
+      const period =
+        $("periodFilter")
+          .value;
+
+      const now =
+        new Date();
+
+      filteredPromotions =
+        allPromotions.filter(
+          promotion => {
+
+            if (search) {
+
+              const haystack =
+                [
+                  promotion.id,
+                  promotion.name,
+                  promotion.description,
+                  promotion.code,
+                  promotion.eventTitle,
+                  promotion.merchantName,
+                  promotion.eventId,
+                  promotion.merchantId
+                ]
+                  .filter(Boolean)
+                  .join(" ")
+                  .toLowerCase();
+
+              if (
+                !haystack.includes(
+                  search
+                )
+              ) {
+                return false;
+              }
+
+            }
+
+            if (
+              status &&
+              promotion.status !== status
+            ) {
+              return false;
+            }
+
+            if (
+              discount &&
+              promotion.discountType !==
+              discount
+            ) {
+              return false;
+            }
+
+            if (period) {
+
+              const dateValue =
+                promotion.createdAt ||
+                promotion.startsAt;
+
+              if (!dateValue) {
+                return false;
+              }
+
+              const date =
+                new Date(
+                  dateValue
+                );
+
+              if (
+                Number.isNaN(
+                  date.getTime()
+                )
+              ) {
+                return false;
+              }
+
+              if (
+                period === "today"
+              ) {
+
+                const start =
+                  new Date(now);
+
+                start.setHours(
+                  0,
+                  0,
+                  0,
+                  0
+                );
+
+                if (
+                  date < start
+                ) {
+                  return false;
+                }
+
+              } else {
+
+                const days =
+                  Number(period);
+
+                const cutoff =
+                  new Date(now);
+
+                cutoff.setDate(
+                  cutoff.getDate() -
+                  days
+                );
+
+                if (
+                  date < cutoff
+                ) {
+                  return false;
+                }
+
+              }
+
+            }
+
+            return true;
+
+          }
+        );
+
+      currentPage = 1;
+
+      renderPromotions();
+      renderPagination();
+    }
+
+    /* =========================================================
+       RENDER
+       ========================================================= */
+
+    function getCurrentPageRows() {
+
+      const start =
+        (currentPage - 1) *
+        PAGE_SIZE;
+
+      return filteredPromotions.slice(
+        start,
+        start + PAGE_SIZE
+      );
+    }
+
+    function renderPromotions() {
+
+      const rows =
+        getCurrentPageRows();
+
+      if (
+        !filteredPromotions.length
+      ) {
+
+        renderEmptyState(
+          "No promotions found",
+          allPromotions.length
+            ? "No promotion records match the selected filters."
+            : "No promotion records are currently available from Supabase."
+        );
+
+        $("mobileList")
+          .innerHTML = "";
+
+        return;
+      }
+
+      $("tableBody")
+        .innerHTML =
+        rows.map(
+          promotion => `
+
+            <tr>
+
+              <td>
+
+                <div class="primary-cell">
+                  ${escapeHtml(
+                    promotion.name ||
+                    "Unnamed promotion"
+                  )}
+                </div>
+
+                <div class="secondary-cell mono">
+                  ${escapeHtml(
+                    promotion.code ||
+                    promotion.id ||
+                    "—"
+                  )}
+                </div>
+
+              </td>
+
+              <td>
+
+                <div class="primary-cell">
+                  ${escapeHtml(
+                    promotion.eventTitle ||
+                    "—"
+                  )}
+                </div>
+
+                <div class="secondary-cell mono">
+                  ${escapeHtml(
+                    promotion.eventId ||
+                    "—"
+                  )}
+                </div>
+
+              </td>
+
+              <td>
+
+                <div class="primary-cell">
+                  ${escapeHtml(
+                    promotion.merchantName ||
+                    "—"
+                  )}
+                </div>
+
+                <div class="secondary-cell mono">
+                  ${escapeHtml(
+                    promotion.merchantId ||
+                    "—"
+                  )}
+                </div>
+
+              </td>
+
+              <td>
+
+                <div class="discount">
+                  ${escapeHtml(
+                    formatDiscount(
+                      promotion
+                    )
+                  )}
+                </div>
+
+                <div class="secondary-cell">
+                  ${escapeHtml(
+                    promotion.discountType
+                  )}
+                </div>
+
+              </td>
+
+              <td>
+
+                <div class="primary-cell">
+                  ${escapeHtml(
+                    formatDateShort(
+                      promotion.startsAt
+                    )
+                  )}
+                </div>
+
+                <div class="secondary-cell">
+                  to
+                  ${escapeHtml(
+                    formatDateShort(
+                      promotion.endsAt
+                    )
+                  )}
+                </div>
+
+              </td>
+
+              <td>
+                ${statusBadge(
+                  promotion.status
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  formatDateShort(
+                    promotion.createdAt
+                  )
+                )}
+              </td>
+
+              <td>
+
+                <div class="row-actions">
+
+                  <button
+                    class="small-btn"
+                    data-view-id="${escapeHtml(
+                      String(
+                        promotion.id
+                      )
+                    )}"
+                  >
+                    View
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          `
+        ).join("");
+
+      attachViewButtons();
+
+      renderMobileRows(rows);
+    }
+
+    function renderMobileRows(
+      rows
+    ) {
+
+      $("mobileList")
+        .innerHTML =
+        rows.map(
+          promotion => `
+
+            <article class="mobile-card">
+
+              <div class="mobile-card-top">
+
+                <div class="mobile-title">
+
+                  <strong>
+                    ${escapeHtml(
+                      promotion.name ||
+                      "Unnamed promotion"
+                    )}
+                  </strong>
+
+                  <span>
+                    ${escapeHtml(
+                      promotion.eventTitle ||
+                      "Event unavailable"
+                    )}
+                  </span>
+
+                </div>
+
+                <div>
+                  ${statusBadge(
+                    promotion.status
+                  )}
+                </div>
+
+              </div>
+
+              <div class="mobile-grid">
+
+                <div class="mobile-item">
+
+                  <small>
+                    Discount
+                  </small>
+
+                  <div class="discount">
+                    ${escapeHtml(
+                      formatDiscount(
+                        promotion
+                      )
+                    )}
+                  </div>
+
+                </div>
+
+                <div class="mobile-item">
+
+                  <small>
+                    Merchant
+                  </small>
+
+                  <div>
+                    ${escapeHtml(
+                      promotion.merchantName ||
+                      "—"
+                    )}
+                  </div>
+
+                </div>
+
+                <div class="mobile-item">
+
+                  <small>
+                    Starts
+                  </small>
+
+                  <div>
+                    ${escapeHtml(
+                      formatDateShort(
+                        promotion.startsAt
+                      )
+                    )}
+                  </div>
+
+                </div>
+
+                <div class="mobile-item">
+
+                  <small>
+                    Ends
+                  </small>
+
+                  <div>
+                    ${escapeHtml(
+                      formatDateShort(
+                        promotion.endsAt
+                      )
+                    )}
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div class="mobile-actions">
+
+                <button
+                  class="small-btn"
+                  data-view-id="${escapeHtml(
+                    String(
+                      promotion.id
+                    )
+                  )}"
+                >
+                  View details
+                </button>
+
+              </div>
+
+            </article>
+
+          `
+        ).join("");
+
+      attachViewButtons();
+    }
+
+    function attachViewButtons() {
+
+      document
+        .querySelectorAll(
+          "[data-view-id]"
+        )
+        .forEach(
+          button => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                const id =
+                  button.dataset
+                    .viewId;
+
+                const promotion =
+                  allPromotions.find(
+                    item =>
+                      String(
+                        item.id
+                      ) ===
+                      String(id)
+                  );
+
+                if (
+                  promotion
+                ) {
+                  openDrawer(
+                    promotion
+                  );
+                }
+
+              }
+            );
+
+          }
+        );
+    }
+
+    function renderEmptyState(
+      title,
+      message
+    ) {
+
+      $("tableBody")
+        .innerHTML = `
+
+          <tr>
+
+            <td colspan="8">
+
+              <div class="empty">
+
+                <div class="empty-icon">
+                  ✦
+                </div>
+
+                <h3>
+                  ${escapeHtml(
+                    title
+                  )}
+                </h3>
+
+                <p>
+                  ${escapeHtml(
+                    message
+                  )}
+                </p>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+    }
+
+    function setLoadingState() {
+
+      $("tableBody")
+        .innerHTML = `
+
+          <tr>
+
+            <td colspan="8">
+
+              <div class="loading-row">
+                Loading promotions...
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      $("mobileList")
+        .innerHTML = `
+
+          <div class="loading-row">
+            Loading promotions...
+          </div>
+
+        `;
+    }
+
+    /* =========================================================
+       PAGINATION
+       ========================================================= */
+
+    function renderPagination() {
+
+      const total =
+        filteredPromotions.length;
+
+      const pages =
+        Math.max(
+          1,
+          Math.ceil(
+            total /
+            PAGE_SIZE
+          )
+        );
+
+      if (
+        !total ||
+        pages <= 1
+      ) {
+
+        $("pagination")
+          .hidden = true;
+
+        return;
+      }
+
+      $("pagination")
+        .hidden = false;
+
+      const start =
+        (currentPage - 1) *
+        PAGE_SIZE + 1;
+
+      const end =
+        Math.min(
+          currentPage *
+          PAGE_SIZE,
+          total
+        );
+
+      $("paginationInfo")
+        .textContent =
+        `${start}–${end} of ${total}`;
+
+      $("prevPageBtn")
+        .disabled =
+        currentPage <= 1;
+
+      $("nextPageBtn")
+        .disabled =
+        currentPage >= pages;
+    }
+
+    /* =========================================================
+       DRAWER
+       ========================================================= */
+
+    function openDrawer(
+      promotion
+    ) {
+
+      $("dId")
+        .textContent =
+        safeText(
+          promotion.id
+        );
+
+      $("dStatus")
+        .innerHTML =
+        statusBadge(
+          promotion.status
+        );
+
+      $("dName")
+        .textContent =
+        safeText(
+          promotion.name
+        );
+
+      $("dCode")
+        .textContent =
+        safeText(
+          promotion.code
+        );
+
+      $("dDiscountType")
+        .textContent =
+        safeText(
+          promotion.discountType
+        );
+
+      $("dDiscount")
+        .textContent =
+        formatDiscount(
+          promotion
+        );
+
+      $("dEvent")
+        .textContent =
+        safeText(
+          promotion.eventTitle
+        );
+
+      $("dEventId")
+        .textContent =
+        safeText(
+          promotion.eventId
+        );
+
+      $("dMerchant")
+        .textContent =
+        safeText(
+          promotion.merchantName
+        );
+
+      $("dMerchantId")
+        .textContent =
+        safeText(
+          promotion.merchantId
+        );
+
+      $("dStarts")
+        .textContent =
+        formatDate(
+          promotion.startsAt
+        );
+
+      $("dEnds")
+        .textContent =
+        formatDate(
+          promotion.endsAt
+        );
+
+      $("dCreated")
+        .textContent =
+        formatDate(
+          promotion.createdAt
+        );
+
+      $("dUpdated")
+        .textContent =
+        formatDate(
+          promotion.updatedAt
+        );
+
+      $("dUsageLimit")
+        .textContent =
+        safeText(
+          promotion.usageLimit
+        );
+
+      $("dUsageCount")
+        .textContent =
+        safeText(
+          promotion.usageCount
+        );
+
+      $("dMinimumOrder")
+        .textContent =
+        safeText(
+          promotion.minimumOrder
+        );
+
+      $("dMaximumDiscount")
+        .textContent =
+        safeText(
+          promotion.maximumDiscount
+        );
+
+      $("drawerSubtitle")
+        .textContent =
+        promotion.name ||
+        promotion.code ||
+        promotion.id ||
+        "Promotion campaign";
+
+      $("drawerBackdrop")
+        .classList
+        .add("open");
+
+      $("drawerBackdrop")
+        .setAttribute(
+          "aria-hidden",
+          "false"
+        );
+
+      document.body.style.overflow =
+        "hidden";
+    }
+
+    function closeDrawer() {
+
+      $("drawerBackdrop")
+        .classList
+        .remove("open");
+
+      $("drawerBackdrop")
+        .setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+      document.body.style.overflow =
+        "";
+    }
+
+    /* =========================================================
+       CSV
+       ========================================================= */
+
+    function csvEscape(
+      value
+    ) {
+
+      const text =
+        value === null ||
+        value === undefined
+          ? ""
+          : String(value);
+
+      return `"${text.replace(
+        /"/g,
+        '""'
+      )}"`;
+    }
+
+    function exportCsv() {
+
+      if (
+        !filteredPromotions.length
+      ) {
+
+        showToast(
+          "There are no promotion records to export.",
+          "error"
+        );
+
+        return;
+      }
+
+      const headers = [
+        "Promotion ID",
+        "Promotion",
+        "Code",
+        "Event ID",
+        "Event",
+        "Merchant ID",
+        "Merchant",
+        "Discount Type",
+        "Discount Value",
+        "Status",
+        "Starts At",
+        "Ends At",
+        "Usage Limit",
+        "Usage Count",
+        "Minimum Order",
+        "Maximum Discount",
+        "Created At",
+        "Updated At"
+      ];
+
+      const lines = [
+        headers
+          .map(csvEscape)
+          .join(",")
+      ];
+
+      filteredPromotions.forEach(
+        promotion => {
+
+          lines.push(
+            [
+              promotion.id,
+              promotion.name,
+              promotion.code,
+              promotion.eventId,
+              promotion.eventTitle,
+              promotion.merchantId,
+              promotion.merchantName,
+              promotion.discountType,
+              promotion.discountValue,
+              promotion.status,
+              promotion.startsAt,
+              promotion.endsAt,
+              promotion.usageLimit,
+              promotion.usageCount,
+              promotion.minimumOrder,
+              promotion.maximumDiscount,
+              promotion.createdAt,
+              promotion.updatedAt
+            ]
+              .map(csvEscape)
+              .join(",")
+          );
+
+        }
+      );
+
+      const blob =
+        new Blob(
+          [lines.join("\n")],
+          {
+            type:
+              "text/csv;charset=utf-8;"
+          }
+        );
+
+      const url =
+        URL.createObjectURL(
+          blob
+        );
+
+      const link =
+        document.createElement(
+          "a"
+        );
+
+      link.href =
+        url;
+
+      link.download =
+        "k-tickets-promotions-" +
+        new Date()
+          .toISOString()
+          .slice(0, 10) +
+        ".csv";
+
+      document.body.appendChild(
+        link
+      );
+
+      link.click();
+
+      link.remove();
+
+      URL.revokeObjectURL(
+        url
+      );
+
+      showToast(
+        "Promotion CSV export created.",
+        "success"
+      );
+    }
+
+    /* =========================================================
+       NOTIFICATIONS
+       ========================================================= */
+
+    async function checkNotifications() {
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("notifications")
+            .select("id")
+            .eq(
+              "user_id",
+              currentUser.id
+            )
+            .eq(
+              "read",
+              false
+            )
+            .limit(1);
+
+        if (error) {
+          return;
+        }
+
+        if (
+          data?.length
+        ) {
+
+          $("notificationDot")
+            .hidden = false;
+
+        }
+
+      } catch (_) {}
+
+    }
+
+    /* =========================================================
+       MOBILE NAVIGATION
+       ========================================================= */
+
+    function setupMobileNavigation() {
+
+      $("mobileMenu")
+        .addEventListener(
+          "click",
+          () => {
+
+            $("sidebar")
+              .classList
+              .toggle("open");
+
+          }
+        );
+
+      document
+        .querySelectorAll(
+          ".sidebar a"
+        )
+        .forEach(
+          link => {
+
+            link.addEventListener(
+              "click",
+              () => {
+
+                $("sidebar")
+                  .classList
+                  .remove("open");
+
+              }
+            );
+
+          }
+        );
+    }
+
+    /* =========================================================
+       EVENTS
+       ========================================================= */
+
+    function setupEvents() {
+
+      $("searchInput")
+        .addEventListener(
+          "input",
+          applyFilters
+        );
+
+      $("statusFilter")
+        .addEventListener(
+          "change",
+          applyFilters
+        );
+
+      $("discountFilter")
+        .addEventListener(
+          "change",
+          applyFilters
+        );
+
+      $("periodFilter")
+        .addEventListener(
+          "change",
+          applyFilters
+        );
+
+      $("clearFiltersBtn")
+        .addEventListener(
+          "click",
+          () => {
+
+            $("searchInput")
+              .value = "";
+
+            $("statusFilter")
+              .value = "";
+
+            $("discountFilter")
+              .value = "";
+
+            $("periodFilter")
+              .value = "";
+
+            applyFilters();
+
+          }
+        );
+
+      const refresh =
+        async () => {
+
+          try {
+
+            await loadPromotions();
+
+            showToast(
+              "Promotion data refreshed.",
+              "success"
+            );
+
+          } catch (_) {
+
+            showToast(
+              "Unable to refresh promotion data.",
+              "error"
+            );
+
+          }
+
+        };
+
+      $("refreshBtn")
+        .addEventListener(
+          "click",
+          refresh
+        );
+
+      $("refreshDataBtn")
+        .addEventListener(
+          "click",
+          refresh
+        );
+
+      $("exportBtn")
+        .addEventListener(
+          "click",
+          exportCsv
+        );
+
+      $("prevPageBtn")
+        .addEventListener(
+          "click",
+          () => {
+
+            if (
+              currentPage > 1
+            ) {
+
+              currentPage--;
+
+              renderPromotions();
+              renderPagination();
+
+            }
+
+          }
+        );
+
+      $("nextPageBtn")
+        .addEventListener(
+          "click",
+          () => {
+
+            const pages =
+              Math.ceil(
+                filteredPromotions.length /
+                PAGE_SIZE
+              );
+
+            if (
+              currentPage < pages
+            ) {
+
+              currentPage++;
+
+              renderPromotions();
+              renderPagination();
+
+            }
+
+          }
+        );
+
+      $("closeDrawerBtn")
+        .addEventListener(
+          "click",
+          closeDrawer
+        );
+
+      $("drawerBackdrop")
+        .addEventListener(
+          "click",
+          event => {
+
+            if (
+              event.target ===
+              $("drawerBackdrop")
+            ) {
+              closeDrawer();
+            }
+
+          }
+        );
+
+      document.addEventListener(
+        "keydown",
+        event => {
+
+          if (
+            event.key ===
+            "Escape"
+          ) {
+            closeDrawer();
+          }
+
+        }
+      );
+
+      $("signOutBtn")
+        .addEventListener(
+          "click",
+          safeSignOut
+        );
+
+      setupMobileNavigation();
+    }
+
+    /* =========================================================
+       AUTH STATE
+       ========================================================= */
+
+    function setupAuthListener() {
+
+      supabaseClient.auth.onAuthStateChange(
+        (
+          event,
+          session
+        ) => {
+
+          if (
+            event ===
+            "SIGNED_OUT" ||
+            !session
+          ) {
+
+            window.location.replace(
+              "../auth/login.html?error=session_expired"
+            );
+
+          }
+
+        }
+      );
+    }
+
+    /* =========================================================
+       BOOT
+       ========================================================= */
+
+    async function boot() {
+
+      try {
+
+        await initializeSupabase();
+
+        const allowed =
+          await verifyAdmin();
+
+        if (!allowed) {
+          return;
+        }
+
+        setupAuthListener();
+        setupEvents();
+
+        await loadPromotions();
+        await checkNotifications();
+
+        $("securityGate")
+          .style
+          .display = "none";
+
+        $("app")
+          .style
+          .display = "block";
+
+      } catch (error) {
+
+        console.error(
+          "K-Tickets Promotions Admin Error:",
+          error
+        );
+
+        /*
+          Do not display database errors, stack traces,
+          SQL details, credentials or internal implementation
+          details to the browser user.
+        */
+
+        $("securityGate")
+          .innerHTML = `
+
+            <div class="security-card">
+
+              <div
+                class="security-mark"
+                style="background:#6C151E;"
+              >
+                !
+              </div>
+
+              <h2>
+                Admin Access Unavailable
+              </h2>
+
+              <p>
+                The administrator area could not be securely
+                initialized. Please sign in again or contact
+                the platform administrator.
+              </p>
+
+              <button
+                class="btn primary"
+                style="margin-top:20px;"
+                onclick="window.location.href='../auth/login.html'"
+              >
+                Return to login
+              </button>
+
+            </div>
+
+          `;
+
+      }
+
+    }
+
+    boot();
+  </script>
+
+</body>
+</html>

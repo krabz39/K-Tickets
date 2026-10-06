@@ -1,0 +1,3426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Create Event | K-Tickets Merchant CMS</title>
+
+    <meta
+        name="description"
+        content="Create and publish events through the K-Tickets merchant CMS."
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --bordo-dark: #531018;
+            --green: #0F3D3A;
+            --green-dark: #092b29;
+            --cream: #F5DABF;
+            --cream-light: #fffaf4;
+            --cream-soft: #f8eadc;
+            --white: #ffffff;
+            --ink: #211817;
+            --muted: #756b67;
+            --line: #eadbd0;
+            --danger: #a52b35;
+            --success: #176b52;
+            --warning: #a66a18;
+            --shadow: 0 18px 50px rgba(15, 61, 58, 0.09);
+            --shadow-soft: 0 8px 24px rgba(33, 24, 23, 0.07);
+            --radius: 18px;
+            --sidebar-width: 260px;
+            --transition: 180ms ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            background: #f8f4ef;
+            color: var(--ink);
+            overflow-x: hidden;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* =========================================================
+           SIDEBAR
+        ========================================================= */
+
+        .sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            min-height: 100vh;
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 1000;
+            background: var(--green);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            transition: transform var(--transition);
+        }
+
+        .brand {
+            padding: 24px 20px 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+        }
+
+        .brand-main {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-family: Georgia, serif;
+            font-size: 21px;
+            font-weight: 800;
+            flex: 0 0 auto;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 15px;
+            letter-spacing: 0.13em;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .merchant-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 18px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.07);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .merchant-status::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #73d1a7;
+            box-shadow: 0 0 0 4px rgba(115, 209, 167, 0.1);
+        }
+
+        .nav {
+            padding: 20px 12px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            padding: 0 12px 9px;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            min-height: 45px;
+            margin-bottom: 4px;
+            padding: 0 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 11px;
+            color: rgba(255, 255, 255, 0.68);
+            font-size: 13px;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--white);
+        }
+
+        .nav-link.active {
+            background: var(--bordo);
+            color: var(--white);
+            box-shadow: 0 8px 22px rgba(108, 21, 30, 0.22);
+        }
+
+        .nav-icon {
+            width: 20px;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .sidebar-bottom {
+            padding: 15px 12px 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-user {
+            min-width: 0;
+            padding: 11px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-avatar {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 auto;
+            border-radius: 50%;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .sidebar-user-info {
+            min-width: 0;
+        }
+
+        .sidebar-user-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .sidebar-user-role {
+            margin-top: 2px;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* =========================================================
+           MAIN
+        ========================================================= */
+
+        .main {
+            width: calc(100% - var(--sidebar-width));
+            min-width: 0;
+            margin-left: var(--sidebar-width);
+        }
+
+        .topbar {
+            height: 72px;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 800;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: rgba(255, 250, 244, 0.92);
+            border-bottom: 1px solid rgba(234, 219, 208, 0.8);
+            backdrop-filter: blur(14px);
+        }
+
+        .topbar-left {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .mobile-menu {
+            width: 40px;
+            height: 40px;
+            display: none;
+            place-items: center;
+            border-radius: 10px;
+            background: var(--white);
+            color: var(--green);
+            border: 1px solid var(--line);
+            font-size: 18px;
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .breadcrumb strong {
+            color: var(--ink);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-button {
+            width: 42px;
+            height: 42px;
+            position: relative;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--white);
+            color: var(--green);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .icon-button:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .notification-dot {
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            display: none;
+            place-items: center;
+            border-radius: 999px;
+            background: var(--bordo);
+            color: white;
+            font-size: 8px;
+            font-weight: 800;
+            border: 2px solid var(--cream-light);
+        }
+
+        .profile-chip {
+            max-width: 220px;
+            padding: 6px 9px 6px 6px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: var(--white);
+        }
+
+        .profile-avatar {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 auto;
+            border-radius: 50%;
+            background: var(--green);
+            color: var(--cream);
+            display: grid;
+            place-items: center;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .profile-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 34px 30px 60px;
+        }
+
+        /* =========================================================
+           PAGE HEADER
+        ========================================================= */
+
+        .page-header {
+            margin-bottom: 26px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .eyebrow {
+            margin-bottom: 8px;
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.17em;
+            text-transform: uppercase;
+        }
+
+        .page-title {
+            color: var(--green);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(30px, 4vw, 46px);
+            line-height: 1.05;
+            letter-spacing: -0.025em;
+        }
+
+        .page-description {
+            max-width: 700px;
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex: 0 0 auto;
+        }
+
+        /* =========================================================
+           BUTTONS
+        ========================================================= */
+
+        .btn {
+            min-height: 44px;
+            padding: 0 17px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 11px;
+            font-size: 12px;
+            font-weight: 750;
+            transition:
+                transform var(--transition),
+                box-shadow var(--transition),
+                background var(--transition);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--bordo);
+            color: var(--white);
+            box-shadow: 0 8px 20px rgba(108, 21, 30, 0.17);
+        }
+
+        .btn-primary:hover {
+            background: var(--bordo-dark);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--green);
+            border: 1px solid var(--line);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn-danger {
+            background: #fff0f0;
+            color: var(--danger);
+            border: 1px solid #f0cdd0;
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+            transform: none;
+        }
+
+        /* =========================================================
+           FORM
+        ========================================================= */
+
+        .form-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 330px;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .form-card {
+            background: var(--white);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+        }
+
+        .card-section {
+            padding: 26px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .card-section:last-child {
+            border-bottom: 0;
+        }
+
+        .section-heading {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            color: var(--green);
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .section-description {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field-label {
+            display: block;
+            margin-bottom: 7px;
+            color: #3c3431;
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .required {
+            color: var(--bordo);
+        }
+
+        .field-hint {
+            margin-top: 5px;
+            color: #988d87;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .input,
+        .textarea,
+        .select {
+            width: 100%;
+            min-height: 46px;
+            padding: 0 13px;
+            outline: none;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fffdfb;
+            color: var(--ink);
+            font-size: 12px;
+            transition:
+                border-color var(--transition),
+                box-shadow var(--transition);
+        }
+
+        .textarea {
+            min-height: 130px;
+            padding: 13px;
+            resize: vertical;
+            line-height: 1.65;
+        }
+
+        .input::placeholder,
+        .textarea::placeholder {
+            color: #b2a6a0;
+        }
+
+        .input:focus,
+        .textarea:focus,
+        .select:focus {
+            border-color: rgba(108, 21, 30, 0.5);
+            box-shadow: 0 0 0 4px rgba(108, 21, 30, 0.07);
+        }
+
+        .input.invalid,
+        .textarea.invalid,
+        .select.invalid {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(165, 43, 53, 0.07);
+        }
+
+        /* =========================================================
+           TICKET TYPES
+        ========================================================= */
+
+        .ticket-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .ticket-item {
+            padding: 17px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: #fffdfb;
+        }
+
+        .ticket-item-header {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .ticket-number {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .ticket-number-badge {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            background: var(--green);
+            color: var(--cream);
+            font-size: 10px;
+        }
+
+        .remove-ticket {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #efced1;
+            border-radius: 9px;
+            background: #fff4f4;
+            color: var(--danger);
+            font-size: 15px;
+        }
+
+        .ticket-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(110px, 1fr));
+            gap: 12px;
+        }
+
+        .currency-input {
+            position: relative;
+        }
+
+        .currency-prefix {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            pointer-events: none;
+        }
+
+        .currency-input .input {
+            padding-left: 42px;
+        }
+
+        .add-ticket-row {
+            margin-top: 14px;
+        }
+
+        .add-ticket {
+            width: 100%;
+            min-height: 46px;
+            border: 1px dashed #cfb9aa;
+            border-radius: 11px;
+            background: #fffaf5;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .add-ticket:hover {
+            border-color: var(--green);
+            background: var(--cream-light);
+        }
+
+        /* =========================================================
+           STATUS / SIDEBAR
+        ========================================================= */
+
+        .side-stack {
+            display: grid;
+            gap: 18px;
+            position: sticky;
+            top: 95px;
+        }
+
+        .side-card {
+            padding: 21px;
+            background: var(--white);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .side-card-title {
+            color: var(--green);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .side-card-description {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .status-options {
+            margin-top: 16px;
+            display: grid;
+            gap: 9px;
+        }
+
+        .status-option {
+            position: relative;
+        }
+
+        .status-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .status-label {
+            min-height: 50px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #fffdfb;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .status-option input:checked + .status-label {
+            border-color: rgba(108, 21, 30, 0.45);
+            background: #fff6f3;
+            box-shadow: 0 0 0 3px rgba(108, 21, 30, 0.06);
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            flex: 0 0 auto;
+            border-radius: 50%;
+        }
+
+        .status-dot.draft {
+            background: #a8978d;
+        }
+
+        .status-dot.published {
+            background: #2b946d;
+        }
+
+        .status-label strong {
+            display: block;
+            color: var(--ink);
+            font-size: 11px;
+        }
+
+        .status-label span {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .info-list {
+            margin-top: 16px;
+            display: grid;
+            gap: 11px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.55;
+        }
+
+        .info-icon {
+            width: 23px;
+            height: 23px;
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            border-radius: 7px;
+            background: var(--cream-soft);
+            color: var(--green);
+            font-size: 11px;
+        }
+
+        .form-actions {
+            margin-top: 22px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #fffaf5;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+        }
+
+        /* =========================================================
+           LOADING
+        ========================================================= */
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 61, 58, 0.97);
+            color: var(--white);
+            transition: opacity 200ms ease, visibility 200ms ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-box {
+            text-align: center;
+        }
+
+        .loading-logo {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 16px;
+            border-radius: 15px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-family: Georgia, serif;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .spinner {
+            width: 23px;
+            height: 23px;
+            margin: 0 auto 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--cream);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 11px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        .toast-container {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 6000;
+            width: min(380px, calc(100vw - 30px));
+            display: grid;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            padding: 14px 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            border-radius: 13px;
+            background: var(--green);
+            color: var(--white);
+            box-shadow: 0 15px 40px rgba(15, 61, 58, 0.22);
+            animation: toastIn 180ms ease;
+            pointer-events: auto;
+        }
+
+        .toast.error {
+            background: var(--bordo);
+        }
+
+        .toast.success {
+            background: var(--green);
+        }
+
+        .toast.warning {
+            background: #8a5c19;
+        }
+
+        .toast-icon {
+            width: 23px;
+            height: 23px;
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 11px;
+        }
+
+        .toast-message {
+            padding-top: 2px;
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 11px;
+            line-height: 1.55;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================================================
+           MOBILE OVERLAY
+        ========================================================= */
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            background: rgba(10, 20, 19, 0.45);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 1180px) {
+            .form-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .side-stack {
+                position: static;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 950px) {
+            :root {
+                --sidebar-width: 250px;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 20px 0 60px rgba(0, 0, 0, 0.2);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: grid;
+            }
+
+            .topbar {
+                padding: 0 20px;
+            }
+
+            .content {
+                padding: 28px 20px 50px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .topbar {
+                height: 64px;
+            }
+
+            .breadcrumb {
+                display: none;
+            }
+
+            .profile-chip {
+                max-width: 170px;
+            }
+
+            .profile-name {
+                max-width: 105px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions .btn {
+                flex: 1;
+            }
+
+            .card-section {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .ticket-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .ticket-grid .ticket-name-field {
+                grid-column: 1 / -1;
+            }
+
+            .side-stack {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                padding: 22px 14px 42px;
+            }
+
+            .topbar {
+                padding: 0 14px;
+            }
+
+            .profile-chip {
+                padding-right: 6px;
+                border: 0;
+                background: transparent;
+            }
+
+            .profile-name {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 32px;
+            }
+
+            .ticket-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ticket-grid .ticket-name-field {
+                grid-column: auto;
+            }
+
+            .ticket-item {
+                padding: 14px;
+            }
+
+            .card-section {
+                padding: 17px;
+            }
+
+            .toast-container {
+                right: 14px;
+                bottom: 14px;
+                width: calc(100vw - 28px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================================================
+         LOADING SCREEN
+    ========================================================== -->
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-box">
+            <div class="loading-logo">K</div>
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">
+                Verifying merchant account...
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SIDEBAR OVERLAY
+    ========================================================== -->
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        onclick="closeSidebar()"
+    ></div>
+
+    <div class="app">
+
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+                <div class="brand-main">
+                    <div class="brand-mark">K</div>
+
+                    <div class="brand-text">
+                        <strong>K-TICKETS</strong>
+                        <span>Merchant CMS</span>
+                    </div>
+                </div>
+
+                <div class="merchant-status">
+                    Merchant Account
+                </div>
+            </div>
+
+            <nav class="nav">
+
+                <div class="nav-label">
+                    Workspace
+                </div>
+
+                <a
+                    class="nav-link"
+                    href="./dashboard.html"
+                >
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="./events.html"
+                >
+                    <span class="nav-icon">◫</span>
+                    <span>My Events</span>
+                </a>
+
+                <a
+                    class="nav-link active"
+                    href="./create-event.html"
+                >
+                    <span class="nav-icon">＋</span>
+                    <span>Create Event</span>
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="./tickets.html"
+                >
+                    <span class="nav-icon">▣</span>
+                    <span>Tickets</span>
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="./promotions.html"
+                >
+                    <span class="nav-icon">%</span>
+                    <span>Promotions</span>
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="./sales.html"
+                >
+                    <span class="nav-icon">↗</span>
+                    <span>Sales</span>
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="./withdrawals.html"
+                >
+                    <span class="nav-icon">₵</span>
+                    <span>Withdrawals</span>
+                </a>
+
+                <div class="nav-label" style="margin-top: 18px;">
+                    Account
+                </div>
+
+                <a
+                    class="nav-link"
+                    href="./settings.html"
+                >
+                    <span class="nav-icon">⚙</span>
+                    <span>Settings</span>
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="#"
+                    onclick="signOut(event)"
+                >
+                    <span class="nav-icon">↪</span>
+                    <span>Sign Out</span>
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-user">
+
+                    <div
+                        class="sidebar-avatar"
+                        id="sidebarAvatar"
+                    >
+                        —
+                    </div>
+
+                    <div class="sidebar-user-info">
+                        <div
+                            class="sidebar-user-name"
+                            id="sidebarUserName"
+                        >
+                            Loading...
+                        </div>
+
+                        <div class="sidebar-user-role">
+                            Merchant
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- =====================================================
+             MAIN
+        ====================================================== -->
+
+        <main class="main">
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+                    <button
+                        class="mobile-menu"
+                        type="button"
+                        aria-label="Open menu"
+                        onclick="toggleSidebar()"
+                    >
+                        ☰
+                    </button>
+
+                    <div class="breadcrumb">
+                        Merchant
+                        <span> / </span>
+                        <strong>Create Event</strong>
+                    </div>
+
+                </div>
+
+                <div class="topbar-right">
+
+                    <a
+                        class="icon-button"
+                        href="../notifications.html"
+                        aria-label="Notifications"
+                    >
+                        ♢
+                        <span
+                            class="notification-dot"
+                            id="notificationDot"
+                        >
+                            0
+                        </span>
+                    </a>
+
+                    <div class="profile-chip">
+
+                        <div
+                            class="profile-avatar"
+                            id="profileAvatar"
+                        >
+                            —
+                        </div>
+
+                        <div
+                            class="profile-name"
+                            id="profileName"
+                        >
+                            Loading...
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+            <!-- CONTENT -->
+
+            <div class="content">
+
+                <!-- PAGE HEADER -->
+
+                <section class="page-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            Merchant Workspace
+                        </div>
+
+                        <h1 class="page-title">
+                            Create Event
+                        </h1>
+
+                        <p class="page-description">
+                            Create an event, configure its ticket inventory,
+                            choose its sales window, and decide whether to
+                            save it as a draft or publish it.
+                        </p>
+                    </div>
+
+                    <div class="header-actions">
+
+                        <a
+                            class="btn btn-secondary"
+                            href="./events.html"
+                        >
+                            ← Back to Events
+                        </a>
+
+                    </div>
+
+                </section>
+
+                <!-- FORM LAYOUT -->
+
+                <form
+                    id="eventForm"
+                    novalidate
+                >
+
+                    <div class="form-layout">
+
+                        <!-- =================================================
+                             MAIN FORM
+                        ================================================== -->
+
+                        <div>
+
+                            <!-- EVENT DETAILS -->
+
+                            <section class="form-card">
+
+                                <div class="card-section">
+
+                                    <div class="section-heading">
+                                        <div class="section-title">
+                                            Event Details
+                                        </div>
+
+                                        <div class="section-description">
+                                            Provide the core information customers
+                                            will see when browsing your event.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-grid">
+
+                                        <div class="field full">
+
+                                            <label
+                                                class="field-label"
+                                                for="title"
+                                            >
+                                                Event Title
+                                                <span class="required">*</span>
+                                            </label>
+
+                                            <input
+                                                class="input"
+                                                id="title"
+                                                name="title"
+                                                type="text"
+                                                autocomplete="off"
+                                                maxlength="180"
+                                                placeholder="Enter event title"
+                                                required
+                                            >
+
+                                        </div>
+
+                                        <div class="field full">
+
+                                            <label
+                                                class="field-label"
+                                                for="description"
+                                            >
+                                                Description
+                                            </label>
+
+                                            <textarea
+                                                class="textarea"
+                                                id="description"
+                                                name="description"
+                                                maxlength="5000"
+                                                placeholder="Describe the event, what customers can expect, and any important information."
+                                            ></textarea>
+
+                                            <div class="field-hint">
+                                                Keep the description clear and useful
+                                                for customers.
+                                            </div>
+
+                                        </div>
+
+                                        <div class="field">
+
+                                            <label
+                                                class="field-label"
+                                                for="venue"
+                                            >
+                                                Venue
+                                                <span class="required">*</span>
+                                            </label>
+
+                                            <input
+                                                class="input"
+                                                id="venue"
+                                                name="venue"
+                                                type="text"
+                                                maxlength="180"
+                                                placeholder="Enter venue"
+                                                required
+                                            >
+
+                                        </div>
+
+                                        <div class="field">
+
+                                            <label
+                                                class="field-label"
+                                                for="city"
+                                            >
+                                                City
+                                            </label>
+
+                                            <input
+                                                class="input"
+                                                id="city"
+                                                name="city"
+                                                type="text"
+                                                maxlength="120"
+                                                placeholder="Enter city"
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- DATE / TIME -->
+
+                                <div class="card-section">
+
+                                    <div class="section-heading">
+                                        <div class="section-title">
+                                            Event Schedule
+                                        </div>
+
+                                        <div class="section-description">
+                                            Set when the event begins and ends.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-grid">
+
+                                        <div class="field">
+
+                                            <label
+                                                class="field-label"
+                                                for="startAt"
+                                            >
+                                                Event Starts
+                                                <span class="required">*</span>
+                                            </label>
+
+                                            <input
+                                                class="input"
+                                                id="startAt"
+                                                name="start_at"
+                                                type="datetime-local"
+                                                required
+                                            >
+
+                                        </div>
+
+                                        <div class="field">
+
+                                            <label
+                                                class="field-label"
+                                                for="endAt"
+                                            >
+                                                Event Ends
+                                                <span class="required">*</span>
+                                            </label>
+
+                                            <input
+                                                class="input"
+                                                id="endAt"
+                                                name="end_at"
+                                                type="datetime-local"
+                                                required
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- SALES WINDOW -->
+
+                                <div class="card-section">
+
+                                    <div class="section-heading">
+                                        <div class="section-title">
+                                            Ticket Sales Window
+                                        </div>
+
+                                        <div class="section-description">
+                                            Control when customers can purchase
+                                            tickets for this event.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-grid">
+
+                                        <div class="field">
+
+                                            <label
+                                                class="field-label"
+                                                for="salesStart"
+                                            >
+                                                Sales Start
+                                            </label>
+
+                                            <input
+                                                class="input"
+                                                id="salesStart"
+                                                name="sales_start_at"
+                                                type="datetime-local"
+                                            >
+
+                                            <div class="field-hint">
+                                                Leave empty if ticket sales should
+                                                not have a specific start time.
+                                            </div>
+
+                                        </div>
+
+                                        <div class="field">
+
+                                            <label
+                                                class="field-label"
+                                                for="salesEnd"
+                                            >
+                                                Sales End
+                                            </label>
+
+                                            <input
+                                                class="input"
+                                                id="salesEnd"
+                                                name="sales_end_at"
+                                                type="datetime-local"
+                                            >
+
+                                            <div class="field-hint">
+                                                Leave empty if ticket sales should
+                                                not have a specific end time.
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- TICKETS -->
+
+                                <div class="card-section">
+
+                                    <div class="section-heading">
+
+                                        <div class="section-title">
+                                            Ticket Types
+                                        </div>
+
+                                        <div class="section-description">
+                                            Configure the ticket categories,
+                                            prices, and available quantities
+                                            customers can purchase.
+                                        </div>
+
+                                    </div>
+
+                                    <div
+                                        class="ticket-list"
+                                        id="ticketList"
+                                    >
+                                        <!-- Dynamic ticket types -->
+                                    </div>
+
+                                    <div class="add-ticket-row">
+
+                                        <button
+                                            type="button"
+                                            class="add-ticket"
+                                            onclick="addTicketType()"
+                                        >
+                                            ＋ Add Ticket Type
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </section>
+
+                            <!-- FORM ACTIONS -->
+
+                            <div class="form-actions">
+
+                                <a
+                                    class="btn btn-secondary"
+                                    href="./events.html"
+                                >
+                                    Cancel
+                                </a>
+
+                                <button
+                                    class="btn btn-primary"
+                                    id="submitButton"
+                                    type="submit"
+                                >
+                                    Create Event
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- =================================================
+                             SIDE PANEL
+                        ================================================== -->
+
+                        <div class="side-stack">
+
+                            <!-- STATUS -->
+
+                            <section class="side-card">
+
+                                <div class="side-card-title">
+                                    Publishing Status
+                                </div>
+
+                                <div class="side-card-description">
+                                    Choose whether this event should remain
+                                    private as a draft or become visible to
+                                    customers after creation.
+                                </div>
+
+                                <div class="status-options">
+
+                                    <div class="status-option">
+
+                                        <input
+                                            type="radio"
+                                            id="statusDraft"
+                                            name="status"
+                                            value="draft"
+                                            checked
+                                        >
+
+                                        <label
+                                            class="status-label"
+                                            for="statusDraft"
+                                        >
+                                            <span class="status-dot draft"></span>
+
+                                            <span>
+                                                <strong>Draft</strong>
+                                                <span>
+                                                    Save without publishing
+                                                </span>
+                                            </span>
+                                        </label>
+
+                                    </div>
+
+                                    <div class="status-option">
+
+                                        <input
+                                            type="radio"
+                                            id="statusPublished"
+                                            name="status"
+                                            value="published"
+                                        >
+
+                                        <label
+                                            class="status-label"
+                                            for="statusPublished"
+                                        >
+                                            <span class="status-dot published"></span>
+
+                                            <span>
+                                                <strong>Published</strong>
+                                                <span>
+                                                    Make available to customers
+                                                </span>
+                                            </span>
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </section>
+
+                            <!-- GUIDANCE -->
+
+                            <section class="side-card">
+
+                                <div class="side-card-title">
+                                    Before You Publish
+                                </div>
+
+                                <div class="side-card-description">
+                                    Make sure your event information is accurate.
+                                </div>
+
+                                <div class="info-list">
+
+                                    <div class="info-row">
+                                        <div class="info-icon">✓</div>
+                                        <div>
+                                            Confirm the event date, start time,
+                                            end time and venue.
+                                        </div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="info-icon">▣</div>
+                                        <div>
+                                            Check each ticket type has a valid
+                                            price and quantity.
+                                        </div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="info-icon">↗</div>
+                                        <div>
+                                            Review the ticket sales window before
+                                            publishing.
+                                        </div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="info-icon">K</div>
+                                        <div>
+                                            K-Tickets service fees are handled
+                                            according to the platform's active
+                                            merchant fee configuration.
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </section>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- =========================================================
+         TOAST CONTAINER
+    ========================================================== -->
+
+    <div
+        class="toast-container"
+        id="toastContainer"
+    ></div>
+
+    <script>
+        /* =========================================================
+           K-TICKETS MERCHANT CREATE EVENT
+           Supabase is the source of truth.
+        ========================================================== */
+
+        const SUPABASE_URL =
+            window.KTICKETS_SUPABASE_URL || "";
+
+        const SUPABASE_ANON_KEY =
+            window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+        let supabaseClient = null;
+        let currentUser = null;
+        let currentProfile = null;
+
+        let ticketCounter = 0;
+
+        /* =========================================================
+           INITIALIZATION
+        ========================================================== */
+
+        document.addEventListener("DOMContentLoaded", async () => {
+
+            addTicketType();
+
+            document
+                .getElementById("eventForm")
+                .addEventListener("submit", handleSubmit);
+
+            document
+                .getElementById("startAt")
+                .addEventListener("change", validateSchedule);
+
+            document
+                .getElementById("endAt")
+                .addEventListener("change", validateSchedule);
+
+            document
+                .getElementById("salesStart")
+                .addEventListener("change", validateSalesWindow);
+
+            document
+                .getElementById("salesEnd")
+                .addEventListener("change", validateSalesWindow);
+
+            await initialize();
+
+        });
+
+        /* =========================================================
+           SUPABASE INITIALIZATION
+        ========================================================== */
+
+        async function initialize() {
+
+            try {
+
+                if (
+                    !SUPABASE_URL ||
+                    !SUPABASE_ANON_KEY
+                ) {
+
+                    throw new Error(
+                        "Supabase configuration is missing."
+                    );
+
+                }
+
+                supabaseClient =
+                    window.supabase.createClient(
+                        SUPABASE_URL,
+                        SUPABASE_ANON_KEY
+                    );
+
+                setLoadingText(
+                    "Verifying merchant account..."
+                );
+
+                const {
+                    data: {
+                        user
+                    },
+                    error: userError
+                } =
+                    await supabaseClient.auth.getUser();
+
+                if (
+                    userError ||
+                    !user
+                ) {
+
+                    window.location.href =
+                        "../auth/login.html";
+
+                    return;
+
+                }
+
+                currentUser = user;
+
+                setLoadingText(
+                    "Loading merchant profile..."
+                );
+
+                await loadProfile();
+
+                setLoadingText(
+                    "Loading notifications..."
+                );
+
+                await loadNotificationCount();
+
+                hideLoading();
+
+            } catch (error) {
+
+                console.error(
+                    "Initialization error:",
+                    error
+                );
+
+                showToast(
+                    error.message ||
+                    "Unable to initialize merchant workspace.",
+                    "error"
+                );
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        "../auth/login.html";
+
+                }, 1800);
+
+            }
+
+        }
+
+        /* =========================================================
+           PROFILE
+        ========================================================== */
+
+        async function loadProfile() {
+
+            const {
+                data: profile,
+                error
+            } =
+                await supabaseClient
+                    .from("profiles")
+                    .select(`
+                        id,
+                        full_name,
+                        phone,
+                        role
+                    `)
+                    .eq("id", currentUser.id)
+                    .maybeSingle();
+
+            if (error) {
+
+                console.error(
+                    "Profile error:",
+                    error
+                );
+
+                throw new Error(
+                    "Unable to load merchant profile."
+                );
+
+            }
+
+            if (!profile) {
+
+                throw new Error(
+                    "Merchant profile was not found."
+                );
+
+            }
+
+            if (
+                String(profile.role || "").toLowerCase() !==
+                "merchant"
+            ) {
+
+                showToast(
+                    "This area is only available to merchant accounts.",
+                    "error"
+                );
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        "../index.html";
+
+                }, 1200);
+
+                throw new Error(
+                    "Unauthorized role."
+                );
+
+            }
+
+            currentProfile = profile;
+
+            updateProfileUI(profile);
+
+        }
+
+        /* =========================================================
+           PROFILE UI
+        ========================================================== */
+
+        function updateProfileUI(profile) {
+
+            const name =
+                profile.full_name ||
+                currentUser.user_metadata?.full_name ||
+                currentUser.email?.split("@")[0] ||
+                "Merchant";
+
+            const initials =
+                getInitials(name);
+
+            document.getElementById(
+                "profileName"
+            ).textContent = name;
+
+            document.getElementById(
+                "sidebarUserName"
+            ).textContent = name;
+
+            document.getElementById(
+                "profileAvatar"
+            ).textContent = initials;
+
+            document.getElementById(
+                "sidebarAvatar"
+            ).textContent = initials;
+
+        }
+
+        function getInitials(name) {
+
+            const parts =
+                String(name)
+                    .trim()
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+            if (!parts.length) {
+                return "M";
+            }
+
+            if (parts.length === 1) {
+
+                return parts[0]
+                    .slice(0, 2)
+                    .toUpperCase();
+
+            }
+
+            return (
+                parts[0][0] +
+                parts[parts.length - 1][0]
+            ).toUpperCase();
+
+        }
+
+        /* =========================================================
+           NOTIFICATIONS
+        ========================================================== */
+
+        async function loadNotificationCount() {
+
+            try {
+
+                const {
+                    count,
+                    error
+                } =
+                    await supabaseClient
+                        .from("notifications")
+                        .select(
+                            "id",
+                            {
+                                count: "exact",
+                                head: true
+                            }
+                        )
+                        .eq(
+                            "user_id",
+                            currentUser.id
+                        )
+                        .eq(
+                            "is_read",
+                            false
+                        );
+
+                if (error) {
+
+                    console.warn(
+                        "Notification count unavailable:",
+                        error
+                    );
+
+                    return;
+
+                }
+
+                if (count && count > 0) {
+
+                    const badge =
+                        document.getElementById(
+                            "notificationDot"
+                        );
+
+                    badge.textContent =
+                        count > 99
+                            ? "99+"
+                            : String(count);
+
+                    badge.style.display =
+                        "grid";
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "Notification query failed:",
+                    error
+                );
+
+            }
+
+        }
+
+        /* =========================================================
+           TICKET TYPES
+        ========================================================== */
+
+        function addTicketType() {
+
+            ticketCounter++;
+
+            const list =
+                document.getElementById(
+                    "ticketList"
+                );
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "ticket-item";
+
+            item.dataset.ticketId =
+                String(ticketCounter);
+
+            item.innerHTML = `
+                <div class="ticket-item-header">
+
+                    <div class="ticket-number">
+                        <span class="ticket-number-badge">
+                            ${ticketCounter}
+                        </span>
+
+                        Ticket Type
+                    </div>
+
+                    <button
+                        type="button"
+                        class="remove-ticket"
+                        title="Remove ticket type"
+                        aria-label="Remove ticket type"
+                        onclick="removeTicketType(this)"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+                <div class="ticket-grid">
+
+                    <div class="field ticket-name-field">
+
+                        <label class="field-label">
+                            Ticket Name
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            class="input ticket-name"
+                            type="text"
+                            maxlength="100"
+                            placeholder="Enter ticket type"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="field">
+
+                        <label class="field-label">
+                            Price
+                            <span class="required">*</span>
+                        </label>
+
+                        <div class="currency-input">
+
+                            <span class="currency-prefix">
+                                KWD
+                            </span>
+
+                            <input
+                                class="input ticket-price"
+                                type="number"
+                                min="0"
+                                step="0.001"
+                                inputmode="decimal"
+                                placeholder="0.000"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="field">
+
+                        <label class="field-label">
+                            Quantity
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            class="input ticket-quantity"
+                            type="number"
+                            min="1"
+                            step="1"
+                            inputmode="numeric"
+                            placeholder="0"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="field">
+
+                        <label class="field-label">
+                            Max / Order
+                        </label>
+
+                        <input
+                            class="input ticket-max"
+                            type="number"
+                            min="1"
+                            step="1"
+                            inputmode="numeric"
+                            placeholder="Optional"
+                        >
+
+                    </div>
+
+                </div>
+            `;
+
+            list.appendChild(item);
+
+            updateTicketNumbers();
+
+        }
+
+        function removeTicketType(button) {
+
+            const items =
+                document.querySelectorAll(
+                    ".ticket-item"
+                );
+
+            if (items.length <= 1) {
+
+                showToast(
+                    "At least one ticket type is required.",
+                    "warning"
+                );
+
+                return;
+
+            }
+
+            const item =
+                button.closest(
+                    ".ticket-item"
+                );
+
+            if (item) {
+
+                item.remove();
+
+                updateTicketNumbers();
+
+            }
+
+        }
+
+        function updateTicketNumbers() {
+
+            const items =
+                document.querySelectorAll(
+                    ".ticket-item"
+                );
+
+            items.forEach(
+                (item, index) => {
+
+                    const badge =
+                        item.querySelector(
+                            ".ticket-number-badge"
+                        );
+
+                    if (badge) {
+
+                        badge.textContent =
+                            String(index + 1);
+
+                    }
+
+                }
+            );
+
+        }
+
+        /* =========================================================
+           VALIDATION
+        ========================================================== */
+
+        function clearInvalidFields() {
+
+            document
+                .querySelectorAll(
+                    ".invalid"
+                )
+                .forEach(
+                    element =>
+                        element.classList.remove(
+                            "invalid"
+                        )
+                );
+
+        }
+
+        function markInvalid(element) {
+
+            if (element) {
+
+                element.classList.add(
+                    "invalid"
+                );
+
+                element.focus();
+
+            }
+
+        }
+
+        function validateRequiredFields() {
+
+            clearInvalidFields();
+
+            const title =
+                document.getElementById(
+                    "title"
+                );
+
+            const venue =
+                document.getElementById(
+                    "venue"
+                );
+
+            const startAt =
+                document.getElementById(
+                    "startAt"
+                );
+
+            const endAt =
+                document.getElementById(
+                    "endAt"
+                );
+
+            if (!title.value.trim()) {
+
+                markInvalid(title);
+
+                showToast(
+                    "Enter an event title.",
+                    "error"
+                );
+
+                return false;
+
+            }
+
+            if (!venue.value.trim()) {
+
+                markInvalid(venue);
+
+                showToast(
+                    "Enter the event venue.",
+                    "error"
+                );
+
+                return false;
+
+            }
+
+            if (!startAt.value) {
+
+                markInvalid(startAt);
+
+                showToast(
+                    "Select the event start date and time.",
+                    "error"
+                );
+
+                return false;
+
+            }
+
+            if (!endAt.value) {
+
+                markInvalid(endAt);
+
+                showToast(
+                    "Select the event end date and time.",
+                    "error"
+                );
+
+                return false;
+
+            }
+
+            if (!validateSchedule()) {
+
+                return false;
+
+            }
+
+            if (!validateSalesWindow()) {
+
+                return false;
+
+            }
+
+            return validateTickets();
+
+        }
+
+        function validateSchedule() {
+
+            const startInput =
+                document.getElementById(
+                    "startAt"
+                );
+
+            const endInput =
+                document.getElementById(
+                    "endAt"
+                );
+
+            if (
+                !startInput.value ||
+                !endInput.value
+            ) {
+
+                return true;
+
+            }
+
+            const start =
+                new Date(
+                    startInput.value
+                );
+
+            const end =
+                new Date(
+                    endInput.value
+                );
+
+            if (
+                Number.isNaN(start.getTime()) ||
+                Number.isNaN(end.getTime())
+            ) {
+
+                return false;
+
+            }
+
+            if (end <= start) {
+
+                markInvalid(endInput);
+
+                showToast(
+                    "Event end time must be after the start time.",
+                    "error"
+                );
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        function validateSalesWindow() {
+
+            const salesStart =
+                document.getElementById(
+                    "salesStart"
+                );
+
+            const salesEnd =
+                document.getElementById(
+                    "salesEnd"
+                );
+
+            if (
+                salesStart.value &&
+                salesEnd.value
+            ) {
+
+                const start =
+                    new Date(
+                        salesStart.value
+                    );
+
+                const end =
+                    new Date(
+                        salesEnd.value
+                    );
+
+                if (end <= start) {
+
+                    markInvalid(salesEnd);
+
+                    showToast(
+                        "Ticket sales end time must be after sales start time.",
+                        "error"
+                    );
+
+                    return false;
+
+                }
+
+            }
+
+            return true;
+
+        }
+
+        function validateTickets() {
+
+            const items =
+                document.querySelectorAll(
+                    ".ticket-item"
+                );
+
+            if (!items.length) {
+
+                showToast(
+                    "Add at least one ticket type.",
+                    "error"
+                );
+
+                return false;
+
+            }
+
+            for (
+                let index = 0;
+                index < items.length;
+                index++
+            ) {
+
+                const item =
+                    items[index];
+
+                const nameInput =
+                    item.querySelector(
+                        ".ticket-name"
+                    );
+
+                const priceInput =
+                    item.querySelector(
+                        ".ticket-price"
+                    );
+
+                const quantityInput =
+                    item.querySelector(
+                        ".ticket-quantity"
+                    );
+
+                const maxInput =
+                    item.querySelector(
+                        ".ticket-max"
+                    );
+
+                const name =
+                    nameInput.value.trim();
+
+                const price =
+                    Number(
+                        priceInput.value
+                    );
+
+                const quantity =
+                    Number(
+                        quantityInput.value
+                    );
+
+                const maxPerOrder =
+                    maxInput.value === ""
+                        ? null
+                        : Number(
+                            maxInput.value
+                        );
+
+                if (!name) {
+
+                    markInvalid(nameInput);
+
+                    showToast(
+                        `Enter a name for ticket type ${index + 1}.`,
+                        "error"
+                    );
+
+                    return false;
+
+                }
+
+                if (
+                    priceInput.value === "" ||
+                    !Number.isFinite(price) ||
+                    price < 0
+                ) {
+
+                    markInvalid(priceInput);
+
+                    showToast(
+                        `Enter a valid price for ticket type ${index + 1}.`,
+                        "error"
+                    );
+
+                    return false;
+
+                }
+
+                if (
+                    quantityInput.value === "" ||
+                    !Number.isInteger(quantity) ||
+                    quantity < 1
+                ) {
+
+                    markInvalid(quantityInput);
+
+                    showToast(
+                        `Enter a valid quantity for ticket type ${index + 1}.`,
+                        "error"
+                    );
+
+                    return false;
+
+                }
+
+                if (
+                    maxPerOrder !== null &&
+                    (
+                        !Number.isInteger(
+                            maxPerOrder
+                        ) ||
+                        maxPerOrder < 1
+                    )
+                ) {
+
+                    markInvalid(maxInput);
+
+                    showToast(
+                        `Enter a valid maximum per order for ticket type ${index + 1}.`,
+                        "error"
+                    );
+
+                    return false;
+
+                }
+
+                if (
+                    maxPerOrder !== null &&
+                    maxPerOrder > quantity
+                ) {
+
+                    markInvalid(maxInput);
+
+                    showToast(
+                        `Maximum per order cannot exceed available quantity for ticket type ${index + 1}.`,
+                        "error"
+                    );
+
+                    return false;
+
+                }
+
+            }
+
+            return true;
+
+        }
+
+        /* =========================================================
+           COLLECT TICKET DATA
+        ========================================================== */
+
+        function collectTicketTypes() {
+
+            return Array
+                .from(
+                    document.querySelectorAll(
+                        ".ticket-item"
+                    )
+                )
+                .map(item => {
+
+                    const maxInput =
+                        item.querySelector(
+                            ".ticket-max"
+                        );
+
+                    return {
+                        name:
+                            item.querySelector(
+                                ".ticket-name"
+                            ).value.trim(),
+
+                        price:
+                            Number(
+                                item.querySelector(
+                                    ".ticket-price"
+                                ).value
+                            ),
+
+                        quantity:
+                            Number(
+                                item.querySelector(
+                                    ".ticket-quantity"
+                                ).value
+                            ),
+
+                        max_per_order:
+                            maxInput.value === ""
+                                ? null
+                                : Number(
+                                    maxInput.value
+                                )
+                    };
+
+                });
+
+        }
+
+        /* =========================================================
+           FORM SUBMISSION
+        ========================================================== */
+
+        async function handleSubmit(event) {
+
+            event.preventDefault();
+
+            if (!currentUser) {
+
+                showToast(
+                    "Your session has expired. Please log in again.",
+                    "error"
+                );
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        "../auth/login.html";
+
+                }, 1000);
+
+                return;
+
+            }
+
+            if (!validateRequiredFields()) {
+
+                return;
+
+            }
+
+            const submitButton =
+                document.getElementById(
+                    "submitButton"
+                );
+
+            const originalText =
+                submitButton.innerHTML;
+
+            submitButton.disabled = true;
+
+            submitButton.innerHTML =
+                "Creating Event...";
+
+            try {
+
+                const title =
+                    document
+                        .getElementById("title")
+                        .value
+                        .trim();
+
+                const description =
+                    document
+                        .getElementById("description")
+                        .value
+                        .trim();
+
+                const venue =
+                    document
+                        .getElementById("venue")
+                        .value
+                        .trim();
+
+                const city =
+                    document
+                        .getElementById("city")
+                        .value
+                        .trim();
+
+                const startAt =
+                    document
+                        .getElementById("startAt")
+                        .value;
+
+                const endAt =
+                    document
+                        .getElementById("endAt")
+                        .value;
+
+                const salesStart =
+                    document
+                        .getElementById("salesStart")
+                        .value;
+
+                const salesEnd =
+                    document
+                        .getElementById("salesEnd")
+                        .value;
+
+                const status =
+                    document.querySelector(
+                        'input[name="status"]:checked'
+                    )?.value ||
+                    "draft";
+
+                const ticketTypes =
+                    collectTicketTypes();
+
+                /*
+                 * Event insert.
+                 *
+                 * All actual event data comes from
+                 * merchant input and Supabase.
+                 */
+
+                const eventPayload = {
+
+                    merchant_id:
+                        currentUser.id,
+
+                    title,
+
+                    description:
+                        description || null,
+
+                    venue,
+
+                    city:
+                        city || null,
+
+                    start_at:
+                        new Date(
+                            startAt
+                        ).toISOString(),
+
+                    end_at:
+                        new Date(
+                            endAt
+                        ).toISOString(),
+
+                    status
+
+                };
+
+                if (salesStart) {
+
+                    eventPayload.sales_start_at =
+                        new Date(
+                            salesStart
+                        ).toISOString();
+
+                }
+
+                if (salesEnd) {
+
+                    eventPayload.sales_end_at =
+                        new Date(
+                            salesEnd
+                        ).toISOString();
+
+                }
+
+                const {
+                    data: createdEvent,
+                    error: eventError
+                } =
+                    await supabaseClient
+                        .from("events")
+                        .insert(
+                            eventPayload
+                        )
+                        .select("id")
+                        .single();
+
+                if (eventError) {
+
+                    console.error(
+                        "Event creation error:",
+                        eventError
+                    );
+
+                    throw eventError;
+
+                }
+
+                if (
+                    !createdEvent ||
+                    !createdEvent.id
+                ) {
+
+                    throw new Error(
+                        "The event was created but its ID could not be returned."
+                    );
+
+                }
+
+                /*
+                 * Insert ticket types.
+                 *
+                 * The ticket_types table should contain
+                 * the event relationship and inventory fields.
+                 */
+
+                const ticketPayload =
+                    ticketTypes.map(
+                        ticket => ({
+
+                            event_id:
+                                createdEvent.id,
+
+                            name:
+                                ticket.name,
+
+                            price:
+                                ticket.price,
+
+                            quantity:
+                                ticket.quantity,
+
+                            max_per_order:
+                                ticket.max_per_order
+
+                        })
+                    );
+
+                const {
+                    error: ticketError
+                } =
+                    await supabaseClient
+                        .from("ticket_types")
+                        .insert(
+                            ticketPayload
+                        );
+
+                if (ticketError) {
+
+                    console.error(
+                        "Ticket creation error:",
+                        ticketError
+                    );
+
+                    /*
+                     * The event already exists.
+                     * We deliberately do not silently
+                     * delete it here because event history
+                     * should not be destroyed automatically.
+                     */
+
+                    throw new Error(
+                        "The event was created, but the ticket types could not be saved. Please check the ticket_types database configuration before publishing."
+                    );
+
+                }
+
+                showToast(
+                    status === "published"
+                        ? "Event created and published successfully."
+                        : "Event saved as a draft successfully.",
+                    "success"
+                );
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        `./edit-event.html?id=${encodeURIComponent(
+                            createdEvent.id
+                        )}`;
+
+                }, 900);
+
+            } catch (error) {
+
+                console.error(
+                    "Create event failed:",
+                    error
+                );
+
+                showToast(
+                    getReadableError(error),
+                    "error"
+                );
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.innerHTML =
+                    originalText;
+
+            }
+
+        }
+
+        /* =========================================================
+           READABLE SUPABASE ERRORS
+        ========================================================== */
+
+        function getReadableError(error) {
+
+            const message =
+                error?.message ||
+                error?.details ||
+                error?.hint ||
+                "";
+
+            if (
+                message
+                    .toLowerCase()
+                    .includes("row-level security")
+            ) {
+
+                return "Supabase blocked this action because the merchant event policy is not configured correctly.";
+
+            }
+
+            if (
+                message
+                    .toLowerCase()
+                    .includes("column")
+            ) {
+
+                return "The event database structure does not match this CMS form yet. Check the events table columns.";
+
+            }
+
+            if (
+                message
+                    .toLowerCase()
+                    .includes("ticket_types")
+            ) {
+
+                return message;
+
+            }
+
+            if (message) {
+
+                return message;
+
+            }
+
+            return "Unable to create the event. Please try again.";
+
+        }
+
+        /* =========================================================
+           SIGN OUT
+        ========================================================== */
+
+        async function signOut(event) {
+
+            if (event) {
+                event.preventDefault();
+            }
+
+            try {
+
+                if (supabaseClient) {
+
+                    await supabaseClient.auth.signOut();
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Sign out error:",
+                    error
+                );
+
+            } finally {
+
+                window.location.href =
+                    "../auth/login.html";
+
+            }
+
+        }
+
+        /* =========================================================
+           SIDEBAR
+        ========================================================== */
+
+        function toggleSidebar() {
+
+            const sidebar =
+                document.getElementById(
+                    "sidebar"
+                );
+
+            const overlay =
+                document.getElementById(
+                    "sidebarOverlay"
+                );
+
+            sidebar.classList.toggle(
+                "open"
+            );
+
+            overlay.classList.toggle(
+                "active"
+            );
+
+        }
+
+        function closeSidebar() {
+
+            const sidebar =
+                document.getElementById(
+                    "sidebar"
+                );
+
+            const overlay =
+                document.getElementById(
+                    "sidebarOverlay"
+                );
+
+            sidebar.classList.remove(
+                "open"
+            );
+
+            overlay.classList.remove(
+                "active"
+            );
+
+        }
+
+        window.addEventListener(
+            "resize",
+            () => {
+
+                if (
+                    window.innerWidth > 950
+                ) {
+
+                    closeSidebar();
+
+                }
+
+            }
+        );
+
+        /* =========================================================
+           LOADING
+        ========================================================== */
+
+        function setLoadingText(text) {
+
+            const element =
+                document.getElementById(
+                    "loadingText"
+                );
+
+            if (element) {
+
+                element.textContent =
+                    text;
+
+            }
+
+        }
+
+        function hideLoading() {
+
+            document
+                .getElementById(
+                    "loadingScreen"
+                )
+                .classList.add(
+                    "hidden"
+                );
+
+        }
+
+        /* =========================================================
+           TOAST
+        ========================================================== */
+
+        function showToast(
+            message,
+            type = "success"
+        ) {
+
+            const container =
+                document.getElementById(
+                    "toastContainer"
+                );
+
+            const toast =
+                document.createElement(
+                    "div"
+                );
+
+            toast.className =
+                `toast ${type}`;
+
+            const icon =
+                type === "error"
+                    ? "!"
+                    : type === "warning"
+                        ? "!"
+                        : "✓";
+
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    ${icon}
+                </div>
+
+                <div class="toast-message">
+                    ${escapeHtml(message)}
+                </div>
+            `;
+
+            container.appendChild(
+                toast
+            );
+
+            setTimeout(() => {
+
+                toast.style.opacity =
+                    "0";
+
+                toast.style.transform =
+                    "translateY(8px)";
+
+                setTimeout(() => {
+
+                    toast.remove();
+
+                }, 200);
+
+            }, 4200);
+
+        }
+
+        function escapeHtml(value) {
+
+            return String(value)
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+    </script>
+
+</body>
+</html>

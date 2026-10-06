@@ -1,0 +1,3885 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <meta
+    name="robots"
+    content="noindex,nofollow,noarchive,nosnippet"
+  >
+
+  <meta
+    name="referrer"
+    content="same-origin"
+  >
+
+  <title>K-Tickets Admin — Payments</title>
+
+  <style>
+    :root{
+      --bordo:#6C151E;
+      --green:#0F3D3A;
+      --cream:#F5DABF;
+      --white:#fff;
+      --ink:#18201f;
+      --muted:#69716f;
+      --line:#e6ded7;
+      --soft:#f8f4ef;
+      --success:#18794e;
+      --warning:#a66b00;
+      --danger:#b42318;
+      --shadow:0 16px 45px rgba(15,61,58,.08);
+      --radius:18px;
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      min-height:100vh;
+      background:#f7f4f0;
+      color:var(--ink);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      overflow-x:hidden;
+    }
+
+    button,
+    input,
+    select{
+      font:inherit;
+    }
+
+    button{
+      cursor:pointer;
+    }
+
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    /* =========================
+       SECURITY GATE
+    ========================= */
+
+    #securityGate{
+      position:fixed;
+      inset:0;
+      z-index:99999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--green);
+      color:var(--cream);
+    }
+
+    #securityGate.hidden{
+      display:none;
+    }
+
+    .security-box{
+      width:min(92%,420px);
+      padding:34px;
+      text-align:center;
+      border:1px solid rgba(245,218,191,.18);
+      border-radius:24px;
+      background:rgba(255,255,255,.04);
+      box-shadow:0 25px 80px rgba(0,0,0,.25);
+    }
+
+    .security-icon{
+      width:58px;
+      height:58px;
+      margin:0 auto 18px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:var(--bordo);
+      font-size:24px;
+    }
+
+    .security-box h2{
+      font-size:20px;
+      margin-bottom:8px;
+    }
+
+    .security-box p{
+      color:rgba(245,218,191,.72);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .loader{
+      width:28px;
+      height:28px;
+      margin:20px auto 0;
+      border:3px solid rgba(245,218,191,.2);
+      border-top-color:var(--cream);
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    .app{
+      min-height:100vh;
+      display:flex;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar{
+      position:fixed;
+      inset:0 auto 0 0;
+      z-index:1000;
+      width:258px;
+      display:flex;
+      flex-direction:column;
+      background:var(--green);
+      color:var(--cream);
+      transition:transform .25s ease;
+    }
+
+    .brand{
+      min-height:82px;
+      display:flex;
+      align-items:center;
+      gap:13px;
+      padding:18px 22px;
+      border-bottom:1px solid rgba(245,218,191,.1);
+    }
+
+    .brand-mark{
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border-radius:12px;
+      background:var(--bordo);
+      color:var(--cream);
+      font-weight:900;
+      letter-spacing:-1px;
+    }
+
+    .brand-text strong{
+      display:block;
+      font-size:15px;
+      letter-spacing:.08em;
+    }
+
+    .brand-text span{
+      display:block;
+      margin-top:3px;
+      color:rgba(245,218,191,.58);
+      font-size:10px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    .nav{
+      flex:1;
+      padding:18px 12px;
+      overflow-y:auto;
+    }
+
+    .nav-label{
+      padding:10px 12px 8px;
+      color:rgba(245,218,191,.4);
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .nav a{
+      display:flex;
+      align-items:center;
+      gap:11px;
+      min-height:43px;
+      margin:3px 0;
+      padding:10px 12px;
+      border-radius:11px;
+      color:rgba(245,218,191,.72);
+      font-size:13px;
+      font-weight:600;
+      transition:.2s ease;
+    }
+
+    .nav a:hover{
+      color:var(--cream);
+      background:rgba(255,255,255,.06);
+    }
+
+    .nav a.active{
+      color:#fff;
+      background:var(--bordo);
+      box-shadow:0 8px 22px rgba(108,21,30,.2);
+    }
+
+    .nav-icon{
+      width:20px;
+      text-align:center;
+      font-size:15px;
+      flex:none;
+    }
+
+    .sidebar-footer{
+      padding:14px;
+      border-top:1px solid rgba(245,218,191,.1);
+    }
+
+    .admin-mini{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+      padding:10px;
+      border-radius:13px;
+      background:rgba(255,255,255,.045);
+    }
+
+    .avatar{
+      width:36px;
+      height:36px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border-radius:50%;
+      background:var(--cream);
+      color:var(--green);
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .admin-mini-text{
+      min-width:0;
+    }
+
+    .admin-mini-text strong{
+      display:block;
+      max-width:150px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      font-size:12px;
+    }
+
+    .admin-mini-text span{
+      display:block;
+      margin-top:2px;
+      color:rgba(245,218,191,.48);
+      font-size:10px;
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    .main{
+      width:calc(100% - 258px);
+      min-width:0;
+      margin-left:258px;
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:500;
+      min-height:76px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:14px 30px;
+      background:rgba(247,244,240,.94);
+      border-bottom:1px solid rgba(24,32,31,.07);
+      backdrop-filter:blur(16px);
+    }
+
+    .topbar-left{
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .mobile-menu{
+      display:none;
+      width:40px;
+      height:40px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#fff;
+      color:var(--green);
+    }
+
+    .page-title h1{
+      color:var(--green);
+      font-size:21px;
+      letter-spacing:-.03em;
+    }
+
+    .page-title p{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .topbar-actions{
+      display:flex;
+      align-items:center;
+      gap:9px;
+    }
+
+    .icon-button{
+      position:relative;
+      width:40px;
+      height:40px;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--line);
+      border-radius:11px;
+      background:#fff;
+      color:var(--green);
+    }
+
+    .notification-dot{
+      position:absolute;
+      top:8px;
+      right:8px;
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:var(--bordo);
+    }
+
+    .content{
+      width:min(1500px,100%);
+      margin:0 auto;
+      padding:28px 30px 50px;
+    }
+
+    /* =========================
+       SECURITY NOTICE
+    ========================= */
+
+    .security-notice{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:20px;
+      padding:14px 16px;
+      border:1px solid rgba(15,61,58,.12);
+      border-radius:15px;
+      background:rgba(15,61,58,.035);
+    }
+
+    .security-notice-icon{
+      width:34px;
+      height:34px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border-radius:10px;
+      background:var(--green);
+      color:var(--cream);
+      font-size:14px;
+    }
+
+    .security-notice strong{
+      display:block;
+      color:var(--green);
+      font-size:12px;
+    }
+
+    .security-notice p{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.55;
+    }
+
+    /* =========================
+       STAT CARDS
+    ========================= */
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:16px;
+      margin-bottom:20px;
+    }
+
+    .stat-card{
+      min-width:0;
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    .stat-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .stat-label{
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+
+    .stat-icon{
+      width:34px;
+      height:34px;
+      display:grid;
+      place-items:center;
+      border-radius:10px;
+      background:rgba(15,61,58,.07);
+      color:var(--green);
+      font-size:14px;
+    }
+
+    .stat-value{
+      margin-top:12px;
+      color:var(--green);
+      font-size:25px;
+      font-weight:850;
+      letter-spacing:-.04em;
+    }
+
+    .stat-note{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    /* =========================
+       TOOLBAR
+    ========================= */
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:16px;
+    }
+
+    .filters{
+      flex:1;
+      min-width:0;
+      display:grid;
+      grid-template-columns:minmax(220px,1.5fr) minmax(150px,1fr) minmax(150px,1fr) minmax(130px,.7fr);
+      gap:9px;
+    }
+
+    .field{
+      position:relative;
+    }
+
+    .field input,
+    .field select{
+      width:100%;
+      height:42px;
+      padding:0 12px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      outline:none;
+      background:#fff;
+      color:var(--ink);
+      font-size:12px;
+    }
+
+    .field input:focus,
+    .field select:focus{
+      border-color:var(--green);
+      box-shadow:0 0 0 3px rgba(15,61,58,.08);
+    }
+
+    .button{
+      min-height:42px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:0 15px;
+      border:1px solid transparent;
+      border-radius:11px;
+      font-size:12px;
+      font-weight:800;
+      transition:.2s ease;
+      white-space:nowrap;
+    }
+
+    .button-primary{
+      background:var(--green);
+      color:#fff;
+    }
+
+    .button-primary:hover{
+      background:#0a302e;
+      transform:translateY(-1px);
+    }
+
+    .button-secondary{
+      border-color:var(--line);
+      background:#fff;
+      color:var(--green);
+    }
+
+    .button-secondary:hover{
+      border-color:rgba(15,61,58,.25);
+    }
+
+    /* =========================
+       TABLE
+    ========================= */
+
+    .panel{
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    .panel-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+      padding:18px 20px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .panel-head h2{
+      color:var(--green);
+      font-size:14px;
+    }
+
+    .panel-head p{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    .table-wrap{
+      width:100%;
+      overflow-x:auto;
+    }
+
+    table{
+      width:100%;
+      min-width:980px;
+      border-collapse:collapse;
+    }
+
+    th{
+      padding:12px 18px;
+      border-bottom:1px solid var(--line);
+      background:#fbf9f6;
+      color:#747a78;
+      font-size:10px;
+      font-weight:850;
+      letter-spacing:.07em;
+      text-align:left;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    td{
+      padding:14px 18px;
+      border-bottom:1px solid #f0ebe6;
+      color:#303837;
+      font-size:12px;
+      vertical-align:middle;
+    }
+
+    tbody tr:hover{
+      background:#fcfaf8;
+    }
+
+    tbody tr:last-child td{
+      border-bottom:0;
+    }
+
+    .payment-id{
+      color:var(--green);
+      font-weight:800;
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+      font-size:10px;
+    }
+
+    .event-name{
+      max-width:230px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:var(--ink);
+      font-weight:700;
+    }
+
+    .subtext{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    .amount{
+      color:var(--green);
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    .method{
+      display:inline-flex;
+      align-items:center;
+      padding:5px 8px;
+      border-radius:8px;
+      background:#f4f2ef;
+      color:#555d5b;
+      font-size:10px;
+      font-weight:800;
+    }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 9px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:850;
+      text-transform:capitalize;
+      white-space:nowrap;
+    }
+
+    .status::before{
+      content:"";
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:currentColor;
+    }
+
+    .status-success{
+      color:var(--success);
+      background:rgba(24,121,78,.09);
+    }
+
+    .status-pending{
+      color:var(--warning);
+      background:rgba(166,107,0,.1);
+    }
+
+    .status-failed,
+    .status-cancelled,
+    .status-refunded{
+      color:var(--danger);
+      background:rgba(180,35,24,.08);
+    }
+
+    .status-unknown{
+      color:#68706e;
+      background:#f1f1ef;
+    }
+
+    .empty{
+      padding:55px 20px;
+      text-align:center;
+    }
+
+    .empty-icon{
+      width:50px;
+      height:50px;
+      margin:0 auto 12px;
+      display:grid;
+      place-items:center;
+      border-radius:15px;
+      background:#f3eee9;
+      color:var(--green);
+      font-size:19px;
+    }
+
+    .empty h3{
+      color:var(--green);
+      font-size:14px;
+    }
+
+    .empty p{
+      max-width:450px;
+      margin:6px auto 0;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.6;
+    }
+
+    /* =========================
+       MOBILE PAYMENT CARDS
+    ========================= */
+
+    .mobile-list{
+      display:none;
+      padding:12px;
+    }
+
+    .payment-card{
+      padding:16px;
+      margin-bottom:10px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:#fff;
+    }
+
+    .payment-card:last-child{
+      margin-bottom:0;
+    }
+
+    .payment-card-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .payment-card-title{
+      min-width:0;
+    }
+
+    .payment-card-title strong{
+      display:block;
+      max-width:220px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:var(--green);
+      font-size:12px;
+    }
+
+    .payment-card-title span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    .payment-card-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .mobile-field label{
+      display:block;
+      margin-bottom:3px;
+      color:#8a8e8c;
+      font-size:9px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+
+    .mobile-field span{
+      color:#303837;
+      font-size:11px;
+    }
+
+    /* =========================
+       DRAWER
+    ========================= */
+
+    .drawer-backdrop{
+      position:fixed;
+      inset:0;
+      z-index:3000;
+      display:none;
+      background:rgba(10,25,24,.42);
+      backdrop-filter:blur(3px);
+    }
+
+    .drawer-backdrop.open{
+      display:block;
+    }
+
+    .drawer{
+      position:absolute;
+      inset:0 0 0 auto;
+      width:min(500px,94vw);
+      overflow-y:auto;
+      padding:24px;
+      background:#fff;
+      box-shadow:-20px 0 60px rgba(0,0,0,.18);
+      animation:slideIn .22s ease;
+    }
+
+    @keyframes slideIn{
+      from{transform:translateX(100%)}
+      to{transform:translateX(0)}
+    }
+
+    .drawer-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:15px;
+      padding-bottom:18px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .drawer-head h2{
+      color:var(--green);
+      font-size:18px;
+    }
+
+    .drawer-head p{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    .drawer-close{
+      width:38px;
+      height:38px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#fff;
+      color:var(--green);
+    }
+
+    .detail-section{
+      padding:18px 0;
+      border-bottom:1px solid var(--line);
+    }
+
+    .detail-section:last-child{
+      border-bottom:0;
+    }
+
+    .detail-section h3{
+      margin-bottom:12px;
+      color:var(--green);
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .detail-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:20px;
+      padding:7px 0;
+    }
+
+    .detail-row span:first-child{
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    .detail-row span:last-child{
+      max-width:260px;
+      color:var(--ink);
+      font-size:11px;
+      font-weight:700;
+      text-align:right;
+      word-break:break-word;
+    }
+
+    .drawer-warning{
+      margin-top:18px;
+      padding:13px;
+      border:1px solid rgba(166,107,0,.16);
+      border-radius:12px;
+      background:rgba(166,107,0,.055);
+    }
+
+    .drawer-warning strong{
+      display:block;
+      color:var(--warning);
+      font-size:11px;
+    }
+
+    .drawer-warning p{
+      margin-top:4px;
+      color:#74634b;
+      font-size:10px;
+      line-height:1.55;
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    #toast{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      z-index:5000;
+      max-width:min(380px,calc(100vw - 30px));
+      padding:13px 16px;
+      border-radius:12px;
+      background:var(--green);
+      color:#fff;
+      font-size:12px;
+      font-weight:700;
+      box-shadow:0 15px 40px rgba(0,0,0,.18);
+      transform:translateY(20px);
+      opacity:0;
+      pointer-events:none;
+      transition:.22s ease;
+    }
+
+    #toast.show{
+      transform:translateY(0);
+      opacity:1;
+    }
+
+    #toast.error{
+      background:var(--bordo);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media(max-width:1180px){
+      .stats{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+
+      .filters{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .toolbar{
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .toolbar > .button{
+        align-self:flex-start;
+      }
+    }
+
+    @media(max-width:900px){
+      .sidebar{
+        transform:translateX(-100%);
+        box-shadow:20px 0 50px rgba(0,0,0,.16);
+      }
+
+      .sidebar.open{
+        transform:translateX(0);
+      }
+
+      .main{
+        width:100%;
+        margin-left:0;
+      }
+
+      .mobile-menu{
+        display:grid;
+        place-items:center;
+      }
+
+      .topbar{
+        padding:12px 18px;
+      }
+
+      .content{
+        padding:22px 18px 40px;
+      }
+
+      .mobile-list{
+        display:block;
+      }
+
+      .table-wrap{
+        display:none;
+      }
+    }
+
+    @media(max-width:620px){
+      .topbar{
+        min-height:68px;
+      }
+
+      .page-title h1{
+        font-size:18px;
+      }
+
+      .page-title p{
+        display:none;
+      }
+
+      .topbar-actions .icon-button:first-child{
+        display:none;
+      }
+
+      .content{
+        padding:18px 13px 32px;
+      }
+
+      .stats{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+      }
+
+      .stat-card{
+        padding:15px;
+      }
+
+      .stat-value{
+        font-size:20px;
+      }
+
+      .filters{
+        grid-template-columns:1fr;
+      }
+
+      .security-notice{
+        padding:12px;
+      }
+
+      .panel-head{
+        padding:15px;
+      }
+
+      .drawer{
+        width:100%;
+        padding:20px;
+      }
+    }
+
+    @media(max-width:400px){
+      .stats{
+        grid-template-columns:1fr;
+      }
+
+      .payment-card-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =====================================================
+       SECURITY GATE
+       ===================================================== -->
+
+  <div id="securityGate">
+    <div class="security-box">
+      <div class="security-icon">🔐</div>
+      <h2>Verifying administrator access</h2>
+      <p>
+        K-Tickets is checking your authenticated Supabase session
+        and administrator role before loading payment data.
+      </p>
+      <div class="loader"></div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
+       APPLICATION
+       ===================================================== -->
+
+  <div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+      <div class="brand">
+        <div class="brand-mark">KT</div>
+
+        <div class="brand-text">
+          <strong>K-TICKETS</strong>
+          <span>Administration</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+
+        <div class="nav-label">Overview</div>
+
+        <a href="./dashboard.html">
+          <span class="nav-icon">⌂</span>
+          Dashboard
+        </a>
+
+        <div class="nav-label">Management</div>
+
+        <a href="./events.html">
+          <span class="nav-icon">◫</span>
+          Events
+        </a>
+
+        <a href="./merchants.html">
+          <span class="nav-icon">♙</span>
+          Merchants
+        </a>
+
+        <a href="./customers.html">
+          <span class="nav-icon">♧</span>
+          Customers
+        </a>
+
+        <a href="./orders.html">
+          <span class="nav-icon">▤</span>
+          Orders
+        </a>
+
+        <a href="./payments.html" class="active">
+          <span class="nav-icon">₿</span>
+          Payments
+        </a>
+
+        <a href="./wamd.html">
+          <span class="nav-icon">↔</span>
+          WAMD
+        </a>
+
+        <a href="./withdrawals.html">
+          <span class="nav-icon">⇩</span>
+          Withdrawals
+        </a>
+
+        <div class="nav-label">Finance</div>
+
+        <a href="./fees.html">
+          <span class="nav-icon">%</span>
+          Fees
+        </a>
+
+        <a href="./reports.html">
+          <span class="nav-icon">▥</span>
+          Reports
+        </a>
+
+        <div class="nav-label">System</div>
+
+        <a href="./settings.html">
+          <span class="nav-icon">⚙</span>
+          Settings
+        </a>
+
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="admin-mini">
+
+          <div class="avatar" id="sidebarAvatar">
+            A
+          </div>
+
+          <div class="admin-mini-text">
+            <strong id="sidebarName">
+              Administrator
+            </strong>
+
+            <span>
+              Platform Admin
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+      <!-- TOPBAR -->
+
+      <header class="topbar">
+
+        <div class="topbar-left">
+
+          <button
+            class="mobile-menu"
+            id="mobileMenu"
+            aria-label="Open navigation"
+          >
+            ☰
+          </button>
+
+          <div class="page-title">
+            <h1>Payments</h1>
+            <p>Monitor platform payment activity</p>
+          </div>
+
+        </div>
+
+        <div class="topbar-actions">
+
+          <button
+            class="icon-button"
+            id="refreshButton"
+            title="Refresh payments"
+            aria-label="Refresh payments"
+          >
+            ↻
+          </button>
+
+          <button
+            class="icon-button"
+            id="notificationButton"
+            title="Notifications"
+            aria-label="Notifications"
+          >
+            ♧
+            <span
+              class="notification-dot"
+              id="notificationDot"
+              style="display:none"
+            ></span>
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <!-- CONTENT -->
+
+      <section class="content">
+
+        <!-- SECURITY NOTICE -->
+
+        <div class="security-notice">
+
+          <div class="security-notice-icon">
+            🔒
+          </div>
+
+          <div>
+            <strong>Payment data is administrator-only</strong>
+
+            <p>
+              This page reads payment information through the authenticated
+              Supabase client. No service-role key, database password,
+              payment secret, or gateway credential is stored in this HTML.
+              Payment mutations must be performed through protected
+              server-side RPCs or Edge Functions.
+            </p>
+          </div>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <section class="stats">
+
+          <article class="stat-card">
+
+            <div class="stat-top">
+              <span class="stat-label">
+                Payments
+              </span>
+
+              <span class="stat-icon">
+                ₿
+              </span>
+            </div>
+
+            <div
+              class="stat-value"
+              id="statPayments"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Records returned from database
+            </div>
+
+          </article>
+
+
+          <article class="stat-card">
+
+            <div class="stat-top">
+              <span class="stat-label">
+                Successful
+              </span>
+
+              <span class="stat-icon">
+                ✓
+              </span>
+            </div>
+
+            <div
+              class="stat-value"
+              id="statSuccessful"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Confirmed payment records
+            </div>
+
+          </article>
+
+
+          <article class="stat-card">
+
+            <div class="stat-top">
+              <span class="stat-label">
+                Pending
+              </span>
+
+              <span class="stat-icon">
+                ◷
+              </span>
+            </div>
+
+            <div
+              class="stat-value"
+              id="statPending"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Awaiting confirmation
+            </div>
+
+          </article>
+
+
+          <article class="stat-card">
+
+            <div class="stat-top">
+              <span class="stat-label">
+                Failed
+              </span>
+
+              <span class="stat-icon">
+                !
+              </span>
+            </div>
+
+            <div
+              class="stat-value"
+              id="statFailed"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Failed or cancelled records
+            </div>
+
+          </article>
+
+        </section>
+
+
+        <!-- TOOLBAR -->
+
+        <div class="toolbar">
+
+          <div class="filters">
+
+            <div class="field">
+              <input
+                type="search"
+                id="searchInput"
+                placeholder="Search payment, order or reference..."
+                autocomplete="off"
+              >
+            </div>
+
+            <div class="field">
+              <select id="methodFilter">
+                <option value="all">
+                  All methods
+                </option>
+                <option value="mpesa">
+                  M-Pesa
+                </option>
+                <option value="wamd">
+                  WAMD
+                </option>
+              </select>
+            </div>
+
+            <div class="field">
+              <select id="statusFilter">
+                <option value="all">
+                  All statuses
+                </option>
+                <option value="successful">
+                  Successful
+                </option>
+                <option value="pending">
+                  Pending
+                </option>
+                <option value="failed">
+                  Failed
+                </option>
+                <option value="cancelled">
+                  Cancelled
+                </option>
+                <option value="refunded">
+                  Refunded
+                </option>
+              </select>
+            </div>
+
+            <div class="field">
+              <select id="periodFilter">
+                <option value="all">
+                  All time
+                </option>
+                <option value="today">
+                  Today
+                </option>
+                <option value="7">
+                  7 days
+                </option>
+                <option value="30">
+                  30 days
+                </option>
+                <option value="90">
+                  90 days
+                </option>
+              </select>
+            </div>
+
+          </div>
+
+          <button
+            class="button button-secondary"
+            id="clearFilters"
+          >
+            Clear filters
+          </button>
+
+        </div>
+
+
+        <!-- PAYMENTS PANEL -->
+
+        <section class="panel">
+
+          <div class="panel-head">
+
+            <div>
+              <h2>Payment activity</h2>
+
+              <p id="resultSummary">
+                Loading payment records...
+              </p>
+            </div>
+
+            <button
+              class="button button-primary"
+              id="exportButton"
+            >
+              Export CSV
+            </button>
+
+          </div>
+
+
+          <!-- DESKTOP -->
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Payment</th>
+                  <th>Order</th>
+                  <th>Event</th>
+                  <th>Method</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+
+              </thead>
+
+              <tbody id="paymentsBody">
+
+                <tr>
+                  <td colspan="8">
+
+                    <div class="empty">
+
+                      <div class="empty-icon">
+                        ◷
+                      </div>
+
+                      <h3>
+                        Loading payments
+                      </h3>
+
+                      <p>
+                        Retrieving payment records from Supabase.
+                      </p>
+
+                    </div>
+
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+
+          <!-- MOBILE -->
+
+          <div
+            class="mobile-list"
+            id="mobileList"
+          >
+
+            <div class="empty">
+
+              <div class="empty-icon">
+                ◷
+              </div>
+
+              <h3>
+                Loading payments
+              </h3>
+
+              <p>
+                Retrieving payment records from Supabase.
+              </p>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =====================================================
+       PAYMENT DETAIL DRAWER
+       ===================================================== -->
+
+  <div
+    class="drawer-backdrop"
+    id="drawerBackdrop"
+  >
+
+    <aside
+      class="drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drawerTitle"
+    >
+
+      <div class="drawer-head">
+
+        <div>
+          <h2 id="drawerTitle">
+            Payment details
+          </h2>
+
+          <p id="drawerSubtitle">
+            Payment record
+          </p>
+        </div>
+
+        <button
+          class="drawer-close"
+          id="drawerClose"
+          aria-label="Close payment details"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div id="drawerContent"></div>
+
+    </aside>
+
+  </div>
+
+
+  <!-- TOAST -->
+
+  <div id="toast"></div>
+
+
+  <!-- =====================================================
+       SUPABASE
+       ===================================================== -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+  <script>
+    /* =====================================================
+       K-TICKETS ADMIN PAYMENTS
+       =====================================================
+
+       SECURITY PRINCIPLES
+
+       1. Never place a Supabase service-role key here.
+       2. Never place database passwords here.
+       3. Never place payment gateway secrets here.
+       4. Admin authorization must be enforced by Supabase
+          Auth + RLS, not by this page alone.
+       5. Payment mutations should use protected RPC/Edge
+          Functions.
+       6. Actual records come from Supabase.
+       7. No fake payment records are generated.
+    ===================================================== */
+
+
+    /* =====================================================
+       CONFIG
+    ===================================================== */
+
+    const SUPABASE_URL =
+      window.KTICKETS_SUPABASE_URL || "";
+
+    const SUPABASE_ANON_KEY =
+      window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+
+    let supabaseClient = null;
+
+    let currentUser = null;
+    let currentProfile = null;
+
+    let allPayments = [];
+    let visiblePayments = [];
+
+    let selectedPayment = null;
+
+    let toastTimer = null;
+
+
+    /* =====================================================
+       DOM
+    ===================================================== */
+
+    const securityGate =
+      document.getElementById("securityGate");
+
+    const sidebar =
+      document.getElementById("sidebar");
+
+    const mobileMenu =
+      document.getElementById("mobileMenu");
+
+    const sidebarName =
+      document.getElementById("sidebarName");
+
+    const sidebarAvatar =
+      document.getElementById("sidebarAvatar");
+
+    const statPayments =
+      document.getElementById("statPayments");
+
+    const statSuccessful =
+      document.getElementById("statSuccessful");
+
+    const statPending =
+      document.getElementById("statPending");
+
+    const statFailed =
+      document.getElementById("statFailed");
+
+    const paymentsBody =
+      document.getElementById("paymentsBody");
+
+    const mobileList =
+      document.getElementById("mobileList");
+
+    const resultSummary =
+      document.getElementById("resultSummary");
+
+    const searchInput =
+      document.getElementById("searchInput");
+
+    const methodFilter =
+      document.getElementById("methodFilter");
+
+    const statusFilter =
+      document.getElementById("statusFilter");
+
+    const periodFilter =
+      document.getElementById("periodFilter");
+
+    const clearFilters =
+      document.getElementById("clearFilters");
+
+    const refreshButton =
+      document.getElementById("refreshButton");
+
+    const exportButton =
+      document.getElementById("exportButton");
+
+    const notificationButton =
+      document.getElementById("notificationButton");
+
+    const notificationDot =
+      document.getElementById("notificationDot");
+
+    const drawerBackdrop =
+      document.getElementById("drawerBackdrop");
+
+    const drawerClose =
+      document.getElementById("drawerClose");
+
+    const drawerTitle =
+      document.getElementById("drawerTitle");
+
+    const drawerSubtitle =
+      document.getElementById("drawerSubtitle");
+
+    const drawerContent =
+      document.getElementById("drawerContent");
+
+    const toast =
+      document.getElementById("toast");
+
+
+    /* =====================================================
+       SECURITY
+    ===================================================== */
+
+    function redirectLogin(reason = "unauthorized"){
+      window.location.replace(
+        "../auth/login.html?error=" +
+        encodeURIComponent(reason)
+      );
+    }
+
+
+    async function safeSignOut(){
+      try{
+        if(supabaseClient){
+          await supabaseClient.auth.signOut();
+        }
+      }catch(error){
+        console.warn(
+          "Sign-out cleanup failed.",
+          error
+        );
+      }
+    }
+
+
+    async function verifyAdmin(){
+      try{
+
+        if(
+          !SUPABASE_URL ||
+          !SUPABASE_ANON_KEY
+        ){
+          console.error(
+            "Supabase configuration is missing."
+          );
+
+          redirectLogin("configuration");
+          return false;
+        }
+
+
+        supabaseClient =
+          window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY,
+            {
+              auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+              }
+            }
+          );
+
+
+        const {
+          data:sessionData,
+          error:sessionError
+        } =
+          await supabaseClient.auth.getSession();
+
+
+        if(sessionError){
+          console.error(
+            "Session verification failed.",
+            sessionError
+          );
+
+          await safeSignOut();
+          redirectLogin("session");
+          return false;
+        }
+
+
+        const session =
+          sessionData?.session;
+
+
+        if(!session?.user){
+          redirectLogin("login_required");
+          return false;
+        }
+
+
+        currentUser =
+          session.user;
+
+
+        /*
+          IMPORTANT:
+
+          This role check is only one layer.
+
+          Supabase RLS must ALSO enforce that only
+          administrators can read protected payment data.
+        */
+
+        const {
+          data:profile,
+          error:profileError
+        } =
+          await supabaseClient
+            .from("profiles")
+            .select(`
+              id,
+              full_name,
+              phone,
+              role
+            `)
+            .eq(
+              "id",
+              currentUser.id
+            )
+            .maybeSingle();
+
+
+        if(
+          profileError ||
+          !profile ||
+          profile.role !== "admin"
+        ){
+
+          console.warn(
+            "Administrator authorization failed."
+          );
+
+          await safeSignOut();
+
+          redirectLogin("unauthorized");
+
+          return false;
+        }
+
+
+        currentProfile =
+          profile;
+
+
+        updateAdminIdentity();
+
+
+        return true;
+
+      }catch(error){
+
+        console.error(
+          "Security verification error:",
+          error
+        );
+
+        await safeSignOut();
+
+        redirectLogin("security_error");
+
+        return false;
+      }
+    }
+
+
+    function updateAdminIdentity(){
+
+      const name =
+        currentProfile?.full_name?.trim() ||
+        "Administrator";
+
+
+      sidebarName.textContent =
+        name;
+
+
+      sidebarAvatar.textContent =
+        initials(name);
+    }
+
+
+    function initials(name){
+
+      const parts =
+        String(name)
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean);
+
+
+      if(!parts.length){
+        return "A";
+      }
+
+
+      if(parts.length === 1){
+        return parts[0]
+          .slice(0,2)
+          .toUpperCase();
+      }
+
+
+      return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+      ).toUpperCase();
+    }
+
+
+    /* =====================================================
+       SAFE DISPLAY HELPERS
+    ===================================================== */
+
+    function escapeHtml(value){
+
+      return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+    }
+
+
+    function safeText(value, fallback = "—"){
+
+      if(
+        value === null ||
+        value === undefined ||
+        value === ""
+      ){
+        return fallback;
+      }
+
+      return String(value);
+    }
+
+
+    function shortId(value){
+
+      if(!value){
+        return "—";
+      }
+
+      const text =
+        String(value);
+
+      if(text.length <= 14){
+        return text;
+      }
+
+      return (
+        text.slice(0,7) +
+        "…" +
+        text.slice(-5)
+      );
+    }
+
+
+    function formatDate(value){
+
+      if(!value){
+        return "—";
+      }
+
+      const date =
+        new Date(value);
+
+      if(
+        Number.isNaN(
+          date.getTime()
+        )
+      ){
+        return "—";
+      }
+
+      return new Intl.DateTimeFormat(
+        undefined,
+        {
+          dateStyle:"medium",
+          timeStyle:"short"
+        }
+      ).format(date);
+    }
+
+
+    function formatMoney(
+      amount,
+      currency = ""
+    ){
+
+      if(
+        amount === null ||
+        amount === undefined ||
+        amount === ""
+      ){
+        return "—";
+      }
+
+
+      const number =
+        Number(amount);
+
+
+      if(
+        !Number.isFinite(number)
+      ){
+        return "—";
+      }
+
+
+      return (
+        currency
+          ? currency + " "
+          : ""
+      ) +
+      number.toLocaleString(
+        undefined,
+        {
+          minimumFractionDigits:2,
+          maximumFractionDigits:2
+        }
+      );
+    }
+
+
+    function normalizeStatus(status){
+
+      const value =
+        String(status || "")
+          .trim()
+          .toLowerCase();
+
+
+      if(
+        [
+          "paid",
+          "completed",
+          "confirmed",
+          "success",
+          "successful"
+        ].includes(value)
+      ){
+        return "successful";
+      }
+
+
+      if(
+        [
+          "pending",
+          "processing",
+          "awaiting",
+          "awaiting_confirmation"
+        ].includes(value)
+      ){
+        return "pending";
+      }
+
+
+      if(
+        [
+          "failed",
+          "failure"
+        ].includes(value)
+      ){
+        return "failed";
+      }
+
+
+      if(value === "cancelled"){
+        return "cancelled";
+      }
+
+
+      if(value === "refunded"){
+        return "refunded";
+      }
+
+
+      return value || "unknown";
+    }
+
+
+    function statusClass(status){
+
+      const normalized =
+        normalizeStatus(status);
+
+
+      if(
+        normalized === "successful"
+      ){
+        return "status-success";
+      }
+
+
+      if(
+        normalized === "pending"
+      ){
+        return "status-pending";
+      }
+
+
+      if(
+        [
+          "failed",
+          "cancelled",
+          "refunded"
+        ].includes(normalized)
+      ){
+        return "status-failed";
+      }
+
+
+      return "status-unknown";
+    }
+
+
+    function displayStatus(status){
+
+      const normalized =
+        normalizeStatus(status);
+
+
+      return normalized
+        .replace(/_/g," ");
+    }
+
+
+    function detectMethod(payment){
+
+      const raw =
+        [
+          payment?.method,
+          payment?.payment_method,
+          payment?.channel,
+          payment?.provider,
+          payment?.gateway
+        ]
+          .find(
+            value =>
+              value !== null &&
+              value !== undefined &&
+              String(value).trim() !== ""
+          );
+
+
+      if(!raw){
+        return "Unknown";
+      }
+
+
+      const value =
+        String(raw).trim();
+
+
+      const lower =
+        value.toLowerCase();
+
+
+      if(
+        lower.includes("mpesa") ||
+        lower.includes("m-pesa")
+      ){
+        return "M-Pesa";
+      }
+
+
+      if(
+        lower.includes("wamd")
+      ){
+        return "WAMD";
+      }
+
+
+      return value;
+    }
+
+
+    function methodKey(payment){
+
+      const method =
+        detectMethod(payment)
+          .toLowerCase();
+
+
+      if(
+        method.includes("mpesa") ||
+        method.includes("m-pesa")
+      ){
+        return "mpesa";
+      }
+
+
+      if(
+        method.includes("wamd")
+      ){
+        return "wamd";
+      }
+
+
+      return "other";
+    }
+
+
+    /* =====================================================
+       PAYMENT DATA NORMALIZATION
+    ===================================================== */
+
+    function normalizePayment(row){
+
+      /*
+        The exact payment schema is intentionally
+        not assumed beyond common fields.
+
+        This allows the CMS to remain usable while
+        the final payment table is being established.
+      */
+
+      const order =
+        Array.isArray(row?.orders)
+          ? row.orders[0]
+          : row?.orders;
+
+
+      const event =
+        Array.isArray(
+          order?.events
+        )
+          ? order.events[0]
+          : order?.events;
+
+
+      return {
+
+        raw:row,
+
+        id:
+          row?.id ??
+          row?.payment_id ??
+          null,
+
+        orderId:
+          row?.order_id ??
+          order?.id ??
+          null,
+
+        userId:
+          row?.user_id ??
+          order?.user_id ??
+          null,
+
+        eventId:
+          row?.event_id ??
+          order?.event_id ??
+          event?.id ??
+          null,
+
+        eventTitle:
+          row?.event_title ??
+          event?.title ??
+          "Event unavailable",
+
+        method:
+          detectMethod(row),
+
+        status:
+          normalizeStatus(
+            row?.status ??
+            row?.payment_status
+          ),
+
+        amount:
+          row?.amount ??
+          row?.total ??
+          row?.paid_amount ??
+          row?.payment_amount ??
+          null,
+
+        currency:
+          row?.currency ??
+          order?.currency ??
+          "",
+
+        reference:
+          row?.reference ??
+          row?.transaction_id ??
+          row?.transaction_code ??
+          row?.receipt_number ??
+          null,
+
+        createdAt:
+          row?.created_at ??
+          row?.paid_at ??
+          row?.payment_date ??
+          null,
+
+        updatedAt:
+          row?.updated_at ??
+          null
+      };
+    }
+
+
+    /* =====================================================
+       LOAD PAYMENTS
+    ===================================================== */
+
+    async function loadPayments(){
+
+      setLoadingState();
+
+
+      try{
+
+        /*
+          Preferred production schema:
+
+          payments
+            id
+            order_id
+            user_id
+            event_id
+            method
+            status
+            amount
+            currency
+            reference
+            created_at
+            updated_at
+
+          The query below intentionally selects
+          only fields needed by this CMS.
+
+          RLS MUST restrict this table to administrators.
+        */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("payments")
+            .select(`
+              id,
+              order_id,
+              user_id,
+              event_id,
+              method,
+              payment_method,
+              channel,
+              provider,
+              gateway,
+              status,
+              payment_status,
+              amount,
+              paid_amount,
+              payment_amount,
+              currency,
+              reference,
+              transaction_id,
+              transaction_code,
+              receipt_number,
+              created_at,
+              paid_at,
+              payment_date,
+              updated_at
+            `)
+            .order(
+              "created_at",
+              {
+                ascending:false
+              }
+            );
+
+
+        if(error){
+
+          /*
+            Do not silently fabricate data.
+
+            If the final payment table uses different
+            columns, update this query after the schema
+            is finalized.
+          */
+
+          throw error;
+        }
+
+
+        allPayments =
+          Array.isArray(data)
+            ? data.map(
+                normalizePayment
+              )
+            : [];
+
+
+        updateStats();
+
+        applyFilters();
+
+
+        await loadNotifications();
+
+
+      }catch(error){
+
+        console.error(
+          "Payment loading failed:",
+          error
+        );
+
+
+        allPayments = [];
+        visiblePayments = [];
+
+
+        renderEmpty(
+          "Payment records unavailable",
+          "The payment table or its current schema could not be read. Check Supabase RLS and the finalized payments schema."
+        );
+
+
+        resultSummary.textContent =
+          "Unable to load payment records";
+
+
+        statPayments.textContent =
+          "—";
+
+        statSuccessful.textContent =
+          "—";
+
+        statPending.textContent =
+          "—";
+
+        statFailed.textContent =
+          "—";
+
+
+        showToast(
+          "Unable to load payment records.",
+          true
+        );
+      }
+    }
+
+
+    function setLoadingState(){
+
+      paymentsBody.innerHTML = `
+        <tr>
+          <td colspan="8">
+            <div class="empty">
+              <div class="empty-icon">◷</div>
+              <h3>Loading payments</h3>
+              <p>Retrieving payment records from Supabase.</p>
+            </div>
+          </td>
+        </tr>
+      `;
+
+
+      mobileList.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">◷</div>
+          <h3>Loading payments</h3>
+          <p>Retrieving payment records from Supabase.</p>
+        </div>
+      `;
+
+
+      resultSummary.textContent =
+        "Loading payment records...";
+    }
+
+
+    /* =====================================================
+       STATS
+    ===================================================== */
+
+    function updateStats(){
+
+      const successful =
+        allPayments.filter(
+          payment =>
+            payment.status ===
+            "successful"
+        ).length;
+
+
+      const pending =
+        allPayments.filter(
+          payment =>
+            payment.status ===
+            "pending"
+        ).length;
+
+
+      const failed =
+        allPayments.filter(
+          payment =>
+            [
+              "failed",
+              "cancelled"
+            ].includes(
+              payment.status
+            )
+        ).length;
+
+
+      statPayments.textContent =
+        allPayments.length
+          .toLocaleString();
+
+
+      statSuccessful.textContent =
+        successful.toLocaleString();
+
+
+      statPending.textContent =
+        pending.toLocaleString();
+
+
+      statFailed.textContent =
+        failed.toLocaleString();
+    }
+
+
+    /* =====================================================
+       FILTERS
+    ===================================================== */
+
+    function applyFilters(){
+
+      const search =
+        searchInput.value
+          .trim()
+          .toLowerCase();
+
+
+      const method =
+        methodFilter.value;
+
+
+      const status =
+        statusFilter.value;
+
+
+      const period =
+        periodFilter.value;
+
+
+      const now =
+        Date.now();
+
+
+      let filtered =
+        allPayments.filter(
+          payment => {
+
+            /* Search */
+
+            if(search){
+
+              const haystack =
+                [
+                  payment.id,
+                  payment.orderId,
+                  payment.userId,
+                  payment.eventId,
+                  payment.eventTitle,
+                  payment.method,
+                  payment.status,
+                  payment.reference
+                ]
+                  .filter(Boolean)
+                  .join(" ")
+                  .toLowerCase();
+
+
+              if(
+                !haystack.includes(
+                  search
+                )
+              ){
+                return false;
+              }
+            }
+
+
+            /* Method */
+
+            if(
+              method !== "all" &&
+              methodKey(payment) !== method
+            ){
+              return false;
+            }
+
+
+            /* Status */
+
+            if(
+              status !== "all" &&
+              payment.status !== status
+            ){
+              return false;
+            }
+
+
+            /* Period */
+
+            if(
+              period !== "all"
+            ){
+
+              const created =
+                payment.createdAt
+                  ? new Date(
+                      payment.createdAt
+                    ).getTime()
+                  : NaN;
+
+
+              if(
+                !Number.isFinite(
+                  created
+                )
+              ){
+                return false;
+              }
+
+
+              const days =
+                Number(period);
+
+
+              const cutoff =
+                now -
+                (
+                  days *
+                  24 *
+                  60 *
+                  60 *
+                  1000
+                );
+
+
+              if(created < cutoff){
+                return false;
+              }
+            }
+
+
+            return true;
+          }
+        );
+
+
+      visiblePayments =
+        filtered;
+
+
+      renderPayments(
+        visiblePayments
+      );
+    }
+
+
+    function clearAllFilters(){
+
+      searchInput.value =
+        "";
+
+      methodFilter.value =
+        "all";
+
+      statusFilter.value =
+        "all";
+
+      periodFilter.value =
+        "all";
+
+
+      applyFilters();
+    }
+
+
+    /* =====================================================
+       RENDER
+    ===================================================== */
+
+    function renderPayments(
+      payments
+    ){
+
+      resultSummary.textContent =
+        `${payments.length.toLocaleString()} payment record${payments.length === 1 ? "" : "s"} shown`;
+
+
+      if(!payments.length){
+
+        renderEmpty(
+          "No payment records found",
+          "No records match the current filters. Payment data is never replaced with sample or placeholder records."
+        );
+
+        return;
+      }
+
+
+      paymentsBody.innerHTML =
+        payments
+          .map(
+            payment =>
+              paymentRow(payment)
+          )
+          .join("");
+
+
+      mobileList.innerHTML =
+        payments
+          .map(
+            payment =>
+              paymentCard(payment)
+          )
+          .join("");
+
+
+      document
+        .querySelectorAll(
+          "[data-payment-id]"
+        )
+        .forEach(
+          element => {
+
+            element.addEventListener(
+              "click",
+              () => {
+
+                const id =
+                  element.dataset.paymentId;
+
+
+                const payment =
+                  allPayments.find(
+                    item =>
+                      String(
+                        item.id
+                      ) ===
+                      String(id)
+                  );
+
+
+                if(payment){
+                  openDrawer(
+                    payment
+                  );
+                }
+              }
+            );
+
+          }
+        );
+    }
+
+
+    function paymentRow(payment){
+
+      return `
+        <tr>
+
+          <td>
+            <div class="payment-id">
+              ${escapeHtml(
+                shortId(payment.id)
+              )}
+            </div>
+
+            ${
+              payment.reference
+                ? `
+                  <div class="subtext">
+                    Ref:
+                    ${escapeHtml(
+                      shortId(
+                        payment.reference
+                      )
+                    )}
+                  </div>
+                `
+                : ""
+            }
+          </td>
+
+
+          <td>
+
+            <div class="payment-id">
+              ${escapeHtml(
+                shortId(
+                  payment.orderId
+                )
+              )}
+            </div>
+
+          </td>
+
+
+          <td>
+
+            <div class="event-name">
+              ${escapeHtml(
+                payment.eventTitle
+              )}
+            </div>
+
+            ${
+              payment.eventId
+                ? `
+                  <div class="subtext">
+                    ${escapeHtml(
+                      shortId(
+                        payment.eventId
+                      )
+                    )}
+                  </div>
+                `
+                : ""
+            }
+
+          </td>
+
+
+          <td>
+
+            <span class="method">
+              ${escapeHtml(
+                payment.method
+              )}
+            </span>
+
+          </td>
+
+
+          <td>
+
+            <span class="amount">
+              ${escapeHtml(
+                formatMoney(
+                  payment.amount,
+                  payment.currency
+                )
+              )}
+            </span>
+
+          </td>
+
+
+          <td>
+
+            <span
+              class="status ${statusClass(
+                payment.status
+              )}"
+            >
+              ${escapeHtml(
+                displayStatus(
+                  payment.status
+                )
+              )}
+            </span>
+
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              formatDate(
+                payment.createdAt
+              )
+            )}
+          </td>
+
+
+          <td>
+
+            <button
+              class="button button-secondary"
+              style="min-height:34px;padding:0 10px"
+              data-payment-id="${escapeHtml(
+                payment.id
+              )}"
+            >
+              View
+            </button>
+
+          </td>
+
+        </tr>
+      `;
+    }
+
+
+    function paymentCard(payment){
+
+      return `
+        <article class="payment-card">
+
+          <div class="payment-card-top">
+
+            <div class="payment-card-title">
+
+              <strong>
+                ${escapeHtml(
+                  payment.eventTitle
+                )}
+              </strong>
+
+              <span>
+                Payment
+                ${escapeHtml(
+                  shortId(
+                    payment.id
+                  )
+                )}
+              </span>
+
+            </div>
+
+
+            <span
+              class="status ${statusClass(
+                payment.status
+              )}"
+            >
+              ${escapeHtml(
+                displayStatus(
+                  payment.status
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="payment-card-grid">
+
+            <div class="mobile-field">
+
+              <label>
+                Order
+              </label>
+
+              <span>
+                ${escapeHtml(
+                  shortId(
+                    payment.orderId
+                  )
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="mobile-field">
+
+              <label>
+                Method
+              </label>
+
+              <span>
+                ${escapeHtml(
+                  payment.method
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="mobile-field">
+
+              <label>
+                Amount
+              </label>
+
+              <span>
+                ${escapeHtml(
+                  formatMoney(
+                    payment.amount,
+                    payment.currency
+                  )
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="mobile-field">
+
+              <label>
+                Date
+              </label>
+
+              <span>
+                ${escapeHtml(
+                  formatDate(
+                    payment.createdAt
+                  )
+                )}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <button
+            class="button button-secondary"
+            style="width:100%;margin-top:14px"
+            data-payment-id="${escapeHtml(
+              payment.id
+            )}"
+          >
+            View payment details
+          </button>
+
+        </article>
+      `;
+    }
+
+
+    function renderEmpty(
+      title,
+      message
+    ){
+
+      paymentsBody.innerHTML = `
+        <tr>
+          <td colspan="8">
+
+            <div class="empty">
+
+              <div class="empty-icon">
+                ◌
+              </div>
+
+              <h3>
+                ${escapeHtml(title)}
+              </h3>
+
+              <p>
+                ${escapeHtml(message)}
+              </p>
+
+            </div>
+
+          </td>
+        </tr>
+      `;
+
+
+      mobileList.innerHTML = `
+        <div class="empty">
+
+          <div class="empty-icon">
+            ◌
+          </div>
+
+          <h3>
+            ${escapeHtml(title)}
+          </h3>
+
+          <p>
+            ${escapeHtml(message)}
+          </p>
+
+        </div>
+      `;
+    }
+
+
+    /* =====================================================
+       DRAWER
+    ===================================================== */
+
+    function openDrawer(payment){
+
+      selectedPayment =
+        payment;
+
+
+      drawerTitle.textContent =
+        "Payment details";
+
+
+      drawerSubtitle.textContent =
+        payment.id
+          ? String(
+              payment.id
+            )
+          : "Payment record";
+
+
+      drawerContent.innerHTML = `
+
+        <div class="detail-section">
+
+          <h3>
+            Payment
+          </h3>
+
+
+          <div class="detail-row">
+            <span>Payment ID</span>
+            <span>
+              ${escapeHtml(
+                safeText(
+                  payment.id
+                )
+              )}
+            </span>
+          </div>
+
+
+          <div class="detail-row">
+            <span>Status</span>
+            <span>
+              <span
+                class="status ${statusClass(
+                  payment.status
+                )}"
+              >
+                ${escapeHtml(
+                  displayStatus(
+                    payment.status
+                  )
+                )}
+              </span>
+            </span>
+          </div>
+
+
+          <div class="detail-row">
+            <span>Method</span>
+            <span>
+              ${escapeHtml(
+                payment.method
+              )}
+            </span>
+          </div>
+
+
+          <div class="detail-row">
+            <span>Amount</span>
+            <span>
+              ${escapeHtml(
+                formatMoney(
+                  payment.amount,
+                  payment.currency
+                )
+              )}
+            </span>
+          </div>
+
+
+          <div class="detail-row">
+            <span>Currency</span>
+            <span>
+              ${escapeHtml(
+                safeText(
+                  payment.currency
+                )
+              )}
+            </span>
+          </div>
+
+
+          <div class="detail-row">
+            <span>Created</span>
+            <span>
+              ${escapeHtml(
+                formatDate(
+                  payment.createdAt
+                )
+              )}
+            </span>
+          </div>
+
+
+          <div class="detail-row">
+            <span>Updated</span>
+            <span>
+              ${escapeHtml(
+                formatDate(
+                  payment.updatedAt
+                )
+              )}
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="detail-section">
+
+          <h3>
+            References
+          </h3>
+
+
+          <div class="detail-row">
+            <span>Order ID</span>
+            <span>
+              ${escapeHtml(
+                safeText(
+                  payment.orderId
+                )
+              )}
+            </span>
+          </div>
+
+
+          <div class="detail-row">
+            <span>Transaction reference</span>
+            <span>
+              ${escapeHtml(
+                safeText(
+                  payment.reference
+                )
+              )}
+            </span>
+          </div>
+
+
+          <div class="detail-row">
+            <span>User ID</span>
+            <span>
+              ${escapeHtml(
+                safeText(
+                  payment.userId
+                )
+              )}
+            </span>
+          </div>
+
+
+          <div class="detail-row">
+            <span>Event ID</span>
+            <span>
+              ${escapeHtml(
+                safeText(
+                  payment.eventId
+                )
+              )}
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="detail-section">
+
+          <h3>
+            Event
+          </h3>
+
+
+          <div class="detail-row">
+            <span>Event</span>
+            <span>
+              ${escapeHtml(
+                payment.eventTitle
+              )}
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="drawer-warning">
+
+          <strong>
+            Payment controls are protected
+          </strong>
+
+          <p>
+            This browser page does not directly approve,
+            reverse, refund, or alter payment records.
+            Those operations should be implemented through
+            an authenticated server-side RPC or Supabase
+            Edge Function with administrator authorization,
+            validation and audit logging.
+          </p>
+
+        </div>
+      `;
+
+
+      drawerBackdrop.classList.add(
+        "open"
+      );
+
+
+      document.body.style.overflow =
+        "hidden";
+    }
+
+
+    function closeDrawer(){
+
+      drawerBackdrop.classList.remove(
+        "open"
+      );
+
+
+      document.body.style.overflow =
+        "";
+
+      selectedPayment =
+        null;
+    }
+
+
+    /* =====================================================
+       NOTIFICATIONS
+    ===================================================== */
+
+    async function loadNotifications(){
+
+      try{
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("notifications")
+            .select(`
+              id,
+              read_at
+            `)
+            .eq(
+              "user_id",
+              currentUser.id
+            )
+            .is(
+              "read_at",
+              null
+            )
+            .limit(1);
+
+
+        if(error){
+
+          /*
+            Notifications are optional.
+
+            A missing notifications table must not
+            prevent the payment CMS from loading.
+          */
+
+          notificationDot.style.display =
+            "none";
+
+          return;
+        }
+
+
+        notificationDot.style.display =
+          data?.length
+            ? "block"
+            : "none";
+
+      }catch(error){
+
+        notificationDot.style.display =
+          "none";
+      }
+    }
+
+
+    /* =====================================================
+       CSV EXPORT
+    ===================================================== */
+
+    function exportCsv(){
+
+      if(!visiblePayments.length){
+
+        showToast(
+          "There are no payment records to export.",
+          true
+        );
+
+        return;
+      }
+
+
+      const headers = [
+        "Payment ID",
+        "Order ID",
+        "User ID",
+        "Event ID",
+        "Event",
+        "Method",
+        "Status",
+        "Amount",
+        "Currency",
+        "Reference",
+        "Created At",
+        "Updated At"
+      ];
+
+
+      const rows =
+        visiblePayments.map(
+          payment => [
+
+            payment.id,
+
+            payment.orderId,
+
+            payment.userId,
+
+            payment.eventId,
+
+            payment.eventTitle,
+
+            payment.method,
+
+            payment.status,
+
+            payment.amount,
+
+            payment.currency,
+
+            payment.reference,
+
+            payment.createdAt,
+
+            payment.updatedAt
+          ]
+        );
+
+
+      const csv =
+        [
+          headers,
+          ...rows
+        ]
+          .map(
+            row =>
+              row
+                .map(
+                  value =>
+                    csvEscape(value)
+                )
+                .join(",")
+          )
+          .join("\n");
+
+
+      const blob =
+        new Blob(
+          [csv],
+          {
+            type:
+              "text/csv;charset=utf-8;"
+          }
+        );
+
+
+      const url =
+        URL.createObjectURL(
+          blob
+        );
+
+
+      const link =
+        document.createElement(
+          "a"
+        );
+
+
+      link.href =
+        url;
+
+
+      link.download =
+        `k-tickets-payments-${new Date().toISOString().slice(0,10)}.csv`;
+
+
+      document.body.appendChild(
+        link
+      );
+
+
+      link.click();
+
+
+      link.remove();
+
+
+      URL.revokeObjectURL(
+        url
+      );
+    }
+
+
+    function csvEscape(value){
+
+      const text =
+        String(
+          value ?? ""
+        );
+
+
+      return `"${text
+        .replace(/"/g,'""')
+        .replace(/\r?\n/g," ")
+      }"`;
+    }
+
+
+    /* =====================================================
+       TOAST
+    ===================================================== */
+
+    function showToast(
+      message,
+      isError = false
+    ){
+
+      clearTimeout(
+        toastTimer
+      );
+
+
+      toast.textContent =
+        message;
+
+
+      toast.classList.toggle(
+        "error",
+        Boolean(isError)
+      );
+
+
+      toast.classList.add(
+        "show"
+      );
+
+
+      toastTimer =
+        setTimeout(
+          () => {
+
+            toast.classList.remove(
+              "show"
+            );
+
+          },
+          3200
+        );
+    }
+
+
+    /* =====================================================
+       EVENTS
+    ===================================================== */
+
+    mobileMenu.addEventListener(
+      "click",
+      () => {
+
+        sidebar.classList.toggle(
+          "open"
+        );
+
+      }
+    );
+
+
+    document.addEventListener(
+      "click",
+      event => {
+
+        if(
+          window.innerWidth <= 900 &&
+          sidebar.classList.contains("open") &&
+          !sidebar.contains(event.target) &&
+          !mobileMenu.contains(event.target)
+        ){
+
+          sidebar.classList.remove(
+            "open"
+          );
+        }
+      }
+    );
+
+
+    searchInput.addEventListener(
+      "input",
+      applyFilters
+    );
+
+
+    methodFilter.addEventListener(
+      "change",
+      applyFilters
+    );
+
+
+    statusFilter.addEventListener(
+      "change",
+      applyFilters
+    );
+
+
+    periodFilter.addEventListener(
+      "change",
+      applyFilters
+    );
+
+
+    clearFilters.addEventListener(
+      "click",
+      clearAllFilters
+    );
+
+
+    refreshButton.addEventListener(
+      "click",
+      async () => {
+
+        refreshButton.disabled =
+          true;
+
+        refreshButton.style.opacity =
+          ".6";
+
+
+        await loadPayments();
+
+
+        refreshButton.disabled =
+          false;
+
+        refreshButton.style.opacity =
+          "1";
+
+
+        showToast(
+          "Payment data refreshed."
+        );
+      }
+    );
+
+
+    exportButton.addEventListener(
+      "click",
+      exportCsv
+    );
+
+
+    drawerClose.addEventListener(
+      "click",
+      closeDrawer
+    );
+
+
+    drawerBackdrop.addEventListener(
+      "click",
+      event => {
+
+        if(
+          event.target ===
+          drawerBackdrop
+        ){
+
+          closeDrawer();
+        }
+      }
+    );
+
+
+    notificationButton.addEventListener(
+      "click",
+      () => {
+
+        showToast(
+          "Notification center is available through the admin notification system."
+        );
+
+      }
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if(
+          event.key === "Escape" &&
+          drawerBackdrop.classList.contains("open")
+        ){
+
+          closeDrawer();
+        }
+
+      }
+    );
+
+
+    /* =====================================================
+       AUTH STATE LISTENER
+    ===================================================== */
+
+    async function setupAuthListener(){
+
+      if(!supabaseClient){
+        return;
+      }
+
+
+      supabaseClient.auth.onAuthStateChange(
+        async (
+          event,
+          session
+        ) => {
+
+          if(
+            event === "SIGNED_OUT" ||
+            !session?.user
+          ){
+
+            window.location.replace(
+              "../auth/login.html?error=session_expired"
+            );
+          }
+
+        }
+      );
+    }
+
+
+    /* =====================================================
+       INITIALIZATION
+    ===================================================== */
+
+    async function initialize(){
+
+      const authorized =
+        await verifyAdmin();
+
+
+      if(!authorized){
+        return;
+      }
+
+
+      securityGate.classList.add(
+        "hidden"
+      );
+
+
+      await setupAuthListener();
+
+
+      await loadPayments();
+    }
+
+
+    initialize();
+
+  </script>
+
+</body>
+</html>
+```

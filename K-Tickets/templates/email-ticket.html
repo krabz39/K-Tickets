@@ -1,0 +1,694 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+
+    <title>Your K-Tickets Ticket</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5dabf;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #24302f;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        img {
+            border: 0;
+            max-width: 100%;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .wrapper {
+            width: 100%;
+            background: #f5dabf;
+            padding: 32px 12px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #6c151e;
+            padding: 28px 32px;
+        }
+
+        .brand {
+            color: #ffffff;
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .brand-sub {
+            margin-top: 5px;
+            color: #f5dabf;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .content {
+            padding: 34px 32px;
+        }
+
+        .eyebrow {
+            color: #6c151e;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 9px 0 10px;
+            color: #0f3d3a;
+            font-size: 30px;
+            line-height: 1.2;
+        }
+
+        .intro {
+            margin: 0 0 26px;
+            color: #68706e;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* DIGITAL TICKET */
+
+        .ticket {
+            border: 1px solid #e7d9cd;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .ticket-top {
+            background: #0f3d3a;
+            padding: 24px 24px 22px;
+            color: #ffffff;
+        }
+
+        .ticket-type {
+            color: #f5dabf;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .event-title {
+            margin-top: 7px;
+            font-size: 25px;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+
+        .ticket-subtitle {
+            margin-top: 8px;
+            color: #dce8e5;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .ticket-main {
+            padding: 24px;
+        }
+
+        .info-table {
+            width: 100%;
+        }
+
+        .info-cell {
+            width: 50%;
+            vertical-align: top;
+            padding-bottom: 20px;
+        }
+
+        .info-label {
+            color: #858b89;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            margin-top: 5px;
+            color: #27312f;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .ticket-divider {
+            border-top: 1px dashed #d9c9bb;
+            margin: 2px 0 22px;
+        }
+
+        /* QR */
+
+        .qr-section {
+            padding: 8px 0 4px;
+            text-align: center;
+        }
+
+        .qr-title {
+            color: #0f3d3a;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .qr-description {
+            margin-top: 5px;
+            color: #737b79;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .qr-image {
+            display: block;
+            width: 190px;
+            height: 190px;
+            margin: 18px auto 12px;
+        }
+
+        .ticket-code {
+            color: #6c151e;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1.7px;
+        }
+
+        .code-label {
+            margin-top: 5px;
+            color: #858b89;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* STATUS */
+
+        .status {
+            margin-top: 22px;
+            padding: 13px 15px;
+            border-radius: 10px;
+            background: #edf5f2;
+            color: #0f3d3a;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* INSTRUCTIONS */
+
+        .instructions {
+            margin-top: 24px;
+            padding: 19px 20px;
+            border-radius: 14px;
+            background: #fbf2ea;
+            border-left: 4px solid #6c151e;
+        }
+
+        .instructions-title {
+            color: #6c151e;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 9px;
+        }
+
+        .instructions-text {
+            color: #5e6664;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .instructions-text strong {
+            color: #27312f;
+        }
+
+        /* ORDER REFERENCE */
+
+        .reference {
+            margin-top: 24px;
+            border: 1px solid #ead9ca;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .reference-head {
+            padding: 15px 18px;
+            background: #fffaf6;
+            color: #6c151e;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .reference-row {
+            border-top: 1px solid #eee4db;
+        }
+
+        .reference-label {
+            width: 45%;
+            padding: 13px 18px;
+            color: #858b89;
+            font-size: 11px;
+        }
+
+        .reference-value {
+            padding: 13px 18px;
+            color: #27312f;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        /* SECURITY */
+
+        .security {
+            margin-top: 24px;
+            color: #747c7a;
+            font-size: 11px;
+            line-height: 1.65;
+            text-align: center;
+        }
+
+        .security strong {
+            color: #6c151e;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            padding: 27px 24px;
+            background: #0f3d3a;
+            color: #dce8e5;
+            text-align: center;
+        }
+
+        .footer-brand {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .footer-text {
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* MOBILE */
+
+        @media only screen and (max-width: 600px) {
+
+            .wrapper {
+                padding: 12px 6px;
+            }
+
+            .header,
+            .content {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+
+            .event-title {
+                font-size: 21px;
+            }
+
+            .info-cell {
+                display: block;
+                width: 100% !important;
+                padding-bottom: 17px;
+            }
+
+            .ticket-main {
+                padding: 20px;
+            }
+
+            .qr-image {
+                width: 175px;
+                height: 175px;
+            }
+
+            .reference-label,
+            .reference-value {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<table role="presentation" width="100%" class="wrapper">
+    <tr>
+        <td align="center">
+
+            <table role="presentation" width="100%" class="container">
+
+                <!-- HEADER -->
+                <tr>
+                    <td class="header">
+
+                        <div class="brand">
+                            K-TICKETS
+                        </div>
+
+                        <div class="brand-sub">
+                            Your ticket. Your moment.
+                        </div>
+
+                    </td>
+                </tr>
+
+                <!-- CONTENT -->
+                <tr>
+                    <td class="content">
+
+                        <div class="eyebrow">
+                            Digital event ticket
+                        </div>
+
+                        <h1>
+                            Your ticket is ready, {{customer_name}}.
+                        </h1>
+
+                        <p class="intro">
+                            Your K-Tickets ticket has been issued successfully.
+                            Keep this email available and present the QR code
+                            at the event entrance.
+                        </p>
+
+                        <!-- DIGITAL TICKET -->
+                        <table role="presentation" width="100%" class="ticket">
+
+                            <!-- TICKET HEADER -->
+                            <tr>
+                                <td class="ticket-top">
+
+                                    <div class="ticket-type">
+                                        {{ticket_type}}
+                                    </div>
+
+                                    <div class="event-title">
+                                        {{event_title}}
+                                    </div>
+
+                                    <div class="ticket-subtitle">
+                                        {{event_short_description}}
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                            <!-- TICKET BODY -->
+                            <tr>
+                                <td class="ticket-main">
+
+                                    <!-- EVENT INFORMATION -->
+                                    <table role="presentation" width="100%" class="info-table">
+
+                                        <tr>
+
+                                            <td class="info-cell">
+                                                <div class="info-label">
+                                                    Date
+                                                </div>
+
+                                                <div class="info-value">
+                                                    {{event_date}}
+                                                </div>
+                                            </td>
+
+                                            <td class="info-cell">
+                                                <div class="info-label">
+                                                    Time
+                                                </div>
+
+                                                <div class="info-value">
+                                                    {{event_time}}
+                                                </div>
+                                            </td>
+
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="info-cell">
+                                                <div class="info-label">
+                                                    Venue
+                                                </div>
+
+                                                <div class="info-value">
+                                                    {{venue}}
+                                                </div>
+                                            </td>
+
+                                            <td class="info-cell">
+                                                <div class="info-label">
+                                                    City
+                                                </div>
+
+                                                <div class="info-value">
+                                                    {{city}}
+                                                </div>
+                                            </td>
+
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="info-cell">
+                                                <div class="info-label">
+                                                    Ticket Holder
+                                                </div>
+
+                                                <div class="info-value">
+                                                    {{customer_name}}
+                                                </div>
+                                            </td>
+
+                                            <td class="info-cell">
+                                                <div class="info-label">
+                                                    Quantity
+                                                </div>
+
+                                                <div class="info-value">
+                                                    {{quantity}}
+                                                </div>
+                                            </td>
+
+                                        </tr>
+
+                                    </table>
+
+                                    <div class="ticket-divider"></div>
+
+                                    <!-- QR CODE -->
+                                    <div class="qr-section">
+
+                                        <div class="qr-title">
+                                            Present this QR code at entry
+                                        </div>
+
+                                        <div class="qr-description">
+                                            Your ticket will be scanned and
+                                            validated at the entrance.
+                                        </div>
+
+                                        <!--
+                                            {{qr_code_url}}
+                                            must be replaced server-side with
+                                            the generated QR image URL.
+                                        -->
+                                        <img
+                                            src="{{qr_code_url}}"
+                                            alt="K-Tickets entry QR code"
+                                            class="qr-image"
+                                        >
+
+                                        <div class="ticket-code">
+                                            {{ticket_code}}
+                                        </div>
+
+                                        <div class="code-label">
+                                            Ticket Code
+                                        </div>
+
+                                    </div>
+
+                                    <!-- TICKET STATUS -->
+                                    <div class="status">
+                                        Ticket Status: {{ticket_status}}
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <!-- ENTRY INSTRUCTIONS -->
+                        <div class="instructions">
+
+                            <div class="instructions-title">
+                                Before you arrive
+                            </div>
+
+                            <div class="instructions-text">
+
+                                <strong>1.</strong>
+                                Keep this email or your K-Tickets ticket
+                                available on your phone.
+
+                                <br><br>
+
+                                <strong>2.</strong>
+                                Make sure your QR code is clearly visible
+                                when you reach the entrance.
+
+                                <br><br>
+
+                                <strong>3.</strong>
+                                Each ticket has its own unique ticket code
+                                and may only be checked in according to
+                                the event's entry rules.
+
+                            </div>
+
+                        </div>
+
+                        <!-- REFERENCES -->
+                        <table role="presentation" width="100%" class="reference">
+
+                            <tr>
+                                <td colspan="2" class="reference-head">
+                                    Ticket References
+                                </td>
+                            </tr>
+
+                            <tr class="reference-row">
+
+                                <td class="reference-label">
+                                    Ticket ID
+                                </td>
+
+                                <td class="reference-value">
+                                    {{ticket_id}}
+                                </td>
+
+                            </tr>
+
+                            <tr class="reference-row">
+
+                                <td class="reference-label">
+                                    Order ID
+                                </td>
+
+                                <td class="reference-value">
+                                    {{order_id}}
+                                </td>
+
+                            </tr>
+
+                            <tr class="reference-row">
+
+                                <td class="reference-label">
+                                    Issued On
+                                </td>
+
+                                <td class="reference-value">
+                                    {{issued_at}}
+                                </td>
+
+                            </tr>
+
+                            <tr class="reference-row">
+
+                                <td class="reference-label">
+                                    Merchant
+                                </td>
+
+                                <td class="reference-value">
+                                    {{merchant_name}}
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                        <!-- SECURITY -->
+                        <div class="security">
+
+                            <strong>Keep your ticket private.</strong><br>
+
+                            Do not publicly share your QR code or ticket code.
+                            K-Tickets uses ticket validation and check-in controls
+                            to help prevent unauthorized entry.
+
+                            <br><br>
+
+                            If you believe your ticket information is incorrect,
+                            contact K-Tickets support before attending the event.
+
+                        </div>
+
+                    </td>
+                </tr>
+
+                <!-- FOOTER -->
+                <tr>
+                    <td class="footer">
+
+                        <div class="footer-brand">
+                            K-TICKETS
+                        </div>
+
+                        <div class="footer-text">
+                            Ticketing made simple.<br>
+                            {{support_email}}
+                        </div>
+
+                        <div class="footer-text">
+                            © {{current_year}} K-Tickets. All rights reserved.
+                        </div>
+
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

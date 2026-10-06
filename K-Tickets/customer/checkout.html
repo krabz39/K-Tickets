@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout | K-Tickets</title>
+
+    <meta
+        name="description"
+        content="Complete your K-Tickets order."
+    >
+
+    <!--
+        SUPABASE
+
+        Replace these two values when connecting the project.
+
+        Do NOT put a Supabase service-role key here.
+        Only the public anon key belongs in browser code.
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --bordo-dark: #531018;
+            --bordo-soft: #f4e5e4;
+
+            --green: #0F3D3A;
+            --green-dark: #092b29;
+            --green-soft: #e4efec;
+
+            --cream: #F5DABF;
+            --cream-light: #fff8f1;
+
+            --white: #ffffff;
+            --ink: #202020;
+            --muted: #77716d;
+            --line: #e8e1da;
+            --surface: #fbfaf8;
+            --danger: #9b2029;
+
+            --shadow-sm: 0 5px 20px rgba(30, 22, 18, .06);
+            --shadow-md: 0 20px 55px rgba(30, 22, 18, .12);
+
+            --sidebar-width: 260px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--surface);
+            color: var(--ink);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            overflow-x: hidden;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .app {
+            min-height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: var(--sidebar-width);
+            padding: 24px 16px;
+            background: var(--green);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 28px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 17px;
+            letter-spacing: .08em;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 2px;
+            color: rgba(255,255,255,.55);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .15em;
+        }
+
+        .nav-label {
+            margin: 5px 0 9px;
+            padding: 0 12px;
+            color: rgba(255,255,255,.4);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .15em;
+        }
+
+        .nav {
+            display: grid;
+            gap: 5px;
+        }
+
+        .nav-link {
+            min-height: 46px;
+            padding: 0 13px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,.7);
+            font-size: 14px;
+            transition: .2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--bordo);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            display: grid;
+            gap: 10px;
+        }
+
+        .support-card {
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .support-card small {
+            color: rgba(255,255,255,.5);
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .support-card strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            height: 42px;
+            border-radius: 11px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,.12);
+            color: rgba(255,255,255,.7);
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            width: calc(100% - var(--sidebar-width));
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            min-height: 78px;
+            padding: 15px 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,.93);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(16px);
+        }
+
+        .mobile-menu {
+            display: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: var(--cream-light);
+            color: var(--green);
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .breadcrumb a {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bordo);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        .content {
+            max-width: 1400px;
+            margin: auto;
+            padding: 35px;
+        }
+
+        .page-heading small {
+            display: block;
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .page-heading h1 {
+            margin-top: 8px;
+            color: var(--green);
+            font-size: clamp(28px, 3vw, 42px);
+            letter-spacing: -.04em;
+        }
+
+        .page-heading p {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .checkout-layout {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(330px, .7fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card + .card {
+            margin-top: 18px;
+        }
+
+        .card h2 {
+            color: var(--green);
+            font-size: 18px;
+        }
+
+        .event-summary {
+            margin-top: 17px;
+            padding: 16px;
+            border-radius: 15px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+        }
+
+        .event-summary-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .event-summary small {
+            color: var(--muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .event-summary h3 {
+            margin-top: 6px;
+            color: var(--green);
+            font-size: 15px;
+        }
+
+        .event-meta {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        .edit-link {
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--line);
+            margin: 22px 0;
+        }
+
+        .customer-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 13px;
+            margin-top: 17px;
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            color: var(--green);
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .field input {
+            width: 100%;
+            height: 44px;
+            padding: 0 13px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            outline: none;
+            background: var(--surface);
+            color: var(--ink);
+            font-size: 12px;
+        }
+
+        .field input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15,61,58,.06);
+        }
+
+        .field input[readonly] {
+            cursor: default;
+        }
+
+        .ticket-row {
+            margin-top: 14px;
+            padding: 15px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .ticket-row-info h3 {
+            color: var(--green);
+            font-size: 13px;
+        }
+
+        .ticket-row-info p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .ticket-row-right {
+            text-align: right;
+        }
+
+        .ticket-row-right strong {
+            color: var(--green);
+            font-size: 13px;
+        }
+
+        .ticket-row-right span {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .summary-card {
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-event {
+            margin-top: 17px;
+            padding: 14px;
+            border-radius: 14px;
+            background: var(--green-soft);
+        }
+
+        .summary-event small {
+            color: var(--green);
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        .summary-event strong {
+            display: block;
+            margin-top: 5px;
+            color: var(--green);
+            font-size: 13px;
+        }
+
+        .summary-row {
+            margin-top: 17px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .summary-row strong {
+            color: var(--ink);
+        }
+
+        .divider {
+            height: 1px;
+            margin: 18px 0;
+            background: var(--line);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-row span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .total-row strong {
+            color: var(--green);
+            font-size: 22px;
+        }
+
+        .continue-btn {
+            width: 100%;
+            height: 51px;
+            margin-top: 20px;
+            border-radius: 13px;
+            background: var(--bordo);
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .continue-btn:hover {
+            background: var(--bordo-dark);
+        }
+
+        .continue-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .secure {
+            margin-top: 11px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 9px;
+        }
+
+        .loading {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .error {
+            display: none;
+            padding: 15px;
+            margin-top: 18px;
+            border-radius: 12px;
+            background: var(--bordo-soft);
+            color: var(--danger);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 1050px) {
+            .checkout-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .topbar {
+                padding: 14px 25px;
+            }
+
+            .content {
+                padding: 25px;
+                padding-bottom: 100px;
+            }
+
+            .mobile-nav {
+                position: fixed;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                height: 64px;
+                border-radius: 19px;
+                background: rgba(15,61,58,.96);
+                z-index: 90;
+                box-shadow: var(--shadow-md);
+            }
+
+            .mobile-nav a {
+                display: grid;
+                place-items: center;
+                align-content: center;
+                gap: 3px;
+                color: rgba(255,255,255,.55);
+                font-size: 10px;
+            }
+
+            .mobile-nav a.active {
+                color: var(--cream);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .topbar {
+                padding: 12px 15px;
+            }
+
+            .breadcrumb {
+                display: none;
+            }
+
+            .content {
+                padding: 20px 15px 100px;
+            }
+
+            .card {
+                padding: 17px;
+                border-radius: 18px;
+            }
+
+            .customer-info {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .ticket-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .ticket-row-right {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar" id="sidebar">
+
+        <a href="../index.html" class="brand">
+            <div class="brand-mark">K</div>
+
+            <div class="brand-text">
+                <strong>K-TICKETS</strong>
+                <span>Customer</span>
+            </div>
+        </a>
+
+        <div class="nav-label">Menu</div>
+
+        <nav class="nav">
+
+            <a href="dashboard.html" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+
+            <a href="events.html" class="nav-link active">
+                <span class="nav-icon">◫</span>
+                Discover Events
+            </a>
+
+            <a href="my-tickets.html" class="nav-link">
+                <span class="nav-icon">▣</span>
+                My Tickets
+            </a>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">◷</span>
+                Payment History
+            </a>
+
+            <a href="#" class="nav-link">
+                <span class="nav-icon">♡</span>
+                Saved Events
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="support-card">
+                <small>Need help?</small>
+                <strong>K-Tickets Support</strong>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">
+                Log out
+            </button>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <button
+                class="mobile-menu"
+                onclick="toggleSidebar()"
+            >
+                ☰
+            </button>
+
+            <div class="breadcrumb">
+                <a href="events.html">Events</a>
+                <span> / Checkout</span>
+            </div>
+
+            <div class="top-actions">
+                <div class="avatar" id="avatar">
+                    —
+                </div>
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="page-heading">
+
+                <small>Secure checkout</small>
+
+                <h1>Review your order.</h1>
+
+                <p>
+                    Confirm your ticket details before continuing
+                    to payment.
+                </p>
+
+            </div>
+
+            <div
+                class="error"
+                id="errorBox"
+            ></div>
+
+            <div id="loading" class="loading">
+                Loading your order...
+            </div>
+
+            <div
+                class="checkout-layout"
+                id="checkoutLayout"
+                style="display:none;"
+            >
+
+                <div>
+
+                    <section class="card">
+
+                        <h2>Event</h2>
+
+                        <div class="event-summary">
+
+                            <div class="event-summary-top">
+
+                                <div>
+
+                                    <small>Event</small>
+
+                                    <h3 id="eventName">
+                                        —
+                                    </h3>
+
+                                    <div
+                                        class="event-meta"
+                                        id="eventMeta"
+                                    >
+                                        —
+                                    </div>
+
+                                </div>
+
+                                <a
+                                    href="events.html"
+                                    class="edit-link"
+                                >
+                                    Change
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="card">
+
+                        <h2>Your information</h2>
+
+                        <div class="customer-info">
+
+                            <div class="field">
+
+                                <label>
+                                    Full name
+                                </label>
+
+                                <input
+                                    id="customerName"
+                                    type="text"
+                                    readonly
+                                >
+
+                            </div>
+
+                            <div class="field">
+
+                                <label>
+                                    Email
+                                </label>
+
+                                <input
+                                    id="customerEmail"
+                                    type="email"
+                                    readonly
+                                >
+
+                            </div>
+
+                            <div class="field full">
+
+                                <label>
+                                    Phone
+                                </label>
+
+                                <input
+                                    id="customerPhone"
+                                    type="tel"
+                                    readonly
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="card">
+
+                        <h2>Tickets</h2>
+
+                        <div id="ticketRows"></div>
+
+                    </section>
+
+                </div>
+
+                <aside class="card summary-card">
+
+                    <h2>Order summary</h2>
+
+                    <div class="summary-event">
+
+                        <small>Order</small>
+
+                        <strong id="summaryEvent">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div id="summaryRows"></div>
+
+                    <div class="divider"></div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Subtotal
+                        </span>
+
+                        <strong id="subtotal">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Service fee
+                        </span>
+
+                        <strong id="serviceFee">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="total-row">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong id="total">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <button
+                        class="continue-btn"
+                        id="continueButton"
+                        onclick="createOrder()"
+                    >
+                        Continue to Payment
+                    </button>
+
+                    <div class="secure">
+                        Your final amount is calculated from
+                        current K-Tickets pricing.
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<nav class="mobile-nav">
+
+    <a href="dashboard.html">
+        <span>⌂</span>
+        <span>Home</span>
+    </a>
+
+    <a href="events.html" class="active">
+        <span>◫</span>
+        <span>Events</span>
+    </a>
+
+    <a href="my-tickets.html">
+        <span>▣</span>
+        <span>Tickets</span>
+    </a>
+
+    <a href="#">
+        <span>◎</span>
+        <span>Account</span>
+    </a>
+
+</nav>
+
+<script>
+
+    /*
+        ============================================================
+        K-TICKETS CHECKOUT
+        ============================================================
+
+        NO customer/event/pricing information is hardcoded.
+
+        Expected URL:
+
+        checkout.html?event=<EVENT_ID>&standard=<QTY>&vip=<QTY>
+
+        The browser uses the event ID only to request data.
+
+        SUPABASE remains the source of truth for:
+
+        - customer
+        - event
+        - ticket types
+        - prices
+        - inventory
+        - promotions
+        - service fee
+        - order total
+
+        IMPORTANT:
+
+        The browser must NOT be trusted to calculate the final
+        amount. The actual order creation should be performed
+        by a secure backend / Edge Function / RPC that rechecks
+        inventory and pricing.
+    */
+
+    const SUPABASE_URL = "";
+    const SUPABASE_ANON_KEY = "";
+
+    let supabaseClient = null;
+
+    let currentUser = null;
+    let currentEvent = null;
+    let ticketSelection = {};
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const eventId =
+        params.get("event");
+
+    function showError(message) {
+
+        const box =
+            document.getElementById("errorBox");
+
+        box.textContent = message;
+        box.style.display = "block";
+
+        document.getElementById("loading")
+            .style.display = "none";
+    }
+
+    function money(value) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            Number.isNaN(Number(value))
+        ) {
+            return "—";
+        }
+
+        return `${Number(value).toFixed(3)} KWD`;
+    }
+
+    async function initialise() {
+
+        try {
+
+            if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+
+                throw new Error(
+                    "Supabase configuration is not connected yet."
+                );
+            }
+
+            if (!eventId) {
+
+                throw new Error(
+                    "No event was supplied."
+                );
+            }
+
+            supabaseClient =
+                window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_ANON_KEY
+                );
+
+            const {
+                data: {
+                    user
+                },
+                error: authError
+            } =
+                await supabaseClient.auth.getUser();
+
+            if (authError || !user) {
+
+                window.location.href =
+                    "../auth/login.html";
+
+                return;
+            }
+
+            currentUser = user;
+
+            await loadCustomer();
+            await loadEvent();
+
+            renderPage();
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError(
+                error.message ||
+                "Unable to load checkout."
+            );
+        }
+    }
+
+    async function loadCustomer() {
+
+        /*
+            Adjust the profile table/column names to the final
+            K-Tickets schema.
+
+            The important part is that the customer comes from
+            the authenticated Supabase user.
+        */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select("*")
+                .eq("id", currentUser.id)
+                .single();
+
+        if (error) {
+
+            /*
+                If profile data is intentionally stored elsewhere,
+                this query can later be changed to the final schema.
+            */
+
+            throw error;
+        }
+
+        currentUser.profile = data;
+    }
+
+    async function loadEvent() {
+
+        /*
+            Expected final architecture:
+
+            events
+              ↓
+            ticket_types
+
+            Event is fetched by its ID.
+
+            RLS should only expose published/public events.
+        */
+
+        const {
+            data: event,
+            error: eventError
+        } =
+            await supabaseClient
+                .from("events")
+                .select("*")
+                .eq("id", eventId)
+                .single();
+
+        if (eventError) {
+            throw eventError;
+        }
+
+        currentEvent = event;
+
+        const {
+            data: tickets,
+            error: ticketError
+        } =
+            await supabaseClient
+                .from("ticket_types")
+                .select("*")
+                .eq("event_id", eventId)
+                .eq("status", "active")
+                .order("price", {
+                    ascending: true
+                });
+
+        if (ticketError) {
+            throw ticketError;
+        }
+
+        currentEvent.ticket_types =
+            tickets || [];
+
+        /*
+            Read quantities supplied by the previous page.
+
+            They are NOT trusted for pricing or inventory.
+            They only tell the UI which quantities the customer
+            requested.
+
+            The backend will validate everything again.
+        */
+
+        currentEvent.ticket_types.forEach(ticket => {
+
+            const quantity =
+                Number(
+                    params.get(ticket.id) ||
+                    params.get(ticket.slug) ||
+                    0
+                );
+
+            ticketSelection[ticket.id] =
+                Math.max(0, quantity);
+
+        });
+    }
+
+    function renderPage() {
+
+        const profile =
+            currentUser.profile;
+
+        document.getElementById("avatar")
+            .textContent =
+            getInitials(
+                profile.full_name ||
+                profile.name ||
+                currentUser.email ||
+                ""
+            );
+
+        document.getElementById("eventName")
+            .textContent =
+            currentEvent.name ||
+            currentEvent.title ||
+            "Event";
+
+        document.getElementById("summaryEvent")
+            .textContent =
+            currentEvent.name ||
+            currentEvent.title ||
+            "Event";
+
+        document.getElementById("eventMeta")
+            .textContent =
+            [
+                currentEvent.date,
+                currentEvent.start_time,
+                currentEvent.location
+            ]
+            .filter(Boolean)
+            .join(" · ");
+
+        document.getElementById("customerName")
+            .value =
+            profile.full_name ||
+            profile.name ||
+            "";
+
+        document.getElementById("customerEmail")
+            .value =
+            profile.email ||
+            currentUser.email ||
+            "";
+
+        document.getElementById("customerPhone")
+            .value =
+            profile.phone ||
+            "";
+
+        renderTickets();
+        renderSummary();
+
+        document.getElementById("loading")
+            .style.display = "none";
+
+        document.getElementById("checkoutLayout")
+            .style.display = "grid";
+    }
+
+    function renderTickets() {
+
+        const container =
+            document.getElementById("ticketRows");
+
+        container.innerHTML = "";
+
+        let hasTickets = false;
+
+        currentEvent.ticket_types
+            .forEach(ticket => {
+
+                const quantity =
+                    ticketSelection[ticket.id] || 0;
+
+                if (quantity <= 0) {
+                    return;
+                }
+
+                hasTickets = true;
+
+                const row =
+                    document.createElement("div");
+
+                row.className = "ticket-row";
+
+                row.innerHTML = `
+
+                    <div class="ticket-row-info">
+
+                        <h3>
+                            ${escapeHTML(
+                                ticket.name ||
+                                ticket.title ||
+                                "Ticket"
+                            )}
+                        </h3>
+
+                        <p>
+                            Quantity: ${quantity}
+                        </p>
+
+                    </div>
+
+                    <div class="ticket-row-right">
+
+                        <strong>
+                            ${money(
+                                Number(ticket.price) *
+                                quantity
+                            )}
+                        </strong>
+
+                        <span>
+                            ${money(ticket.price)} each
+                        </span>
+
+                    </div>
+                `;
+
+                container.appendChild(row);
+            });
+
+        if (!hasTickets) {
+
+            container.innerHTML = `
+                <div class="loading">
+                    No tickets selected.
+                </div>
+            `;
+
+            document.getElementById("continueButton")
+                .disabled = true;
+        }
+    }
+
+    function renderSummary() {
+
+        const container =
+            document.getElementById("summaryRows");
+
+        container.innerHTML = "";
+
+        currentEvent.ticket_types
+            .forEach(ticket => {
+
+                const quantity =
+                    ticketSelection[ticket.id] || 0;
+
+                if (quantity <= 0) {
+                    return;
+                }
+
+                const total =
+                    Number(ticket.price) *
+                    quantity;
+
+                const row =
+                    document.createElement("div");
+
+                row.className = "summary-row";
+
+                row.innerHTML = `
+
+                    <span>
+                        ${escapeHTML(
+                            ticket.name ||
+                            ticket.title ||
+                            "Ticket"
+                        )}
+                        × ${quantity}
+                    </span>
+
+                    <strong>
+                        ${money(total)}
+                    </strong>
+                `;
+
+                container.appendChild(row);
+            });
+
+        /*
+            These values should ideally be returned by a secure
+            checkout calculation endpoint/RPC.
+
+            This frontend calculation is for display only.
+        */
+
+        const subtotal =
+            currentEvent.ticket_types.reduce(
+                (sum, ticket) => {
+
+                    const quantity =
+                        ticketSelection[ticket.id] || 0;
+
+                    return sum +
+                        (
+                            Number(ticket.price) *
+                            quantity
+                        );
+
+                },
+                0
+            );
+
+        const feePercentage =
+            Number(
+                currentEvent.service_fee_percentage ||
+                0
+            );
+
+        const serviceFee =
+            subtotal *
+            (feePercentage / 100);
+
+        const total =
+            subtotal +
+            serviceFee;
+
+        document.getElementById("subtotal")
+            .textContent =
+            money(subtotal);
+
+        document.getElementById("serviceFee")
+            .textContent =
+            money(serviceFee);
+
+        document.getElementById("total")
+            .textContent =
+            money(total);
+    }
+
+    async function createOrder() {
+
+        const button =
+            document.getElementById("continueButton");
+
+        button.disabled = true;
+        button.textContent = "Creating order...";
+
+        try {
+
+            /*
+                Recommended final implementation:
+
+                Call a Supabase Edge Function / secure RPC.
+
+                The server must:
+
+                1. authenticate user
+                2. load event
+                3. load ticket types
+                4. lock/check inventory
+                5. check promotion
+                6. calculate service fee
+                7. calculate final amount
+                8. create order
+                9. create order_items
+                10. reserve inventory
+                11. return order ID
+
+                Do NOT simply insert a browser-calculated total.
+            */
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.rpc(
+                    "create_ticket_order",
+                    {
+                        p_event_id: eventId,
+                        p_items:
+                            currentEvent.ticket_types
+                                .filter(ticket =>
+                                    (
+                                        ticketSelection[ticket.id] ||
+                                        0
+                                    ) > 0
+                                )
+                                .map(ticket => ({
+                                    ticket_type_id:
+                                        ticket.id,
+
+                                    quantity:
+                                        ticketSelection[
+                                            ticket.id
+                                        ] || 0
+                                }))
+                    }
+                );
+
+            if (error) {
+                throw error;
+            }
+
+            if (!data) {
+
+                throw new Error(
+                    "The order was not created."
+                );
+            }
+
+            /*
+                Depending on the final RPC return shape,
+                data can be:
+
+                { id: "..." }
+
+                or simply:
+
+                "order-uuid"
+            */
+
+            const orderId =
+                typeof data === "string"
+                    ? data
+                    : data.id;
+
+            if (!orderId) {
+
+                throw new Error(
+                    "No order ID was returned."
+                );
+            }
+
+            window.location.href =
+                `payment.html?order=${encodeURIComponent(orderId)}`;
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError(
+                error.message ||
+                "Unable to create your order."
+            );
+
+            button.disabled = false;
+            button.textContent =
+                "Continue to Payment";
+        }
+    }
+
+    function getInitials(value) {
+
+        const parts =
+            value
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean);
+
+        return parts
+            .slice(0, 2)
+            .map(part =>
+                part.charAt(0)
+            )
+            .join("")
+            .toUpperCase() || "K";
+    }
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function toggleSidebar() {
+
+        document
+            .getElementById("sidebar")
+            .classList
+            .toggle("open");
+    }
+
+    async function logout() {
+
+        if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+        }
+
+        window.location.href =
+            "../auth/login.html";
+    }
+
+    initialise();
+
+</script>
+
+</body>
+</html>

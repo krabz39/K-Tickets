@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Tickets — Ticket Management</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --bordo-dark: #521017;
+            --green: #0F3D3A;
+            --green-dark: #092d2b;
+            --cream: #F5DABF;
+            --cream-light: #fff8f1;
+            --white: #ffffff;
+            --text: #241817;
+            --muted: #766b67;
+            --border: #eadbd0;
+            --success: #24734e;
+            --warning: #a66b00;
+            --danger: #a52b34;
+            --shadow: 0 12px 35px rgba(36, 24, 23, .08);
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f8f3ed;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* =========================
+           APP SHELL
+        ========================= */
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: 260px;
+            background: var(--green);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform .25s ease;
+        }
+
+        .brand {
+            padding: 25px 22px 22px;
+            border-bottom: 1px solid rgba(255,255,255,.10);
+        }
+
+        .brand-mark {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 43px;
+            height: 43px;
+            border-radius: 13px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-family: Georgia, serif;
+            font-weight: 800;
+            font-size: 19px;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 15px;
+            letter-spacing: .08em;
+        }
+
+        .brand-text span {
+            display: block;
+            color: rgba(255,255,255,.58);
+            font-size: 11px;
+            margin-top: 4px;
+            letter-spacing: .08em;
+        }
+
+        .nav {
+            flex: 1;
+            padding: 18px 12px;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            color: rgba(255,255,255,.38);
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: .13em;
+            padding: 12px 12px 8px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 45px;
+            padding: 10px 13px;
+            border-radius: 11px;
+            margin-bottom: 4px;
+            color: rgba(255,255,255,.70);
+            font-size: 13px;
+            transition: .2s ease;
+        }
+
+        .nav a:hover {
+            color: #fff;
+            background: rgba(255,255,255,.07);
+        }
+
+        .nav a.active {
+            color: #fff;
+            background: var(--bordo);
+            box-shadow: 0 8px 20px rgba(0,0,0,.12);
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid rgba(255,255,255,.10);
+        }
+
+        .merchant-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.05);
+        }
+
+        .merchant-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .merchant-mini-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .merchant-mini-info strong {
+            display: block;
+            font-size: 12px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .merchant-mini-info span {
+            display: block;
+            font-size: 10px;
+            color: rgba(255,255,255,.45);
+            margin-top: 2px;
+        }
+
+        .signout {
+            border: 0;
+            background: transparent;
+            color: rgba(255,255,255,.65);
+            padding: 6px;
+            font-size: 16px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 260px;
+            min-width: 0;
+            width: calc(100% - 260px);
+        }
+
+        .topbar {
+            height: 72px;
+            background: rgba(255,255,255,.93);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            backdrop-filter: blur(14px);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .mobile-menu {
+            display: none;
+            border: 0;
+            background: transparent;
+            font-size: 24px;
+            color: var(--green);
+        }
+
+        .crumb {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .crumb strong {
+            color: var(--text);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            position: relative;
+            display: grid;
+            place-items: center;
+            color: var(--green);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 50px;
+            background: var(--bordo);
+            color: #fff;
+            font-size: 9px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .online-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            background: #42a56e;
+            border-radius: 50%;
+        }
+
+        .content {
+            padding: 30px;
+            max-width: 1700px;
+            margin: auto;
+        }
+
+        /* =========================
+           PAGE HEADER
+        ========================= */
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .eyebrow {
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        h1 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(28px, 4vw, 39px);
+            line-height: 1.05;
+            color: var(--green);
+        }
+
+        .page-header p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px;
+            max-width: 620px;
+            line-height: 1.6;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            min-height: 42px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 11px;
+            padding: 0 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 700;
+            transition: .2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(36,24,23,.07);
+        }
+
+        .btn-primary {
+            background: var(--bordo);
+            color: #fff;
+            border-color: var(--bordo);
+        }
+
+        .btn-primary:hover {
+            background: var(--bordo-dark);
+        }
+
+        .btn-danger {
+            color: var(--danger);
+        }
+
+        /* =========================
+           SUMMARY
+        ========================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 19px;
+            box-shadow: var(--shadow);
+            min-width: 0;
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-weight: 700;
+        }
+
+        .stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: #f8ebe4;
+            color: var(--bordo);
+            font-size: 15px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--green);
+            margin-top: 14px;
+        }
+
+        .stat-note {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+           TOOLBAR
+        ========================= */
+
+        .panel {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .toolbar {
+            padding: 17px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 9px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .search {
+            position: relative;
+            width: min(350px, 100%);
+        }
+
+        .search span {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a1938c;
+            font-size: 14px;
+        }
+
+        .search input {
+            width: 100%;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 12px 0 34px;
+            outline: none;
+            color: var(--text);
+            background: #fff;
+            font-size: 12px;
+        }
+
+        .search input:focus,
+        select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15,61,58,.08);
+        }
+
+        select {
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 34px 0 11px;
+            color: var(--text);
+            background: #fff;
+            outline: none;
+            font-size: 12px;
+        }
+
+        .toolbar-note {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th {
+            text-align: left;
+            padding: 13px 17px;
+            background: #fcf8f4;
+            border-bottom: 1px solid var(--border);
+            color: #81746d;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .09em;
+            font-weight: 800;
+        }
+
+        td {
+            padding: 14px 17px;
+            border-bottom: 1px solid #f1e8e1;
+            vertical-align: middle;
+            font-size: 12px;
+        }
+
+        tbody tr {
+            transition: .18s ease;
+        }
+
+        tbody tr:hover {
+            background: #fffaf6;
+        }
+
+        .ticket-code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 11px;
+            color: var(--green);
+            font-weight: 700;
+            background: #eef5f2;
+            padding: 6px 8px;
+            border-radius: 7px;
+            display: inline-block;
+        }
+
+        .event-name {
+            font-weight: 800;
+            color: var(--green);
+            max-width: 230px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .customer-name {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .secondary {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 9px;
+            border-radius: 50px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .badge-valid,
+        .badge-active {
+            color: #246b48;
+            background: #e9f5ed;
+        }
+
+        .badge-used {
+            color: #735000;
+            background: #fff2ce;
+        }
+
+        .badge-cancelled,
+        .badge-invalid {
+            color: #943039;
+            background: #f9e7e9;
+        }
+
+        .badge-pending {
+            color: #6e5a00;
+            background: #fff4c9;
+        }
+
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .icon-btn {
+            width: 33px;
+            height: 33px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+        }
+
+        .icon-btn:hover {
+            background: var(--cream-light);
+        }
+
+        .icon-btn.danger {
+            color: var(--danger);
+        }
+
+        /* =========================
+           MOBILE CARDS
+        ========================= */
+
+        .mobile-list {
+            display: none;
+            padding: 12px;
+        }
+
+        .ticket-card {
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+
+        .ticket-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .ticket-card-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .ticket-card h3 {
+            font-size: 13px;
+            color: var(--green);
+            margin-top: 9px;
+        }
+
+        .ticket-info {
+            margin-top: 13px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .ticket-info-item {
+            min-width: 0;
+        }
+
+        .ticket-info-item span {
+            display: block;
+            color: var(--muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            margin-bottom: 3px;
+        }
+
+        .ticket-info-item strong {
+            display: block;
+            color: var(--text);
+            font-size: 11px;
+            overflow-wrap: anywhere;
+        }
+
+        .ticket-card-actions {
+            display: flex;
+            gap: 7px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .ticket-card-actions .btn {
+            flex: 1;
+        }
+
+        /* =========================
+           EMPTY / LOADING
+        ========================= */
+
+        .state {
+            padding: 55px 25px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .state-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 17px;
+            background: #f7ebe3;
+            color: var(--bordo);
+            display: grid;
+            place-items: center;
+            margin: 0 auto 14px;
+            font-size: 21px;
+        }
+
+        .state strong {
+            display: block;
+            color: var(--green);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .state p {
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .spinner {
+            width: 25px;
+            height: 25px;
+            border: 3px solid #eadbd0;
+            border-top-color: var(--bordo);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* =========================
+           TOAST
+        ========================= */
+
+        .toast-wrap {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast {
+            min-width: 260px;
+            max-width: 380px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--green);
+            border-radius: 12px;
+            padding: 13px 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,.13);
+            font-size: 12px;
+            color: var(--text);
+            animation: toastIn .25s ease;
+        }
+
+        .toast.error {
+            border-left-color: var(--bordo);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           OVERLAY
+        ========================= */
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.42);
+            z-index: 900;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .topbar {
+                padding: 0 17px;
+                height: 64px;
+            }
+
+            .online-status {
+                display: none;
+            }
+
+            .content {
+                padding: 21px 15px 30px;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions .btn {
+                flex: 1;
+            }
+
+            .table-wrap {
+                display: none;
+            }
+
+            .mobile-list {
+                display: block;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
+            }
+
+            .stat-card {
+                padding: 14px;
+                border-radius: 14px;
+            }
+
+            .stat-value {
+                font-size: 21px;
+            }
+
+            .stat-icon {
+                width: 29px;
+                height: 29px;
+                font-size: 12px;
+            }
+
+            .toolbar {
+                align-items: stretch;
+            }
+
+            .toolbar-left {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search {
+                width: 100%;
+            }
+
+            select {
+                width: 100%;
+            }
+
+            .toolbar-note {
+                display: none;
+            }
+
+            .ticket-info {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .toast-wrap {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+            }
+
+            .toast {
+                min-width: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-mark">
+                <div class="logo">K</div>
+
+                <div class="brand-text">
+                    <strong>K-TICKETS</strong>
+                    <span>MERCHANT CMS</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav">
+
+            <div class="nav-label">Workspace</div>
+
+            <a href="./dashboard.html">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="./events.html">
+                <span class="nav-icon">◫</span>
+                <span>My Events</span>
+            </a>
+
+            <a href="./create-event.html">
+                <span class="nav-icon">＋</span>
+                <span>Create Event</span>
+            </a>
+
+            <a href="./tickets.html" class="active">
+                <span class="nav-icon">▣</span>
+                <span>Tickets</span>
+            </a>
+
+            <a href="./promotions.html">
+                <span class="nav-icon">%</span>
+                <span>Promotions</span>
+            </a>
+
+            <a href="./sales.html">
+                <span class="nav-icon">↗</span>
+                <span>Sales</span>
+            </a>
+
+            <div class="nav-label">Finance</div>
+
+            <a href="./withdrawals.html">
+                <span class="nav-icon">◇</span>
+                <span>Withdrawals</span>
+            </a>
+
+            <div class="nav-label">Account</div>
+
+            <a href="./settings.html">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="merchant-mini">
+
+                <div class="merchant-avatar" id="merchantAvatar">
+                    —
+                </div>
+
+                <div class="merchant-mini-info">
+                    <strong id="merchantName">Loading...</strong>
+                    <span>Merchant account</span>
+                </div>
+
+                <button class="signout" id="signOutBtn" title="Sign out">
+                    ↪
+                </button>
+
+            </div>
+        </div>
+
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button class="mobile-menu" id="mobileMenu">
+                    ☰
+                </button>
+
+                <div class="crumb">
+                    Merchant / <strong>Tickets</strong>
+                </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <div class="online-status">
+                    <span class="online-dot"></span>
+                    CMS Online
+                </div>
+
+                <a href="../notifications.html"
+                   class="notification-btn"
+                   title="Notifications">
+
+                    ♢
+
+                    <span class="notification-count"
+                          id="notificationCount">
+                        0
+                    </span>
+
+                </a>
+
+            </div>
+
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <div class="page-header">
+
+                <div>
+                    <div class="eyebrow">Ticket Management</div>
+
+                    <h1>Tickets</h1>
+
+                    <p>
+                        Monitor tickets issued for your events, review customer
+                        assignments, and track ticket status from one place.
+                    </p>
+                </div>
+
+                <div class="header-actions">
+
+                    <button class="btn" id="refreshBtn">
+                        ↻ Refresh
+                    </button>
+
+                    <a href="./events.html" class="btn">
+                        ◫ My Events
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- SUMMARY -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">Total Tickets</span>
+                        <div class="stat-icon">▣</div>
+                    </div>
+
+                    <div class="stat-value" id="totalTickets">
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        Issued across your events
+                    </div>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">Valid</span>
+                        <div class="stat-icon">✓</div>
+                    </div>
+
+                    <div class="stat-value" id="validTickets">
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        Available for entry
+                    </div>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">Used</span>
+                        <div class="stat-icon">◉</div>
+                    </div>
+
+                    <div class="stat-value" id="usedTickets">
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        Already checked in
+                    </div>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">Cancelled</span>
+                        <div class="stat-icon">×</div>
+                    </div>
+
+                    <div class="stat-value" id="cancelledTickets">
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        No longer valid
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TICKETS PANEL -->
+            <div class="panel">
+
+                <div class="toolbar">
+
+                    <div class="toolbar-left">
+
+                        <div class="search">
+                            <span>⌕</span>
+
+                            <input
+                                type="search"
+                                id="searchInput"
+                                placeholder="Search ticket, customer or event..."
+                                autocomplete="off"
+                            >
+                        </div>
+
+                        <select id="statusFilter">
+                            <option value="">All statuses</option>
+                            <option value="valid">Valid</option>
+                            <option value="used">Used</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="invalid">Invalid</option>
+                        </select>
+
+                    </div>
+
+                    <div class="toolbar-note" id="resultCount">
+                        Loading tickets...
+                    </div>
+
+                </div>
+
+                <!-- DESKTOP -->
+                <div class="table-wrap">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Ticket</th>
+                                <th>Event</th>
+                                <th>Customer</th>
+                                <th>Ticket Type</th>
+                                <th>Issued</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="ticketTableBody">
+
+                            <tr>
+                                <td colspan="7">
+                                    <div class="state">
+                                        <div class="spinner"></div>
+                                        Loading tickets...
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- MOBILE -->
+                <div class="mobile-list" id="mobileList">
+
+                    <div class="state">
+                        <div class="spinner"></div>
+                        Loading tickets...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+
+<script>
+/* ============================================================
+   K-TICKETS MERCHANT TICKETS
+   Supabase is the source of truth.
+============================================================ */
+
+const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL || "";
+
+const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+let supabaseClient = null;
+
+let currentUser = null;
+let currentProfile = null;
+
+let allTickets = [];
+let filteredTickets = [];
+
+
+/* ============================================================
+   INITIALIZATION
+============================================================ */
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    setupUI();
+
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+
+        showFatalError(
+            "Supabase configuration is missing. Set KTICKETS_SUPABASE_URL and KTICKETS_SUPABASE_ANON_KEY before using this page."
+        );
+
+        return;
+    }
+
+    supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+    await initializePage();
+});
+
+
+/* ============================================================
+   UI
+============================================================ */
+
+function setupUI() {
+
+    const mobileMenu =
+        document.getElementById("mobileMenu");
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("sidebarOverlay");
+
+    mobileMenu?.addEventListener("click", () => {
+
+        sidebar.classList.add("open");
+        overlay.classList.add("show");
+
+    });
+
+    overlay?.addEventListener("click", closeSidebar);
+
+    document
+        .getElementById("refreshBtn")
+        ?.addEventListener("click", async () => {
+
+            await loadTickets();
+
+        });
+
+    document
+        .getElementById("searchInput")
+        ?.addEventListener("input", applyFilters);
+
+    document
+        .getElementById("statusFilter")
+        ?.addEventListener("change", applyFilters);
+
+    document
+        .getElementById("signOutBtn")
+        ?.addEventListener("click", signOut);
+}
+
+
+function closeSidebar() {
+
+    document
+        .getElementById("sidebar")
+        ?.classList.remove("open");
+
+    document
+        .getElementById("sidebarOverlay")
+        ?.classList.remove("show");
+}
+
+
+/* ============================================================
+   AUTH
+============================================================ */
+
+async function initializePage() {
+
+    try {
+
+        const {
+            data: {
+                user
+            },
+            error
+        } = await supabaseClient.auth.getUser();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!user) {
+
+            window.location.href =
+                "../auth/login.html?redirect=merchant/tickets.html";
+
+            return;
+        }
+
+        currentUser = user;
+
+        await loadMerchantProfile();
+
+        await Promise.all([
+            loadTickets(),
+            loadNotifications()
+        ]);
+
+    } catch (error) {
+
+        console.error(
+            "Initialization error:",
+            error
+        );
+
+        showFatalError(
+            getErrorMessage(error)
+        );
+    }
+}
+
+
+/* ============================================================
+   MERCHANT PROFILE
+============================================================ */
+
+async function loadMerchantProfile() {
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("profiles")
+        .select(`
+            id,
+            full_name,
+            phone,
+            role
+        `)
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+
+    if (!data) {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+            "../auth/login.html?error=profile_missing";
+
+        return;
+    }
+
+    currentProfile = data;
+
+    if (data.role !== "merchant") {
+
+        showFatalError(
+            "This area is restricted to merchant accounts."
+        );
+
+        setTimeout(() => {
+
+            window.location.href =
+                "../index.html";
+
+        }, 1800);
+
+        return;
+    }
+
+    const name =
+        data.full_name ||
+        currentUser.user_metadata?.full_name ||
+        currentUser.email ||
+        "Merchant";
+
+    document.getElementById("merchantName").textContent =
+        name;
+
+    document.getElementById("merchantAvatar").textContent =
+        getInitials(name);
+}
+
+
+/* ============================================================
+   TICKETS
+============================================================ */
+
+async function loadTickets() {
+
+    setLoadingState();
+
+    try {
+
+        /*
+         * The ticket query is intentionally restricted through
+         * the merchant's events.
+         *
+         * RLS must also enforce the same ownership server-side.
+         */
+
+        const {
+            data: tickets,
+            error: ticketError
+        } = await supabaseClient
+            .from("tickets")
+            .select(`
+                id,
+                user_id,
+                event_id,
+                ticket_type_id,
+                ticket_code,
+                status,
+                issued_at,
+                checked_in_at
+            `)
+            .order("issued_at", {
+                ascending: false,
+                nullsFirst: false
+            });
+
+        if (ticketError) {
+            throw ticketError;
+        }
+
+        const ticketRows =
+            Array.isArray(tickets)
+                ? tickets
+                : [];
+
+        if (!ticketRows.length) {
+
+            allTickets = [];
+
+            updateStats();
+
+            applyFilters();
+
+            return;
+        }
+
+
+        /* ====================================================
+           EVENTS
+        ==================================================== */
+
+        const eventIds = [
+            ...new Set(
+                ticketRows
+                    .map(ticket => ticket.event_id)
+                    .filter(Boolean)
+            )
+        ];
+
+        let events = [];
+
+        if (eventIds.length) {
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("events")
+                .select(`
+                    id,
+                    merchant_id,
+                    title
+                `)
+                .in("id", eventIds);
+
+            if (error) {
+                throw error;
+            }
+
+            events = data || [];
+        }
+
+
+        /*
+         * Only retain events owned by this merchant.
+         *
+         * This is useful even if RLS already protects the query.
+         */
+
+        const merchantEventIds =
+            new Set(
+                events
+                    .filter(
+                        event =>
+                            event.merchant_id ===
+                            currentUser.id
+                    )
+                    .map(event => event.id)
+            );
+
+
+        const merchantTickets =
+            ticketRows.filter(ticket =>
+                merchantEventIds.has(ticket.event_id)
+            );
+
+
+        /* ====================================================
+           TICKET TYPES
+        ==================================================== */
+
+        const typeIds = [
+            ...new Set(
+                merchantTickets
+                    .map(ticket => ticket.ticket_type_id)
+                    .filter(Boolean)
+            )
+        ];
+
+        let ticketTypes = [];
+
+        if (typeIds.length) {
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("ticket_types")
+                .select(`
+                    id,
+                    event_id,
+                    name
+                `)
+                .in("id", typeIds);
+
+            if (error) {
+                throw error;
+            }
+
+            ticketTypes = data || [];
+        }
+
+
+        /* ====================================================
+           CUSTOMERS
+        ==================================================== */
+
+        const userIds = [
+            ...new Set(
+                merchantTickets
+                    .map(ticket => ticket.user_id)
+                    .filter(Boolean)
+            )
+        ];
+
+        let profiles = [];
+
+        if (userIds.length) {
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("profiles")
+                .select(`
+                    id,
+                    full_name,
+                    phone
+                `)
+                .in("id", userIds);
+
+            if (error) {
+                throw error;
+            }
+
+            profiles = data || [];
+        }
+
+
+        /* ====================================================
+           MAP RELATIONSHIPS
+        ==================================================== */
+
+        const eventMap = new Map(
+            events.map(event => [
+                event.id,
+                event
+            ])
+        );
+
+        const typeMap = new Map(
+            ticketTypes.map(type => [
+                type.id,
+                type
+            ])
+        );
+
+        const profileMap = new Map(
+            profiles.map(profile => [
+                profile.id,
+                profile
+            ])
+        );
+
+
+        allTickets =
+            merchantTickets.map(ticket => {
+
+                const event =
+                    eventMap.get(ticket.event_id);
+
+                const ticketType =
+                    typeMap.get(ticket.ticket_type_id);
+
+                const customer =
+                    profileMap.get(ticket.user_id);
+
+                return {
+                    ...ticket,
+
+                    event: event || null,
+
+                    ticket_type:
+                        ticketType || null,
+
+                    customer:
+                        customer || null
+                };
+
+            });
+
+
+        updateStats();
+
+        applyFilters();
+
+    } catch (error) {
+
+        console.error(
+            "Ticket loading error:",
+            error
+        );
+
+        allTickets = [];
+
+        updateStats();
+
+        renderErrorState(
+            getErrorMessage(error)
+        );
+    }
+}
+
+
+/* ============================================================
+   FILTERS
+============================================================ */
+
+function applyFilters() {
+
+    const search =
+        document
+            .getElementById("searchInput")
+            ?.value
+            ?.trim()
+            ?.toLowerCase() || "";
+
+    const status =
+        document
+            .getElementById("statusFilter")
+            ?.value || "";
+
+
+    filteredTickets =
+        allTickets.filter(ticket => {
+
+            const eventTitle =
+                ticket.event?.title ||
+                "";
+
+            const customerName =
+                ticket.customer?.full_name ||
+                "";
+
+            const customerPhone =
+                ticket.customer?.phone ||
+                "";
+
+            const ticketCode =
+                ticket.ticket_code ||
+                "";
+
+            const ticketType =
+                ticket.ticket_type?.name ||
+                "";
+
+            const matchesSearch =
+                !search ||
+                eventTitle.toLowerCase().includes(search) ||
+                customerName.toLowerCase().includes(search) ||
+                customerPhone.toLowerCase().includes(search) ||
+                ticketCode.toLowerCase().includes(search) ||
+                ticketType.toLowerCase().includes(search);
+
+            const matchesStatus =
+                !status ||
+                normalizeStatus(ticket.status) ===
+                    normalizeStatus(status);
+
+            return (
+                matchesSearch &&
+                matchesStatus
+            );
+
+        });
+
+
+    renderDesktopTable(filteredTickets);
+
+    renderMobileList(filteredTickets);
+
+    document.getElementById("resultCount").textContent =
+        `${filteredTickets.length} ${
+            filteredTickets.length === 1
+                ? "ticket"
+                : "tickets"
+        }`;
+}
+
+
+/* ============================================================
+   STATS
+============================================================ */
+
+function updateStats() {
+
+    const total =
+        allTickets.length;
+
+    const valid =
+        allTickets.filter(
+            ticket =>
+                normalizeStatus(ticket.status) ===
+                "valid"
+        ).length;
+
+    const used =
+        allTickets.filter(
+            ticket =>
+                normalizeStatus(ticket.status) ===
+                "used"
+        ).length;
+
+    const cancelled =
+        allTickets.filter(
+            ticket =>
+                ["cancelled", "canceled", "invalid"]
+                    .includes(
+                        normalizeStatus(ticket.status)
+                    )
+        ).length;
+
+
+    document.getElementById("totalTickets")
+        .textContent = formatNumber(total);
+
+    document.getElementById("validTickets")
+        .textContent = formatNumber(valid);
+
+    document.getElementById("usedTickets")
+        .textContent = formatNumber(used);
+
+    document.getElementById("cancelledTickets")
+        .textContent = formatNumber(cancelled);
+}
+
+
+/* ============================================================
+   DESKTOP TABLE
+============================================================ */
+
+function renderDesktopTable(tickets) {
+
+    const tbody =
+        document.getElementById("ticketTableBody");
+
+    if (!tickets.length) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    ${emptyStateHTML()}
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    tbody.innerHTML =
+        tickets.map(ticket => {
+
+            const customer =
+                ticket.customer?.full_name ||
+                "Customer";
+
+            const eventTitle =
+                ticket.event?.title ||
+                "Event unavailable";
+
+            const ticketType =
+                ticket.ticket_type?.name ||
+                "Ticket";
+
+            return `
+                <tr>
+
+                    <td>
+                        <span class="ticket-code">
+                            ${escapeHTML(
+                                ticket.ticket_code ||
+                                ticket.id ||
+                                "—"
+                            )}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="event-name"
+                             title="${escapeAttr(eventTitle)}">
+                            ${escapeHTML(eventTitle)}
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="customer-name">
+                            ${escapeHTML(customer)}
+                        </div>
+
+                        ${
+                            ticket.customer?.phone
+                                ? `
+                                    <span class="secondary">
+                                        ${escapeHTML(
+                                            ticket.customer.phone
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
+                    </td>
+
+                    <td>
+                        ${escapeHTML(ticketType)}
+                    </td>
+
+                    <td>
+                        ${
+                            formatDateTime(
+                                ticket.issued_at
+                            )
+                        }
+                    </td>
+
+                    <td>
+                        ${statusBadge(ticket.status)}
+                    </td>
+
+                    <td>
+                        <div class="action-group">
+
+                            <button
+                                class="icon-btn"
+                                title="View ticket"
+                                onclick="viewTicket('${escapeAttr(ticket.id)}')"
+                            >
+                                ↗
+                            </button>
+
+                        </div>
+                    </td>
+
+                </tr>
+            `;
+
+        }).join("");
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+function renderMobileList(tickets) {
+
+    const container =
+        document.getElementById("mobileList");
+
+    if (!tickets.length) {
+
+        container.innerHTML =
+            emptyStateHTML();
+
+        return;
+    }
+
+
+    container.innerHTML =
+        tickets.map(ticket => {
+
+            const customer =
+                ticket.customer?.full_name ||
+                "Customer";
+
+            const eventTitle =
+                ticket.event?.title ||
+                "Event unavailable";
+
+            const ticketType =
+                ticket.ticket_type?.name ||
+                "Ticket";
+
+            return `
+                <article class="ticket-card">
+
+                    <div class="ticket-card-top">
+
+                        <div>
+                            <span class="ticket-code">
+                                ${escapeHTML(
+                                    ticket.ticket_code ||
+                                    ticket.id ||
+                                    "—"
+                                )}
+                            </span>
+
+                            <h3>
+                                ${escapeHTML(eventTitle)}
+                            </h3>
+                        </div>
+
+                        ${statusBadge(ticket.status)}
+
+                    </div>
+
+
+                    <div class="ticket-info">
+
+                        <div class="ticket-info-item">
+                            <span>Customer</span>
+                            <strong>
+                                ${escapeHTML(customer)}
+                            </strong>
+                        </div>
+
+                        <div class="ticket-info-item">
+                            <span>Ticket Type</span>
+                            <strong>
+                                ${escapeHTML(ticketType)}
+                            </strong>
+                        </div>
+
+                        <div class="ticket-info-item">
+                            <span>Issued</span>
+                            <strong>
+                                ${formatDateTime(ticket.issued_at)}
+                            </strong>
+                        </div>
+
+                        <div class="ticket-info-item">
+                            <span>Checked In</span>
+                            <strong>
+                                ${
+                                    ticket.checked_in_at
+                                        ? formatDateTime(
+                                            ticket.checked_in_at
+                                        )
+                                        : "—"
+                                }
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="ticket-card-actions">
+
+                        <button
+                            class="btn"
+                            onclick="viewTicket('${escapeAttr(ticket.id)}')"
+                        >
+                            View Ticket
+                        </button>
+
+                    </div>
+
+                </article>
+            `;
+
+        }).join("");
+}
+
+
+/* ============================================================
+   VIEW TICKET
+============================================================ */
+
+function viewTicket(ticketId) {
+
+    if (!ticketId) {
+        return;
+    }
+
+    window.location.href =
+        `../customer/ticket.html?id=${encodeURIComponent(ticketId)}`;
+}
+
+
+/* ============================================================
+   NOTIFICATIONS
+============================================================ */
+
+async function loadNotifications() {
+
+    try {
+
+        const {
+            count,
+            error
+        } = await supabaseClient
+            .from("notifications")
+            .select("id", {
+                count: "exact",
+                head: true
+            })
+            .eq("user_id", currentUser.id)
+            .eq("is_read", false);
+
+        if (error) {
+            throw error;
+        }
+
+        const badge =
+            document.getElementById(
+                "notificationCount"
+            );
+
+        if (count && count > 0) {
+
+            badge.textContent =
+                count > 99
+                    ? "99+"
+                    : count;
+
+            badge.style.display =
+                "flex";
+
+        } else {
+
+            badge.style.display =
+                "none";
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Notification count unavailable:",
+            error
+        );
+
+    }
+}
+
+
+/* ============================================================
+   SIGN OUT
+============================================================ */
+
+async function signOut() {
+
+    try {
+
+        const {
+            error
+        } = await supabaseClient.auth.signOut();
+
+        if (error) {
+            throw error;
+        }
+
+        window.location.href =
+            "../auth/login.html";
+
+    } catch (error) {
+
+        showToast(
+            getErrorMessage(error),
+            true
+        );
+    }
+}
+
+
+/* ============================================================
+   LOADING / ERROR STATES
+============================================================ */
+
+function setLoadingState() {
+
+    document.getElementById(
+        "ticketTableBody"
+    ).innerHTML = `
+        <tr>
+            <td colspan="7">
+                <div class="state">
+                    <div class="spinner"></div>
+                    Loading tickets...
+                </div>
+            </td>
+        </tr>
+    `;
+
+    document.getElementById(
+        "mobileList"
+    ).innerHTML = `
+        <div class="state">
+            <div class="spinner"></div>
+            Loading tickets...
+        </div>
+    `;
+
+    document.getElementById(
+        "resultCount"
+    ).textContent =
+        "Loading tickets...";
+}
+
+
+function renderErrorState(message) {
+
+    document.getElementById(
+        "ticketTableBody"
+    ).innerHTML = `
+        <tr>
+            <td colspan="7">
+                <div class="state">
+                    <div class="state-icon">!</div>
+                    <strong>Unable to load tickets</strong>
+                    <p>${escapeHTML(message)}</p>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    document.getElementById(
+        "mobileList"
+    ).innerHTML = `
+        <div class="state">
+            <div class="state-icon">!</div>
+            <strong>Unable to load tickets</strong>
+            <p>${escapeHTML(message)}</p>
+        </div>
+    `;
+
+    document.getElementById(
+        "resultCount"
+    ).textContent =
+        "Unable to load";
+}
+
+
+function showFatalError(message) {
+
+    document.getElementById(
+        "ticketTableBody"
+    ).innerHTML = `
+        <tr>
+            <td colspan="7">
+                <div class="state">
+                    <div class="state-icon">!</div>
+                    <strong>Page unavailable</strong>
+                    <p>${escapeHTML(message)}</p>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    document.getElementById(
+        "mobileList"
+    ).innerHTML = `
+        <div class="state">
+            <div class="state-icon">!</div>
+            <strong>Page unavailable</strong>
+            <p>${escapeHTML(message)}</p>
+        </div>
+    `;
+}
+
+
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+
+function emptyStateHTML() {
+
+    return `
+        <div class="state">
+
+            <div class="state-icon">
+                ▣
+            </div>
+
+            <strong>
+                No tickets found
+            </strong>
+
+            <p>
+                Tickets issued through your events
+                will appear here.
+            </p>
+
+        </div>
+    `;
+}
+
+
+/* ============================================================
+   STATUS
+============================================================ */
+
+function normalizeStatus(status) {
+
+    return String(
+        status || ""
+    )
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+}
+
+
+function statusBadge(status) {
+
+    const normalized =
+        normalizeStatus(status);
+
+    let label =
+        normalized
+            ? normalized.replace(/_/g, " ")
+            : "unknown";
+
+    let className =
+        "badge-pending";
+
+    if (normalized === "valid" ||
+        normalized === "active") {
+
+        className =
+            "badge-valid";
+
+    } else if (normalized === "used" ||
+               normalized === "checked_in") {
+
+        className =
+            "badge-used";
+
+    } else if (
+        normalized === "cancelled" ||
+        normalized === "canceled" ||
+        normalized === "invalid"
+    ) {
+
+        className =
+            "badge-cancelled";
+    }
+
+    return `
+        <span class="badge ${className}">
+            ${escapeHTML(label)}
+        </span>
+    `;
+}
+
+
+/* ============================================================
+   FORMATTING
+============================================================ */
+
+function formatNumber(value) {
+
+    return new Intl.NumberFormat().format(
+        Number(value) || 0
+    );
+}
+
+
+function formatDateTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "—";
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            dateStyle: "medium",
+            timeStyle: "short"
+        }
+    ).format(date);
+}
+
+
+function getInitials(name) {
+
+    const clean =
+        String(name || "")
+            .trim();
+
+    if (!clean) {
+        return "M";
+    }
+
+    const parts =
+        clean.split(/\s+/)
+            .filter(Boolean);
+
+    if (parts.length === 1) {
+
+        return parts[0]
+            .slice(0, 2)
+            .toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+}
+
+
+/* ============================================================
+   SECURITY / ESCAPING
+============================================================ */
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function escapeAttr(value) {
+
+    return escapeHTML(value)
+        .replace(/`/g, "&#096;");
+}
+
+
+/* ============================================================
+   ERRORS
+============================================================ */
+
+function getErrorMessage(error) {
+
+    if (!error) {
+        return "An unexpected error occurred.";
+    }
+
+    if (typeof error === "string") {
+        return error;
+    }
+
+    return (
+        error.message ||
+        error.details ||
+        error.hint ||
+        "An unexpected error occurred."
+    );
+}
+
+
+/* ============================================================
+   TOASTS
+============================================================ */
+
+function showToast(message, isError = false) {
+
+    const wrap =
+        document.getElementById("toastWrap");
+
+    const toast =
+        document.createElement("div");
+
+    toast.className =
+        `toast ${isError ? "error" : ""}`;
+
+    toast.textContent =
+        message;
+
+    wrap.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.remove();
+
+    }, 4000);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,991 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sign In | K-Tickets</title>
+
+    <meta
+        name="description"
+        content="Sign in to your K-Tickets account."
+    >
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --bordo-dark: #541018;
+            --green: #0F3D3A;
+            --green-dark: #092D2B;
+            --cream: #F5DABF;
+            --white: #FFFDF9;
+            --text: #1D2927;
+            --muted: #6D7774;
+            --border: rgba(15, 61, 58, 0.14);
+            --danger: #A52835;
+            --success: #21735D;
+            --shadow: 0 24px 70px rgba(15, 61, 58, 0.14);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: var(--cream);
+            color: var(--text);
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .page {
+            min-height: 100vh;
+            min-height: 100dvh;
+
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(420px, 0.8fr);
+        }
+
+        /* =========================
+           LEFT PANEL
+        ========================= */
+
+        .brand-panel {
+            position: relative;
+            overflow: hidden;
+
+            background: var(--green);
+            color: var(--cream);
+
+            padding: clamp(28px, 5vw, 70px);
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-panel::before,
+        .brand-panel::after {
+            content: "";
+            position: absolute;
+
+            border-radius: 50%;
+
+            pointer-events: none;
+        }
+
+        .brand-panel::before {
+            width: 420px;
+            height: 420px;
+
+            right: -180px;
+            top: -180px;
+
+            background: var(--bordo);
+            opacity: 0.9;
+        }
+
+        .brand-panel::after {
+            width: 280px;
+            height: 280px;
+
+            left: -160px;
+            bottom: -150px;
+
+            border: 1px solid rgba(245, 218, 191, 0.18);
+        }
+
+        .brand-content,
+        .brand-footer {
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+
+            width: fit-content;
+
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 13px;
+
+            background: var(--bordo);
+            color: var(--cream);
+
+            font-weight: 900;
+            font-size: 18px;
+        }
+
+        .brand-content {
+            max-width: 620px;
+            margin-top: auto;
+            margin-bottom: auto;
+            padding: 80px 0;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            padding: 8px 12px;
+
+            border-radius: 999px;
+
+            background: rgba(245, 218, 191, 0.09);
+            border: 1px solid rgba(245, 218, 191, 0.14);
+
+            color: var(--cream);
+
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .brand-content h1 {
+            margin-top: 24px;
+
+            max-width: 650px;
+
+            font-size: clamp(42px, 5vw, 76px);
+            line-height: 0.98;
+            letter-spacing: -3px;
+        }
+
+        .brand-content h1 span {
+            color: #E8B4A5;
+        }
+
+        .brand-content p {
+            max-width: 550px;
+
+            margin-top: 24px;
+
+            color: rgba(245, 218, 191, 0.68);
+
+            font-size: clamp(15px, 1.5vw, 18px);
+            line-height: 1.7;
+        }
+
+        .brand-points {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 14px;
+
+            margin-top: 38px;
+        }
+
+        .brand-point {
+            padding: 16px;
+
+            border-radius: 15px;
+
+            background: rgba(245, 218, 191, 0.06);
+            border: 1px solid rgba(245, 218, 191, 0.09);
+        }
+
+        .brand-point strong {
+            display: block;
+
+            color: white;
+            font-size: 13px;
+        }
+
+        .brand-point span {
+            display: block;
+
+            margin-top: 5px;
+
+            color: rgba(245, 218, 191, 0.55);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .brand-footer {
+            color: rgba(245, 218, 191, 0.48);
+            font-size: 12px;
+        }
+
+        /* =========================
+           FORM PANEL
+        ========================= */
+
+        .form-panel {
+            background: var(--white);
+
+            padding:
+                clamp(24px, 5vw, 70px);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .mobile-brand {
+            display: none;
+        }
+
+        .form-heading h2 {
+            color: var(--green);
+
+            font-size: clamp(30px, 4vw, 42px);
+            line-height: 1.05;
+
+            letter-spacing: -1.5px;
+        }
+
+        .form-heading p {
+            margin-top: 10px;
+
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .form {
+            margin-top: 32px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 8px;
+        }
+
+        label {
+            color: var(--green);
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .field-link {
+            color: var(--bordo);
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .field-link:hover {
+            text-decoration: underline;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+
+            min-height: 52px;
+
+            padding: 0 15px;
+
+            border: 1px solid var(--border);
+            border-radius: 13px;
+
+            outline: none;
+
+            background: #FFFCF8;
+            color: var(--text);
+
+            font-size: 15px;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        input::placeholder {
+            color: #A4AAA8;
+        }
+
+        input:focus {
+            border-color: var(--bordo);
+
+            background: white;
+
+            box-shadow:
+                0 0 0 4px rgba(108, 21, 30, 0.08);
+        }
+
+        .password-input {
+            padding-right: 65px;
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            right: 10px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: 0;
+            background: transparent;
+
+            color: var(--green);
+
+            padding: 8px;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .password-toggle:hover {
+            color: var(--bordo);
+        }
+
+        .remember-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+
+            margin: 6px 0 22px;
+        }
+
+        .remember {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+        .remember input {
+            width: 16px;
+            min-height: 16px;
+
+            accent-color: var(--bordo);
+        }
+
+        .submit-btn {
+            width: 100%;
+            min-height: 54px;
+
+            border: 0;
+            border-radius: 13px;
+
+            background: var(--bordo);
+            color: white;
+
+            font-weight: 900;
+
+            box-shadow:
+                0 12px 25px rgba(108, 21, 30, 0.18);
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--bordo-dark);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.65;
+            transform: none;
+        }
+
+        .message {
+            display: none;
+
+            margin-bottom: 18px;
+            padding: 12px 14px;
+
+            border-radius: 12px;
+
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            background: rgba(165, 40, 53, 0.08);
+            color: var(--danger);
+        }
+
+        .message.success {
+            background: rgba(33, 115, 93, 0.08);
+            color: var(--success);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            margin: 28px 0;
+
+            color: #A4AAA8;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+
+            height: 1px;
+            flex: 1;
+
+            background: var(--border);
+        }
+
+        .register-prompt {
+            text-align: center;
+
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .register-prompt a {
+            color: var(--bordo);
+            font-weight: 900;
+        }
+
+        .register-prompt a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            display: block;
+
+            margin-top: 25px;
+
+            text-align: center;
+
+            color: var(--green);
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .back-home:hover {
+            color: var(--bordo);
+        }
+
+        /* =========================
+           TABLET
+        ========================= */
+
+        @media (max-width: 950px) {
+
+            .page {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                display: none;
+            }
+
+            .form-panel {
+                min-height: 100vh;
+                min-height: 100dvh;
+
+                padding:
+                    30px 22px;
+            }
+
+            .mobile-brand {
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
+                margin-bottom: 42px;
+            }
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 520px) {
+
+            .form-panel {
+                align-items: flex-start;
+
+                padding:
+                    25px 17px 35px;
+            }
+
+            .form-container {
+                max-width: 100%;
+            }
+
+            .mobile-brand {
+                justify-content: flex-start;
+                margin-bottom: 34px;
+            }
+
+            .form-heading h2 {
+                font-size: 32px;
+            }
+
+            .form {
+                margin-top: 27px;
+            }
+
+            .remember-row {
+                align-items: flex-start;
+            }
+
+            .field-link {
+                text-align: right;
+            }
+        }
+
+        /* =========================
+           SMALL PHONES
+        ========================= */
+
+        @media (max-width: 360px) {
+
+            .form-panel {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .form-heading h2 {
+                font-size: 29px;
+            }
+
+            input,
+            .submit-btn {
+                min-height: 50px;
+            }
+
+            .remember-row {
+                flex-direction: column;
+            }
+        }
+
+        /* =========================
+           REDUCED MOTION
+        ========================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- BRAND PANEL -->
+
+    <section class="brand-panel">
+
+        <a href="index.html" class="brand">
+            <span class="brand-mark">K</span>
+            <span>K-Tickets</span>
+        </a>
+
+        <div class="brand-content">
+
+            <span class="eyebrow">
+                Welcome back
+            </span>
+
+            <h1>
+                Your events
+                <span>await.</span>
+            </h1>
+
+            <p>
+                Sign in to discover your tickets, manage your
+                events and keep your K-Tickets experience in one place.
+            </p>
+
+            <div class="brand-points">
+
+                <div class="brand-point">
+                    <strong>Your tickets</strong>
+                    <span>Always available in your account.</span>
+                </div>
+
+                <div class="brand-point">
+                    <strong>Secure payments</strong>
+                    <span>Built around verified transactions.</span>
+                </div>
+
+                <div class="brand-point">
+                    <strong>Easy entry</strong>
+                    <span>Your unique QR is ready when you are.</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="brand-footer">
+            © <span id="brandYear"></span> K-Tickets
+        </div>
+
+    </section>
+
+
+    <!-- FORM PANEL -->
+
+    <main class="form-panel">
+
+        <div class="form-container">
+
+            <a href="index.html" class="mobile-brand brand">
+                <span class="brand-mark">K</span>
+                <span>K-Tickets</span>
+            </a>
+
+            <div class="form-heading">
+
+                <h2>
+                    Sign in
+                </h2>
+
+                <p>
+                    Welcome back. Enter your details to continue.
+                </p>
+
+            </div>
+
+
+            <form
+                class="form"
+                id="loginForm"
+                novalidate
+            >
+
+                <div
+                    class="message"
+                    id="message"
+                    role="alert"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="field">
+
+                    <div class="field-row">
+                        <label for="email">
+                            Email address
+                        </label>
+                    </div>
+
+                    <div class="input-wrap">
+
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autocomplete="email"
+                            placeholder="you@example.com"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <div class="field-row">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <a
+                            href="forgot-password.html"
+                            class="field-link"
+                        >
+                            Forgot password?
+                        </a>
+
+                    </div>
+
+                    <div class="input-wrap">
+
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            autocomplete="current-password"
+                            placeholder="Enter your password"
+                            class="password-input"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="passwordToggle"
+                            aria-label="Show password"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="remember-row">
+
+                    <label class="remember">
+
+                        <input
+                            type="checkbox"
+                            id="remember"
+                        >
+
+                        <span>
+                            Remember me
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                    id="submitBtn"
+                >
+                    Sign in
+                </button>
+
+            </form>
+
+
+            <div class="divider">
+                OR
+            </div>
+
+
+            <p class="register-prompt">
+                Don't have a K-Tickets account?
+                <a href="register.html">
+                    Create one
+                </a>
+            </p>
+
+
+            <a
+                href="index.html"
+                class="back-home"
+            >
+                ← Back to K-Tickets
+            </a>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* =========================
+       YEAR
+    ========================= */
+
+    document.getElementById("brandYear").textContent =
+        new Date().getFullYear();
+
+
+    /* =========================
+       PASSWORD VISIBILITY
+    ========================= */
+
+    const password =
+        document.getElementById("password");
+
+    const passwordToggle =
+        document.getElementById("passwordToggle");
+
+    passwordToggle.addEventListener("click", () => {
+
+        const isPassword =
+            password.type === "password";
+
+        password.type =
+            isPassword ? "text" : "password";
+
+        passwordToggle.textContent =
+            isPassword ? "Hide" : "Show";
+
+        passwordToggle.setAttribute(
+            "aria-label",
+            isPassword
+                ? "Hide password"
+                : "Show password"
+        );
+
+    });
+
+
+    /* =========================
+       TEMPORARY FORM HANDLING
+       =========================
+       Supabase authentication
+       will replace this section.
+    ========================= */
+
+    const form =
+        document.getElementById("loginForm");
+
+    const message =
+        document.getElementById("message");
+
+    const submitBtn =
+        document.getElementById("submitBtn");
+
+
+    form.addEventListener("submit", (event) => {
+
+        event.preventDefault();
+
+        message.className = "message";
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const passwordValue =
+            password.value;
+
+        if (!email || !passwordValue) {
+
+            message.textContent =
+                "Please enter your email and password.";
+
+            message.classList.add(
+                "show",
+                "error"
+            );
+
+            return;
+        }
+
+        if (!email.includes("@")) {
+
+            message.textContent =
+                "Please enter a valid email address.";
+
+            message.classList.add(
+                "show",
+                "error"
+            );
+
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Signing in...";
+
+        /*
+            SUPABASE AUTH WILL BE CONNECTED HERE.
+        */
+
+        setTimeout(() => {
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Sign in";
+
+            message.textContent =
+                "Authentication will be connected to your K-Tickets account next.";
+
+            message.classList.add(
+                "show",
+                "success"
+            );
+
+        }, 700);
+
+    });
+
+</script>
+
+</body>
+</html>

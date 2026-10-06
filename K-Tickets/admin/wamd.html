@@ -1,0 +1,4709 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="referrer" content="same-origin">
+
+  <title>K-Tickets Admin — WAMD Verification</title>
+
+  <style>
+    :root{
+      --bordo:#6C151E;
+      --green:#0F3D3A;
+      --cream:#F5DABF;
+      --white:#fff;
+      --ink:#18201f;
+      --muted:#69716f;
+      --line:#e6ded7;
+      --soft:#f8f4ef;
+      --success:#18794e;
+      --warning:#a66b00;
+      --danger:#b42318;
+      --info:#2764a5;
+      --shadow:0 16px 45px rgba(15,61,58,.08);
+      --radius:18px;
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      min-height:100vh;
+      background:#f7f4f0;
+      color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      overflow-x:hidden;
+    }
+
+    button,input,select,textarea{
+      font:inherit;
+    }
+
+    button{
+      cursor:pointer;
+    }
+
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    /* =========================
+       SECURITY GATE
+    ========================= */
+
+    #securityGate{
+      position:fixed;
+      inset:0;
+      z-index:99999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--green);
+      color:var(--cream);
+    }
+
+    #securityGate.hidden{
+      display:none;
+    }
+
+    .security-box{
+      width:min(92%,430px);
+      padding:34px;
+      text-align:center;
+      border:1px solid rgba(245,218,191,.18);
+      border-radius:24px;
+      background:rgba(255,255,255,.04);
+      box-shadow:0 25px 80px rgba(0,0,0,.25);
+    }
+
+    .security-icon{
+      width:58px;
+      height:58px;
+      margin:0 auto 18px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:var(--bordo);
+      font-size:24px;
+    }
+
+    .security-box h2{
+      font-size:20px;
+      margin-bottom:8px;
+    }
+
+    .security-box p{
+      color:rgba(245,218,191,.72);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .loader{
+      width:28px;
+      height:28px;
+      margin:20px auto 0;
+      border:3px solid rgba(245,218,191,.2);
+      border-top-color:var(--cream);
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+
+    /* =========================
+       APP / SIDEBAR
+    ========================= */
+
+    .app{
+      min-height:100vh;
+      display:flex;
+    }
+
+    .sidebar{
+      position:fixed;
+      inset:0 auto 0 0;
+      z-index:1000;
+      width:258px;
+      display:flex;
+      flex-direction:column;
+      background:var(--green);
+      color:var(--cream);
+      transition:transform .25s ease;
+    }
+
+    .brand{
+      min-height:82px;
+      display:flex;
+      align-items:center;
+      gap:13px;
+      padding:18px 22px;
+      border-bottom:1px solid rgba(245,218,191,.1);
+    }
+
+    .brand-mark{
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border-radius:12px;
+      background:var(--bordo);
+      color:var(--cream);
+      font-weight:900;
+      letter-spacing:-1px;
+    }
+
+    .brand-text strong{
+      display:block;
+      font-size:15px;
+      letter-spacing:.08em;
+    }
+
+    .brand-text span{
+      display:block;
+      margin-top:3px;
+      color:rgba(245,218,191,.58);
+      font-size:10px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    .nav{
+      flex:1;
+      padding:18px 12px;
+      overflow-y:auto;
+    }
+
+    .nav-label{
+      padding:10px 12px 8px;
+      color:rgba(245,218,191,.4);
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .nav a{
+      display:flex;
+      align-items:center;
+      gap:11px;
+      min-height:43px;
+      margin:3px 0;
+      padding:10px 12px;
+      border-radius:11px;
+      color:rgba(245,218,191,.72);
+      font-size:13px;
+      font-weight:600;
+      transition:.2s ease;
+    }
+
+    .nav a:hover{
+      color:var(--cream);
+      background:rgba(255,255,255,.06);
+    }
+
+    .nav a.active{
+      color:#fff;
+      background:var(--bordo);
+      box-shadow:0 8px 22px rgba(108,21,30,.2);
+    }
+
+    .nav-icon{
+      width:20px;
+      text-align:center;
+      font-size:15px;
+      flex:none;
+    }
+
+    .sidebar-footer{
+      padding:14px;
+      border-top:1px solid rgba(245,218,191,.1);
+    }
+
+    .admin-mini{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+      padding:10px;
+      border-radius:13px;
+      background:rgba(255,255,255,.045);
+    }
+
+    .avatar{
+      width:36px;
+      height:36px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border-radius:50%;
+      background:var(--cream);
+      color:var(--green);
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .admin-mini-text{
+      min-width:0;
+    }
+
+    .admin-mini-text strong{
+      display:block;
+      max-width:150px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      font-size:12px;
+    }
+
+    .admin-mini-text span{
+      display:block;
+      margin-top:2px;
+      color:rgba(245,218,191,.48);
+      font-size:10px;
+    }
+
+    /* =========================
+       MAIN / TOPBAR
+    ========================= */
+
+    .main{
+      width:calc(100% - 258px);
+      min-width:0;
+      margin-left:258px;
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:500;
+      min-height:76px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:14px 30px;
+      background:rgba(247,244,240,.94);
+      border-bottom:1px solid rgba(24,32,31,.07);
+      backdrop-filter:blur(16px);
+    }
+
+    .topbar-left{
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .mobile-menu{
+      display:none;
+      width:40px;
+      height:40px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#fff;
+      color:var(--green);
+    }
+
+    .page-title h1{
+      color:var(--green);
+      font-size:21px;
+      letter-spacing:-.03em;
+    }
+
+    .page-title p{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .topbar-actions{
+      display:flex;
+      align-items:center;
+      gap:9px;
+    }
+
+    .icon-button{
+      position:relative;
+      width:40px;
+      height:40px;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--line);
+      border-radius:11px;
+      background:#fff;
+      color:var(--green);
+    }
+
+    .notification-dot{
+      position:absolute;
+      top:8px;
+      right:8px;
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:var(--bordo);
+    }
+
+    .content{
+      width:min(1500px,100%);
+      margin:0 auto;
+      padding:28px 30px 50px;
+    }
+
+    /* =========================
+       SECURITY NOTICE
+    ========================= */
+
+    .security-notice{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:20px;
+      padding:14px 16px;
+      border:1px solid rgba(15,61,58,.12);
+      border-radius:15px;
+      background:rgba(15,61,58,.035);
+    }
+
+    .security-notice-icon{
+      width:34px;
+      height:34px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border-radius:10px;
+      background:var(--green);
+      color:var(--cream);
+      font-size:14px;
+    }
+
+    .security-notice strong{
+      display:block;
+      color:var(--green);
+      font-size:12px;
+    }
+
+    .security-notice p{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.55;
+    }
+
+    /* =========================
+       STATS
+    ========================= */
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:16px;
+      margin-bottom:20px;
+    }
+
+    .stat-card{
+      min-width:0;
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    .stat-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .stat-label{
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+
+    .stat-icon{
+      width:34px;
+      height:34px;
+      display:grid;
+      place-items:center;
+      border-radius:10px;
+      background:rgba(15,61,58,.07);
+      color:var(--green);
+      font-size:14px;
+    }
+
+    .stat-value{
+      margin-top:12px;
+      color:var(--green);
+      font-size:25px;
+      font-weight:850;
+      letter-spacing:-.04em;
+    }
+
+    .stat-note{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    /* =========================
+       WAMD EXPLAINER
+    ========================= */
+
+    .workflow{
+      display:grid;
+      grid-template-columns:1.35fr .65fr;
+      gap:16px;
+      margin-bottom:20px;
+    }
+
+    .workflow-card{
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    .workflow-card h2{
+      color:var(--green);
+      font-size:14px;
+    }
+
+    .workflow-card > p{
+      margin-top:5px;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.55;
+    }
+
+    .workflow-steps{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:9px;
+      margin-top:17px;
+    }
+
+    .workflow-step{
+      position:relative;
+      min-width:0;
+      padding:13px;
+      border:1px solid var(--line);
+      border-radius:13px;
+      background:#fbf9f6;
+    }
+
+    .workflow-step-number{
+      width:26px;
+      height:26px;
+      display:grid;
+      place-items:center;
+      margin-bottom:9px;
+      border-radius:8px;
+      background:var(--green);
+      color:#fff;
+      font-size:10px;
+      font-weight:900;
+    }
+
+    .workflow-step strong{
+      display:block;
+      color:var(--green);
+      font-size:11px;
+    }
+
+    .workflow-step span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:9px;
+      line-height:1.45;
+    }
+
+    .protection-list{
+      display:grid;
+      gap:9px;
+      margin-top:15px;
+    }
+
+    .protection-item{
+      display:flex;
+      align-items:flex-start;
+      gap:9px;
+      padding:9px;
+      border-radius:10px;
+      background:#fbf9f6;
+    }
+
+    .protection-item-icon{
+      width:25px;
+      height:25px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border-radius:7px;
+      background:rgba(15,61,58,.08);
+      color:var(--green);
+      font-size:10px;
+      font-weight:900;
+    }
+
+    .protection-item strong{
+      display:block;
+      color:var(--ink);
+      font-size:10px;
+    }
+
+    .protection-item span{
+      display:block;
+      margin-top:2px;
+      color:var(--muted);
+      font-size:9px;
+      line-height:1.4;
+    }
+
+    /* =========================
+       TOOLBAR
+    ========================= */
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:16px;
+    }
+
+    .filters{
+      flex:1;
+      min-width:0;
+      display:grid;
+      grid-template-columns:minmax(220px,1.5fr) minmax(150px,1fr) minmax(150px,1fr);
+      gap:9px;
+    }
+
+    .field{
+      position:relative;
+    }
+
+    .field input,
+    .field select{
+      width:100%;
+      height:42px;
+      padding:0 12px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      outline:none;
+      background:#fff;
+      color:var(--ink);
+      font-size:12px;
+    }
+
+    .field input:focus,
+    .field select:focus{
+      border-color:var(--green);
+      box-shadow:0 0 0 3px rgba(15,61,58,.08);
+    }
+
+    .button{
+      min-height:42px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:0 15px;
+      border:1px solid transparent;
+      border-radius:11px;
+      font-size:12px;
+      font-weight:800;
+      transition:.2s ease;
+      white-space:nowrap;
+    }
+
+    .button-primary{
+      background:var(--green);
+      color:#fff;
+    }
+
+    .button-primary:hover{
+      background:#0a302e;
+      transform:translateY(-1px);
+    }
+
+    .button-secondary{
+      border-color:var(--line);
+      background:#fff;
+      color:var(--green);
+    }
+
+    .button-danger{
+      background:var(--bordo);
+      color:#fff;
+    }
+
+    .button-success{
+      background:var(--success);
+      color:#fff;
+    }
+
+    .button:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+      transform:none!important;
+    }
+
+    /* =========================
+       PANEL / TABLE
+    ========================= */
+
+    .panel{
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    .panel-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+      padding:18px 20px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .panel-head h2{
+      color:var(--green);
+      font-size:14px;
+    }
+
+    .panel-head p{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    .table-wrap{
+      width:100%;
+      overflow-x:auto;
+    }
+
+    table{
+      width:100%;
+      min-width:1050px;
+      border-collapse:collapse;
+    }
+
+    th{
+      padding:12px 18px;
+      border-bottom:1px solid var(--line);
+      background:#fbf9f6;
+      color:#747a78;
+      font-size:10px;
+      font-weight:850;
+      letter-spacing:.07em;
+      text-align:left;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    td{
+      padding:14px 18px;
+      border-bottom:1px solid #f0ebe6;
+      color:#303837;
+      font-size:12px;
+      vertical-align:middle;
+    }
+
+    tbody tr:hover{
+      background:#fcfaf8;
+    }
+
+    tbody tr:last-child td{
+      border-bottom:0;
+    }
+
+    .id{
+      color:var(--green);
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font-size:10px;
+      font-weight:800;
+    }
+
+    .primary-text{
+      max-width:230px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:var(--ink);
+      font-weight:700;
+    }
+
+    .subtext{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    .amount{
+      color:var(--green);
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    .method{
+      display:inline-flex;
+      align-items:center;
+      padding:5px 8px;
+      border-radius:8px;
+      background:#f4f2ef;
+      color:#555d5b;
+      font-size:10px;
+      font-weight:800;
+    }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 9px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:850;
+      text-transform:capitalize;
+      white-space:nowrap;
+    }
+
+    .status::before{
+      content:"";
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:currentColor;
+    }
+
+    .status-success{
+      color:var(--success);
+      background:rgba(24,121,78,.09);
+    }
+
+    .status-pending{
+      color:var(--warning);
+      background:rgba(166,107,0,.1);
+    }
+
+    .status-failed,
+    .status-rejected,
+    .status-cancelled{
+      color:var(--danger);
+      background:rgba(180,35,24,.08);
+    }
+
+    .status-unknown{
+      color:#68706e;
+      background:#f1f1ef;
+    }
+
+    .empty{
+      padding:55px 20px;
+      text-align:center;
+    }
+
+    .empty-icon{
+      width:50px;
+      height:50px;
+      margin:0 auto 12px;
+      display:grid;
+      place-items:center;
+      border-radius:15px;
+      background:#f3eee9;
+      color:var(--green);
+      font-size:19px;
+    }
+
+    .empty h3{
+      color:var(--green);
+      font-size:14px;
+    }
+
+    .empty p{
+      max-width:500px;
+      margin:6px auto 0;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.6;
+    }
+
+    /* =========================
+       MOBILE CARDS
+    ========================= */
+
+    .mobile-list{
+      display:none;
+      padding:12px;
+    }
+
+    .wamd-card{
+      padding:16px;
+      margin-bottom:10px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:#fff;
+    }
+
+    .wamd-card:last-child{
+      margin-bottom:0;
+    }
+
+    .wamd-card-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .wamd-card-title{
+      min-width:0;
+    }
+
+    .wamd-card-title strong{
+      display:block;
+      max-width:230px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:var(--green);
+      font-size:12px;
+    }
+
+    .wamd-card-title span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    .mobile-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .mobile-field label{
+      display:block;
+      margin-bottom:3px;
+      color:#8a8e8c;
+      font-size:9px;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .mobile-field span{
+      color:#303837;
+      font-size:11px;
+      word-break:break-word;
+    }
+
+    .mobile-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-top:14px;
+    }
+
+    /* =========================
+       DRAWER
+    ========================= */
+
+    .drawer-backdrop{
+      position:fixed;
+      inset:0;
+      z-index:3000;
+      display:none;
+      background:rgba(10,25,24,.42);
+      backdrop-filter:blur(3px);
+    }
+
+    .drawer-backdrop.open{
+      display:block;
+    }
+
+    .drawer{
+      position:absolute;
+      inset:0 0 0 auto;
+      width:min(540px,94vw);
+      overflow-y:auto;
+      padding:24px;
+      background:#fff;
+      box-shadow:-20px 0 60px rgba(0,0,0,.18);
+      animation:slideIn .22s ease;
+    }
+
+    @keyframes slideIn{
+      from{transform:translateX(100%)}
+      to{transform:translateX(0)}
+    }
+
+    .drawer-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:15px;
+      padding-bottom:18px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .drawer-head h2{
+      color:var(--green);
+      font-size:18px;
+    }
+
+    .drawer-head p{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    .drawer-close{
+      width:38px;
+      height:38px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#fff;
+      color:var(--green);
+    }
+
+    .detail-section{
+      padding:18px 0;
+      border-bottom:1px solid var(--line);
+    }
+
+    .detail-section:last-child{
+      border-bottom:0;
+    }
+
+    .detail-section h3{
+      margin-bottom:12px;
+      color:var(--green);
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .detail-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:20px;
+      padding:7px 0;
+    }
+
+    .detail-row > span:first-child{
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    .detail-row > span:last-child{
+      max-width:290px;
+      color:var(--ink);
+      font-size:11px;
+      font-weight:700;
+      text-align:right;
+      word-break:break-word;
+    }
+
+    .action-box{
+      margin-top:18px;
+      padding:15px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fbf9f6;
+    }
+
+    .action-box h3{
+      color:var(--green);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .action-box p{
+      margin-top:5px;
+      color:var(--muted);
+      font-size:10px;
+      line-height:1.55;
+    }
+
+    .action-box textarea{
+      width:100%;
+      min-height:86px;
+      margin-top:11px;
+      padding:10px;
+      resize:vertical;
+      border:1px solid var(--line);
+      border-radius:10px;
+      outline:none;
+      background:#fff;
+      color:var(--ink);
+      font-size:11px;
+    }
+
+    .action-box textarea:focus{
+      border-color:var(--green);
+      box-shadow:0 0 0 3px rgba(15,61,58,.08);
+    }
+
+    .action-buttons{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:9px;
+      margin-top:10px;
+    }
+
+    .secure-action-note{
+      margin-top:12px;
+      padding:11px;
+      border:1px solid rgba(39,100,165,.14);
+      border-radius:10px;
+      background:rgba(39,100,165,.045);
+      color:#53697f;
+      font-size:9px;
+      line-height:1.55;
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    #toast{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      z-index:5000;
+      max-width:min(380px,calc(100vw - 30px));
+      padding:13px 16px;
+      border-radius:12px;
+      background:var(--green);
+      color:#fff;
+      font-size:12px;
+      font-weight:700;
+      box-shadow:0 15px 40px rgba(0,0,0,.18);
+      transform:translateY(20px);
+      opacity:0;
+      pointer-events:none;
+      transition:.22s ease;
+    }
+
+    #toast.show{
+      transform:translateY(0);
+      opacity:1;
+    }
+
+    #toast.error{
+      background:var(--bordo);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media(max-width:1200px){
+      .workflow{
+        grid-template-columns:1fr;
+      }
+
+      .stats{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+
+      .filters{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .toolbar{
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .toolbar > .button{
+        align-self:flex-start;
+      }
+    }
+
+    @media(max-width:900px){
+      .sidebar{
+        transform:translateX(-100%);
+        box-shadow:20px 0 50px rgba(0,0,0,.16);
+      }
+
+      .sidebar.open{
+        transform:translateX(0);
+      }
+
+      .main{
+        width:100%;
+        margin-left:0;
+      }
+
+      .mobile-menu{
+        display:grid;
+        place-items:center;
+      }
+
+      .topbar{
+        padding:12px 18px;
+      }
+
+      .content{
+        padding:22px 18px 40px;
+      }
+
+      .table-wrap{
+        display:none;
+      }
+
+      .mobile-list{
+        display:block;
+      }
+
+      .workflow-steps{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media(max-width:620px){
+      .topbar{
+        min-height:68px;
+      }
+
+      .page-title h1{
+        font-size:18px;
+      }
+
+      .page-title p{
+        display:none;
+      }
+
+      .topbar-actions .icon-button:first-child{
+        display:none;
+      }
+
+      .content{
+        padding:18px 13px 32px;
+      }
+
+      .stats{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+      }
+
+      .stat-card{
+        padding:15px;
+      }
+
+      .stat-value{
+        font-size:20px;
+      }
+
+      .filters{
+        grid-template-columns:1fr;
+      }
+
+      .workflow-steps{
+        grid-template-columns:1fr;
+      }
+
+      .security-notice{
+        padding:12px;
+      }
+
+      .panel-head{
+        padding:15px;
+      }
+
+      .drawer{
+        width:100%;
+        padding:20px;
+      }
+    }
+
+    @media(max-width:400px){
+      .stats{
+        grid-template-columns:1fr;
+      }
+
+      .mobile-grid{
+        grid-template-columns:1fr;
+      }
+
+      .mobile-actions,
+      .action-buttons{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =====================================================
+       SECURITY GATE
+  ====================================================== -->
+
+  <div id="securityGate">
+    <div class="security-box">
+      <div class="security-icon">🔐</div>
+
+      <h2>
+        Verifying administrator access
+      </h2>
+
+      <p>
+        K-Tickets is checking your authenticated
+        Supabase session and administrator role
+        before loading WAMD records.
+      </p>
+
+      <div class="loader"></div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
+       APP
+  ====================================================== -->
+
+  <div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+      <div class="brand">
+
+        <div class="brand-mark">
+          KT
+        </div>
+
+        <div class="brand-text">
+          <strong>K-TICKETS</strong>
+          <span>Administration</span>
+        </div>
+
+      </div>
+
+
+      <nav class="nav">
+
+        <div class="nav-label">
+          Overview
+        </div>
+
+        <a href="./dashboard.html">
+          <span class="nav-icon">⌂</span>
+          Dashboard
+        </a>
+
+
+        <div class="nav-label">
+          Management
+        </div>
+
+        <a href="./events.html">
+          <span class="nav-icon">◫</span>
+          Events
+        </a>
+
+        <a href="./merchants.html">
+          <span class="nav-icon">♙</span>
+          Merchants
+        </a>
+
+        <a href="./customers.html">
+          <span class="nav-icon">♧</span>
+          Customers
+        </a>
+
+        <a href="./orders.html">
+          <span class="nav-icon">▤</span>
+          Orders
+        </a>
+
+        <a href="./payments.html">
+          <span class="nav-icon">₿</span>
+          Payments
+        </a>
+
+        <a href="./wamd.html" class="active">
+          <span class="nav-icon">↔</span>
+          WAMD
+        </a>
+
+        <a href="./withdrawals.html">
+          <span class="nav-icon">⇩</span>
+          Withdrawals
+        </a>
+
+
+        <div class="nav-label">
+          Finance
+        </div>
+
+        <a href="./fees.html">
+          <span class="nav-icon">%</span>
+          Fees
+        </a>
+
+        <a href="./reports.html">
+          <span class="nav-icon">▥</span>
+          Reports
+        </a>
+
+
+        <div class="nav-label">
+          System
+        </div>
+
+        <a href="./settings.html">
+          <span class="nav-icon">⚙</span>
+          Settings
+        </a>
+
+      </nav>
+
+
+      <div class="sidebar-footer">
+
+        <div class="admin-mini">
+
+          <div class="avatar" id="sidebarAvatar">
+            A
+          </div>
+
+          <div class="admin-mini-text">
+
+            <strong id="sidebarName">
+              Administrator
+            </strong>
+
+            <span>
+              Platform Admin
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+      <!-- TOPBAR -->
+
+      <header class="topbar">
+
+        <div class="topbar-left">
+
+          <button
+            class="mobile-menu"
+            id="mobileMenu"
+            aria-label="Open navigation"
+          >
+            ☰
+          </button>
+
+          <div class="page-title">
+
+            <h1>
+              WAMD Verification
+            </h1>
+
+            <p>
+              Review and verify manual WAMD payments
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+          <button
+            class="icon-button"
+            id="refreshButton"
+            title="Refresh WAMD records"
+            aria-label="Refresh WAMD records"
+          >
+            ↻
+          </button>
+
+          <button
+            class="icon-button"
+            id="notificationButton"
+            title="Notifications"
+            aria-label="Notifications"
+          >
+            ♧
+
+            <span
+              class="notification-dot"
+              id="notificationDot"
+              style="display:none"
+            ></span>
+
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <!-- CONTENT -->
+
+      <section class="content">
+
+        <!-- SECURITY NOTICE -->
+
+        <div class="security-notice">
+
+          <div class="security-notice-icon">
+            🔒
+          </div>
+
+          <div>
+
+            <strong>
+              WAMD verification is a privileged financial operation
+            </strong>
+
+            <p>
+              The browser never receives a Supabase service-role key,
+              database password, payment credential, or gateway secret.
+              Verification and rejection must be enforced again on the
+              server through a protected RPC or Edge Function with
+              administrator authorization and audit logging.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <section class="stats">
+
+          <article class="stat-card">
+
+            <div class="stat-top">
+
+              <span class="stat-label">
+                Total
+              </span>
+
+              <span class="stat-icon">
+                ↔
+              </span>
+
+            </div>
+
+            <div
+              class="stat-value"
+              id="statTotal"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              WAMD records returned
+            </div>
+
+          </article>
+
+
+          <article class="stat-card">
+
+            <div class="stat-top">
+
+              <span class="stat-label">
+                Pending
+              </span>
+
+              <span class="stat-icon">
+                ◷
+              </span>
+
+            </div>
+
+            <div
+              class="stat-value"
+              id="statPending"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Awaiting administrator review
+            </div>
+
+          </article>
+
+
+          <article class="stat-card">
+
+            <div class="stat-top">
+
+              <span class="stat-label">
+                Verified
+              </span>
+
+              <span class="stat-icon">
+                ✓
+              </span>
+
+            </div>
+
+            <div
+              class="stat-value"
+              id="statVerified"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Successfully verified
+            </div>
+
+          </article>
+
+
+          <article class="stat-card">
+
+            <div class="stat-top">
+
+              <span class="stat-label">
+                Rejected
+              </span>
+
+              <span class="stat-icon">
+                !
+              </span>
+
+            </div>
+
+            <div
+              class="stat-value"
+              id="statRejected"
+            >
+              —
+            </div>
+
+            <div class="stat-note">
+              Rejected or invalid records
+            </div>
+
+          </article>
+
+        </section>
+
+
+        <!-- WORKFLOW -->
+
+        <section class="workflow">
+
+          <article class="workflow-card">
+
+            <h2>
+              WAMD verification workflow
+            </h2>
+
+            <p>
+              A manual WAMD payment remains pending until an authorized
+              administrator verifies the submitted transaction reference
+              and confirms the payment against the related order.
+            </p>
+
+
+            <div class="workflow-steps">
+
+              <div class="workflow-step">
+
+                <div class="workflow-step-number">
+                  1
+                </div>
+
+                <strong>
+                  Customer pays
+                </strong>
+
+                <span>
+                  Customer completes the WAMD payment outside K-Tickets.
+                </span>
+
+              </div>
+
+
+              <div class="workflow-step">
+
+                <div class="workflow-step-number">
+                  2
+                </div>
+
+                <strong>
+                  Reference submitted
+                </strong>
+
+                <span>
+                  Transaction reference is attached to the order.
+                </span>
+
+              </div>
+
+
+              <div class="workflow-step">
+
+                <div class="workflow-step-number">
+                  3
+                </div>
+
+                <strong>
+                  Admin reviews
+                </strong>
+
+                <span>
+                  Admin validates the submitted information.
+                </span>
+
+              </div>
+
+
+              <div class="workflow-step">
+
+                <div class="workflow-step-number">
+                  4
+                </div>
+
+                <strong>
+                  Order confirmed
+                </strong>
+
+                <span>
+                  Only successful verification may unlock ticket fulfilment.
+                </span>
+
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="workflow-card">
+
+            <h2>
+              Protection layer
+            </h2>
+
+            <p>
+              Verification actions must never rely on the browser alone.
+            </p>
+
+
+            <div class="protection-list">
+
+              <div class="protection-item">
+
+                <div class="protection-item-icon">
+                  ✓
+                </div>
+
+                <div>
+                  <strong>
+                    Admin authorization
+                  </strong>
+
+                  <span>
+                    Server verifies the authenticated admin role.
+                  </span>
+                </div>
+
+              </div>
+
+
+              <div class="protection-item">
+
+                <div class="protection-item-icon">
+                    ↔
+                </div>
+
+                <div>
+                  <strong>
+                    Order binding
+                  </strong>
+
+                  <span>
+                    Verification must be tied to the correct order.
+                  </span>
+                </div>
+
+              </div>
+
+
+              <div class="protection-item">
+
+                <div class="protection-item-icon">
+                  #
+                </div>
+
+                <div>
+                  <strong>
+                    Reference uniqueness
+                  </strong>
+
+                  <span>
+                    Reuse of a transaction reference should be rejected.
+                  </span>
+                </div>
+
+              </div>
+
+
+              <div class="protection-item">
+
+                <div class="protection-item-icon">
+                  ▤
+                </div>
+
+                <div>
+                  <strong>
+                    Audit logging
+                  </strong>
+
+                  <span>
+                    Every verification decision should be recorded.
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        </section>
+
+
+        <!-- TOOLBAR -->
+
+        <div class="toolbar">
+
+          <div class="filters">
+
+            <div class="field">
+
+              <input
+                type="search"
+                id="searchInput"
+                placeholder="Search transaction, order or reference..."
+                autocomplete="off"
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <select id="statusFilter">
+
+                <option value="all">
+                  All statuses
+                </option>
+
+                <option value="pending">
+                  Pending
+                </option>
+
+                <option value="verified">
+                  Verified
+                </option>
+
+                <option value="rejected">
+                  Rejected
+                </option>
+
+                <option value="cancelled">
+                  Cancelled
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <select id="periodFilter">
+
+                <option value="all">
+                  All time
+                </option>
+
+                <option value="today">
+                  Today
+                </option>
+
+                <option value="7">
+                  7 days
+                </option>
+
+                <option value="30">
+                  30 days
+                </option>
+
+                <option value="90">
+                  90 days
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <button
+            class="button button-secondary"
+            id="clearFilters"
+          >
+            Clear filters
+          </button>
+
+        </div>
+
+
+        <!-- TABLE -->
+
+        <section class="panel">
+
+          <div class="panel-head">
+
+            <div>
+
+              <h2>
+                WAMD submissions
+              </h2>
+
+              <p id="resultSummary">
+                Loading WAMD records...
+              </p>
+
+            </div>
+
+
+            <button
+              class="button button-primary"
+              id="exportButton"
+            >
+              Export CSV
+            </button>
+
+          </div>
+
+
+          <!-- DESKTOP TABLE -->
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Transaction</th>
+                  <th>Order</th>
+                  <th>Customer</th>
+                  <th>Event</th>
+                  <th>Amount</th>
+                  <th>Reference</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                  <th></th>
+                </tr>
+
+              </thead>
+
+
+              <tbody id="wamdBody">
+
+                <tr>
+
+                  <td colspan="9">
+
+                    <div class="empty">
+
+                      <div class="empty-icon">
+                        ◷
+                      </div>
+
+                      <h3>
+                        Loading WAMD records
+                      </h3>
+
+                      <p>
+                        Retrieving manual payment submissions from Supabase.
+                      </p>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+
+          <!-- MOBILE -->
+
+          <div
+            class="mobile-list"
+            id="mobileList"
+          >
+
+            <div class="empty">
+
+              <div class="empty-icon">
+                ◷
+              </div>
+
+              <h3>
+                Loading WAMD records
+              </h3>
+
+              <p>
+                Retrieving manual payment submissions from Supabase.
+              </p>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =====================================================
+       DRAWER
+  ====================================================== -->
+
+  <div
+    class="drawer-backdrop"
+    id="drawerBackdrop"
+  >
+
+    <aside
+      class="drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drawerTitle"
+    >
+
+      <div class="drawer-head">
+
+        <div>
+
+          <h2 id="drawerTitle">
+            WAMD review
+          </h2>
+
+          <p id="drawerSubtitle">
+            Manual payment verification
+          </p>
+
+        </div>
+
+
+        <button
+          class="drawer-close"
+          id="drawerClose"
+          aria-label="Close WAMD review"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div id="drawerContent"></div>
+
+    </aside>
+
+  </div>
+
+
+  <!-- TOAST -->
+
+  <div id="toast"></div>
+
+
+  <!-- =====================================================
+       SUPABASE
+  ====================================================== -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+  <script>
+    /* =====================================================
+       K-TICKETS ADMIN WAMD
+       =====================================================
+
+       SECURITY MODEL
+
+       - Browser uses only the Supabase anon/public key.
+       - No service-role key is allowed here.
+       - No payment gateway secrets are allowed here.
+       - Admin role is checked before the page loads.
+       - Supabase RLS must independently protect WAMD rows.
+       - Verification/rejection must be performed through
+         a secure server-side RPC or Edge Function.
+       - The server must re-check administrator authorization.
+       - The server must bind the WAMD record to its order.
+       - The server must prevent duplicate transaction references.
+       - The server should write an immutable audit record.
+
+       EXPECTED FUTURE SERVER RPCS
+
+       admin_verify_wamd(
+         p_wamd_id,
+         p_note
+       )
+
+       admin_reject_wamd(
+         p_wamd_id,
+         p_note
+       )
+
+       These are intentionally NOT assumed to exist yet.
+    ===================================================== */
+
+
+    /* =====================================================
+       CONFIG
+    ===================================================== */
+
+    const SUPABASE_URL =
+      window.KTICKETS_SUPABASE_URL || "";
+
+    const SUPABASE_ANON_KEY =
+      window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+
+    let supabaseClient = null;
+
+    let currentUser = null;
+    let currentProfile = null;
+
+    let allWamd = [];
+    let visibleWamd = [];
+
+    let selectedWamd = null;
+
+    let toastTimer = null;
+
+
+    /* =====================================================
+       DOM
+    ===================================================== */
+
+    const securityGate =
+      document.getElementById("securityGate");
+
+    const sidebar =
+      document.getElementById("sidebar");
+
+    const mobileMenu =
+      document.getElementById("mobileMenu");
+
+    const sidebarName =
+      document.getElementById("sidebarName");
+
+    const sidebarAvatar =
+      document.getElementById("sidebarAvatar");
+
+    const statTotal =
+      document.getElementById("statTotal");
+
+    const statPending =
+      document.getElementById("statPending");
+
+    const statVerified =
+      document.getElementById("statVerified");
+
+    const statRejected =
+      document.getElementById("statRejected");
+
+    const wamdBody =
+      document.getElementById("wamdBody");
+
+    const mobileList =
+      document.getElementById("mobileList");
+
+    const resultSummary =
+      document.getElementById("resultSummary");
+
+    const searchInput =
+      document.getElementById("searchInput");
+
+    const statusFilter =
+      document.getElementById("statusFilter");
+
+    const periodFilter =
+      document.getElementById("periodFilter");
+
+    const clearFilters =
+      document.getElementById("clearFilters");
+
+    const refreshButton =
+      document.getElementById("refreshButton");
+
+    const exportButton =
+      document.getElementById("exportButton");
+
+    const notificationButton =
+      document.getElementById("notificationButton");
+
+    const notificationDot =
+      document.getElementById("notificationDot");
+
+    const drawerBackdrop =
+      document.getElementById("drawerBackdrop");
+
+    const drawerClose =
+      document.getElementById("drawerClose");
+
+    const drawerTitle =
+      document.getElementById("drawerTitle");
+
+    const drawerSubtitle =
+      document.getElementById("drawerSubtitle");
+
+    const drawerContent =
+      document.getElementById("drawerContent");
+
+    const toast =
+      document.getElementById("toast");
+
+
+    /* =====================================================
+       SECURITY
+    ===================================================== */
+
+    function redirectLogin(reason = "unauthorized"){
+
+      window.location.replace(
+        "../auth/login.html?error=" +
+        encodeURIComponent(reason)
+      );
+    }
+
+
+    async function safeSignOut(){
+
+      try{
+
+        if(supabaseClient){
+
+          await supabaseClient.auth.signOut();
+
+        }
+
+      }catch(error){
+
+        console.warn(
+          "Sign-out cleanup failed.",
+          error
+        );
+
+      }
+
+    }
+
+
+    async function verifyAdmin(){
+
+      try{
+
+        if(
+          !SUPABASE_URL ||
+          !SUPABASE_ANON_KEY
+        ){
+
+          console.error(
+            "Supabase configuration is missing."
+          );
+
+          redirectLogin(
+            "configuration"
+          );
+
+          return false;
+        }
+
+
+        supabaseClient =
+          window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY,
+            {
+              auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+              }
+            }
+          );
+
+
+        const {
+          data:sessionData,
+          error:sessionError
+        } =
+          await supabaseClient.auth.getSession();
+
+
+        if(sessionError){
+
+          await safeSignOut();
+
+          redirectLogin(
+            "session"
+          );
+
+          return false;
+        }
+
+
+        const session =
+          sessionData?.session;
+
+
+        if(!session?.user){
+
+          redirectLogin(
+            "login_required"
+          );
+
+          return false;
+        }
+
+
+        currentUser =
+          session.user;
+
+
+        /*
+          This is a UI gate only.
+
+          RLS MUST separately enforce administrator
+          access to the WAMD table and RPCs.
+        */
+
+        const {
+          data:profile,
+          error:profileError
+        } =
+          await supabaseClient
+            .from("profiles")
+            .select(`
+              id,
+              full_name,
+              phone,
+              role
+            `)
+            .eq(
+              "id",
+              currentUser.id
+            )
+            .maybeSingle();
+
+
+        if(
+          profileError ||
+          !profile ||
+          profile.role !== "admin"
+        ){
+
+          await safeSignOut();
+
+          redirectLogin(
+            "unauthorized"
+          );
+
+          return false;
+        }
+
+
+        currentProfile =
+          profile;
+
+
+        updateAdminIdentity();
+
+
+        return true;
+
+      }catch(error){
+
+        console.error(
+          "Security verification failed:",
+          error
+        );
+
+        await safeSignOut();
+
+        redirectLogin(
+          "security_error"
+        );
+
+        return false;
+      }
+    }
+
+
+    function updateAdminIdentity(){
+
+      const name =
+        currentProfile?.full_name?.trim() ||
+        "Administrator";
+
+
+      sidebarName.textContent =
+        name;
+
+
+      sidebarAvatar.textContent =
+        initials(name);
+    }
+
+
+    function initials(name){
+
+      const parts =
+        String(name)
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean);
+
+
+      if(!parts.length){
+        return "A";
+      }
+
+
+      if(parts.length === 1){
+
+        return parts[0]
+          .slice(0,2)
+          .toUpperCase();
+      }
+
+
+      return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+      ).toUpperCase();
+    }
+
+
+    /* =====================================================
+       SAFE HELPERS
+    ===================================================== */
+
+    function escapeHtml(value){
+
+      return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+    }
+
+
+    function safeText(
+      value,
+      fallback = "—"
+    ){
+
+      if(
+        value === null ||
+        value === undefined ||
+        value === ""
+      ){
+
+        return fallback;
+      }
+
+
+      return String(value);
+    }
+
+
+    function shortId(value){
+
+      if(!value){
+        return "—";
+      }
+
+
+      const text =
+        String(value);
+
+
+      if(text.length <= 16){
+        return text;
+      }
+
+
+      return (
+        text.slice(0,8) +
+        "…" +
+        text.slice(-6)
+      );
+    }
+
+
+    function formatDate(value){
+
+      if(!value){
+        return "—";
+      }
+
+
+      const date =
+        new Date(value);
+
+
+      if(
+        Number.isNaN(
+          date.getTime()
+        )
+      ){
+
+        return "—";
+      }
+
+
+      return new Intl.DateTimeFormat(
+        undefined,
+        {
+          dateStyle:"medium",
+          timeStyle:"short"
+        }
+      ).format(date);
+    }
+
+
+    function formatMoney(
+      amount,
+      currency = ""
+    ){
+
+      if(
+        amount === null ||
+        amount === undefined ||
+        amount === ""
+      ){
+
+        return "—";
+      }
+
+
+      const number =
+        Number(amount);
+
+
+      if(
+        !Number.isFinite(number)
+      ){
+
+        return "—";
+      }
+
+
+      return (
+        currency
+          ? currency + " "
+          : ""
+      ) +
+      number.toLocaleString(
+        undefined,
+        {
+          minimumFractionDigits:2,
+          maximumFractionDigits:2
+        }
+      );
+    }
+
+
+    function normalizeStatus(status){
+
+      const value =
+        String(status || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[\s-]+/g,"_");
+
+
+      if(
+        [
+          "verified",
+          "approved",
+          "confirmed",
+          "success",
+          "successful",
+          "paid",
+          "completed"
+        ].includes(value)
+      ){
+
+        return "verified";
+      }
+
+
+      if(
+        [
+          "pending",
+          "processing",
+          "awaiting",
+          "awaiting_confirmation",
+          "submitted"
+        ].includes(value)
+      ){
+
+        return "pending";
+      }
+
+
+      if(
+        [
+          "rejected",
+          "declined",
+          "invalid",
+          "failed",
+          "failure"
+        ].includes(value)
+      ){
+
+        return "rejected";
+      }
+
+
+      if(value === "cancelled"){
+
+        return "cancelled";
+      }
+
+
+      return value || "unknown";
+    }
+
+
+    function statusClass(status){
+
+      const normalized =
+        normalizeStatus(status);
+
+
+      if(normalized === "verified"){
+        return "status-success";
+      }
+
+
+      if(normalized === "pending"){
+        return "status-pending";
+      }
+
+
+      if(
+        [
+          "rejected",
+          "cancelled"
+        ].includes(normalized)
+      ){
+
+        return "status-rejected";
+      }
+
+
+      return "status-unknown";
+    }
+
+
+    function displayStatus(status){
+
+      return normalizeStatus(status)
+        .replace(/_/g," ");
+    }
+
+
+    /* =====================================================
+       NORMALIZE WAMD RECORD
+    ===================================================== */
+
+    function normalizeWamd(row){
+
+      const order =
+        Array.isArray(row?.orders)
+          ? row.orders[0]
+          : row?.orders;
+
+
+      const event =
+        Array.isArray(order?.events)
+          ? order.events[0]
+          : order?.events;
+
+
+      return {
+
+        raw:row,
+
+        id:
+          row?.id ??
+          row?.wamd_id ??
+          null,
+
+        orderId:
+          row?.order_id ??
+          order?.id ??
+          null,
+
+        userId:
+          row?.user_id ??
+          order?.user_id ??
+          null,
+
+        eventId:
+          row?.event_id ??
+          order?.event_id ??
+          event?.id ??
+          null,
+
+        eventTitle:
+          row?.event_title ??
+          event?.title ??
+          "Event unavailable",
+
+        amount:
+          row?.amount ??
+          row?.payment_amount ??
+          row?.paid_amount ??
+          order?.total ??
+          null,
+
+        currency:
+          row?.currency ??
+          order?.currency ??
+          "",
+
+        reference:
+          row?.transaction_id ??
+          row?.transaction_code ??
+          row?.reference ??
+          row?.wamd_reference ??
+          row?.receipt_number ??
+          null,
+
+        status:
+          normalizeStatus(
+            row?.status ??
+            row?.verification_status ??
+            row?.payment_status
+          ),
+
+        note:
+          row?.admin_note ??
+          row?.verification_note ??
+          row?.review_note ??
+          null,
+
+        submittedAt:
+          row?.submitted_at ??
+          row?.created_at ??
+          row?.payment_date ??
+          null,
+
+        reviewedAt:
+          row?.reviewed_at ??
+          row?.verified_at ??
+          row?.updated_at ??
+          null,
+
+        reviewedBy:
+          row?.reviewed_by ??
+          row?.verified_by ??
+          null,
+
+        customerName:
+          row?.customer_name ??
+          null
+      };
+    }
+
+
+    /* =====================================================
+       LOAD WAMD
+    ===================================================== */
+
+    async function loadWamd(){
+
+      setLoadingState();
+
+
+      try{
+
+        /*
+          EXPECTED PRODUCTION TABLE
+
+          wamd_payments
+
+            id
+            order_id
+            user_id
+            event_id
+            amount
+            currency
+            transaction_id
+            transaction_code
+            reference
+            status
+            verification_status
+            admin_note
+            verification_note
+            submitted_at
+            created_at
+            reviewed_at
+            verified_at
+            reviewed_by
+            verified_by
+
+          The exact final schema can be tightened once
+          the Supabase SQL is finalized.
+
+          RLS MUST restrict this table to administrators.
+        */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("wamd_payments")
+            .select(`
+              id,
+              order_id,
+              user_id,
+              event_id,
+              amount,
+              currency,
+              transaction_id,
+              transaction_code,
+              reference,
+              wamd_reference,
+              receipt_number,
+              status,
+              verification_status,
+              payment_status,
+              admin_note,
+              verification_note,
+              review_note,
+              submitted_at,
+              created_at,
+              payment_date,
+              reviewed_at,
+              verified_at,
+              updated_at,
+              reviewed_by,
+              verified_by,
+              customer_name,
+              orders(
+                id,
+                user_id,
+                total,
+                currency,
+                event_id,
+                events(
+                  id,
+                  title
+                )
+              )
+            `)
+            .order(
+              "created_at",
+              {
+                ascending:false
+              }
+            );
+
+
+        if(error){
+
+          throw error;
+        }
+
+
+        allWamd =
+          Array.isArray(data)
+            ? data.map(
+                normalizeWamd
+              )
+            : [];
+
+
+        updateStats();
+
+        applyFilters();
+
+        await loadNotifications();
+
+      }catch(error){
+
+        console.error(
+          "WAMD loading failed:",
+          error
+        );
+
+
+        allWamd = [];
+        visibleWamd = [];
+
+
+        renderEmpty(
+          "WAMD records unavailable",
+          "The WAMD table or its current schema could not be read. Check Supabase RLS and the finalized WAMD schema."
+        );
+
+
+        resultSummary.textContent =
+          "Unable to load WAMD records";
+
+
+        statTotal.textContent =
+          "—";
+
+        statPending.textContent =
+          "—";
+
+        statVerified.textContent =
+          "—";
+
+        statRejected.textContent =
+          "—";
+
+
+        showToast(
+          "Unable to load WAMD records.",
+          true
+        );
+      }
+    }
+
+
+    function setLoadingState(){
+
+      wamdBody.innerHTML = `
+        <tr>
+          <td colspan="9">
+            <div class="empty">
+              <div class="empty-icon">◷</div>
+              <h3>Loading WAMD records</h3>
+              <p>Retrieving manual payment submissions from Supabase.</p>
+            </div>
+          </td>
+        </tr>
+      `;
+
+
+      mobileList.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">◷</div>
+          <h3>Loading WAMD records</h3>
+          <p>Retrieving manual payment submissions from Supabase.</p>
+        </div>
+      `;
+
+
+      resultSummary.textContent =
+        "Loading WAMD records...";
+    }
+
+
+    /* =====================================================
+       STATS
+    ===================================================== */
+
+    function updateStats(){
+
+      const pending =
+        allWamd.filter(
+          row =>
+            row.status === "pending"
+        ).length;
+
+
+      const verified =
+        allWamd.filter(
+          row =>
+            row.status === "verified"
+        ).length;
+
+
+      const rejected =
+        allWamd.filter(
+          row =>
+            [
+              "rejected",
+              "cancelled"
+            ].includes(
+              row.status
+            )
+        ).length;
+
+
+      statTotal.textContent =
+        allWamd.length.toLocaleString();
+
+
+      statPending.textContent =
+        pending.toLocaleString();
+
+
+      statVerified.textContent =
+        verified.toLocaleString();
+
+
+      statRejected.textContent =
+        rejected.toLocaleString();
+    }
+
+
+    /* =====================================================
+       FILTERS
+    ===================================================== */
+
+    function applyFilters(){
+
+      const search =
+        searchInput.value
+          .trim()
+          .toLowerCase();
+
+
+      const status =
+        statusFilter.value;
+
+
+      const period =
+        periodFilter.value;
+
+
+      const now =
+        Date.now();
+
+
+      visibleWamd =
+        allWamd.filter(
+          row => {
+
+            if(search){
+
+              const haystack =
+                [
+                  row.id,
+                  row.orderId,
+                  row.userId,
+                  row.eventId,
+                  row.eventTitle,
+                  row.reference,
+                  row.status,
+                  row.customerName
+                ]
+                  .filter(Boolean)
+                  .join(" ")
+                  .toLowerCase();
+
+
+              if(
+                !haystack.includes(
+                  search
+                )
+              ){
+
+                return false;
+              }
+            }
+
+
+            if(
+              status !== "all" &&
+              row.status !== status
+            ){
+
+              return false;
+            }
+
+
+            if(
+              period !== "all"
+            ){
+
+              const created =
+                row.submittedAt
+                  ? new Date(
+                      row.submittedAt
+                    ).getTime()
+                  : NaN;
+
+
+              if(
+                !Number.isFinite(
+                  created
+                )
+              ){
+
+                return false;
+              }
+
+
+              if(period === "today"){
+
+                const start =
+                  new Date();
+
+                start.setHours(
+                  0,
+                  0,
+                  0,
+                  0
+                );
+
+
+                if(
+                  created <
+                  start.getTime()
+                ){
+
+                  return false;
+                }
+
+              }else{
+
+                const days =
+                  Number(period);
+
+
+                const cutoff =
+                  now -
+                  days *
+                  24 *
+                  60 *
+                  60 *
+                  1000;
+
+
+                if(
+                  created <
+                  cutoff
+                ){
+
+                  return false;
+                }
+              }
+            }
+
+
+            return true;
+          }
+        );
+
+
+      renderWamd(
+        visibleWamd
+      );
+    }
+
+
+    function clearAllFilters(){
+
+      searchInput.value =
+        "";
+
+      statusFilter.value =
+        "all";
+
+      periodFilter.value =
+        "all";
+
+
+      applyFilters();
+    }
+
+
+    /* =====================================================
+       RENDER TABLE
+    ===================================================== */
+
+    function renderWamd(rows){
+
+      resultSummary.textContent =
+        `${rows.length.toLocaleString()} WAMD record${rows.length === 1 ? "" : "s"} shown`;
+
+
+      if(!rows.length){
+
+        renderEmpty(
+          "No WAMD records found",
+          "No records match the current filters. No sample or placeholder payment records are generated."
+        );
+
+        return;
+      }
+
+
+      wamdBody.innerHTML =
+        rows
+          .map(
+            row =>
+              tableRow(row)
+          )
+          .join("");
+
+
+      mobileList.innerHTML =
+        rows
+          .map(
+            row =>
+              mobileCard(row)
+          )
+          .join("");
+
+
+      document
+        .querySelectorAll(
+          "[data-wamd-id]"
+        )
+        .forEach(
+          button => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                const id =
+                  button.dataset.wamdId;
+
+
+                const row =
+                  allWamd.find(
+                    item =>
+                      String(
+                        item.id
+                      ) ===
+                      String(id)
+                  );
+
+
+                if(row){
+
+                  openDrawer(
+                    row
+                  );
+                }
+              }
+            );
+
+          }
+        );
+    }
+
+
+    function tableRow(row){
+
+      return `
+        <tr>
+
+          <td>
+
+            <div class="id">
+              ${escapeHtml(
+                shortId(row.id)
+              )}
+            </div>
+
+            ${
+              row.reference
+                ? `
+                  <div class="subtext">
+                    ${escapeHtml(
+                      shortId(
+                        row.reference
+                      )
+                    )}
+                  </div>
+                `
+                : ""
+            }
+
+          </td>
+
+
+          <td>
+
+            <div class="id">
+              ${escapeHtml(
+                shortId(row.orderId)
+              )}
+            </div>
+
+          </td>
+
+
+          <td>
+
+            <div class="primary-text">
+              ${escapeHtml(
+                row.customerName ||
+                "Customer"
+              )}
+            </div>
+
+            ${
+              row.userId
+                ? `
+                  <div class="subtext">
+                    ${escapeHtml(
+                      shortId(
+                        row.userId
+                      )
+                    )}
+                  </div>
+                `
+                : ""
+            }
+
+          </td>
+
+
+          <td>
+
+            <div class="primary-text">
+              ${escapeHtml(
+                row.eventTitle
+              )}
+            </div>
+
+          </td>
+
+
+          <td>
+
+            <span class="amount">
+              ${escapeHtml(
+                formatMoney(
+                  row.amount,
+                  row.currency
+                )
+              )}
+            </span>
+
+          </td>
+
+
+          <td>
+
+            <div class="id">
+              ${escapeHtml(
+                shortId(
+                  row.reference
+                )
+              )}
+            </div>
+
+          </td>
+
+
+          <td>
+
+            <span
+              class="status ${statusClass(
+                row.status
+              )}"
+            >
+              ${escapeHtml(
+                displayStatus(
+                  row.status
+                )
+              )}
+            </span>
+
+          </td>
+
+
+          <td>
+
+            ${escapeHtml(
+              formatDate(
+                row.submittedAt
+              )
+            )}
+
+          </td>
+
+
+          <td>
+
+            <button
+              class="button button-secondary"
+              style="min-height:34px;padding:0 10px"
+              data-wamd-id="${escapeHtml(
+                row.id
+              )}"
+            >
+              Review
+            </button>
+
+          </td>
+
+        </tr>
+      `;
+    }
+
+
+    function mobileCard(row){
+
+      const pending =
+        row.status === "pending";
+
+
+      return `
+        <article class="wamd-card">
+
+          <div class="wamd-card-top">
+
+            <div class="wamd-card-title">
+
+              <strong>
+                ${escapeHtml(
+                  row.eventTitle
+                )}
+              </strong>
+
+              <span>
+                ${escapeHtml(
+                  shortId(row.id)
+                )}
+              </span>
+
+            </div>
+
+
+            <span
+              class="status ${statusClass(
+                row.status
+              )}"
+            >
+              ${escapeHtml(
+                displayStatus(
+                  row.status
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="mobile-grid">
+
+            <div class="mobile-field">
+
+              <label>
+                Order
+              </label>
+
+              <span>
+                ${escapeHtml(
+                  shortId(
+                    row.orderId
+                  )
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="mobile-field">
+
+              <label>
+                Amount
+              </label>
+
+              <span>
+                ${escapeHtml(
+                  formatMoney(
+                    row.amount,
+                    row.currency
+                  )
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="mobile-field">
+
+              <label>
+                Reference
+              </label>
+
+              <span>
+                ${escapeHtml(
+                  safeText(
+                    row.reference
+                  )
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="mobile-field">
+
+              <label>
+                Submitted
+              </label>
+
+              <span>
+                ${escapeHtml(
+                  formatDate(
+                    row.submittedAt
+                  )
+                )}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="mobile-actions">
+
+            <button
+              class="button button-secondary"
+              data-wamd-id="${escapeHtml(
+                row.id
+              )}"
+            >
+              Review
+            </button>
+
+            ${
+              pending
+                ? `
+                  <button
+                    class="button button-primary"
+                    data-wamd-id="${escapeHtml(
+                      row.id
+                    )}"
+                  >
+                    Open verification
+                  </button>
+                `
+                : `
+                  <button
+                    class="button button-secondary"
+                    data-wamd-id="${escapeHtml(
+                      row.id
+                    )}"
+                  >
+                    View record
+                  </button>
+                `
+            }
+
+          </div>
+
+        </article>
+      `;
+    }
+
+
+    function renderEmpty(
+      title,
+      message
+    ){
+
+      wamdBody.innerHTML = `
+        <tr>
+          <td colspan="9">
+
+            <div class="empty">
+
+              <div class="empty-icon">
+                ◌
+              </div>
+
+              <h3>
+                ${escapeHtml(title)}
+              </h3>
+
+              <p>
+                ${escapeHtml(message)}
+              </p>
+
+            </div>
+
+          </td>
+        </tr>
+      `;
+
+
+      mobileList.innerHTML = `
+        <div class="empty">
+
+          <div class="empty-icon">
+            ◌
+          </div>
+
+          <h3>
+            ${escapeHtml(title)}
+          </h3>
+
+          <p>
+            ${escapeHtml(message)}
+          </p>
+
+        </div>
+      `;
+    }
+
+
+    /* =====================================================
+       DRAWER
+    ===================================================== */
+
+    function openDrawer(row){
+
+      selectedWamd =
+        row;
+
+
+      drawerTitle.textContent =
+        "WAMD review";
+
+
+      drawerSubtitle.textContent =
+        row.id
+          ? String(row.id)
+          : "Manual payment record";
+
+
+      const isPending =
+        row.status === "pending";
+
+
+      drawerContent.innerHTML = `
+
+        <div class="detail-section">
+
+          <h3>
+            Payment
+          </h3>
+
+
+          <div class="detail-row">
+
+            <span>
+              WAMD ID
+            </span>
+
+            <span>
+              ${escapeHtml(
+                safeText(row.id)
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Status
+            </span>
+
+            <span>
+
+              <span
+                class="status ${statusClass(
+                  row.status
+                )}"
+              >
+                ${escapeHtml(
+                  displayStatus(
+                    row.status
+                  )
+                )}
+              </span>
+
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Amount
+            </span>
+
+            <span>
+              ${escapeHtml(
+                formatMoney(
+                  row.amount,
+                  row.currency
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Currency
+            </span>
+
+            <span>
+              ${escapeHtml(
+                safeText(
+                  row.currency
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Submitted
+            </span>
+
+            <span>
+              ${escapeHtml(
+                formatDate(
+                  row.submittedAt
+                )
+              )}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="detail-section">
+
+          <h3>
+            Transaction
+          </h3>
+
+
+          <div class="detail-row">
+
+            <span>
+              Transaction reference
+            </span>
+
+            <span>
+              ${escapeHtml(
+                safeText(
+                  row.reference
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Order ID
+            </span>
+
+            <span>
+              ${escapeHtml(
+                safeText(
+                  row.orderId
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              User ID
+            </span>
+
+            <span>
+              ${escapeHtml(
+                safeText(
+                  row.userId
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Event
+            </span>
+
+            <span>
+              ${escapeHtml(
+                safeText(
+                  row.eventTitle
+                )
+              )}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="detail-section">
+
+          <h3>
+            Review
+          </h3>
+
+
+          <div class="detail-row">
+
+            <span>
+              Reviewed
+            </span>
+
+            <span>
+              ${escapeHtml(
+                formatDate(
+                  row.reviewedAt
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Reviewed by
+            </span>
+
+            <span>
+              ${escapeHtml(
+                safeText(
+                  row.reviewedBy
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Existing note
+            </span>
+
+            <span>
+              ${escapeHtml(
+                safeText(
+                  row.note
+                )
+              )}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        ${
+          isPending
+            ? `
+              <div class="action-box">
+
+                <h3>
+                  Administrator decision
+                </h3>
+
+                <p>
+                  Verify only after confirming that the submitted
+                  WAMD transaction reference corresponds to the
+                  correct order and amount.
+                </p>
+
+
+                <textarea
+                  id="verificationNote"
+                  placeholder="Optional verification/rejection note..."
+                  maxlength="1000"
+                ></textarea>
+
+
+                <div class="action-buttons">
+
+                  <button
+                    class="button button-success"
+                    id="verifyButton"
+                  >
+                    Verify payment
+                  </button>
+
+
+                  <button
+                    class="button button-danger"
+                    id="rejectButton"
+                  >
+                    Reject payment
+                  </button>
+
+                </div>
+
+
+                <div class="secure-action-note">
+                  These buttons require protected server-side RPCs.
+                  The browser must never directly modify WAMD status.
+                </div>
+
+              </div>
+            `
+            : `
+              <div class="action-box">
+
+                <h3>
+                  Record locked
+                </h3>
+
+                <p>
+                  This WAMD record is no longer pending. Additional
+                  changes should require a separate privileged
+                  server-side workflow with audit logging.
+                </p>
+
+              </div>
+            `
+        }
+      `;
+
+
+      drawerBackdrop.classList.add(
+        "open"
+      );
+
+
+      document.body.style.overflow =
+        "hidden";
+
+
+      if(isPending){
+
+        document
+          .getElementById(
+            "verifyButton"
+          )
+          .addEventListener(
+            "click",
+            () =>
+              verifyWamd(
+                row.id
+              )
+          );
+
+
+        document
+          .getElementById(
+            "rejectButton"
+          )
+          .addEventListener(
+            "click",
+            () =>
+              rejectWamd(
+                row.id
+              )
+          );
+      }
+    }
+
+
+    function closeDrawer(){
+
+      drawerBackdrop.classList.remove(
+        "open"
+      );
+
+
+      document.body.style.overflow =
+        "";
+
+
+      selectedWamd =
+        null;
+    }
+
+
+    /* =====================================================
+       SECURE VERIFICATION
+    ===================================================== */
+
+    async function verifyWamd(
+      wamdId
+    ){
+
+      if(!wamdId){
+
+        showToast(
+          "Missing WAMD record ID.",
+          true
+        );
+
+        return;
+      }
+
+
+      const note =
+        document
+          .getElementById(
+            "verificationNote"
+          )
+          ?.value
+          .trim() || null;
+
+
+      const button =
+        document
+          .getElementById(
+            "verifyButton"
+          );
+
+
+      if(button){
+        button.disabled =
+          true;
+      }
+
+
+      try{
+
+        /*
+          IMPORTANT:
+
+          This RPC MUST be created in Supabase
+          before verification is enabled.
+
+          The RPC itself must:
+
+          1. Confirm auth.uid() is an admin.
+          2. Lock the WAMD row.
+          3. Confirm it is still pending.
+          4. Validate the order association.
+          5. Validate the transaction reference.
+          6. Prevent duplicate reference reuse.
+          7. Mark WAMD verified.
+          8. Confirm/update the linked order atomically.
+          9. Trigger ticket issuance only through
+             the trusted backend flow.
+          10. Write an immutable audit record.
+        */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.rpc(
+            "admin_verify_wamd",
+            {
+              p_wamd_id:wamdId,
+              p_note:note
+            }
+          );
+
+
+        if(error){
+
+          /*
+            If the RPC has not yet been installed,
+            fail safely rather than modifying the
+            table directly.
+          */
+
+          throw error;
+        }
+
+
+        showToast(
+          "WAMD payment verified."
+        );
+
+
+        closeDrawer();
+
+
+        await loadWamd();
+
+
+      }catch(error){
+
+        console.error(
+          "WAMD verification failed:",
+          error
+        );
+
+
+        showToast(
+          "Verification was not completed. The secure verification RPC may not be installed or authorization failed.",
+          true
+        );
+
+
+      }finally{
+
+        if(button){
+          button.disabled =
+            false;
+        }
+
+      }
+    }
+
+
+    /* =====================================================
+       SECURE REJECTION
+    ===================================================== */
+
+    async function rejectWamd(
+      wamdId
+    ){
+
+      if(!wamdId){
+
+        showToast(
+          "Missing WAMD record ID.",
+          true
+        );
+
+        return;
+      }
+
+
+      const note =
+        document
+          .getElementById(
+            "verificationNote"
+          )
+          ?.value
+          .trim() || null;
+
+
+      if(!note){
+
+        showToast(
+          "Add a review note before rejecting the payment.",
+          true
+        );
+
+        return;
+      }
+
+
+      const button =
+        document
+          .getElementById(
+            "rejectButton"
+          );
+
+
+      if(button){
+        button.disabled =
+          true;
+      }
+
+
+      try{
+
+        /*
+          IMPORTANT:
+
+          No direct client-side UPDATE is performed.
+
+          The secure RPC must:
+
+          - verify administrator role
+          - lock the record
+          - verify current status is pending
+          - save rejection reason
+          - record reviewer
+          - create audit entry
+          - preserve the original transaction reference
+          - prevent unauthorized order manipulation
+        */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.rpc(
+            "admin_reject_wamd",
+            {
+              p_wamd_id:wamdId,
+              p_note:note
+            }
+          );
+
+
+        if(error){
+
+          throw error;
+        }
+
+
+        showToast(
+          "WAMD payment rejected."
+        );
+
+
+        closeDrawer();
+
+
+        await loadWamd();
+
+
+      }catch(error){
+
+        console.error(
+          "WAMD rejection failed:",
+          error
+        );
+
+
+        showToast(
+          "Rejection was not completed. The secure rejection RPC may not be installed or authorization failed.",
+          true
+        );
+
+
+      }finally{
+
+        if(button){
+          button.disabled =
+            false;
+        }
+
+      }
+    }
+
+
+    /* =====================================================
+       NOTIFICATIONS
+    ===================================================== */
+
+    async function loadNotifications(){
+
+      try{
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("notifications")
+            .select(`
+              id,
+              read_at
+            `)
+            .eq(
+              "user_id",
+              currentUser.id
+            )
+            .is(
+              "read_at",
+              null
+            )
+            .limit(1);
+
+
+        if(error){
+
+          notificationDot.style.display =
+            "none";
+
+          return;
+        }
+
+
+        notificationDot.style.display =
+          data?.length
+            ? "block"
+            : "none";
+
+      }catch(error){
+
+        notificationDot.style.display =
+          "none";
+      }
+    }
+
+
+    /* =====================================================
+       CSV EXPORT
+    ===================================================== */
+
+    function exportCsv(){
+
+      if(!visibleWamd.length){
+
+        showToast(
+          "There are no WAMD records to export.",
+          true
+        );
+
+        return;
+      }
+
+
+      const headers = [
+        "WAMD ID",
+        "Order ID",
+        "User ID",
+        "Event ID",
+        "Event",
+        "Amount",
+        "Currency",
+        "Transaction Reference",
+        "Status",
+        "Submitted At",
+        "Reviewed At",
+        "Reviewed By",
+        "Review Note"
+      ];
+
+
+      const rows =
+        visibleWamd.map(
+          row => [
+
+            row.id,
+            row.orderId,
+            row.userId,
+            row.eventId,
+            row.eventTitle,
+            row.amount,
+            row.currency,
+            row.reference,
+            row.status,
+            row.submittedAt,
+            row.reviewedAt,
+            row.reviewedBy,
+            row.note
+          ]
+        );
+
+
+      const csv =
+        [
+          headers,
+          ...rows
+        ]
+          .map(
+            row =>
+              row
+                .map(
+                  value =>
+                    csvEscape(value)
+                )
+                .join(",")
+          )
+          .join("\n");
+
+
+      const blob =
+        new Blob(
+          [csv],
+          {
+            type:
+              "text/csv;charset=utf-8;"
+          }
+        );
+
+
+      const url =
+        URL.createObjectURL(
+          blob
+        );
+
+
+      const link =
+        document.createElement(
+          "a"
+        );
+
+
+      link.href =
+        url;
+
+
+      link.download =
+        `k-tickets-wamd-${new Date().toISOString().slice(0,10)}.csv`;
+
+
+      document.body.appendChild(
+        link
+      );
+
+
+      link.click();
+
+
+      link.remove();
+
+
+      URL.revokeObjectURL(
+        url
+      );
+    }
+
+
+    function csvEscape(value){
+
+      const text =
+        String(
+          value ?? ""
+        );
+
+
+      return `"${text
+        .replace(/"/g,'""')
+        .replace(/\r?\n/g," ")
+      }"`;
+    }
+
+
+    /* =====================================================
+       TOAST
+    ===================================================== */
+
+    function showToast(
+      message,
+      isError = false
+    ){
+
+      clearTimeout(
+        toastTimer
+      );
+
+
+      toast.textContent =
+        message;
+
+
+      toast.classList.toggle(
+        "error",
+        Boolean(isError)
+      );
+
+
+      toast.classList.add(
+        "show"
+      );
+
+
+      toastTimer =
+        setTimeout(
+          () => {
+
+            toast.classList.remove(
+              "show"
+            );
+
+          },
+          3500
+        );
+    }
+
+
+    /* =====================================================
+       UI EVENTS
+    ===================================================== */
+
+    mobileMenu.addEventListener(
+      "click",
+      () => {
+
+        sidebar.classList.toggle(
+          "open"
+        );
+
+      }
+    );
+
+
+    document.addEventListener(
+      "click",
+      event => {
+
+        if(
+          window.innerWidth <= 900 &&
+          sidebar.classList.contains("open") &&
+          !sidebar.contains(
+            event.target
+          ) &&
+          !mobileMenu.contains(
+            event.target
+          )
+        ){
+
+          sidebar.classList.remove(
+            "open"
+          );
+        }
+
+      }
+    );
+
+
+    searchInput.addEventListener(
+      "input",
+      applyFilters
+    );
+
+
+    statusFilter.addEventListener(
+      "change",
+      applyFilters
+    );
+
+
+    periodFilter.addEventListener(
+      "change",
+      applyFilters
+    );
+
+
+    clearFilters.addEventListener(
+      "click",
+      clearAllFilters
+    );
+
+
+    refreshButton.addEventListener(
+      "click",
+      async () => {
+
+        refreshButton.disabled =
+          true;
+
+        refreshButton.style.opacity =
+          ".6";
+
+
+        await loadWamd();
+
+
+        refreshButton.disabled =
+          false;
+
+        refreshButton.style.opacity =
+          "1";
+
+
+        showToast(
+          "WAMD data refreshed."
+        );
+      }
+    );
+
+
+    exportButton.addEventListener(
+      "click",
+      exportCsv
+    );
+
+
+    drawerClose.addEventListener(
+      "click",
+      closeDrawer
+    );
+
+
+    drawerBackdrop.addEventListener(
+      "click",
+      event => {
+
+        if(
+          event.target ===
+          drawerBackdrop
+        ){
+
+          closeDrawer();
+        }
+      }
+    );
+
+
+    notificationButton.addEventListener(
+      "click",
+      () => {
+
+        showToast(
+          "Notification center is available through the admin notification system."
+        );
+
+      }
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if(
+          event.key === "Escape" &&
+          drawerBackdrop.classList.contains(
+            "open"
+          )
+        ){
+
+          closeDrawer();
+        }
+
+      }
+    );
+
+
+    /* =====================================================
+       AUTH STATE
+    ===================================================== */
+
+    async function setupAuthListener(){
+
+      if(!supabaseClient){
+        return;
+      }
+
+
+      supabaseClient.auth.onAuthStateChange(
+        async (
+          event,
+          session
+        ) => {
+
+          if(
+            event === "SIGNED_OUT" ||
+            !session?.user
+          ){
+
+            window.location.replace(
+              "../auth/login.html?error=session_expired"
+            );
+          }
+
+        }
+      );
+    }
+
+
+    /* =====================================================
+       INITIALIZATION
+    ===================================================== */
+
+    async function initialize(){
+
+      const authorized =
+        await verifyAdmin();
+
+
+      if(!authorized){
+        return;
+      }
+
+
+      securityGate.classList.add(
+        "hidden"
+      );
+
+
+      await setupAuthListener();
+
+
+      await loadWamd();
+
+    }
+
+
+    initialize();
+
+  </script>
+
+</body>
+</html>

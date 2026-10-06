@@ -1,0 +1,1109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | K-Tickets</title>
+
+    <meta
+        name="description"
+        content="Create your K-Tickets customer or merchant account."
+    >
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --bordo-dark: #541018;
+            --green: #0F3D3A;
+            --cream: #F5DABF;
+            --white: #FFFDF9;
+            --text: #1D2927;
+            --muted: #6D7774;
+            --border: rgba(15, 61, 58, 0.14);
+            --success: #21735D;
+            --danger: #A52835;
+            --shadow: 0 24px 70px rgba(15, 61, 58, 0.14);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: var(--cream);
+            color: var(--text);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .page {
+            min-height: 100vh;
+            min-height: 100dvh;
+
+            display: grid;
+            grid-template-columns: 0.75fr 1.25fr;
+        }
+
+        /* =========================
+           BRAND SIDE
+        ========================= */
+
+        .brand-panel {
+            position: relative;
+            overflow: hidden;
+
+            background: var(--bordo);
+            color: var(--cream);
+
+            padding: clamp(28px, 5vw, 70px);
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-panel::before {
+            content: "";
+
+            position: absolute;
+
+            width: 430px;
+            height: 430px;
+
+            right: -230px;
+            bottom: -180px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+        }
+
+        .brand-panel::after {
+            content: "";
+
+            position: absolute;
+
+            width: 240px;
+            height: 240px;
+
+            left: -130px;
+            top: 25%;
+
+            border-radius: 50%;
+
+            border:
+                1px solid rgba(245, 218, 191, 0.20);
+        }
+
+        .brand,
+        .brand-content,
+        .brand-footer {
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+
+            width: fit-content;
+
+            font-weight: 900;
+        }
+
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 13px;
+
+            background: var(--cream);
+            color: var(--bordo);
+
+            font-weight: 900;
+        }
+
+        .brand-content {
+            margin-top: auto;
+            margin-bottom: auto;
+
+            padding: 70px 0;
+        }
+
+        .brand-content h1 {
+            max-width: 500px;
+
+            margin-top: 22px;
+
+            font-size: clamp(42px, 5vw, 67px);
+            line-height: 0.98;
+            letter-spacing: -3px;
+        }
+
+        .brand-content h1 span {
+            color: #B8D3C6;
+        }
+
+        .brand-content p {
+            max-width: 480px;
+
+            margin-top: 22px;
+
+            color: rgba(245, 218, 191, 0.68);
+
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .brand-footer {
+            color: rgba(245, 218, 191, 0.55);
+            font-size: 12px;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-panel {
+            background: var(--white);
+
+            padding:
+                clamp(24px, 5vw, 65px);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .mobile-brand {
+            display: none;
+        }
+
+        .heading h2 {
+            color: var(--green);
+
+            font-size: clamp(30px, 4vw, 44px);
+            line-height: 1;
+
+            letter-spacing: -1.5px;
+        }
+
+        .heading p {
+            margin-top: 11px;
+
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .form {
+            margin-top: 28px;
+        }
+
+        .message {
+            display: none;
+
+            margin-bottom: 18px;
+            padding: 13px 15px;
+
+            border-radius: 12px;
+
+            font-size: 13px;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            color: var(--danger);
+            background: rgba(165, 40, 53, 0.08);
+        }
+
+        .message.success {
+            color: var(--success);
+            background: rgba(33, 115, 93, 0.08);
+        }
+
+        /* =========================
+           ACCOUNT TYPE
+        ========================= */
+
+        .section-label {
+            margin-bottom: 10px;
+
+            color: var(--green);
+
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .account-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 12px;
+
+            margin-bottom: 23px;
+        }
+
+        .account-option {
+            position: relative;
+        }
+
+        .account-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .account-card {
+            min-height: 108px;
+
+            padding: 18px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 15px;
+
+            background: #FFFCF8;
+
+            cursor: pointer;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .account-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(108, 21, 30, 0.35);
+        }
+
+        .account-option input:checked + .account-card {
+            border-color: var(--bordo);
+
+            background: rgba(108, 21, 30, 0.045);
+
+            box-shadow:
+                0 0 0 3px rgba(108, 21, 30, 0.07);
+        }
+
+        .account-card strong {
+            color: var(--green);
+
+            font-size: 15px;
+        }
+
+        .account-card span {
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        /* =========================
+           FIELDS
+        ========================= */
+
+        .fields {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 17px;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: var(--green);
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        input {
+            width: 100%;
+
+            min-height: 52px;
+
+            padding: 0 15px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 13px;
+
+            outline: none;
+
+            background: #FFFCF8;
+
+            color: var(--text);
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        input:focus {
+            border-color: var(--bordo);
+
+            box-shadow:
+                0 0 0 4px rgba(108, 21, 30, 0.08);
+
+            background: white;
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 64px;
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            right: 9px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: 0;
+            background: transparent;
+
+            padding: 8px;
+
+            color: var(--green);
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .password-toggle:hover {
+            color: var(--bordo);
+        }
+
+        .merchant-note {
+            display: none;
+
+            margin-top: 15px;
+            padding: 12px 14px;
+
+            border-radius: 12px;
+
+            background: rgba(15, 61, 58, 0.07);
+            color: var(--green);
+
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .merchant-note.show {
+            display: block;
+        }
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 9px;
+
+            margin-top: 20px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .terms input {
+            width: 16px;
+            min-width: 16px;
+            min-height: 16px;
+
+            margin-top: 2px;
+
+            accent-color: var(--bordo);
+        }
+
+        .terms a {
+            color: var(--bordo);
+            font-weight: 800;
+        }
+
+        .submit {
+            width: 100%;
+
+            min-height: 54px;
+
+            margin-top: 23px;
+
+            border: 0;
+            border-radius: 13px;
+
+            background: var(--bordo);
+            color: white;
+
+            font-weight: 900;
+
+            box-shadow:
+                0 12px 25px rgba(108, 21, 30, 0.18);
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+        .submit:hover {
+            background: var(--bordo-dark);
+            transform: translateY(-2px);
+        }
+
+        .submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-prompt {
+            margin-top: 23px;
+
+            text-align: center;
+
+            color: var(--muted);
+
+            font-size: 13px;
+        }
+
+        .login-prompt a {
+            color: var(--bordo);
+            font-weight: 900;
+        }
+
+        /* =========================
+           TABLET
+        ========================= */
+
+        @media (max-width: 950px) {
+
+            .page {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                display: none;
+            }
+
+            .form-panel {
+                min-height: 100vh;
+                min-height: 100dvh;
+            }
+
+            .mobile-brand {
+                display: flex;
+
+                align-items: center;
+
+                margin-bottom: 38px;
+            }
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 620px) {
+
+            .form-panel {
+                padding:
+                    25px 17px 35px;
+
+                align-items: flex-start;
+            }
+
+            .mobile-brand {
+                margin-bottom: 32px;
+            }
+
+            .fields {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .account-types {
+                grid-template-columns: 1fr;
+            }
+
+            .account-card {
+                min-height: 92px;
+            }
+        }
+
+        @media (max-width: 360px) {
+
+            .form-panel {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .heading h2 {
+                font-size: 29px;
+            }
+
+            input,
+            .submit {
+                min-height: 50px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- BRAND -->
+
+    <section class="brand-panel">
+
+        <a href="index.html" class="brand">
+            <span class="brand-mark">K</span>
+            <span>K-Tickets</span>
+        </a>
+
+        <div class="brand-content">
+
+            <h1>
+                One account.
+                <span>Every experience.</span>
+            </h1>
+
+            <p>
+                Join K-Tickets as a customer or merchant and
+                manage your events, tickets and experiences
+                from one secure account.
+            </p>
+
+        </div>
+
+        <div class="brand-footer">
+            Built for events in Kuwait ·
+            © <span id="year"></span> K-Tickets
+        </div>
+
+    </section>
+
+
+    <!-- FORM -->
+
+    <main class="form-panel">
+
+        <div class="form-container">
+
+            <a
+                href="index.html"
+                class="mobile-brand brand"
+            >
+                <span class="brand-mark">K</span>
+                <span>K-Tickets</span>
+            </a>
+
+
+            <div class="heading">
+
+                <h2>
+                    Create your account
+                </h2>
+
+                <p>
+                    Choose how you'll use K-Tickets.
+                </p>
+
+            </div>
+
+
+            <form
+                class="form"
+                id="registerForm"
+                novalidate
+            >
+
+                <div
+                    class="message"
+                    id="message"
+                    role="alert"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="section-label">
+                    Account type
+                </div>
+
+
+                <div class="account-types">
+
+                    <label class="account-option">
+
+                        <input
+                            type="radio"
+                            name="role"
+                            value="customer"
+                            checked
+                        >
+
+                        <span class="account-card">
+
+                            <strong>
+                                Customer
+                            </strong>
+
+                            <span>
+                                Discover events, purchase tickets
+                                and manage your bookings.
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="account-option">
+
+                        <input
+                            type="radio"
+                            name="role"
+                            value="merchant"
+                        >
+
+                        <span class="account-card">
+
+                            <strong>
+                                Merchant
+                            </strong>
+
+                            <span>
+                                Create events, sell tickets,
+                                manage sales and settlements.
+                            </span>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="fields">
+
+                    <div class="field">
+
+                        <label for="firstName">
+                            First name
+                        </label>
+
+                        <input
+                            id="firstName"
+                            type="text"
+                            autocomplete="given-name"
+                            placeholder="First name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="lastName">
+                            Last name
+                        </label>
+
+                        <input
+                            id="lastName"
+                            type="text"
+                            autocomplete="family-name"
+                            placeholder="Last name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label for="email">
+                            Email address
+                        </label>
+
+                        <input
+                            id="email"
+                            type="email"
+                            autocomplete="email"
+                            placeholder="you@example.com"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="phone">
+                            Phone number
+                        </label>
+
+                        <input
+                            id="phone"
+                            type="tel"
+                            autocomplete="tel"
+                            placeholder="+965 ..."
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="password-wrap">
+
+                            <input
+                                id="password"
+                                type="password"
+                                autocomplete="new-password"
+                                placeholder="Create password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="passwordToggle"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="merchant-note"
+                    id="merchantNote"
+                >
+                    Merchant accounts may require approval before
+                    event creation and ticket sales are enabled.
+                </div>
+
+
+                <label class="terms">
+
+                    <input
+                        type="checkbox"
+                        id="terms"
+                        required
+                    >
+
+                    <span>
+                        I agree to the K-Tickets
+                        <a href="#">
+                            Terms of Service
+                        </a>
+                        and
+                        <a href="#">
+                            Privacy Policy
+                        </a>.
+                    </span>
+
+                </label>
+
+
+                <button
+                    type="submit"
+                    class="submit"
+                    id="submitButton"
+                >
+                    Create account
+                </button>
+
+            </form>
+
+
+            <p class="login-prompt">
+
+                Already have an account?
+
+                <a href="login.html">
+                    Sign in
+                </a>
+
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    document.getElementById("year").textContent =
+        new Date().getFullYear();
+
+
+    const password =
+        document.getElementById("password");
+
+    const passwordToggle =
+        document.getElementById("passwordToggle");
+
+    passwordToggle.addEventListener("click", () => {
+
+        const show =
+            password.type === "password";
+
+        password.type =
+            show ? "text" : "password";
+
+        passwordToggle.textContent =
+            show ? "Hide" : "Show";
+
+    });
+
+
+    const roleInputs =
+        document.querySelectorAll(
+            'input[name="role"]'
+        );
+
+    const merchantNote =
+        document.getElementById("merchantNote");
+
+
+    roleInputs.forEach(input => {
+
+        input.addEventListener("change", () => {
+
+            merchantNote.classList.toggle(
+                "show",
+                input.value === "merchant" &&
+                input.checked
+            );
+
+        });
+
+    });
+
+
+    const form =
+        document.getElementById("registerForm");
+
+    const message =
+        document.getElementById("message");
+
+    const submitButton =
+        document.getElementById("submitButton");
+
+
+    function showMessage(text, type) {
+
+        message.textContent = text;
+
+        message.className =
+            "message show " + type;
+
+    }
+
+
+    form.addEventListener("submit", event => {
+
+        event.preventDefault();
+
+        message.className = "message";
+
+        const firstName =
+            document.getElementById("firstName")
+            .value.trim();
+
+        const lastName =
+            document.getElementById("lastName")
+            .value.trim();
+
+        const email =
+            document.getElementById("email")
+            .value.trim();
+
+        const phone =
+            document.getElementById("phone")
+            .value.trim();
+
+        const passwordValue =
+            password.value;
+
+        const terms =
+            document.getElementById("terms").checked;
+
+
+        if (
+            !firstName ||
+            !lastName ||
+            !email ||
+            !phone ||
+            !passwordValue
+        ) {
+
+            showMessage(
+                "Please complete all required fields.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!email.includes("@")) {
+
+            showMessage(
+                "Please enter a valid email address.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (passwordValue.length < 8) {
+
+            showMessage(
+                "Your password must contain at least 8 characters.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!terms) {
+
+            showMessage(
+                "Please accept the Terms of Service and Privacy Policy.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        submitButton.disabled = true;
+
+        submitButton.textContent =
+            "Creating account...";
+
+
+        /*
+            SUPABASE AUTH WILL BE CONNECTED HERE.
+        */
+
+        setTimeout(() => {
+
+            submitButton.disabled = false;
+
+            submitButton.textContent =
+                "Create account";
+
+            showMessage(
+                "Your K-Tickets account will be created once Supabase authentication is connected.",
+                "success"
+            );
+
+        }, 700);
+
+    });
+
+</script>
+
+</body>
+</html>

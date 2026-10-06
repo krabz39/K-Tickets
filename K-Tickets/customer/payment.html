@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Payment | K-Tickets</title>
+
+    <meta
+        name="description"
+        content="Complete your K-Tickets payment."
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --bordo-dark: #531018;
+            --bordo-soft: #f4e5e4;
+
+            --green: #0F3D3A;
+            --green-dark: #092b29;
+            --green-soft: #e4efec;
+
+            --cream: #F5DABF;
+            --cream-light: #fff8f1;
+
+            --white: #ffffff;
+            --ink: #202020;
+            --muted: #77716d;
+            --line: #e8e1da;
+            --surface: #fbfaf8;
+            --danger: #9b2029;
+            --warning: #8a6439;
+
+            --shadow-sm: 0 5px 20px rgba(30, 22, 18, .06);
+            --shadow-md: 0 20px 55px rgba(30, 22, 18, .12);
+
+            --sidebar-width: 260px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--surface);
+            color: var(--ink);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            overflow-x: hidden;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: var(--sidebar-width);
+            padding: 24px 16px;
+            background: var(--green);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 28px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--cream);
+            color: var(--green);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 17px;
+            letter-spacing: .08em;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 2px;
+            color: rgba(255,255,255,.55);
+            font-size: 10px;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+
+        .nav-label {
+            margin: 5px 0 9px;
+            padding: 0 12px;
+            color: rgba(255,255,255,.4);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .15em;
+        }
+
+        .nav {
+            display: grid;
+            gap: 5px;
+        }
+
+        .nav-link {
+            min-height: 46px;
+            padding: 0 13px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,.7);
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--bordo);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            display: grid;
+            gap: 10px;
+        }
+
+        .support-card {
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .support-card small {
+            color: rgba(255,255,255,.5);
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .support-card strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            height: 42px;
+            border-radius: 11px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,.12);
+            color: rgba(255,255,255,.7);
+        }
+
+        .main {
+            width: calc(100% - var(--sidebar-width));
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            min-height: 78px;
+            padding: 15px 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,.93);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(16px);
+        }
+
+        .mobile-menu {
+            display: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: var(--cream-light);
+            color: var(--green);
+        }
+
+        .breadcrumb {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .breadcrumb a {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bordo);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .content {
+            max-width: 1000px;
+            margin: auto;
+            padding: 35px;
+        }
+
+        .heading small {
+            display: block;
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+        }
+
+        .heading h1 {
+            margin-top: 8px;
+            color: var(--green);
+            font-size: clamp(28px, 3vw, 42px);
+            letter-spacing: -.04em;
+        }
+
+        .heading p {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .payment-layout {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 330px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 23px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .payment-methods {
+            display: grid;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .method {
+            padding: 17px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .method:hover {
+            border-color: var(--green);
+        }
+
+        .method.active {
+            border-color: var(--bordo);
+            box-shadow: 0 0 0 2px rgba(108,21,30,.07);
+        }
+
+        .method-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .method-radio {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--line);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .method.active .method-radio {
+            border-color: var(--bordo);
+        }
+
+        .method.active .method-radio::after {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--bordo);
+        }
+
+        .method-name {
+            color: var(--green);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .method-description {
+            margin-top: 5px;
+            margin-left: 30px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .payment-panel {
+            display: none;
+            margin-top: 17px;
+            padding: 17px;
+            border-radius: 15px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+        }
+
+        .payment-panel.active {
+            display: block;
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .field:first-child {
+            margin-top: 0;
+        }
+
+        .field label {
+            color: var(--green);
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .field input {
+            width: 100%;
+            height: 45px;
+            padding: 0 13px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: white;
+            outline: none;
+            font-size: 12px;
+        }
+
+        .field input:focus {
+            border-color: var(--green);
+        }
+
+        .help-text {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.6;
+        }
+
+        .action-btn {
+            width: 100%;
+            height: 50px;
+            margin-top: 18px;
+            border-radius: 13px;
+            background: var(--bordo);
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .action-btn:hover {
+            background: var(--bordo-dark);
+        }
+
+        .action-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .order-card {
+            position: sticky;
+            top: 100px;
+        }
+
+        .order-event {
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 14px;
+            background: var(--green-soft);
+        }
+
+        .order-event small {
+            color: var(--green);
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        .order-event strong {
+            display: block;
+            margin-top: 5px;
+            color: var(--green);
+            font-size: 13px;
+        }
+
+        .row {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .row strong {
+            color: var(--ink);
+        }
+
+        .divider {
+            height: 1px;
+            margin: 18px 0;
+            background: var(--line);
+        }
+
+        .total {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .total span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .total strong {
+            color: var(--green);
+            font-size: 21px;
+        }
+
+        .status {
+            margin-top: 18px;
+            padding: 13px;
+            border-radius: 13px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .status strong {
+            color: var(--green);
+        }
+
+        .error {
+            display: none;
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 12px;
+            background: var(--bordo-soft);
+            color: var(--danger);
+            font-size: 11px;
+        }
+
+        .loading {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .topbar {
+                padding: 14px 25px;
+            }
+
+            .content {
+                padding: 25px;
+                padding-bottom: 100px;
+            }
+
+            .payment-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .order-card {
+                position: static;
+            }
+
+            .mobile-nav {
+                position: fixed;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                height: 64px;
+                border-radius: 19px;
+                background: rgba(15,61,58,.96);
+                z-index: 90;
+            }
+
+            .mobile-nav a {
+                display: grid;
+                place-items: center;
+                align-content: center;
+                gap: 3px;
+                color: rgba(255,255,255,.55);
+                font-size: 10px;
+            }
+
+            .mobile-nav a.active {
+                color: var(--cream);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                padding: 12px 15px;
+            }
+
+            .breadcrumb {
+                display: none;
+            }
+
+            .content {
+                padding: 20px 15px 100px;
+            }
+
+            .card {
+                padding: 17px;
+                border-radius: 18px;
+            }
+
+            .method {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar" id="sidebar">
+
+        <a href="../index.html" class="brand">
+
+            <div class="brand-mark">K</div>
+
+            <div class="brand-text">
+                <strong>K-TICKETS</strong>
+                <span>Customer</span>
+            </div>
+
+        </a>
+
+        <div class="nav-label">Menu</div>
+
+        <nav class="nav">
+
+            <a href="dashboard.html" class="nav-link">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+
+            <a href="events.html" class="nav-link">
+                <span class="nav-icon">◫</span>
+                Discover Events
+            </a>
+
+            <a href="my-tickets.html" class="nav-link">
+                <span class="nav-icon">▣</span>
+                My Tickets
+            </a>
+
+            <a href="#" class="nav-link active">
+                <span class="nav-icon">◷</span>
+                Payment
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="support-card">
+                <small>Need help?</small>
+                <strong>K-Tickets Support</strong>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">
+                Log out
+            </button>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <button
+                class="mobile-menu"
+                onclick="toggleSidebar()"
+            >
+                ☰
+            </button>
+
+            <div class="breadcrumb">
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <span> / Payment</span>
+            </div>
+
+            <div class="avatar" id="avatar">
+                —
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="heading">
+
+                <small>Payment</small>
+
+                <h1>Complete your payment.</h1>
+
+                <p>
+                    Choose your preferred payment method.
+                </p>
+
+            </div>
+
+            <div
+                class="error"
+                id="errorBox"
+            ></div>
+
+            <div
+                class="loading"
+                id="loading"
+            >
+                Loading payment details...
+            </div>
+
+            <div
+                class="payment-layout"
+                id="paymentLayout"
+                style="display:none;"
+            >
+
+                <section class="card">
+
+                    <h2>Payment method</h2>
+
+                    <div class="payment-methods">
+
+                        <div
+                            class="method active"
+                            data-method="mpesa"
+                            onclick="selectMethod('mpesa')"
+                        >
+
+                            <div class="method-top">
+
+                                <div class="method-radio"></div>
+
+                                <div class="method-name">
+                                    M-Pesa
+                                </div>
+
+                            </div>
+
+                            <div class="method-description">
+                                Pay through an M-Pesa STK Push.
+                                Confirmation is handled automatically.
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="method"
+                            data-method="wamd"
+                            onclick="selectMethod('wamd')"
+                        >
+
+                            <div class="method-top">
+
+                                <div class="method-radio"></div>
+
+                                <div class="method-name">
+                                    WAMD
+                                </div>
+
+                            </div>
+
+                            <div class="method-description">
+                                Make the WAMD payment using the
+                                instructions provided below, then
+                                submit your transaction ID.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- MPESA -->
+
+                    <div
+                        class="payment-panel active"
+                        id="mpesaPanel"
+                    >
+
+                        <div class="field">
+
+                            <label>
+                                M-Pesa phone number
+                            </label>
+
+                            <input
+                                id="mpesaPhone"
+                                type="tel"
+                                inputmode="tel"
+                                autocomplete="tel"
+                                placeholder="Enter payment phone number"
+                            >
+
+                        </div>
+
+                        <p class="help-text">
+                            The payment request will be sent to
+                            the number entered above.
+                        </p>
+
+                        <button
+                            class="action-btn"
+                            id="mpesaButton"
+                            onclick="startMpesaPayment()"
+                        >
+                            Request M-Pesa STK Push
+                        </button>
+
+                    </div>
+
+                    <!-- WAMD -->
+
+                    <div
+                        class="payment-panel"
+                        id="wamdPanel"
+                    >
+
+                        <div id="wamdInstructions">
+                            Loading WAMD instructions...
+                        </div>
+
+                        <div class="field">
+
+                            <label>
+                                WAMD transaction ID
+                            </label>
+
+                            <input
+                                id="wamdTransactionId"
+                                type="text"
+                                autocomplete="off"
+                                placeholder="Enter transaction ID"
+                            >
+
+                        </div>
+
+                        <button
+                            class="action-btn"
+                            id="wamdButton"
+                            onclick="submitWamdPayment()"
+                        >
+                            Submit WAMD Payment
+                        </button>
+
+                    </div>
+
+                </section>
+
+                <aside class="card order-card">
+
+                    <h2>Your order</h2>
+
+                    <div class="order-event">
+
+                        <small>Event</small>
+
+                        <strong id="orderEvent">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div id="orderRows"></div>
+
+                    <div class="divider"></div>
+
+                    <div class="row">
+
+                        <span>
+                            Subtotal
+                        </span>
+
+                        <strong id="subtotal">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="row">
+
+                        <span>
+                            Service fee
+                        </span>
+
+                        <strong id="serviceFee">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="total">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong id="total">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="status">
+
+                        <strong>
+                            Payment status:
+                        </strong>
+
+                        <span id="paymentStatus">
+                            Awaiting payment
+                        </span>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<nav class="mobile-nav">
+
+    <a href="dashboard.html">
+        <span>⌂</span>
+        <span>Home</span>
+    </a>
+
+    <a href="events.html">
+        <span>◫</span>
+        <span>Events</span>
+    </a>
+
+    <a href="my-tickets.html" class="active">
+        <span>▣</span>
+        <span>Tickets</span>
+    </a>
+
+    <a href="#">
+        <span>◎</span>
+        <span>Account</span>
+    </a>
+
+</nav>
+
+<script>
+
+    /*
+        ============================================================
+        K-TICKETS PAYMENT
+        ============================================================
+
+        Supabase is the source of truth.
+
+        Browser:
+            - displays order
+            - collects payment input
+            - calls secure payment backend
+            - listens for order/payment status
+
+        Backend:
+            - validates authenticated user
+            - validates order
+            - communicates with M-Pesa
+            - records provider reference
+            - confirms payment
+            - changes payment/order state
+            - triggers ticket generation
+
+        WAMD:
+            - customer submits transaction ID
+            - payment remains pending
+            - admin verifies
+            - backend changes status
+            - ticket generation follows
+    */
+
+    const SUPABASE_URL = "";
+    const SUPABASE_ANON_KEY = "";
+
+    let supabaseClient = null;
+    let currentUser = null;
+    let order = null;
+    let selectedMethod = "mpesa";
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const orderId =
+        params.get("order");
+
+    function showError(message) {
+
+        const box =
+            document.getElementById("errorBox");
+
+        box.textContent = message;
+        box.style.display = "block";
+
+        document.getElementById("loading")
+            .style.display = "none";
+    }
+
+    function money(value) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+            return "—";
+        }
+
+        return `${Number(value).toFixed(3)} KWD`;
+    }
+
+    async function initialise() {
+
+        try {
+
+            if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+
+                throw new Error(
+                    "Supabase configuration is not connected yet."
+                );
+            }
+
+            if (!orderId) {
+
+                throw new Error(
+                    "No order was supplied."
+                );
+            }
+
+            supabaseClient =
+                window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_ANON_KEY
+                );
+
+            const {
+                data: {
+                    user
+                }
+            } =
+                await supabaseClient.auth.getUser();
+
+            if (!user) {
+
+                window.location.href =
+                    "../auth/login.html";
+
+                return;
+            }
+
+            currentUser = user;
+
+            await loadOrder();
+            await loadPaymentSettings();
+
+            renderOrder();
+
+            subscribeToOrder();
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError(
+                error.message ||
+                "Unable to load payment."
+            );
+        }
+    }
+
+    async function loadOrder() {
+
+        /*
+            The final schema can use an orders view that joins:
+
+            orders
+            events
+            order_items
+            ticket_types
+
+            RLS must guarantee that the authenticated customer
+            can only retrieve their own order.
+        */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("orders")
+                .select(`
+                    *,
+                    events(*),
+                    order_items(
+                        *,
+                        ticket_types(*)
+                    )
+                `)
+                .eq("id", orderId)
+                .single();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data) {
+
+            throw new Error(
+                "Order could not be found."
+            );
+        }
+
+        order = data;
+    }
+
+    async function loadPaymentSettings() {
+
+        /*
+            Payment settings must be stored in Supabase.
+
+            Example records can include:
+
+            payment_settings
+              - method
+              - enabled
+              - instructions
+              - display_name
+              - phone/account details
+        */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("payment_settings")
+                .select("*")
+                .eq("enabled", true);
+
+        if (error) {
+
+            /*
+                If this table is not created yet, the page can
+                still render the order. Payment configuration
+                will be connected once the final schema exists.
+            */
+
+            console.warn(
+                "Payment settings unavailable:",
+                error
+            );
+
+            return;
+        }
+
+        const wamd =
+            (data || []).find(
+                item =>
+                    String(item.method)
+                        .toLowerCase() === "wamd"
+            );
+
+        if (wamd) {
+
+            renderWamdInstructions(wamd);
+
+        } else {
+
+            document.getElementById(
+                "wamdInstructions"
+            ).innerHTML = `
+                <p class="help-text">
+                    WAMD payment instructions are currently
+                    unavailable.
+                </p>
+            `;
+        }
+    }
+
+    function renderWamdInstructions(settings) {
+
+        const container =
+            document.getElementById(
+                "wamdInstructions"
+            );
+
+        /*
+            Render admin-provided instruction text.
+
+            Do not hardcode WAMD account/payment information here.
+        */
+
+        container.innerHTML = `
+            <div class="status">
+                ${escapeHTML(
+                    settings.instructions ||
+                    "Follow the payment instructions provided by K-Tickets."
+                )}
+            </div>
+        `;
+    }
+
+    function renderOrder() {
+
+        const event =
+            order.events || {};
+
+        document.getElementById("orderEvent")
+            .textContent =
+            event.name ||
+            event.title ||
+            "Event";
+
+        const rows =
+            document.getElementById("orderRows");
+
+        rows.innerHTML = "";
+
+        (order.order_items || [])
+            .forEach(item => {
+
+                const ticket =
+                    item.ticket_types || {};
+
+                const row =
+                    document.createElement("div");
+
+                row.className = "row";
+
+                row.innerHTML = `
+
+                    <span>
+                        ${escapeHTML(
+                            ticket.name ||
+                            ticket.title ||
+                            "Ticket"
+                        )}
+                        × ${Number(
+                            item.quantity || 0
+                        )}
+                    </span>
+
+                    <strong>
+                        ${money(
+                            item.total ||
+                            (
+                                Number(ticket.price || 0) *
+                                Number(item.quantity || 0)
+                            )
+                        )}
+                    </strong>
+
+                `;
+
+                rows.appendChild(row);
+            });
+
+        document.getElementById("subtotal")
+            .textContent =
+            money(order.subtotal);
+
+        document.getElementById("serviceFee")
+            .textContent =
+            money(order.service_fee);
+
+        document.getElementById("total")
+            .textContent =
+            money(order.total);
+
+        document.getElementById("paymentStatus")
+            .textContent =
+            formatStatus(
+                order.payment_status ||
+                "pending"
+            );
+
+        document.getElementById("loading")
+            .style.display = "none";
+
+        document.getElementById("paymentLayout")
+            .style.display = "grid";
+
+    }
+
+    function selectMethod(method) {
+
+        selectedMethod = method;
+
+        document
+            .querySelectorAll(".method")
+            .forEach(item => {
+
+                item.classList.toggle(
+                    "active",
+                    item.dataset.method === method
+                );
+
+            });
+
+        document
+            .getElementById("mpesaPanel")
+            .classList.toggle(
+                "active",
+                method === "mpesa"
+            );
+
+        document
+            .getElementById("wamdPanel")
+            .classList.toggle(
+                "active",
+                method === "wamd"
+            );
+    }
+
+    async function startMpesaPayment() {
+
+        const input =
+            document.getElementById(
+                "mpesaPhone"
+            );
+
+        const phone =
+            input.value.trim();
+
+        if (!phone) {
+
+            showError(
+                "Enter the M-Pesa phone number."
+            );
+
+            return;
+        }
+
+        const button =
+            document.getElementById(
+                "mpesaButton"
+            );
+
+        button.disabled = true;
+        button.textContent =
+            "Sending STK Push...";
+
+        try {
+
+            /*
+                The browser should call a secure Edge Function.
+
+                The function should:
+
+                - authenticate the Supabase user
+                - verify ownership of order
+                - verify order is payable
+                - verify amount
+                - call Daraja
+                - save provider reference
+                - update payment status
+
+                Example endpoint:
+
+                supabase.functions.invoke(
+                    "mpesa-stk",
+                    {
+                        body: {
+                            order_id: orderId,
+                            phone
+                        }
+                    }
+                )
+            */
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.functions.invoke(
+                    "mpesa-stk",
+                    {
+                        body: {
+                            order_id: orderId,
+                            phone
+                        }
+                    }
+                );
+
+            if (error) {
+                throw error;
+            }
+
+            if (
+                data &&
+                data.success === false
+            ) {
+                throw new Error(
+                    data.message ||
+                    "M-Pesa payment could not be started."
+                );
+            }
+
+            document.getElementById(
+                "paymentStatus"
+            ).textContent =
+                "STK Push sent. Waiting for confirmation...";
+
+            button.textContent =
+                "Waiting for confirmation...";
+
+            /*
+                Status is subsequently controlled by the
+                backend/database, not by this button.
+            */
+
+            monitorPayment();
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError(
+                error.message ||
+                "Unable to start M-Pesa payment."
+            );
+
+            button.disabled = false;
+            button.textContent =
+                "Request M-Pesa STK Push";
+        }
+    }
+
+    async function submitWamdPayment() {
+
+        const input =
+            document.getElementById(
+                "wamdTransactionId"
+            );
+
+        const transactionId =
+            input.value.trim();
+
+        if (!transactionId) {
+
+            showError(
+                "Enter your WAMD transaction ID."
+            );
+
+            return;
+        }
+
+        const button =
+            document.getElementById(
+                "wamdButton"
+            );
+
+        button.disabled = true;
+        button.textContent =
+            "Submitting...";
+
+        try {
+
+            /*
+                WAMD is intentionally NOT automatically
+                considered successful.
+
+                It creates a pending verification record.
+
+                Admin later verifies the transaction.
+            */
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from("payment_submissions")
+                    .insert({
+                        order_id: orderId,
+                        payment_method: "wamd",
+                        transaction_id: transactionId,
+                        status: "pending"
+                    })
+                    .select()
+                    .single();
+
+            if (error) {
+                throw error;
+            }
+
+            if (!data) {
+
+                throw new Error(
+                    "Payment submission failed."
+                );
+            }
+
+            /*
+                Go to success/pending screen.
+            */
+
+            window.location.href =
+                `payment-success.html?order=${encodeURIComponent(orderId)}`;
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError(
+                error.message ||
+                "Unable to submit WAMD payment."
+            );
+
+            button.disabled = false;
+            button.textContent =
+                "Submit WAMD Payment";
+        }
+    }
+
+    function subscribeToOrder() {
+
+        /*
+            Supabase Realtime lets the customer see the
+            payment state change without refreshing.
+
+            Example states:
+
+            pending
+            processing
+            paid
+            failed
+            expired
+        */
+
+        supabaseClient
+            .channel(`order-${orderId}`)
+            .on(
+                "postgres_changes",
+                {
+                    event: "UPDATE",
+                    schema: "public",
+                    table: "orders",
+                    filter: `id=eq.${orderId}`
+                },
+                payload => {
+
+                    order =
+                        {
+                            ...order,
+                            ...payload.new
+                        };
+
+                    const status =
+                        payload.new.payment_status;
+
+                    document.getElementById(
+                        "paymentStatus"
+                    ).textContent =
+                        formatStatus(status);
+
+                    if (
+                        status === "paid" ||
+                        status === "completed"
+                    ) {
+
+                        window.location.href =
+                            `payment-success.html?order=${encodeURIComponent(orderId)}`;
+                    }
+                }
+            )
+            .subscribe();
+    }
+
+    function monitorPayment() {
+
+        /*
+            Realtime is the primary mechanism.
+
+            This fallback simply refreshes the order state
+            periodically in case realtime is unavailable.
+        */
+
+        let attempts = 0;
+
+        const timer =
+            setInterval(
+                async () => {
+
+                    attempts++;
+
+                    if (attempts > 60) {
+
+                        clearInterval(timer);
+
+                        return;
+                    }
+
+                    try {
+
+                        const {
+                            data
+                        } =
+                            await supabaseClient
+                                .from("orders")
+                                .select("payment_status")
+                                .eq("id", orderId)
+                                .single();
+
+                        if (!data) return;
+
+                        const status =
+                            data.payment_status;
+
+                        document.getElementById(
+                            "paymentStatus"
+                        ).textContent =
+                            formatStatus(status);
+
+                        if (
+                            status === "paid" ||
+                            status === "completed"
+                        ) {
+
+                            clearInterval(timer);
+
+                            window.location.href =
+                                `payment-success.html?order=${encodeURIComponent(orderId)}`;
+                        }
+
+                    } catch (error) {
+
+                        console.warn(
+                            "Payment polling error:",
+                            error
+                        );
+                    }
+
+                },
+                5000
+            );
+    }
+
+    function formatStatus(status) {
+
+        return String(status || "pending")
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, char =>
+                char.toUpperCase()
+            );
+    }
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function toggleSidebar() {
+
+        document
+            .getElementById("sidebar")
+            .classList
+            .toggle("open");
+    }
+
+    async function logout() {
+
+        if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+        }
+
+        window.location.href =
+            "../auth/login.html";
+    }
+
+    initialise();
+
+</script>
+
+</body>
+</html>

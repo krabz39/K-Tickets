@@ -1,0 +1,3842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+    <meta name="referrer" content="same-origin">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F3D3A">
+
+    <title>Merchant Details | K-Tickets Admin</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --green: #0F3D3A;
+            --cream: #F5DABF;
+            --white: #fff;
+            --ink: #17201f;
+            --muted: #6c7472;
+            --line: #e7ded5;
+            --soft: #faf7f3;
+            --success: #176b4d;
+            --warning: #9a6800;
+            --danger: #a42632;
+            --info: #315d78;
+            --shadow: 0 18px 45px rgba(15,61,58,.07);
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: #f7f3ef;
+            color: var(--ink);
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        code {
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Consolas,
+                monospace;
+        }
+
+        .security-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(
+                    circle at top,
+                    rgba(245,218,191,.22),
+                    transparent 38%
+                ),
+                var(--green);
+            color: var(--cream);
+        }
+
+        .security-gate.hidden {
+            display: none;
+        }
+
+        .security-box {
+            width: min(420px, calc(100% - 32px));
+            padding: 34px;
+            border: 1px solid rgba(245,218,191,.18);
+            border-radius: 24px;
+            background: rgba(255,255,255,.06);
+            box-shadow: 0 25px 80px rgba(0,0,0,.25);
+            text-align: center;
+        }
+
+        .security-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            border-radius: 18px;
+            background: var(--cream);
+            color: var(--green);
+            font-size: 23px;
+            font-weight: 900;
+        }
+
+        .security-box h2 {
+            margin-bottom: 8px;
+            font-size: 21px;
+        }
+
+        .security-box p {
+            color: rgba(245,218,191,.72);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 1000;
+            width: 260px;
+            padding: 22px 15px;
+            overflow-y: auto;
+            background: var(--green);
+            color: var(--cream);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 7px 10px 24px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(245,218,191,.13);
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: var(--cream);
+            color: var(--green);
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 14px;
+            letter-spacing: .08em;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 3px;
+            color: rgba(245,218,191,.58);
+            font-size: 10px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .nav-section {
+            margin: 19px 10px 8px;
+            color: rgba(245,218,191,.42);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-height: 43px;
+            margin: 3px 0;
+            padding: 0 12px;
+            border-radius: 12px;
+            color: rgba(245,218,191,.74);
+            font-size: 13px;
+            transition: .18s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(245,218,191,.08);
+            color: var(--cream);
+        }
+
+        .nav-link.active {
+            background: var(--cream);
+            color: var(--green);
+            font-weight: 800;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .sidebar-bottom {
+            margin-top: 22px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(245,218,191,.13);
+        }
+
+        .signout {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid rgba(245,218,191,.16);
+            border-radius: 12px;
+            background: transparent;
+            color: rgba(245,218,191,.78);
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .signout:hover {
+            background: rgba(245,218,191,.08);
+            color: var(--cream);
+        }
+
+        .main {
+            min-width: 0;
+            margin-left: 260px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            min-height: 76px;
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(247,243,239,.94);
+            backdrop-filter: blur(16px);
+        }
+
+        .heading-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .mobile-menu {
+            display: none;
+            width: 39px;
+            height: 39px;
+            place-items: center;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: var(--white);
+            color: var(--green);
+            font-weight: 900;
+        }
+
+        .back-btn {
+            width: 39px;
+            height: 39px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: var(--white);
+            color: var(--green);
+            font-weight: 900;
+        }
+
+        .page-heading {
+            min-width: 0;
+        }
+
+        .page-heading h1 {
+            overflow: hidden;
+            font-size: clamp(19px, 2vw, 26px);
+            letter-spacing: -.035em;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .page-heading p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 0 0 auto;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--bordo);
+            color: var(--cream);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .admin-user-text strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .admin-user-text span {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        .security-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 15px 17px;
+            border: 1px solid rgba(108,21,30,.15);
+            border-radius: 15px;
+            background: rgba(108,21,30,.045);
+        }
+
+        .security-note-icon {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            background: var(--bordo);
+            color: var(--cream);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .security-note strong {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+
+        .security-note p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.55;
+        }
+
+        .merchant-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 22px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 24px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(15,61,58,.05),
+                    rgba(245,218,191,.18)
+                ),
+                var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .merchant-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        .merchant-avatar {
+            width: 72px;
+            height: 72px;
+            flex: 0 0 72px;
+            display: grid;
+            place-items: center;
+            border-radius: 22px;
+            background: var(--green);
+            color: var(--cream);
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .merchant-info {
+            min-width: 0;
+        }
+
+        .merchant-info h2 {
+            overflow: hidden;
+            color: var(--green);
+            font-size: clamp(20px, 2.4vw, 29px);
+            letter-spacing: -.04em;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .merchant-info p {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .merchant-id {
+            margin-top: 8px;
+            color: var(--muted);
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Consolas,
+                monospace;
+            font-size: 9px;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 25px;
+            padding: 0 9px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .status-active {
+            background: #e5f4ed;
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background: #efeeeb;
+            color: #66635e;
+        }
+
+        .status-warning {
+            background: #fff2d5;
+            color: var(--warning);
+        }
+
+        .status-danger {
+            background: #fbe7e9;
+            color: var(--danger);
+        }
+
+        .status-unknown {
+            background: #e8eef2;
+            color: var(--info);
+        }
+
+        .btn {
+            min-height: 40px;
+            padding: 0 13px;
+            border: 0;
+            border-radius: 11px;
+            font-size: 11px;
+            font-weight: 800;
+            transition: .18s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: var(--cream);
+        }
+
+        .btn-primary:hover {
+            filter: brightness(.94);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--line);
+            background: var(--white);
+            color: var(--green);
+        }
+
+        .btn-secondary:hover {
+            background: var(--soft);
+        }
+
+        .btn-danger {
+            background: var(--bordo);
+            color: var(--cream);
+        }
+
+        .btn-disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            min-width: 0;
+            padding: 17px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            margin-top: 9px;
+            overflow: hidden;
+            color: var(--green);
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -.045em;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .stat-value.bordo {
+            color: var(--bordo);
+        }
+
+        .stat-value.warning {
+            color: var(--warning);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(300px, .8fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .stack {
+            display: grid;
+            gap: 20px;
+            min-width: 0;
+        }
+
+        .section-card {
+            min-width: 0;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            min-height: 64px;
+            padding: 15px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .section-header h2 {
+            font-size: 14px;
+        }
+
+        .section-header p {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.45;
+        }
+
+        .section-body {
+            padding: 18px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .profile-item {
+            min-width: 0;
+            padding: 13px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: #fffdfa;
+        }
+
+        .profile-item.full {
+            grid-column: 1 / -1;
+        }
+
+        .profile-item label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .profile-item strong {
+            display: block;
+            overflow-wrap: anywhere;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .profile-item .mono {
+            color: var(--muted);
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Consolas,
+                monospace;
+            font-size: 9px;
+        }
+
+        .event-list,
+        .activity-list {
+            display: grid;
+            gap: 9px;
+        }
+
+        .event-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: center;
+            padding: 13px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: #fffdfa;
+        }
+
+        .event-row-main {
+            min-width: 0;
+        }
+
+        .event-row h3 {
+            overflow: hidden;
+            color: var(--green);
+            font-size: 12px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .event-row p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .event-row-side {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .event-date {
+            color: var(--muted);
+            font-size: 9px;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .activity-item {
+            position: relative;
+            padding: 12px 13px 12px 39px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: #fffdfa;
+        }
+
+        .activity-dot {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 0 4px rgba(15,61,58,.08);
+        }
+
+        .activity-item strong {
+            display: block;
+            font-size: 10px;
+        }
+
+        .activity-item span {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.45;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 680px;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 11px 13px;
+            background: #fcfaf7;
+            color: var(--muted);
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #eee7e0;
+            vertical-align: middle;
+            font-size: 10px;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        tbody tr:hover {
+            background: #fffcf9;
+        }
+
+        .empty {
+            padding: 42px 18px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 46px;
+            height: 46px;
+            margin: 0 auto 12px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: var(--soft);
+            color: var(--green);
+            font-weight: 900;
+        }
+
+        .empty h3 {
+            font-size: 13px;
+        }
+
+        .empty p {
+            max-width: 460px;
+            margin: 6px auto 0;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.55;
+        }
+
+        .loading {
+            padding: 45px 20px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .error-box {
+            padding: 14px;
+            border: 1px solid #ead0d3;
+            border-radius: 12px;
+            background: #fff3f4;
+            color: var(--danger);
+            font-size: 10px;
+            line-height: 1.55;
+        }
+
+        .drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 1500;
+            display: none;
+            background: rgba(13,24,23,.48);
+            backdrop-filter: blur(3px);
+        }
+
+        .drawer-backdrop.open {
+            display: block;
+        }
+
+        .drawer {
+            position: fixed;
+            inset: 0 0 0 auto;
+            z-index: 1600;
+            width: min(540px, 100%);
+            padding: 24px;
+            overflow-y: auto;
+            background: #fffdfa;
+            box-shadow: -20px 0 70px rgba(0,0,0,.18);
+            transform: translateX(100%);
+            transition: transform .24s ease;
+        }
+
+        .drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .drawer-header h2 {
+            font-size: 19px;
+        }
+
+        .drawer-header p {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--white);
+            color: var(--green);
+            font-weight: 900;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .detail {
+            min-width: 0;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--white);
+        }
+
+        .detail.full {
+            grid-column: 1 / -1;
+        }
+
+        .detail label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--muted);
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+        }
+
+        .detail strong,
+        .detail pre {
+            display: block;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .detail pre {
+            max-height: 240px;
+            margin: 0;
+            padding: 10px;
+            overflow: auto;
+            border-radius: 9px;
+            background: #f5f1ec;
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Consolas,
+                monospace;
+            font-size: 9px;
+        }
+
+        .drawer-warning {
+            margin-top: 16px;
+            padding: 13px;
+            border: 1px solid #ead8b1;
+            border-radius: 12px;
+            background: #fff8e8;
+            color: #75550c;
+            font-size: 9px;
+            line-height: 1.55;
+        }
+
+        .toast {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 5000;
+            max-width: min(380px, calc(100vw - 44px));
+            padding: 13px 15px;
+            border-radius: 13px;
+            background: var(--green);
+            color: var(--cream);
+            box-shadow: 0 16px 40px rgba(0,0,0,.2);
+            font-size: 11px;
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .2s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        @media (max-width: 1250px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .22s ease;
+                box-shadow: 20px 0 50px rgba(0,0,0,.18);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: grid;
+            }
+
+            .topbar {
+                padding: 12px 17px;
+            }
+
+            .content {
+                padding: 19px;
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .admin-user-text {
+                display: none;
+            }
+
+            .content {
+                padding: 14px;
+            }
+
+            .page-heading p {
+                display: none;
+            }
+
+            .merchant-hero {
+                grid-template-columns: 1fr;
+                padding: 18px;
+            }
+
+            .hero-actions {
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .merchant-main {
+                align-items: flex-start;
+            }
+
+            .merchant-avatar {
+                width: 58px;
+                height: 58px;
+                flex-basis: 58px;
+                border-radius: 17px;
+            }
+
+            .merchant-info h2 {
+                white-space: normal;
+            }
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+                gap: 9px;
+            }
+
+            .stat {
+                padding: 14px;
+                border-radius: 15px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-item.full {
+                grid-column: auto;
+            }
+
+            .section-body {
+                padding: 14px;
+            }
+
+            .section-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .event-row {
+                grid-template-columns: 1fr;
+            }
+
+            .event-row-side {
+                justify-content: space-between;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail.full {
+                grid-column: auto;
+            }
+
+            .drawer {
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 390px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .merchant-main {
+                gap: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="security-gate" id="securityGate">
+
+    <div class="security-box">
+
+        <div class="security-icon">
+            ✓
+        </div>
+
+        <h2>
+            Securing Admin Session
+        </h2>
+
+        <p>
+            Verifying authentication and administrator privileges
+            before loading merchant information.
+        </p>
+
+    </div>
+
+</div>
+
+<div class="app" id="app" hidden>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                KT
+            </div>
+
+            <div class="brand-text">
+                <strong>K-TICKETS</strong>
+                <span>Admin CMS</span>
+            </div>
+
+        </div>
+
+        <div class="nav-section">
+            Overview
+        </div>
+
+        <a class="nav-link" href="./dashboard.html">
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
+
+        <div class="nav-section">
+            Platform
+        </div>
+
+        <a class="nav-link" href="./events.html">
+            <span class="nav-icon">◫</span>
+            Events
+        </a>
+
+        <a class="nav-link active" href="./merchants.html">
+            <span class="nav-icon">♙</span>
+            Merchants
+        </a>
+
+        <a class="nav-link" href="./customers.html">
+            <span class="nav-icon">♧</span>
+            Customers
+        </a>
+
+        <a class="nav-link" href="./orders.html">
+            <span class="nav-icon">▤</span>
+            Orders
+        </a>
+
+        <a class="nav-link" href="./payments.html">
+            <span class="nav-icon">◈</span>
+            Payments
+        </a>
+
+        <a class="nav-link" href="./wamd.html">
+            <span class="nav-icon">↔</span>
+            WAMD
+        </a>
+
+        <a class="nav-link" href="./withdrawals.html">
+            <span class="nav-icon">⇧</span>
+            Withdrawals
+        </a>
+
+        <a class="nav-link" href="./fees.html">
+            <span class="nav-icon">%</span>
+            Fees
+        </a>
+
+        <div class="nav-section">
+            Control
+        </div>
+
+        <a class="nav-link" href="./reports.html">
+            <span class="nav-icon">▥</span>
+            Reports
+        </a>
+
+        <a class="nav-link" href="./settings.html">
+            <span class="nav-icon">⚙</span>
+            Settings
+        </a>
+
+        <a class="nav-link" href="./audit-logs.html">
+            <span class="nav-icon">◉</span>
+            Audit Logs
+        </a>
+
+        <div class="sidebar-bottom">
+
+            <button
+                class="signout"
+                id="signOutBtn"
+            >
+                ⇥ &nbsp; Sign Out
+            </button>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="heading-wrap">
+
+                <button
+                    class="mobile-menu"
+                    id="mobileMenuBtn"
+                    aria-label="Open menu"
+                >
+                    ☰
+                </button>
+
+                <button
+                    class="back-btn"
+                    id="backBtn"
+                    aria-label="Back to merchants"
+                >
+                    ←
+                </button>
+
+                <div class="page-heading">
+
+                    <h1>
+                        Merchant Details
+                    </h1>
+
+                    <p>
+                        Secure merchant profile and platform activity
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="admin-user">
+
+                <div
+                    class="admin-avatar"
+                    id="adminAvatar"
+                >
+                    A
+                </div>
+
+                <div class="admin-user-text">
+
+                    <strong id="adminName">
+                        Administrator
+                    </strong>
+
+                    <span>
+                        Platform Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="security-note">
+
+                <div class="security-note-icon">
+                    !
+                </div>
+
+                <div>
+
+                    <strong>
+                        Protected merchant information
+                    </strong>
+
+                    <p>
+                        This page is administrator-only. Sensitive
+                        authentication credentials, passwords, service-role
+                        keys and private payment secrets are never loaded
+                        into the browser. Account-state changes must use
+                        authorized server-side operations.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- MERCHANT HERO -->
+            <section class="merchant-hero">
+
+                <div class="merchant-main">
+
+                    <div
+                        class="merchant-avatar"
+                        id="merchantAvatar"
+                    >
+                        M
+                    </div>
+
+                    <div class="merchant-info">
+
+                        <h2 id="merchantName">
+                            Loading...
+                        </h2>
+
+                        <p id="merchantPhone">
+                            Loading merchant profile...
+                        </p>
+
+                        <div
+                            class="merchant-id"
+                            id="merchantId"
+                        >
+                            Merchant ID: —
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="hero-actions">
+
+                    <span
+                        class="status-badge status-unknown"
+                        id="merchantStatus"
+                    >
+                        Checking status
+                    </span>
+
+                    <button
+                        class="btn btn-secondary"
+                        id="refreshBtn"
+                    >
+                        ↻ Refresh
+                    </button>
+
+                </div>
+
+            </section>
+
+            <!-- STATS -->
+            <div class="stats">
+
+                <div class="stat">
+
+                    <div class="stat-label">
+                        Events
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="eventCount"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-label">
+                        Active Events
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="activeEventCount"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-label">
+                        Orders
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="orderCount"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-label">
+                        Gross Sales
+                    </div>
+
+                    <div
+                        class="stat-value bordo"
+                        id="grossSales"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-label">
+                        Net Sales
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="netSales"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="layout">
+
+                <!-- LEFT -->
+                <div class="stack">
+
+                    <!-- PROFILE -->
+                    <section class="section-card">
+
+                        <div class="section-header">
+
+                            <div>
+                                <h2>
+                                    Merchant Profile
+                                </h2>
+
+                                <p>
+                                    Information stored in the platform profile.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="section-body">
+
+                            <div
+                                class="profile-grid"
+                                id="profileGrid"
+                            >
+                                <div class="loading">
+                                    Loading profile...
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- EVENTS -->
+                    <section class="section-card">
+
+                        <div class="section-header">
+
+                            <div>
+                                <h2>
+                                    Merchant Events
+                                </h2>
+
+                                <p>
+                                    Events owned by this merchant.
+                                </p>
+                            </div>
+
+                            <a
+                                class="btn btn-secondary"
+                                id="eventsLink"
+                                href="./events.html"
+                            >
+                                All Events
+                            </a>
+
+                        </div>
+
+                        <div class="section-body">
+
+                            <div
+                                class="event-list"
+                                id="eventList"
+                            >
+                                <div class="loading">
+                                    Loading events...
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ORDERS -->
+                    <section class="section-card">
+
+                        <div class="section-header">
+
+                            <div>
+                                <h2>
+                                    Recent Orders
+                                </h2>
+
+                                <p>
+                                    Orders associated with this merchant's events.
+                                </p>
+                            </div>
+
+                            <a
+                                class="btn btn-secondary"
+                                id="ordersLink"
+                                href="./orders.html"
+                            >
+                                Orders
+                            </a>
+
+                        </div>
+
+                        <div class="section-body">
+
+                            <div
+                                class="table-wrap"
+                                id="ordersWrap"
+                            >
+                                <div class="loading">
+                                    Loading orders...
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <!-- RIGHT -->
+                <div class="stack">
+
+                    <!-- SECURITY -->
+                    <section class="section-card">
+
+                        <div class="section-header">
+
+                            <div>
+                                <h2>
+                                    Account Security
+                                </h2>
+
+                                <p>
+                                    Authentication state only.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="section-body">
+
+                            <div
+                                class="profile-grid"
+                                id="securityGrid"
+                            >
+                                <div class="loading">
+                                    Loading...
+                                </div>
+                            </div>
+
+                            <div class="drawer-warning">
+
+                                <strong>
+                                    No password access
+                                </strong>
+
+                                <br><br>
+
+                                Supabase Auth credentials and passwords are
+                                never readable from this page. Administrator
+                                account-state changes should be performed
+                                through protected server-side functions.
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ACTIVITY -->
+                    <section class="section-card">
+
+                        <div class="section-header">
+
+                            <div>
+                                <h2>
+                                    Merchant Activity
+                                </h2>
+
+                                <p>
+                                    Recent platform activity when available.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="section-body">
+
+                            <div
+                                class="activity-list"
+                                id="activityList"
+                            >
+                                <div class="loading">
+                                    Loading activity...
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ADMIN ACTIONS -->
+                    <section class="section-card">
+
+                        <div class="section-header">
+
+                            <div>
+                                <h2>
+                                    Administrative Controls
+                                </h2>
+
+                                <p>
+                                    Privileged operations require server-side authorization.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="section-body">
+
+                            <div class="error-box">
+
+                                <strong>
+                                    Controls locked
+                                </strong>
+
+                                <br><br>
+
+                                This page intentionally does not perform
+                                role changes, account deletion, password
+                                resets, merchant suspension or financial
+                                actions directly from the browser.
+
+                                <br><br>
+
+                                Once the secure RPC/Edge Function layer is
+                                installed, approved controls can be connected
+                                here with audit logging and transaction-safe
+                                authorization.
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- DETAIL DRAWER -->
+<div
+    class="drawer-backdrop"
+    id="drawerBackdrop"
+></div>
+
+<aside
+    class="drawer"
+    id="detailDrawer"
+>
+
+    <div class="drawer-header">
+
+        <div>
+
+            <h2 id="drawerTitle">
+                Event Details
+            </h2>
+
+            <p>
+                Database information returned for the selected record.
+            </p>
+
+        </div>
+
+        <button
+            class="close-btn"
+            id="closeDrawerBtn"
+        >
+            ×
+        </button>
+
+    </div>
+
+    <div
+        class="detail-grid"
+        id="drawerDetails"
+    ></div>
+
+</aside>
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+<script>
+/*
+|--------------------------------------------------------------------------
+| K-TICKETS ADMIN MERCHANT DETAILS
+|--------------------------------------------------------------------------
+|
+| SECURITY PRINCIPLES
+|
+| 1. Browser contains only the Supabase ANON key.
+| 2. Never expose service-role credentials.
+| 3. Never expose database passwords.
+| 4. Never expose payment gateway secrets.
+| 5. Verify Supabase Auth session.
+| 6. Verify profiles.role === "admin".
+| 7. RLS must independently enforce admin read access.
+| 8. Merchant ID comes from the URL only as a selector.
+| 9. Every merchant query is scoped to that selected ID.
+| 10. No privileged mutation is performed here.
+|
+| IMPORTANT:
+|
+| UI authorization is NOT security.
+|
+| Production Supabase RLS should ensure:
+|
+|   admin -> can read merchant profile
+|   admin -> can read merchant-owned events
+|   admin -> can read merchant-related orders
+|
+| and must prevent:
+|
+|   customer -> reading arbitrary merchants
+|   merchant -> reading another merchant's private admin data
+|   anonymous -> reading merchant records
+|
+|--------------------------------------------------------------------------
+|
+| URL:
+|
+| admin/merchant-details.html?id=<MERCHANT_UUID>
+|
+|--------------------------------------------------------------------------
+*/
+
+const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL || "";
+
+const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+let supabaseClient = null;
+
+let currentUser = null;
+let currentProfile = null;
+
+let merchantId = null;
+let merchantProfile = null;
+let merchantEvents = [];
+let merchantOrders = [];
+
+const $ = id =>
+    document.getElementById(id);
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function safeText(
+    value,
+    fallback = "—"
+) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return fallback;
+    }
+
+    return String(value);
+}
+
+function normalizeRole(role) {
+
+    return String(role || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+}
+
+function initials(name) {
+
+    const value =
+        String(name || "M")
+            .trim();
+
+    if (!value) {
+        return "M";
+    }
+
+    return value
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(part =>
+            part.charAt(0)
+        )
+        .join("")
+        .toUpperCase();
+}
+
+function formatDate(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return safeText(value);
+    }
+
+    return date.toLocaleString(
+        undefined,
+        {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+}
+
+function formatShortDate(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return safeText(value);
+    }
+
+    return date.toLocaleDateString(
+        undefined,
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }
+    );
+}
+
+function formatNumber(value) {
+
+    const number =
+        Number(value);
+
+    if (
+        !Number.isFinite(number)
+    ) {
+        return "—";
+    }
+
+    return number.toLocaleString(
+        undefined,
+        {
+            maximumFractionDigits: 2
+        }
+    );
+}
+
+function formatMoney(
+    value,
+    currency = ""
+) {
+
+    const number =
+        Number(value);
+
+    if (
+        !Number.isFinite(number)
+    ) {
+        return "—";
+    }
+
+    return (
+        currency
+            ? currency + " "
+            : ""
+    ) +
+    number.toLocaleString(
+        undefined,
+        {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        }
+    );
+}
+
+function showToast(
+    message,
+    type = ""
+) {
+
+    const toast =
+        $("toast");
+
+    toast.textContent =
+        message;
+
+    toast.className =
+        "toast show " + type;
+
+    clearTimeout(
+        showToast.timer
+    );
+
+    showToast.timer =
+        setTimeout(
+            () => {
+                toast.className =
+                    "toast";
+            },
+            3500
+        );
+}
+
+function redirectLogin(
+    reason = ""
+) {
+
+    window.location.replace(
+        "../auth/login.html" +
+        (
+            reason
+                ? "?error=" +
+                  encodeURIComponent(reason)
+                : ""
+        )
+    );
+}
+
+async function safeSignOut() {
+
+    try {
+
+        if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Sign-out failed:",
+            error
+        );
+    }
+}
+
+function getMerchantId() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const value =
+        params.get("id");
+
+    if (!value) {
+        return null;
+    }
+
+    /*
+     * UUID validation.
+     *
+     * This is not the security boundary.
+     * RLS remains the real authorization layer.
+     */
+
+    const uuidPattern =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (
+        !uuidPattern.test(value)
+    ) {
+        return null;
+    }
+
+    return value;
+}
+
+function setStatus(
+    element,
+    status
+) {
+
+    const normalized =
+        String(status || "")
+            .toLowerCase();
+
+    element.className =
+        "status-badge";
+
+    if (
+        normalized === "active" ||
+        normalized === "enabled" ||
+        normalized === "approved"
+    ) {
+
+        element.classList.add(
+            "status-active"
+        );
+
+        element.textContent =
+            "Active";
+
+        return;
+    }
+
+    if (
+        normalized === "inactive" ||
+        normalized === "disabled"
+    ) {
+
+        element.classList.add(
+            "status-inactive"
+        );
+
+        element.textContent =
+            "Inactive";
+
+        return;
+    }
+
+    if (
+        normalized === "suspended" ||
+        normalized === "blocked"
+    ) {
+
+        element.classList.add(
+            "status-danger"
+        );
+
+        element.textContent =
+            "Suspended";
+
+        return;
+    }
+
+    if (
+        normalized === "pending"
+    ) {
+
+        element.classList.add(
+            "status-warning"
+        );
+
+        element.textContent =
+            "Pending";
+
+        return;
+    }
+
+    element.classList.add(
+        "status-unknown"
+    );
+
+    element.textContent =
+        status
+            ? String(status)
+            : "Unknown";
+}
+
+async function verifyAdmin() {
+
+    const {
+        data: sessionData,
+        error: sessionError
+    } =
+        await supabaseClient.auth.getSession();
+
+    if (
+        sessionError ||
+        !sessionData?.session?.user
+    ) {
+
+        redirectLogin(
+            "session_required"
+        );
+
+        return false;
+    }
+
+    currentUser =
+        sessionData.session.user;
+
+    const {
+        data: profile,
+        error: profileError
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role
+            `)
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+    if (
+        profileError ||
+        !profile ||
+        normalizeRole(profile.role) !==
+            "admin"
+    ) {
+
+        await safeSignOut();
+
+        redirectLogin(
+            "unauthorized"
+        );
+
+        return false;
+    }
+
+    currentProfile =
+        profile;
+
+    $("adminName").textContent =
+        safeText(
+            profile.full_name,
+            "Administrator"
+        );
+
+    $("adminAvatar").textContent =
+        initials(
+            profile.full_name
+        );
+
+    return true;
+}
+
+async function loadMerchantProfile() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role
+            `)
+            .eq(
+                "id",
+                merchantId
+            )
+            .eq(
+                "role",
+                "merchant"
+            )
+            .maybeSingle();
+
+    if (error) {
+
+        console.error(
+            "Merchant profile query failed:",
+            error
+        );
+
+        throw new Error(
+            "Merchant profile could not be loaded."
+        );
+    }
+
+    if (!data) {
+
+        throw new Error(
+            "Merchant was not found or is not accessible."
+        );
+    }
+
+    merchantProfile =
+        data;
+
+    $("merchantName").textContent =
+        safeText(
+            data.full_name,
+            "Unnamed merchant"
+        );
+
+    $("merchantPhone").textContent =
+        safeText(
+            data.phone,
+            "No phone number provided"
+        );
+
+    $("merchantId").textContent =
+        "Merchant ID: " +
+        safeText(data.id);
+
+    $("merchantAvatar").textContent =
+        initials(
+            data.full_name
+        );
+
+    /*
+     * account_status is intentionally optional.
+     * The current known profile schema does not guarantee it.
+     */
+
+    const possibleStatus =
+        data.account_status ??
+        data.status ??
+        null;
+
+    if (possibleStatus) {
+
+        setStatus(
+            $("merchantStatus"),
+            possibleStatus
+        );
+
+    } else {
+
+        setStatus(
+            $("merchantStatus"),
+            "active"
+        );
+
+        /*
+         * This is only a role/profile availability indicator.
+         * It must not be interpreted as a verified billing/account
+         * status unless the database provides such a field.
+         */
+    }
+
+    renderProfile(data);
+    renderSecurity(data);
+}
+
+function renderProfile(data) {
+
+    $("profileGrid").innerHTML = `
+
+        <div class="profile-item">
+
+            <label>
+                Full Name
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        data.full_name
+                    )
+                )}
+            </strong>
+
+        </div>
+
+        <div class="profile-item">
+
+            <label>
+                Role
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        data.role
+                    )
+                )}
+            </strong>
+
+        </div>
+
+        <div class="profile-item">
+
+            <label>
+                Phone
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        data.phone
+                    )
+                )}
+            </strong>
+
+        </div>
+
+        <div class="profile-item">
+
+            <label>
+                Profile ID
+            </label>
+
+            <strong class="mono">
+                ${escapeHtml(
+                    safeText(
+                        data.id
+                    )
+                )}
+            </strong>
+
+        </div>
+
+        <div class="profile-item full">
+
+            <label>
+                Authentication Email
+            </label>
+
+            <strong>
+                Not read from browser profile
+            </strong>
+
+            <div
+                style="
+                    margin-top:5px;
+                    color:var(--muted);
+                    font-size:9px;
+                    line-height:1.5;
+                "
+            >
+                Auth emails should not be copied into
+                public profile tables. If an admin needs
+                verified account-email information,
+                expose only the minimum required through
+                a protected server-side operation.
+            </div>
+
+        </div>
+    `;
+}
+
+function renderSecurity(data) {
+
+    $("securityGrid").innerHTML = `
+
+        <div class="profile-item">
+
+            <label>
+                Platform Role
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        data.role
+                    )
+                )}
+            </strong>
+
+        </div>
+
+        <div class="profile-item">
+
+            <label>
+                Profile State
+            </label>
+
+            <strong>
+                ${data.id
+                    ? "Profile accessible"
+                    : "Unavailable"
+                }
+            </strong>
+
+        </div>
+
+        <div class="profile-item full">
+
+            <label>
+                Password
+            </label>
+
+            <strong>
+                Protected by Supabase Auth
+            </strong>
+
+        </div>
+    `;
+}
+
+async function loadMerchantEvents() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("events")
+            .select(`
+                id,
+                merchant_id,
+                title,
+                description,
+                venue,
+                city,
+                start_at,
+                end_at,
+                status,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "merchant_id",
+                merchantId
+            )
+            .order(
+                "start_at",
+                {
+                    ascending: true,
+                    nullsFirst: false
+                }
+            )
+            .limit(500);
+
+    if (error) {
+
+        console.error(
+            "Merchant events query failed:",
+            error
+        );
+
+        merchantEvents = [];
+
+        $("eventList").innerHTML = `
+            <div class="error-box">
+                Event information could not be loaded.
+                Verify the events table and administrator RLS policy.
+            </div>
+        `;
+
+        return;
+    }
+
+    merchantEvents =
+        data || [];
+
+    renderEvents();
+
+    updateEventStats();
+}
+
+function updateEventStats() {
+
+    const total =
+        merchantEvents.length;
+
+    const active =
+        merchantEvents.filter(
+            event => {
+
+                const status =
+                    String(
+                        event.status || ""
+                    ).toLowerCase();
+
+                return [
+                    "active",
+                    "published",
+                    "live",
+                    "approved"
+                ].includes(status);
+            }
+        ).length;
+
+    $("eventCount").textContent =
+        total.toLocaleString();
+
+    $("activeEventCount").textContent =
+        active.toLocaleString();
+}
+
+function renderEvents() {
+
+    const container =
+        $("eventList");
+
+    if (!merchantEvents.length) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    ◫
+                </div>
+
+                <h3>
+                    No events found
+                </h3>
+
+                <p>
+                    No events currently belong to this merchant.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    /*
+     * Show the latest/current subset here.
+     * The full events page remains the source for complete browsing.
+     */
+
+    container.innerHTML =
+        merchantEvents
+            .slice(0, 12)
+            .map(event => {
+
+                const status =
+                    String(
+                        event.status || ""
+                    ).toLowerCase();
+
+                let statusClass =
+                    "status-unknown";
+
+                if (
+                    [
+                        "active",
+                        "published",
+                        "live",
+                        "approved"
+                    ].includes(status)
+                ) {
+                    statusClass =
+                        "status-active";
+                } else if (
+                    [
+                        "cancelled",
+                        "canceled",
+                        "failed"
+                    ].includes(status)
+                ) {
+                    statusClass =
+                        "status-danger";
+                } else if (
+                    [
+                        "pending",
+                        "draft"
+                    ].includes(status)
+                ) {
+                    statusClass =
+                        "status-warning";
+                }
+
+                return `
+
+                    <div
+                        class="event-row"
+                    >
+
+                        <div
+                            class="event-row-main"
+                        >
+
+                            <h3>
+                                ${escapeHtml(
+                                    safeText(
+                                        event.title,
+                                        "Untitled event"
+                                    )
+                                )}
+                            </h3>
+
+                            <p>
+                                ${escapeHtml(
+                                    [
+                                        event.venue,
+                                        event.city
+                                    ]
+                                    .filter(Boolean)
+                                    .join(" • ") ||
+                                    "Venue not provided"
+                                )}
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="event-row-side"
+                        >
+
+                            <span
+                                class="status-badge ${statusClass}"
+                            >
+                                ${escapeHtml(
+                                    status
+                                        ? status
+                                        : "Unknown"
+                                )}
+                            </span>
+
+                            <div
+                                class="event-date"
+                            >
+                                ${escapeHtml(
+                                    formatShortDate(
+                                        event.start_at
+                                    )
+                                )}
+                            </div>
+
+                            <button
+                                class="btn btn-secondary event-view"
+                                data-id="${escapeHtml(
+                                    event.id
+                                )}"
+                                style="
+                                    min-height:34px;
+                                    padding:0 10px;
+                                "
+                            >
+                                View
+                            </button>
+
+                        </div>
+
+                    </div>
+                `;
+            })
+            .join("");
+
+    container
+        .querySelectorAll(".event-view")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const event =
+                        merchantEvents.find(
+                            item =>
+                                String(item.id) ===
+                                String(
+                                    button.dataset.id
+                                )
+                        );
+
+                    if (event) {
+                        openEventDrawer(
+                            event
+                        );
+                    }
+                }
+            );
+        });
+}
+
+async function loadMerchantOrders() {
+
+    /*
+     * Orders are loaded through merchant-owned events.
+     *
+     * The !inner relation makes the event ownership condition
+     * part of the database query rather than relying on JavaScript
+     * filtering after a broad order query.
+     */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("orders")
+            .select(`
+                id,
+                user_id,
+                event_id,
+                status,
+                subtotal,
+                service_fee,
+                total,
+                currency,
+                created_at,
+                updated_at,
+                events!inner(
+                    id,
+                    merchant_id,
+                    title,
+                    venue,
+                    city,
+                    start_at,
+                    end_at
+                )
+            `)
+            .eq(
+                "events.merchant_id",
+                merchantId
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            )
+            .limit(500);
+
+    if (error) {
+
+        console.error(
+            "Merchant orders query failed:",
+            error
+        );
+
+        merchantOrders = [];
+
+        $("ordersWrap").innerHTML = `
+            <div class="error-box">
+                Order information could not be loaded.
+                Verify the orders/events relationship and RLS policy.
+            </div>
+        `;
+
+        updateOrderStats();
+
+        return;
+    }
+
+    merchantOrders =
+        data || [];
+
+    updateOrderStats();
+    renderOrders();
+}
+
+function orderIsSuccessful(order) {
+
+    const status =
+        String(
+            order.status || ""
+        ).toLowerCase();
+
+    return [
+        "paid",
+        "completed",
+        "confirmed",
+        "success",
+        "successful"
+    ].includes(status);
+}
+
+function updateOrderStats() {
+
+    const orders =
+        merchantOrders.length;
+
+    let gross = 0;
+    let net = 0;
+
+    merchantOrders.forEach(
+        order => {
+
+            if (
+                !orderIsSuccessful(
+                    order
+                )
+            ) {
+                return;
+            }
+
+            const total =
+                Number(
+                    order.total
+                );
+
+            const fee =
+                Number(
+                    order.service_fee
+                );
+
+            if (
+                Number.isFinite(total)
+            ) {
+                gross += total;
+            }
+
+            if (
+                Number.isFinite(total)
+            ) {
+
+                net +=
+                    total -
+                    (
+                        Number.isFinite(fee)
+                            ? fee
+                            : 0
+                    );
+            }
+        }
+    );
+
+    $("orderCount").textContent =
+        orders.toLocaleString();
+
+    /*
+     * Do not invent currency.
+     *
+     * If successful orders use multiple currencies,
+     * aggregate display should not silently combine them.
+     */
+
+    const currencies =
+        [
+            ...new Set(
+                merchantOrders
+                    .map(
+                        order =>
+                            order.currency
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+    if (
+        currencies.length === 1
+    ) {
+
+        $("grossSales").textContent =
+            formatMoney(
+                gross,
+                currencies[0]
+            );
+
+        $("netSales").textContent =
+            formatMoney(
+                net,
+                currencies[0]
+            );
+
+    } else if (
+        currencies.length > 1
+    ) {
+
+        $("grossSales").textContent =
+            "Multiple";
+
+        $("netSales").textContent =
+            "Multiple";
+
+    } else {
+
+        $("grossSales").textContent =
+            "—";
+
+        $("netSales").textContent =
+            "—";
+    }
+}
+
+function renderOrders() {
+
+    const container =
+        $("ordersWrap");
+
+    if (!merchantOrders.length) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    ▤
+                </div>
+
+                <h3>
+                    No orders found
+                </h3>
+
+                <p>
+                    No orders are currently associated
+                    with this merchant's events.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    const recent =
+        merchantOrders.slice(
+            0,
+            15
+        );
+
+    container.innerHTML = `
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>
+                        Order
+                    </th>
+
+                    <th>
+                        Event
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Total
+                    </th>
+
+                    <th>
+                        Created
+                    </th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                ${recent.map(
+                    order => {
+
+                        const status =
+                            String(
+                                order.status ||
+                                ""
+                            ).toLowerCase();
+
+                        let statusClass =
+                            "status-unknown";
+
+                        if (
+                            orderIsSuccessful(
+                                order
+                            )
+                        ) {
+                            statusClass =
+                                "status-active";
+                        } else if (
+                            [
+                                "pending",
+                                "processing"
+                            ].includes(
+                                status
+                            )
+                        ) {
+                            statusClass =
+                                "status-warning";
+                        } else if (
+                            [
+                                "failed",
+                                "cancelled",
+                                "canceled",
+                                "refunded"
+                            ].includes(
+                                status
+                            )
+                        ) {
+                            statusClass =
+                                "status-danger";
+                        }
+
+                        const event =
+                            Array.isArray(
+                                order.events
+                            )
+                                ? order.events[0]
+                                : order.events;
+
+                        return `
+
+                            <tr>
+
+                                <td>
+                                    <code>
+                                        ${escapeHtml(
+                                            safeText(
+                                                order.id
+                                            )
+                                        )}
+                                    </code>
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        safeText(
+                                            event?.title,
+                                            "—"
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+
+                                    <span
+                                        class="status-badge ${statusClass}"
+                                    >
+                                        ${escapeHtml(
+                                            order.status ||
+                                            "Unknown"
+                                        )}
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        formatMoney(
+                                            order.total,
+                                            order.currency ||
+                                            ""
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        formatDate(
+                                            order.created_at
+                                        )
+                                    )}
+                                </td>
+
+                            </tr>
+                        `;
+                    }
+                ).join("")}
+
+            </tbody>
+
+        </table>
+    `;
+}
+
+async function loadMerchantActivity() {
+
+    /*
+     * audit_logs schema is intentionally flexible here.
+     *
+     * If audit_logs has not yet been created or RLS does not permit
+     * the administrator to read it, the page reports unavailable
+     * activity instead of fabricating history.
+     */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("audit_logs")
+            .select("*")
+            .or(
+                `entity_id.eq.${merchantId},resource_id.eq.${merchantId},target_id.eq.${merchantId}`
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            )
+            .limit(12);
+
+    if (error) {
+
+        console.warn(
+            "Merchant audit activity unavailable:",
+            error
+        );
+
+        renderUnavailableActivity();
+
+        return;
+    }
+
+    const rows =
+        data || [];
+
+    if (!rows.length) {
+
+        renderEmptyActivity();
+
+        return;
+    }
+
+    renderActivity(
+        rows
+    );
+}
+
+function renderActivity(rows) {
+
+    const container =
+        $("activityList");
+
+    container.innerHTML =
+        rows.map(row => {
+
+            const action =
+                row.action ??
+                row.event ??
+                row.action_name ??
+                row.operation ??
+                "Activity";
+
+            const description =
+                row.description ??
+                row.message ??
+                row.reason ??
+                row.details ??
+                "";
+
+            const timestamp =
+                row.created_at ??
+                row.timestamp ??
+                row.occurred_at ??
+                row.logged_at ??
+                null;
+
+            return `
+
+                <div
+                    class="activity-item"
+                >
+
+                    <span
+                        class="activity-dot"
+                    ></span>
+
+                    <strong>
+                        ${escapeHtml(
+                            safeText(
+                                action
+                            )
+                        )}
+                    </strong>
+
+                    <span>
+                        ${escapeHtml(
+                            safeText(
+                                description,
+                                "Platform activity recorded."
+                            )
+                        )}
+                    </span>
+
+                    <span>
+                        ${escapeHtml(
+                            formatDate(
+                                timestamp
+                            )
+                        )}
+                    </span>
+
+                </div>
+            `;
+        }).join("");
+}
+
+function renderUnavailableActivity() {
+
+    $("activityList").innerHTML = `
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                ◉
+            </div>
+
+            <h3>
+                Activity unavailable
+            </h3>
+
+            <p>
+                Audit activity could not be read from the current
+                database configuration or policy. No activity has
+                been invented.
+            </p>
+
+        </div>
+    `;
+}
+
+function renderEmptyActivity() {
+
+    $("activityList").innerHTML = `
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                ◉
+            </div>
+
+            <h3>
+                No recent activity
+            </h3>
+
+            <p>
+                No audit records were returned for this merchant.
+            </p>
+
+        </div>
+    `;
+}
+
+function openEventDrawer(event) {
+
+    $("drawerTitle").textContent =
+        "Event Details";
+
+    $("drawerDetails").innerHTML = `
+
+        <div class="detail">
+            <label>
+                Event ID
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        event.id
+                    )
+                )}
+            </strong>
+        </div>
+
+        <div class="detail">
+            <label>
+                Status
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        event.status
+                    )
+                )}
+            </strong>
+        </div>
+
+        <div class="detail full">
+            <label>
+                Title
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        event.title
+                    )
+                )}
+            </strong>
+        </div>
+
+        <div class="detail">
+            <label>
+                Venue
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        event.venue
+                    )
+                )}
+            </strong>
+        </div>
+
+        <div class="detail">
+            <label>
+                City
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        event.city
+                    )
+                )}
+            </strong>
+        </div>
+
+        <div class="detail">
+            <label>
+                Start
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    formatDate(
+                        event.start_at
+                    )
+                )}
+            </strong>
+        </div>
+
+        <div class="detail">
+            <label>
+                End
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    formatDate(
+                        event.end_at
+                    )
+                )}
+            </strong>
+        </div>
+
+        <div class="detail full">
+            <label>
+                Description
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        event.description
+                    )
+                )}
+            </strong>
+        </div>
+
+        <div class="detail">
+            <label>
+                Created
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    formatDate(
+                        event.created_at
+                    )
+                )}
+            </strong>
+        </div>
+
+        <div class="detail">
+            <label>
+                Updated
+            </label>
+
+            <strong>
+                ${escapeHtml(
+                    formatDate(
+                        event.updated_at
+                    )
+                )}
+            </strong>
+        </div>
+
+    `;
+
+    openDrawer();
+}
+
+function openDrawer() {
+
+    $("drawerBackdrop")
+        .classList.add("open");
+
+    $("detailDrawer")
+        .classList.add("open");
+
+    document.body.style.overflow =
+        "hidden";
+}
+
+function closeDrawer() {
+
+    $("drawerBackdrop")
+        .classList.remove("open");
+
+    $("detailDrawer")
+        .classList.remove("open");
+
+    document.body.style.overflow =
+        "";
+}
+
+async function refreshPage() {
+
+    $("refreshBtn").disabled =
+        true;
+
+    $("refreshBtn").textContent =
+        "Loading...";
+
+    try {
+
+        await loadMerchantProfile();
+        await loadMerchantEvents();
+        await loadMerchantOrders();
+        await loadMerchantActivity();
+
+        showToast(
+            "Merchant information refreshed.",
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Merchant refresh failed:",
+            error
+        );
+
+        showToast(
+            error.message ||
+            "Merchant information could not be loaded.",
+            "error"
+        );
+
+    } finally {
+
+        $("refreshBtn").disabled =
+            false;
+
+        $("refreshBtn").textContent =
+            "↻ Refresh";
+    }
+}
+
+function setupNavigation() {
+
+    $("backBtn")
+        .addEventListener(
+            "click",
+            () => {
+
+                if (
+                    window.history.length > 1
+                ) {
+                    window.history.back();
+                } else {
+                    window.location.href =
+                        "./merchants.html";
+                }
+            }
+        );
+
+    $("eventsLink").href =
+        "./events.html?merchant_id=" +
+        encodeURIComponent(
+            merchantId
+        );
+
+    $("ordersLink").href =
+        "./orders.html?merchant_id=" +
+        encodeURIComponent(
+            merchantId
+        );
+
+    $("refreshBtn")
+        .addEventListener(
+            "click",
+            refreshPage
+        );
+}
+
+function setupDrawer() {
+
+    $("closeDrawerBtn")
+        .addEventListener(
+            "click",
+            closeDrawer
+        );
+
+    $("drawerBackdrop")
+        .addEventListener(
+            "click",
+            closeDrawer
+        );
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape"
+            ) {
+                closeDrawer();
+            }
+        }
+    );
+}
+
+function setupMobileMenu() {
+
+    const sidebar =
+        $("sidebar");
+
+    $("mobileMenuBtn")
+        .addEventListener(
+            "click",
+            () => {
+
+                sidebar.classList.toggle(
+                    "open"
+                );
+            }
+        );
+
+    document
+        .querySelectorAll(".nav-link")
+        .forEach(link => {
+
+            link.addEventListener(
+                "click",
+                () => {
+
+                    sidebar.classList.remove(
+                        "open"
+                    );
+                }
+            );
+        });
+}
+
+function setupSignOut() {
+
+    $("signOutBtn")
+        .addEventListener(
+            "click",
+            async () => {
+
+                $("signOutBtn").disabled =
+                    true;
+
+                $("signOutBtn").textContent =
+                    "Signing out...";
+
+                await safeSignOut();
+
+                redirectLogin(
+                    "signed_out"
+                );
+            }
+        );
+}
+
+async function initialize() {
+
+    if (
+        !SUPABASE_URL ||
+        !SUPABASE_ANON_KEY
+    ) {
+
+        $("securityGate").innerHTML = `
+
+            <div class="security-box">
+
+                <div class="security-icon">
+                    !
+                </div>
+
+                <h2>
+                    Configuration Required
+                </h2>
+
+                <p>
+                    Supabase configuration is missing.
+                    No merchant information has been loaded.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    merchantId =
+        getMerchantId();
+
+    if (!merchantId) {
+
+        $("securityGate").innerHTML = `
+
+            <div class="security-box">
+
+                <div class="security-icon">
+                    !
+                </div>
+
+                <h2>
+                    Merchant Not Specified
+                </h2>
+
+                <p>
+                    Open this page from the admin merchant
+                    list using a valid merchant ID.
+                </p>
+
+                <br>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="window.location.href='./merchants.html'"
+                >
+                    Back to Merchants
+                </button>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    try {
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY,
+                {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true
+                    }
+                }
+            );
+
+        const authorized =
+            await verifyAdmin();
+
+        if (!authorized) {
+            return;
+        }
+
+        setupNavigation();
+        setupDrawer();
+        setupMobileMenu();
+        setupSignOut();
+
+        await loadMerchantProfile();
+        await loadMerchantEvents();
+        await loadMerchantOrders();
+        await loadMerchantActivity();
+
+        $("app").hidden =
+            false;
+
+        $("securityGate")
+            .classList.add(
+                "hidden"
+            );
+
+        supabaseClient.auth
+            .onAuthStateChange(
+                (
+                    event,
+                    session
+                ) => {
+
+                    if (
+                        event ===
+                            "SIGNED_OUT" ||
+                        !session?.user
+                    ) {
+
+                        redirectLogin(
+                            "session_expired"
+                        );
+                    }
+                }
+            );
+
+    } catch (error) {
+
+        console.error(
+            "Merchant details initialization failed:",
+            error
+        );
+
+        $("securityGate").innerHTML = `
+
+            <div class="security-box">
+
+                <div class="security-icon">
+                    !
+                </div>
+
+                <h2>
+                    Merchant Data Unavailable
+                </h2>
+
+                <p>
+                    ${escapeHtml(
+                        error.message ||
+                        "The requested merchant could not be loaded."
+                    )}
+                </p>
+
+                <br>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="window.location.href='./merchants.html'"
+                >
+                    Back to Merchants
+                </button>
+
+            </div>
+        `;
+    }
+}
+
+initialize();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1070 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>K-Tickets Invoice {{invoice_number}}</title>
+
+    <style>
+        :root {
+            --bordo: #6c151e;
+            --green: #0f3d3a;
+            --cream: #f5dabf;
+            --paper: #ffffff;
+            --ink: #26302e;
+            --muted: #707876;
+            --line: #e6ddd5;
+            --soft: #fbf6f1;
+            --success: #eaf3ef;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #eee7e0;
+            color: var(--ink);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                Helvetica,
+                sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .page-wrap {
+            padding: 32px 16px;
+        }
+
+        .invoice {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--paper);
+            box-shadow: 0 18px 50px rgba(38, 48, 46, 0.12);
+        }
+
+        /* =========================
+           TOP BRAND AREA
+        ========================== */
+
+        .topbar {
+            background: var(--green);
+            padding: 34px 42px;
+            color: #ffffff;
+        }
+
+        .topbar-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .brand-cell {
+            width: 55%;
+            vertical-align: top;
+        }
+
+        .invoice-cell {
+            width: 45%;
+            text-align: right;
+            vertical-align: top;
+        }
+
+        .brand {
+            color: #ffffff;
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .brand-subtitle {
+            margin-top: 5px;
+            color: var(--cream);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+        }
+
+        .invoice-title {
+            color: #ffffff;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .invoice-number {
+            margin-top: 6px;
+            color: #d7e4e0;
+            font-size: 12px;
+        }
+
+        /* =========================
+           BODY
+        ========================== */
+
+        .body {
+            padding: 42px;
+        }
+
+        .status-row {
+            margin-bottom: 32px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 13px;
+            border-radius: 30px;
+            background: var(--success);
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .issued-date {
+            float: right;
+            color: var(--muted);
+            font-size: 12px;
+            padding-top: 6px;
+        }
+
+        /* =========================
+           BILLING INFORMATION
+        ========================== */
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 36px;
+        }
+
+        .details-cell {
+            width: 50%;
+            vertical-align: top;
+            padding-right: 25px;
+        }
+
+        .details-cell:last-child {
+            padding-right: 0;
+            padding-left: 25px;
+        }
+
+        .section-label {
+            margin-bottom: 8px;
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+        }
+
+        .person-name {
+            color: var(--green);
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .details-text {
+            margin-top: 5px;
+            color: #626a68;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           EVENT CARD
+        ========================== */
+
+        .event-card {
+            margin-bottom: 30px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .event-header {
+            padding: 17px 20px;
+            background: var(--soft);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .event-label {
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+        }
+
+        .event-title {
+            margin-top: 4px;
+            color: var(--green);
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .event-meta {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* =========================
+           ITEMS
+        ========================== */
+
+        .items {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items thead th {
+            padding: 13px 14px;
+            background: var(--green);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-align: left;
+            text-transform: uppercase;
+        }
+
+        .items thead th:last-child {
+            text-align: right;
+        }
+
+        .items tbody td {
+            padding: 16px 14px;
+            border-bottom: 1px solid var(--line);
+            color: #4f5956;
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        .items tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .item-name {
+            color: var(--ink);
+            font-weight: 700;
+        }
+
+        .item-description {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .number {
+            text-align: center;
+        }
+
+        .money {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* =========================
+           TOTALS
+        ========================== */
+
+        .totals-wrapper {
+            width: 100%;
+            margin-top: 26px;
+        }
+
+        .totals-table {
+            width: 370px;
+            max-width: 100%;
+            margin-left: auto;
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            padding: 9px 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .totals-table td:last-child {
+            color: var(--ink);
+            font-weight: 700;
+            text-align: right;
+            padding-left: 20px;
+            white-space: nowrap;
+        }
+
+        .total-row td {
+            padding-top: 16px;
+            border-top: 2px solid var(--green);
+            color: var(--bordo) !important;
+            font-size: 18px !important;
+            font-weight: 900 !important;
+        }
+
+        /* =========================
+           PAYMENT
+        ========================== */
+
+        .payment-box {
+            margin-top: 36px;
+            padding: 20px;
+            border-radius: 12px;
+            background: var(--soft);
+            border: 1px solid var(--line);
+        }
+
+        .payment-title {
+            color: var(--green);
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .payment-table td {
+            padding: 5px 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .payment-table td:last-child {
+            color: var(--ink);
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .paid {
+            color: var(--green) !important;
+        }
+
+        /* =========================
+           NOTES
+        ========================== */
+
+        .notes {
+            margin-top: 30px;
+            padding: 18px 20px;
+            border-left: 4px solid var(--bordo);
+            background: #fff9f4;
+        }
+
+        .notes-title {
+            color: var(--bordo);
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .notes-text {
+            color: #626a68;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        .footer {
+            padding: 26px 42px;
+            background: var(--green);
+            color: #dce8e5;
+        }
+
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .footer-left {
+            width: 60%;
+            vertical-align: top;
+        }
+
+        .footer-right {
+            width: 40%;
+            text-align: right;
+            vertical-align: top;
+        }
+
+        .footer-brand {
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+        .footer-text {
+            margin-top: 5px;
+            color: #cbdad6;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .footer-right .footer-text {
+            color: var(--cream);
+        }
+
+        /* =========================
+           PRINT
+        ========================== */
+
+        .print-actions {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 18px;
+            text-align: right;
+        }
+
+        .print-button {
+            border: 0;
+            border-radius: 8px;
+            padding: 11px 17px;
+            background: var(--green);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .print-button:hover {
+            background: var(--bordo);
+        }
+
+        @media print {
+
+            @page {
+                size: A4;
+                margin: 12mm;
+            }
+
+            body {
+                background: #ffffff;
+            }
+
+            .page-wrap {
+                padding: 0;
+            }
+
+            .invoice {
+                max-width: none;
+                box-shadow: none;
+            }
+
+            .print-actions {
+                display: none;
+            }
+
+            .topbar {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .footer {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .items thead th {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .status,
+            .event-header,
+            .payment-box,
+            .notes {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+
+        @media only screen and (max-width: 650px) {
+
+            .page-wrap {
+                padding: 10px 6px;
+            }
+
+            .topbar,
+            .body,
+            .footer {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .brand-cell,
+            .invoice-cell {
+                display: block;
+                width: 100%;
+                text-align: left;
+            }
+
+            .invoice-cell {
+                padding-top: 20px;
+            }
+
+            .invoice-title {
+                font-size: 25px;
+            }
+
+            .issued-date {
+                float: none;
+                display: block;
+                margin-top: 10px;
+            }
+
+            .details-cell,
+            .details-cell:last-child {
+                display: block;
+                width: 100%;
+                padding: 0 0 22px;
+            }
+
+            .details-cell:last-child {
+                padding-bottom: 0;
+            }
+
+            .items {
+                min-width: 600px;
+            }
+
+            .items-wrapper {
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            .totals-table {
+                width: 100%;
+            }
+
+            .footer-left,
+            .footer-right {
+                display: block;
+                width: 100%;
+                text-align: left;
+            }
+
+            .footer-right {
+                padding-top: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!--
+        K-TICKETS INVOICE TEMPLATE
+
+        This file is intended to be populated server-side.
+
+        Expected placeholders include:
+        {{invoice_number}}
+        {{invoice_status}}
+        {{issued_date}}
+        {{customer_name}}
+        {{customer_email}}
+        {{customer_phone}}
+        {{customer_address}}
+        {{merchant_name}}
+        {{merchant_email}}
+        {{merchant_phone}}
+        {{merchant_address}}
+        {{event_title}}
+        {{event_description}}
+        {{event_date}}
+        {{event_time}}
+        {{venue}}
+        {{city}}
+        {{order_id}}
+        {{payment_method}}
+        {{payment_reference}}
+        {{payment_status}}
+        {{currency}}
+        {{subtotal}}
+        {{service_fee}}
+        {{discount}}
+        {{tax}}
+        {{other_fees}}
+        {{total}}
+        {{amount_paid}}
+        {{balance_due}}
+        {{notes}}
+        {{support_email}}
+        {{support_phone}}
+        {{current_year}}
+
+        Item rows should be generated by the backend.
+        Example item variables:
+        {{ticket_type}}
+        {{ticket_description}}
+        {{quantity}}
+        {{unit_price}}
+        {{line_total}}
+    -->
+
+    <div class="page-wrap">
+
+        <!-- PRINT / SAVE AS PDF -->
+        <div class="print-actions">
+            <button
+                type="button"
+                class="print-button"
+                onclick="window.print()"
+            >
+                Print / Save as PDF
+            </button>
+        </div>
+
+        <main class="invoice">
+
+            <!-- =========================
+                 HEADER
+            ========================== -->
+
+            <header class="topbar">
+
+                <table role="presentation" class="topbar-table">
+
+                    <tr>
+
+                        <td class="brand-cell">
+
+                            <div class="brand">
+                                K-TICKETS
+                            </div>
+
+                            <div class="brand-subtitle">
+                                Your ticket. Your moment.
+                            </div>
+
+                        </td>
+
+                        <td class="invoice-cell">
+
+                            <div class="invoice-title">
+                                INVOICE
+                            </div>
+
+                            <div class="invoice-number">
+                                {{invoice_number}}
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </header>
+
+            <!-- =========================
+                 BODY
+            ========================== -->
+
+            <section class="body">
+
+                <!-- STATUS -->
+
+                <div class="status-row">
+
+                    <span class="status">
+                        {{invoice_status}}
+                    </span>
+
+                    <span class="issued-date">
+                        Issued: {{issued_date}}
+                    </span>
+
+                    <div style="clear: both;"></div>
+
+                </div>
+
+                <!-- BILLING -->
+
+                <table role="presentation" class="details-table">
+
+                    <tr>
+
+                        <!-- BILL TO -->
+
+                        <td class="details-cell">
+
+                            <div class="section-label">
+                                Bill To
+                            </div>
+
+                            <div class="person-name">
+                                {{customer_name}}
+                            </div>
+
+                            <div class="details-text">
+                                {{customer_email}}<br>
+                                {{customer_phone}}<br>
+                                {{customer_address}}
+                            </div>
+
+                        </td>
+
+                        <!-- MERCHANT -->
+
+                        <td class="details-cell">
+
+                            <div class="section-label">
+                                Merchant
+                            </div>
+
+                            <div class="person-name">
+                                {{merchant_name}}
+                            </div>
+
+                            <div class="details-text">
+                                {{merchant_email}}<br>
+                                {{merchant_phone}}<br>
+                                {{merchant_address}}
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </table>
+
+                <!-- EVENT -->
+
+                <section class="event-card">
+
+                    <div class="event-header">
+
+                        <div class="event-label">
+                            Event
+                        </div>
+
+                        <div class="event-title">
+                            {{event_title}}
+                        </div>
+
+                        <div class="event-meta">
+                            {{event_date}}
+                            &nbsp;•&nbsp;
+                            {{event_time}}
+                            &nbsp;•&nbsp;
+                            {{venue}}, {{city}}
+                        </div>
+
+                    </div>
+
+                    <!-- ITEMS -->
+
+                    <div class="items-wrapper">
+
+                        <table class="items">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th style="width: 42%;">
+                                        Description
+                                    </th>
+
+                                    <th style="width: 12%; text-align: center;">
+                                        Qty
+                                    </th>
+
+                                    <th style="width: 20%; text-align: right;">
+                                        Unit Price
+                                    </th>
+
+                                    <th style="width: 26%; text-align: right;">
+                                        Amount
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <!--
+                                    The backend should repeat this row for
+                                    every ticket type / line item.
+                                -->
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="item-name">
+                                            {{ticket_type}}
+                                        </div>
+
+                                        <div class="item-description">
+                                            {{ticket_description}}
+                                        </div>
+
+                                    </td>
+
+                                    <td class="number">
+                                        {{quantity}}
+                                    </td>
+
+                                    <td class="money">
+                                        {{currency}} {{unit_price}}
+                                    </td>
+
+                                    <td class="money">
+                                        {{currency}} {{line_total}}
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+                <!-- TOTALS -->
+
+                <div class="totals-wrapper">
+
+                    <table class="totals-table">
+
+                        <tr>
+                            <td>
+                                Subtotal
+                            </td>
+
+                            <td>
+                                {{currency}} {{subtotal}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Discount
+                            </td>
+
+                            <td>
+                                - {{currency}} {{discount}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Service Fee
+                            </td>
+
+                            <td>
+                                {{currency}} {{service_fee}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Tax
+                            </td>
+
+                            <td>
+                                {{currency}} {{tax}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Other Fees
+                            </td>
+
+                            <td>
+                                {{currency}} {{other_fees}}
+                            </td>
+                        </tr>
+
+                        <tr class="total-row">
+
+                            <td>
+                                Total
+                            </td>
+
+                            <td>
+                                {{currency}} {{total}}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Amount Paid
+                            </td>
+
+                            <td>
+                                {{currency}} {{amount_paid}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Balance Due
+                            </td>
+
+                            <td>
+                                {{currency}} {{balance_due}}
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+                <!-- PAYMENT -->
+
+                <section class="payment-box">
+
+                    <div class="payment-title">
+                        Payment Information
+                    </div>
+
+                    <table class="payment-table">
+
+                        <tr>
+
+                            <td>
+                                Order ID
+                            </td>
+
+                            <td>
+                                {{order_id}}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                Payment Method
+                            </td>
+
+                            <td>
+                                {{payment_method}}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                Payment Reference
+                            </td>
+
+                            <td>
+                                {{payment_reference}}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                Payment Status
+                            </td>
+
+                            <td class="paid">
+                                {{payment_status}}
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </section>
+
+                <!-- NOTES -->
+
+                <section class="notes">
+
+                    <div class="notes-title">
+                        Notes
+                    </div>
+
+                    <div class="notes-text">
+                        {{notes}}
+                    </div>
+
+                </section>
+
+            </section>
+
+            <!-- =========================
+                 FOOTER
+            ========================== -->
+
+            <footer class="footer">
+
+                <table role="presentation" class="footer-table">
+
+                    <tr>
+
+                        <td class="footer-left">
+
+                            <div class="footer-brand">
+                                K-TICKETS
+                            </div>
+
+                            <div class="footer-text">
+                                Ticketing made simple.
+                                <br>
+                                {{support_email}}
+                                <br>
+                                {{support_phone}}
+                            </div>
+
+                        </td>
+
+                        <td class="footer-right">
+
+                            <div class="footer-text">
+                                Thank you for choosing K-Tickets.
+                            </div>
+
+                            <div class="footer-text">
+                                © {{current_year}} K-Tickets.
+                                All rights reserved.
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

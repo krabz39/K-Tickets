@@ -1,0 +1,2547 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow,noarchive,nosnippet"
+    >
+
+    <meta
+        name="referrer"
+        content="same-origin"
+    >
+
+    <title>K-Tickets — My Ticket</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo: #6C151E;
+            --green: #0F3D3A;
+            --cream: #F5DABF;
+
+            --paper: #FFFFFF;
+            --soft: #FBF6F1;
+            --soft-green: #EDF5F2;
+
+            --ink: #24302F;
+            --muted: #707977;
+            --line: #E7DDD5;
+
+            --success: #167052;
+            --warning: #A86413;
+            --danger: #9B2B36;
+
+            --shadow:
+                0 18px 55px rgba(15, 61, 58, 0.12);
+
+            --radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(108, 21, 30, 0.08),
+                    transparent 32%
+                ),
+                linear-gradient(
+                    135deg,
+                    #f5dabf 0%,
+                    #f9eee5 42%,
+                    #ffffff 100%
+                );
+            color: var(--ink);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                Helvetica,
+                sans-serif;
+        }
+
+        button,
+        a {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 22px;
+        }
+
+        .shell {
+            width: min(1050px, 100%);
+            margin: 0 auto;
+        }
+
+        /* =========================
+           TOP BAR
+        ========================== */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--green);
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .brand-mark {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--bordo);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 900;
+        }
+
+        .brand-text {
+            font-size: 19px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .top-btn {
+            border: 1px solid rgba(15, 61, 58, 0.14);
+            border-radius: 10px;
+            padding: 10px 13px;
+            background: rgba(255,255,255,.75);
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .top-btn:hover {
+            border-color: var(--green);
+        }
+
+        /* =========================
+           STATES
+        ========================== */
+
+        .state {
+            display: none;
+            padding: 55px 25px;
+            text-align: center;
+            background: rgba(255,255,255,.92);
+            border: 1px solid rgba(255,255,255,.7);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .state.active {
+            display: block;
+        }
+
+        .state-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--soft-green);
+            color: var(--green);
+            font-size: 25px;
+            font-weight: 900;
+        }
+
+        .state h2 {
+            margin: 0 0 8px;
+            color: var(--green);
+            font-size: 23px;
+        }
+
+        .state p {
+            max-width: 560px;
+            margin: 0 auto;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .retry-btn {
+            margin-top: 20px;
+            border: 0;
+            border-radius: 10px;
+            padding: 12px 17px;
+            background: var(--green);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* =========================
+           TICKET
+        ========================== */
+
+        #ticketView {
+            display: none;
+        }
+
+        #ticketView.active {
+            display: block;
+        }
+
+        .ticket {
+            overflow: hidden;
+            background: var(--paper);
+            border: 1px solid rgba(15,61,58,.09);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .ticket-head {
+            position: relative;
+            overflow: hidden;
+            padding: 34px;
+            background: var(--green);
+            color: #fff;
+        }
+
+        .ticket-head::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            right: -90px;
+            top: -120px;
+            border-radius: 50%;
+            border: 45px solid rgba(245,218,191,.08);
+        }
+
+        .ticket-head-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .ticket-kicker {
+            color: var(--cream);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+        }
+
+        .event-title {
+            max-width: 750px;
+            margin: 9px 0 0;
+            color: #fff;
+            font-size: clamp(27px, 4vw, 42px);
+            line-height: 1.12;
+            letter-spacing: -.7px;
+        }
+
+        .event-description {
+            max-width: 720px;
+            margin-top: 12px;
+            color: #dce8e5;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .head-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 20px;
+            padding: 8px 12px;
+            border-radius: 30px;
+            background: rgba(255,255,255,.12);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+        }
+
+        .head-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #8FE1C2;
+        }
+
+        /* =========================
+           MAIN
+        ========================== */
+
+        .ticket-main {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+            gap: 0;
+        }
+
+        .details {
+            padding: 34px;
+        }
+
+        .section-label {
+            margin-bottom: 17px;
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 22px 20px;
+        }
+
+        .info-label {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            margin-top: 5px;
+            color: var(--ink);
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .info-value.muted {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .divider {
+            height: 1px;
+            margin: 30px 0;
+            background: var(--line);
+        }
+
+        /* =========================
+           QR PANEL
+        ========================== */
+
+        .qr-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 34px 28px;
+            background: var(--soft);
+            border-left: 1px solid var(--line);
+            text-align: center;
+        }
+
+        .qr-label {
+            color: var(--green);
+            font-size: 15px;
+            font-weight: 900;
+        }
+
+        .qr-help {
+            max-width: 250px;
+            margin: 6px auto 17px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .qr-wrap {
+            width: 225px;
+            height: 225px;
+            display: grid;
+            place-items: center;
+            padding: 13px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 17px;
+            box-shadow: 0 10px 25px rgba(15,61,58,.08);
+        }
+
+        #qrImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .qr-placeholder {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .ticket-code {
+            margin-top: 15px;
+            color: var(--bordo);
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 1.8px;
+            word-break: break-all;
+        }
+
+        .ticket-code-label {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        /* =========================
+           HOLDER / REFERENCES
+        ========================== */
+
+        .holder-card {
+            padding: 18px;
+            border-radius: 13px;
+            background: var(--soft);
+            border: 1px solid var(--line);
+        }
+
+        .holder-name {
+            color: var(--green);
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .holder-email {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .reference-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 14px;
+        }
+
+        .reference {
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .reference-label {
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .reference-value {
+            margin-top: 5px;
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 800;
+            word-break: break-word;
+        }
+
+        /* =========================
+           STATUS
+        ========================== */
+
+        .status-banner {
+            margin-top: 25px;
+            padding: 16px 18px;
+            border-radius: 13px;
+            background: var(--soft-green);
+            border: 1px solid #d8e9e3;
+            color: var(--green);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .status-banner strong {
+            font-weight: 900;
+        }
+
+        .status-banner.cancelled,
+        .status-banner.expired {
+            background: #fff0f1;
+            border-color: #f1d2d5;
+            color: var(--danger);
+        }
+
+        .status-banner.pending {
+            background: #fff7e9;
+            border-color: #f0dfbd;
+            color: var(--warning);
+        }
+
+        /* =========================
+           BOTTOM ACTIONS
+        ========================== */
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            min-height: 43px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            padding: 11px 16px;
+            font-size: 12px;
+            font-weight: 900;
+            transition: .2s ease;
+        }
+
+        .btn-primary {
+            background: var(--bordo);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #581119;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            border-color: var(--line);
+            color: var(--green);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--green);
+        }
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        .page-footer {
+            padding: 25px 5px 8px;
+            color: #6d7774;
+            font-size: 11px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .page-footer strong {
+            color: var(--green);
+        }
+
+        /* =========================
+           PRINT
+        ========================== */
+
+        @media print {
+
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+
+            body {
+                background: #fff;
+            }
+
+            .page {
+                padding: 0;
+            }
+
+            .topbar,
+            .actions,
+            .page-footer,
+            .no-print {
+                display: none !important;
+            }
+
+            .shell {
+                width: 100%;
+            }
+
+            .ticket {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                border-radius: 0;
+            }
+
+            .ticket-head,
+            .qr-panel,
+            .status-banner,
+            .holder-card {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .ticket-main {
+                grid-template-columns: minmax(0, 1.3fr) minmax(250px, .7fr);
+            }
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 780px) {
+
+            .page {
+                padding: 12px;
+            }
+
+            .ticket-main {
+                grid-template-columns: 1fr;
+            }
+
+            .qr-panel {
+                border-left: 0;
+                border-top: 1px solid var(--line);
+            }
+        }
+
+        @media (max-width: 560px) {
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .top-actions {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .top-btn {
+                padding: 9px 10px;
+            }
+
+            .ticket-head,
+            .details {
+                padding: 25px 20px;
+            }
+
+            .qr-panel {
+                padding: 28px 20px;
+            }
+
+            .info-grid,
+            .reference-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .qr-wrap {
+                width: min(225px, 78vw);
+                height: min(225px, 78vw);
+            }
+        }
+
+        @media (max-width: 400px) {
+
+            .brand-text {
+                font-size: 16px;
+            }
+
+            .brand-mark {
+                width: 36px;
+                height: 36px;
+            }
+
+            .topbar {
+                gap: 10px;
+            }
+
+            .top-actions {
+                gap: 5px;
+            }
+
+            .top-btn {
+                font-size: 10px;
+            }
+
+            .event-title {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="shell">
+
+        <!-- =========================
+             TOP NAV
+        ========================== -->
+
+        <header class="topbar no-print">
+
+            <a
+                href="../customer/my-tickets.html"
+                class="brand"
+            >
+                <span class="brand-mark">KT</span>
+                <span class="brand-text">K-TICKETS</span>
+            </a>
+
+            <div class="top-actions">
+
+                <a
+                    href="../customer/my-tickets.html"
+                    class="top-btn"
+                >
+                    My Tickets
+                </a>
+
+                <button
+                    type="button"
+                    class="top-btn"
+                    id="printTopBtn"
+                >
+                    Print
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- =========================
+             LOADING
+        ========================== -->
+
+        <section
+            class="state active"
+            id="loadingState"
+        >
+
+            <div class="state-icon">
+                …
+            </div>
+
+            <h2>
+                Loading your ticket
+            </h2>
+
+            <p>
+                We're securely retrieving your ticket information.
+            </p>
+
+        </section>
+
+        <!-- =========================
+             ERROR
+        ========================== -->
+
+        <section
+            class="state"
+            id="errorState"
+        >
+
+            <div class="state-icon">
+                !
+            </div>
+
+            <h2 id="errorTitle">
+                Ticket unavailable
+            </h2>
+
+            <p id="errorMessage">
+                We couldn't load this ticket.
+            </p>
+
+            <button
+                type="button"
+                class="retry-btn"
+                id="retryBtn"
+            >
+                Try Again
+            </button>
+
+        </section>
+
+        <!-- =========================
+             TICKET
+        ========================== -->
+
+        <main
+            class="ticket"
+            id="ticketView"
+        >
+
+            <!-- TICKET HEADER -->
+
+            <section class="ticket-head">
+
+                <div class="ticket-head-content">
+
+                    <div class="ticket-kicker">
+                        K-Tickets Digital Ticket
+                    </div>
+
+                    <h1
+                        class="event-title"
+                        id="eventTitle"
+                    >
+                        Event
+                    </h1>
+
+                    <div
+                        class="event-description"
+                        id="eventDescription"
+                    ></div>
+
+                    <div
+                        class="head-status"
+                        id="headStatus"
+                    >
+                        <span class="head-status-dot"></span>
+                        <span id="headStatusText">
+                            Valid Ticket
+                        </span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- TICKET MAIN -->
+
+            <section class="ticket-main">
+
+                <!-- DETAILS -->
+
+                <div class="details">
+
+                    <div class="section-label">
+                        Event Details
+                    </div>
+
+                    <div class="info-grid">
+
+                        <div>
+                            <div class="info-label">
+                                Date
+                            </div>
+
+                            <div
+                                class="info-value"
+                                id="eventDate"
+                            >
+                                —
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="info-label">
+                                Time
+                            </div>
+
+                            <div
+                                class="info-value"
+                                id="eventTime"
+                            >
+                                —
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="info-label">
+                                Venue
+                            </div>
+
+                            <div
+                                class="info-value"
+                                id="eventVenue"
+                            >
+                                —
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="info-label">
+                                City
+                            </div>
+
+                            <div
+                                class="info-value"
+                                id="eventCity"
+                            >
+                                —
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="info-label">
+                                Ticket Type
+                            </div>
+
+                            <div
+                                class="info-value"
+                                id="ticketType"
+                            >
+                                —
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="info-label">
+                                Quantity
+                            </div>
+
+                            <div
+                                class="info-value"
+                                id="ticketQuantity"
+                            >
+                                1
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- HOLDER -->
+
+                    <div class="section-label">
+                        Ticket Holder
+                    </div>
+
+                    <div class="holder-card">
+
+                        <div
+                            class="holder-name"
+                            id="holderName"
+                        >
+                            —
+                        </div>
+
+                        <div
+                            class="holder-email"
+                            id="holderEmail"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- REFERENCES -->
+
+                    <div class="section-label">
+                        Ticket References
+                    </div>
+
+                    <div class="reference-grid">
+
+                        <div class="reference">
+
+                            <div class="reference-label">
+                                Ticket Code
+                            </div>
+
+                            <div
+                                class="reference-value"
+                                id="ticketCode"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                        <div class="reference">
+
+                            <div class="reference-label">
+                                Ticket ID
+                            </div>
+
+                            <div
+                                class="reference-value"
+                                id="ticketId"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                        <div class="reference">
+
+                            <div class="reference-label">
+                                Order ID
+                            </div>
+
+                            <div
+                                class="reference-value"
+                                id="orderId"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                        <div class="reference">
+
+                            <div class="reference-label">
+                                Issued
+                            </div>
+
+                            <div
+                                class="reference-value"
+                                id="issuedAt"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- STATUS -->
+
+                    <div
+                        class="status-banner"
+                        id="statusBanner"
+                    >
+                        <strong>Ticket status:</strong>
+                        <span id="statusText">
+                            —
+                        </span>
+                    </div>
+
+                    <!-- ACTIONS -->
+
+                    <div class="actions no-print">
+
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            id="printBtn"
+                        >
+                            Print / Save PDF
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            id="downloadQrBtn"
+                        >
+                            Download QR
+                        </button>
+
+                        <a
+                            href="../customer/my-tickets.html"
+                            class="btn btn-secondary"
+                        >
+                            Back to My Tickets
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- QR PANEL -->
+
+                <aside class="qr-panel">
+
+                    <div class="qr-label">
+                        Entry QR
+                    </div>
+
+                    <div class="qr-help">
+                        Present this QR code at the event entrance.
+                    </div>
+
+                    <div class="qr-wrap">
+
+                        <img
+                            id="qrImage"
+                            src=""
+                            alt="Ticket QR code"
+                            style="display:none;"
+                        >
+
+                        <div
+                            class="qr-placeholder"
+                            id="qrPlaceholder"
+                        >
+                            QR code unavailable
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="ticket-code"
+                        id="qrTicketCode"
+                    >
+                        —
+                    </div>
+
+                    <div class="ticket-code-label">
+                        Ticket Code
+                    </div>
+
+                </aside>
+
+            </section>
+
+        </main>
+
+        <!-- =========================
+             FOOTER
+        ========================== -->
+
+        <footer class="page-footer">
+
+            <strong>K-TICKETS</strong>
+            · Ticketing made simple.
+
+            <br>
+
+            Keep your ticket and QR code private.
+
+            <br>
+
+            Support:
+            <span id="supportEmail">
+                —
+            </span>
+
+        </footer>
+
+    </div>
+
+</div>
+
+
+<script>
+/* ============================================================
+   K-TICKETS CUSTOMER TICKET PAGE
+   ============================================================
+
+   SECURITY MODEL
+
+   - Supabase ANON key only.
+   - Customer must be authenticated.
+   - Ticket ownership is checked through user_id.
+   - Never use the Supabase service-role key here.
+   - Never trust a ticket ID from the URL as proof of ownership.
+   - RLS must independently enforce ticket ownership.
+   - QR content should be generated server-side.
+   - Check-in must be performed through a protected RPC/Edge
+     Function, not directly from this page.
+
+   Expected URL:
+
+   /customer/ticket.html?id=TICKET_ID
+
+   This page also accepts:
+
+   /customer/ticket.html?ticket_id=TICKET_ID
+============================================================ */
+
+
+/* ============================================================
+   SUPABASE CONFIG
+============================================================ */
+
+const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL || "";
+
+const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+let supabaseClient = null;
+
+
+/* ============================================================
+   DOM
+============================================================ */
+
+const loadingState =
+    document.getElementById("loadingState");
+
+const errorState =
+    document.getElementById("errorState");
+
+const ticketView =
+    document.getElementById("ticketView");
+
+const errorTitle =
+    document.getElementById("errorTitle");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const retryBtn =
+    document.getElementById("retryBtn");
+
+const printBtn =
+    document.getElementById("printBtn");
+
+const printTopBtn =
+    document.getElementById("printTopBtn");
+
+const downloadQrBtn =
+    document.getElementById("downloadQrBtn");
+
+const qrImage =
+    document.getElementById("qrImage");
+
+const qrPlaceholder =
+    document.getElementById("qrPlaceholder");
+
+const statusBanner =
+    document.getElementById("statusBanner");
+
+
+/* ============================================================
+   HELPERS
+============================================================ */
+
+function showLoading() {
+
+    loadingState.classList.add("active");
+    errorState.classList.remove("active");
+    ticketView.classList.remove("active");
+}
+
+
+function showError(
+    title,
+    message
+) {
+
+    loadingState.classList.remove("active");
+    ticketView.classList.remove("active");
+
+    errorTitle.textContent =
+        title || "Ticket unavailable";
+
+    errorMessage.textContent =
+        message || "We couldn't load this ticket.";
+
+    errorState.classList.add("active");
+}
+
+
+function showTicket() {
+
+    loadingState.classList.remove("active");
+    errorState.classList.remove("active");
+    ticketView.classList.add("active");
+}
+
+
+function escapeText(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return "—";
+    }
+
+    return String(value);
+}
+
+
+function firstValue(
+    object,
+    keys,
+    fallback = null
+) {
+
+    if (!object) {
+        return fallback;
+    }
+
+    for (const key of keys) {
+
+        const value =
+            object[key];
+
+        if (
+            value !== undefined &&
+            value !== null &&
+            value !== ""
+        ) {
+            return value;
+        }
+    }
+
+    return fallback;
+}
+
+
+function formatDate(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return String(value);
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        }
+    ).format(date);
+}
+
+
+function formatTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return String(value);
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            hour: "numeric",
+            minute: "2-digit"
+        }
+    ).format(date);
+}
+
+
+function formatDateTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return String(value);
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+        }
+    ).format(date);
+}
+
+
+function normalizeStatus(value) {
+
+    return String(
+        value || "issued"
+    )
+        .trim()
+        .toLowerCase()
+        .replace(/[\s-]+/g, "_");
+}
+
+
+function isTicketValid(status) {
+
+    return [
+        "issued",
+        "active",
+        "valid",
+        "confirmed"
+    ].includes(
+        normalizeStatus(status)
+    );
+}
+
+
+/* ============================================================
+   URL
+============================================================ */
+
+function getTicketIdFromUrl() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    return (
+        params.get("id") ||
+        params.get("ticket_id") ||
+        ""
+    ).trim();
+}
+
+
+/* ============================================================
+   SUPABASE INIT
+============================================================ */
+
+function initializeSupabase() {
+
+    if (
+        !SUPABASE_URL ||
+        !SUPABASE_ANON_KEY
+    ) {
+        throw new Error(
+            "K-Tickets Supabase configuration is missing."
+        );
+    }
+
+    if (
+        !window.supabase ||
+        !window.supabase.createClient
+    ) {
+        throw new Error(
+            "Supabase library failed to load."
+        );
+    }
+
+    supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY,
+            {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
+                }
+            }
+        );
+}
+
+
+/* ============================================================
+   AUTH
+============================================================ */
+
+async function requireCustomer() {
+
+    const {
+        data: sessionData,
+        error: sessionError
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+    if (sessionError) {
+        throw sessionError;
+    }
+
+    const session =
+        sessionData?.session;
+
+    if (!session?.user) {
+
+        window.location.href =
+            "../auth/login.html?redirect=" +
+            encodeURIComponent(
+                window.location.pathname +
+                window.location.search
+            );
+
+        return null;
+    }
+
+    return session.user;
+}
+
+
+/* ============================================================
+   LOAD CUSTOMER PROFILE
+============================================================ */
+
+async function loadCustomerProfile(
+    userId
+) {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(
+                "id,full_name,phone,role"
+            )
+            .eq("id", userId)
+            .maybeSingle();
+
+    if (error) {
+        console.warn(
+            "Profile lookup failed:",
+            error
+        );
+
+        return null;
+    }
+
+    return data;
+}
+
+
+/* ============================================================
+   LOAD TICKET
+============================================================ */
+
+async function loadTicket(
+    ticketId,
+    userId
+) {
+
+    /*
+        Important:
+
+        The .eq("user_id", userId) condition is intentional.
+
+        Supabase RLS must ALSO enforce this server-side.
+    */
+
+    const primary =
+        await supabaseClient
+            .from("tickets")
+            .select(`
+                *,
+                events(
+                    id,
+                    title,
+                    description,
+                    venue,
+                    city,
+                    start_at,
+                    end_at,
+                    status
+                ),
+                ticket_types(
+                    id,
+                    name
+                )
+            `)
+            .eq("id", ticketId)
+            .eq("user_id", userId)
+            .maybeSingle();
+
+    if (!primary.error) {
+
+        return primary.data;
+    }
+
+    /*
+        Flexible fallback for environments where
+        foreign-key relationships are not configured.
+    */
+
+    const fallback =
+        await supabaseClient
+            .from("tickets")
+            .select("*")
+            .eq("id", ticketId)
+            .eq("user_id", userId)
+            .maybeSingle();
+
+    if (fallback.error) {
+        throw fallback.error;
+    }
+
+    return fallback.data;
+}
+
+
+/* ============================================================
+   LOAD EVENT IF NEEDED
+============================================================ */
+
+async function loadEvent(
+    eventId
+) {
+
+    if (!eventId) {
+        return null;
+    }
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("events")
+            .select(`
+                id,
+                title,
+                description,
+                venue,
+                city,
+                start_at,
+                end_at,
+                status
+            `)
+            .eq("id", eventId)
+            .maybeSingle();
+
+    if (error) {
+
+        console.warn(
+            "Event lookup failed:",
+            error
+        );
+
+        return null;
+    }
+
+    return data;
+}
+
+
+/* ============================================================
+   LOAD TICKET TYPE IF NEEDED
+============================================================ */
+
+async function loadTicketType(
+    ticketTypeId
+) {
+
+    if (!ticketTypeId) {
+        return null;
+    }
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("ticket_types")
+            .select(`
+                id,
+                name
+            `)
+            .eq("id", ticketTypeId)
+            .maybeSingle();
+
+    if (error) {
+
+        console.warn(
+            "Ticket type lookup failed:",
+            error
+        );
+
+        return null;
+    }
+
+    return data;
+}
+
+
+/* ============================================================
+   MAP TICKET
+============================================================ */
+
+async function normalizeTicket(
+    rawTicket
+) {
+
+    if (!rawTicket) {
+        return null;
+    }
+
+    let event =
+        rawTicket.events || null;
+
+    let ticketType =
+        rawTicket.ticket_types || null;
+
+    const eventId =
+        firstValue(
+            rawTicket,
+            ["event_id"]
+        );
+
+    const ticketTypeId =
+        firstValue(
+            rawTicket,
+            ["ticket_type_id"]
+        );
+
+    if (!event && eventId) {
+        event =
+            await loadEvent(eventId);
+    }
+
+    if (!ticketType && ticketTypeId) {
+        ticketType =
+            await loadTicketType(ticketTypeId);
+    }
+
+    return {
+        raw: rawTicket,
+
+        id:
+            firstValue(
+                rawTicket,
+                ["id","ticket_id"]
+            ),
+
+        code:
+            firstValue(
+                rawTicket,
+                [
+                    "ticket_code",
+                    "code",
+                    "ticket_number",
+                    "ticket_no"
+                ]
+            ),
+
+        status:
+            firstValue(
+                rawTicket,
+                [
+                    "status",
+                    "ticket_status",
+                    "state"
+                ],
+                "issued"
+            ),
+
+        userId:
+            firstValue(
+                rawTicket,
+                [
+                    "user_id",
+                    "customer_id"
+                ]
+            ),
+
+        eventId,
+
+        ticketTypeId,
+
+        quantity:
+            firstValue(
+                rawTicket,
+                [
+                    "quantity",
+                    "qty"
+                ],
+                1
+            ),
+
+        issuedAt:
+            firstValue(
+                rawTicket,
+                [
+                    "issued_at",
+                    "created_at"
+                ]
+            ),
+
+        checkedInAt:
+            firstValue(
+                rawTicket,
+                [
+                    "checked_in_at",
+                    "check_in_at"
+                ]
+            ),
+
+        orderId:
+            firstValue(
+                rawTicket,
+                [
+                    "order_id",
+                    "order"
+                ]
+            ),
+
+        qrCodeUrl:
+            firstValue(
+                rawTicket,
+                [
+                    "qr_code_url",
+                    "qr_url",
+                    "qr_image_url"
+                ]
+            ),
+
+        event,
+
+        ticketType
+    };
+}
+
+
+/* ============================================================
+   RENDER
+============================================================ */
+
+function renderTicket(
+    ticket,
+    profile
+) {
+
+    const event =
+        ticket.event || {};
+
+    const ticketType =
+        ticket.ticketType || {};
+
+    const status =
+        normalizeStatus(
+            ticket.status
+        );
+
+    const customerName =
+        firstValue(
+            profile,
+            ["full_name"]
+        ) ||
+        firstValue(
+            ticket.raw,
+            [
+                "customer_name",
+                "holder_name"
+            ],
+            "Ticket Holder"
+        );
+
+    const customerEmail =
+        firstValue(
+            ticket.raw,
+            [
+                "customer_email",
+                "email"
+            ],
+            ""
+        );
+
+    const eventTitle =
+        firstValue(
+            event,
+            ["title"]
+        ) ||
+        firstValue(
+            ticket.raw,
+            ["event_title"],
+            "K-Tickets Event"
+        );
+
+    const description =
+        firstValue(
+            event,
+            ["description"]
+        ) ||
+        firstValue(
+            ticket.raw,
+            ["event_description"],
+            ""
+        );
+
+    const startAt =
+        firstValue(
+            event,
+            ["start_at"]
+        ) ||
+        firstValue(
+            ticket.raw,
+            [
+                "event_start_at",
+                "start_at"
+            ]
+        );
+
+    const venue =
+        firstValue(
+            event,
+            ["venue"]
+        ) ||
+        firstValue(
+            ticket.raw,
+            ["venue"],
+            "—"
+        );
+
+    const city =
+        firstValue(
+            event,
+            ["city"]
+        ) ||
+        firstValue(
+            ticket.raw,
+            ["city"],
+            "—"
+        );
+
+    const ticketTypeName =
+        firstValue(
+            ticketType,
+            ["name"]
+        ) ||
+        firstValue(
+            ticket.raw,
+            [
+                "ticket_type_name",
+                "type_name"
+            ],
+            "General Admission"
+        );
+
+    const quantity =
+        firstValue(
+            ticket.raw,
+            ["quantity","qty"],
+            1
+        );
+
+    /* EVENT */
+
+    document.getElementById(
+        "eventTitle"
+    ).textContent =
+        escapeText(eventTitle);
+
+    document.getElementById(
+        "eventDescription"
+    ).textContent =
+        escapeText(description);
+
+    document.getElementById(
+        "eventDate"
+    ).textContent =
+        formatDate(startAt);
+
+    document.getElementById(
+        "eventTime"
+    ).textContent =
+        formatTime(startAt);
+
+    document.getElementById(
+        "eventVenue"
+    ).textContent =
+        escapeText(venue);
+
+    document.getElementById(
+        "eventCity"
+    ).textContent =
+        escapeText(city);
+
+    /* TICKET */
+
+    document.getElementById(
+        "ticketType"
+    ).textContent =
+        escapeText(ticketTypeName);
+
+    document.getElementById(
+        "ticketQuantity"
+    ).textContent =
+        escapeText(quantity);
+
+    /* HOLDER */
+
+    document.getElementById(
+        "holderName"
+    ).textContent =
+        escapeText(customerName);
+
+    document.getElementById(
+        "holderEmail"
+    ).textContent =
+        customerEmail
+            ? escapeText(customerEmail)
+            : "Email available in your K-Tickets account";
+
+    /* REFERENCES */
+
+    document.getElementById(
+        "ticketCode"
+    ).textContent =
+        escapeText(ticket.code);
+
+    document.getElementById(
+        "qrTicketCode"
+    ).textContent =
+        escapeText(ticket.code);
+
+    document.getElementById(
+        "ticketId"
+    ).textContent =
+        escapeText(ticket.id);
+
+    document.getElementById(
+        "orderId"
+    ).textContent =
+        escapeText(ticket.orderId);
+
+    document.getElementById(
+        "issuedAt"
+    ).textContent =
+        formatDateTime(ticket.issuedAt);
+
+    /* STATUS */
+
+    const statusLabel =
+        status
+            .replace(/_/g, " ")
+            .replace(
+                /\b\w/g,
+                char => char.toUpperCase()
+            );
+
+    document.getElementById(
+        "headStatusText"
+    ).textContent =
+        statusLabel;
+
+    document.getElementById(
+        "statusText"
+    ).textContent =
+        statusLabel;
+
+    statusBanner.classList.remove(
+        "cancelled",
+        "expired",
+        "pending"
+    );
+
+    if (
+        status === "cancelled" ||
+        status === "void" ||
+        status === "refunded"
+    ) {
+
+        statusBanner.classList.add(
+            "cancelled"
+        );
+
+        document.getElementById(
+            "statusText"
+        ).textContent =
+            "This ticket is no longer valid.";
+
+    } else if (
+        status === "expired"
+    ) {
+
+        statusBanner.classList.add(
+            "expired"
+        );
+
+        document.getElementById(
+            "statusText"
+        ).textContent =
+            "This ticket has expired.";
+
+    } else if (
+        status === "pending"
+    ) {
+
+        statusBanner.classList.add(
+            "pending"
+        );
+
+        document.getElementById(
+            "statusText"
+        ).textContent =
+            "This ticket is awaiting confirmation.";
+
+    } else if (
+        ticket.checkedInAt
+    ) {
+
+        document.getElementById(
+            "statusText"
+        ).textContent =
+            "Checked in on " +
+            formatDateTime(
+                ticket.checkedInAt
+            );
+
+    } else if (
+        isTicketValid(status)
+    ) {
+
+        document.getElementById(
+            "statusText"
+        ).textContent =
+            "This ticket is valid and ready for entry.";
+
+    }
+
+    /* QR */
+
+    setQrCode(
+        ticket.qrCodeUrl
+    );
+
+    /* DOCUMENT */
+
+    document.title =
+        "K-Tickets — " +
+        eventTitle;
+
+    /* DOWNLOAD */
+
+    downloadQrBtn.dataset.qrUrl =
+        ticket.qrCodeUrl || "";
+
+    downloadQrBtn.dataset.code =
+        ticket.code || "";
+}
+
+
+/* ============================================================
+   QR
+============================================================ */
+
+function setQrCode(
+    url
+) {
+
+    if (!url) {
+
+        qrImage.style.display =
+            "none";
+
+        qrImage.removeAttribute(
+            "src"
+        );
+
+        qrPlaceholder.style.display =
+            "block";
+
+        qrPlaceholder.textContent =
+            "QR code unavailable.";
+
+        return;
+    }
+
+    qrImage.onload =
+        function() {
+
+            qrImage.style.display =
+                "block";
+
+            qrPlaceholder.style.display =
+                "none";
+        };
+
+    qrImage.onerror =
+        function() {
+
+            qrImage.style.display =
+                "none";
+
+            qrPlaceholder.style.display =
+                "block";
+
+            qrPlaceholder.textContent =
+                "QR image could not be loaded.";
+        };
+
+    qrImage.src =
+        url;
+}
+
+
+/* ============================================================
+   DOWNLOAD QR
+============================================================ */
+
+async function downloadQr() {
+
+    const url =
+        downloadQrBtn.dataset.qrUrl;
+
+    const code =
+        downloadQrBtn.dataset.code ||
+        "ticket";
+
+    if (!url) {
+
+        alert(
+            "A QR image is not available for this ticket."
+        );
+
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(
+                "QR download failed."
+            );
+        }
+
+        const blob =
+            await response.blob();
+
+        const objectUrl =
+            URL.createObjectURL(blob);
+
+        const link =
+            document.createElement("a");
+
+        link.href =
+            objectUrl;
+
+        link.download =
+            "k-tickets-" +
+            code +
+            ".png";
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        link.remove();
+
+        URL.revokeObjectURL(
+            objectUrl
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "QR download failed:",
+            error
+        );
+
+        /*
+            Fallback:
+
+            Opening the QR image is preferable to
+            pretending a download succeeded.
+        */
+
+        window.open(
+            url,
+            "_blank",
+            "noopener,noreferrer"
+        );
+    }
+}
+
+
+/* ============================================================
+   SUPPORT SETTINGS
+============================================================ */
+
+async function loadSupportEmail() {
+
+    /*
+        Optional.
+
+        This attempts to read a public support setting if the
+        project's site_settings table is available.
+
+        Failure is intentionally silent because the ticket
+        should never depend on this lookup.
+    */
+
+    try {
+
+        const {
+            data
+        } =
+            await supabaseClient
+                .from("site_settings")
+                .select("*")
+                .limit(100);
+
+        if (!data || !data.length) {
+            return;
+        }
+
+        let email = "";
+
+        for (const row of data) {
+
+            const key =
+                String(
+                    row.key ||
+                    row.setting_key ||
+                    ""
+                ).toLowerCase();
+
+            if (
+                key === "support_email"
+            ) {
+
+                email =
+                    row.value ||
+                    row.setting_value ||
+                    "";
+
+                break;
+            }
+        }
+
+        if (email) {
+
+            document.getElementById(
+                "supportEmail"
+            ).textContent =
+                email;
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Support email unavailable:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   LOAD PAGE
+============================================================ */
+
+async function loadPage() {
+
+    showLoading();
+
+    try {
+
+        const ticketId =
+            getTicketIdFromUrl();
+
+        if (!ticketId) {
+
+            showError(
+                "Ticket not specified",
+                "Open this page from your My Tickets area so we can identify the ticket."
+            );
+
+            return;
+        }
+
+        initializeSupabase();
+
+        const user =
+            await requireCustomer();
+
+        if (!user) {
+            return;
+        }
+
+        const ticket =
+            await loadTicket(
+                ticketId,
+                user.id
+            );
+
+        if (!ticket) {
+
+            showError(
+                "Ticket not found",
+                "This ticket does not exist, is unavailable, or does not belong to the signed-in account."
+            );
+
+            return;
+        }
+
+        const profile =
+            await loadCustomerProfile(
+                user.id
+            );
+
+        const normalized =
+            await normalizeTicket(
+                ticket
+            );
+
+        /*
+            Additional ownership check in the browser.
+
+            RLS remains the actual security boundary.
+        */
+
+        if (
+            normalized.userId &&
+            normalized.userId !== user.id
+        ) {
+
+            showError(
+                "Ticket unavailable",
+                "This ticket cannot be accessed from the current account."
+            );
+
+            return;
+        }
+
+        renderTicket(
+            normalized,
+            profile
+        );
+
+        await loadSupportEmail();
+
+        showTicket();
+
+    } catch (error) {
+
+        console.error(
+            "Ticket page error:",
+            error
+        );
+
+        showError(
+            "Unable to load ticket",
+            error?.message ||
+            "Something went wrong while loading your ticket."
+        );
+    }
+}
+
+
+/* ============================================================
+   EVENTS
+============================================================ */
+
+printBtn.addEventListener(
+    "click",
+    () => window.print()
+);
+
+printTopBtn.addEventListener(
+    "click",
+    () => window.print()
+);
+
+downloadQrBtn.addEventListener(
+    "click",
+    downloadQr
+);
+
+retryBtn.addEventListener(
+    "click",
+    loadPage
+);
+
+
+/* ============================================================
+   AUTH STATE
+============================================================ */
+
+function registerAuthListener() {
+
+    if (!supabaseClient) {
+        return;
+    }
+
+    supabaseClient
+        .auth
+        .onAuthStateChange(
+            (event, session) => {
+
+                if (
+                    event === "SIGNED_OUT" ||
+                    !session?.user
+                ) {
+
+                    window.location.href =
+                        "../auth/login.html";
+                }
+            }
+        );
+}
+
+
+/* ============================================================
+   START
+============================================================ */
+
+loadPage()
+    .then(() => {
+        registerAuthListener();
+    })
+    .catch(error => {
+
+        console.error(
+            "Initialization error:",
+            error
+        );
+
+        showError(
+            "Unable to load ticket",
+            "Please try again."
+        );
+    });
+
+</script>
+
+</body>
+</html>

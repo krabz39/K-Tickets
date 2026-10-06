@@ -1,0 +1,4072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0F3D3A" />
+  <title>K-Tickets — Withdrawals</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bordo: #6C151E;
+      --green: #0F3D3A;
+      --cream: #F5DABF;
+      --white: #fffaf5;
+      --ink: #241916;
+      --muted: #756862;
+      --line: rgba(36, 25, 22, .11);
+      --soft: rgba(15, 61, 58, .07);
+      --danger: #9d2632;
+      --success: #176b50;
+      --warning: #9a6818;
+      --shadow: 0 18px 50px rgba(36, 25, 22, .10);
+      --radius: 20px;
+      --sidebar-width: 260px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: #f8eee4;
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================== */
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: var(--sidebar-width);
+      background: var(--green);
+      color: #fff;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      z-index: 1000;
+      transition: transform .25s ease;
+    }
+
+    .brand {
+      padding: 4px 12px 26px;
+    }
+
+    .brand-name {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 27px;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .brand-sub {
+      margin-top: 5px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: .62;
+    }
+
+    .merchant-label {
+      margin: 0 12px 12px;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: .45;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .nav a,
+    .nav button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.68);
+      min-height: 46px;
+      padding: 0 13px;
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      text-align: left;
+      transition: .2s ease;
+    }
+
+    .nav a:hover,
+    .nav button:hover {
+      color: #fff;
+      background: rgba(255,255,255,.08);
+    }
+
+    .nav a.active {
+      color: #fff;
+      background: rgba(245,218,191,.13);
+      box-shadow: inset 3px 0 0 var(--cream);
+    }
+
+    .nav-icon {
+      width: 21px;
+      text-align: center;
+      font-size: 16px;
+      flex: 0 0 21px;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.10);
+    }
+
+    .merchant-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 8px;
+      margin-bottom: 7px;
+    }
+
+    .mini-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--cream);
+      color: var(--green);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .mini-info {
+      min-width: 0;
+    }
+
+    .mini-name {
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-role {
+      margin-top: 2px;
+      font-size: 10px;
+      opacity: .5;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* =========================
+       MAIN
+    ========================== */
+
+    .main {
+      width: calc(100% - var(--sidebar-width));
+      margin-left: var(--sidebar-width);
+      min-width: 0;
+    }
+
+    .topbar {
+      min-height: 74px;
+      background: rgba(255,250,245,.86);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--line);
+      padding: 0 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .mobile-menu {
+      display: none;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      background: #fffaf5;
+      border-radius: 12px;
+      color: var(--green);
+      font-size: 20px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .topbar-title {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .icon-button {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.65);
+      color: var(--green);
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      transition: .2s ease;
+    }
+
+    .icon-button:hover {
+      border-color: rgba(15,61,58,.25);
+      background: #fff;
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 999px;
+      background: var(--bordo);
+      color: #fff;
+      font-size: 8px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .top-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--cream);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .content {
+      padding: 34px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* =========================
+       PAGE HEADER
+    ========================== */
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      color: var(--bordo);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1;
+      letter-spacing: -.8px;
+      color: var(--green);
+    }
+
+    .page-description {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 650px;
+      line-height: 1.7;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 43px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fffaf5;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(36,25,22,.08);
+    }
+
+    .btn-primary {
+      background: var(--bordo);
+      color: #fff;
+      border-color: var(--bordo);
+    }
+
+    .btn-primary:hover {
+      background: #591018;
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .btn-danger {
+      color: var(--danger);
+      border-color: rgba(157,38,50,.18);
+      background: rgba(157,38,50,.04);
+    }
+
+    .btn-small {
+      min-height: 35px;
+      padding: 0 11px;
+      font-size: 11px;
+      border-radius: 9px;
+    }
+
+    /* =========================
+       SUMMARY
+    ========================== */
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: rgba(255,250,245,.82);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(36,25,22,.045);
+      min-width: 0;
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.1px;
+      font-weight: 700;
+    }
+
+    .stat-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--soft);
+      color: var(--green);
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+    }
+
+    .stat-value {
+      margin-top: 13px;
+      color: var(--green);
+      font-size: clamp(21px, 2.5vw, 29px);
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .stat-note {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    /* =========================
+       FILTERS
+    ========================== */
+
+    .panel {
+      background: rgba(255,250,245,.82);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .filters {
+      padding: 15px;
+      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(145px, .7fr));
+      gap: 9px;
+    }
+
+    .field {
+      position: relative;
+      min-width: 0;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fffdf9;
+      color: var(--ink);
+      outline: none;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: rgba(15,61,58,.45);
+      box-shadow: 0 0 0 3px rgba(15,61,58,.06);
+    }
+
+    /* =========================
+       TABLE
+    ========================== */
+
+    .table-panel {
+      overflow: hidden;
+    }
+
+    .table-header {
+      min-height: 62px;
+      padding: 0 19px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table-title {
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .table-count {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.1px;
+      background: rgba(15,61,58,.025);
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: rgba(15,61,58,.025);
+    }
+
+    .id-cell {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .primary-cell {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .secondary-cell {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .amount {
+      color: var(--green);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 25px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 9px;
+      text-transform: capitalize;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .status-pending {
+      color: var(--warning);
+      background: rgba(154,104,24,.10);
+    }
+
+    .status-processing {
+      color: var(--warning);
+      background: rgba(154,104,24,.10);
+    }
+
+    .status-approved,
+    .status-completed,
+    .status-paid,
+    .status-success {
+      color: var(--success);
+      background: rgba(23,107,80,.10);
+    }
+
+    .status-rejected,
+    .status-failed,
+    .status-cancelled {
+      color: var(--danger);
+      background: rgba(157,38,50,.09);
+    }
+
+    .status-requested {
+      color: var(--green);
+      background: rgba(15,61,58,.09);
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      justify-content: flex-end;
+    }
+
+    .empty {
+      padding: 70px 25px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .empty-icon {
+      width: 55px;
+      height: 55px;
+      margin: 0 auto 13px;
+      border-radius: 16px;
+      background: var(--soft);
+      color: var(--green);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+    }
+
+    .empty strong {
+      display: block;
+      color: var(--green);
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .empty p {
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    /* =========================
+       MOBILE CARDS
+    ========================== */
+
+    .mobile-list {
+      display: none;
+      padding: 12px;
+    }
+
+    .withdrawal-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fffdf9;
+      padding: 15px;
+      margin-bottom: 9px;
+    }
+
+    .withdrawal-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .card-label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      font-size: 8px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .card-value {
+      font-size: 12px;
+      color: var(--ink);
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .card-amount {
+      font-size: 18px;
+      color: var(--green);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .card-grid {
+      margin-top: 15px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 7px;
+      margin-top: 15px;
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+    }
+
+    .card-actions .btn {
+      flex: 1;
+    }
+
+    /* =========================
+       DRAWER
+    ========================== */
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20,15,13,.46);
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: .22s ease;
+    }
+
+    .overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .drawer {
+      position: fixed;
+      inset: 0 0 0 auto;
+      width: min(520px, 100%);
+      background: #fffaf5;
+      z-index: 2100;
+      transform: translateX(100%);
+      transition: transform .28s ease;
+      box-shadow: -20px 0 60px rgba(20,15,13,.16);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      min-height: 75px;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .drawer-title {
+      color: var(--green);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+    }
+
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 22px;
+    }
+
+    .detail-status {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      align-items: center;
+      padding: 15px;
+      background: var(--soft);
+      border-radius: 15px;
+      margin-bottom: 18px;
+    }
+
+    .detail-amount {
+      color: var(--green);
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .detail-section {
+      margin-top: 22px;
+    }
+
+    .detail-section h3 {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+      margin-bottom: 9px;
+    }
+
+    .detail-grid {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 145px 1fr;
+      gap: 15px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+    }
+
+    .detail-row:last-child {
+      border-bottom: 0;
+    }
+
+    .detail-key {
+      color: var(--muted);
+    }
+
+    .detail-value {
+      color: var(--ink);
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .drawer-footer {
+      padding: 16px 22px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      gap: 9px;
+    }
+
+    .drawer-footer .btn {
+      flex: 1;
+    }
+
+    /* =========================
+       WITHDRAWAL FORM MODAL
+    ========================== */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(20,15,13,.48);
+      z-index: 3000;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: .2s ease;
+    }
+
+    .modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      width: min(520px, 100%);
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      background: #fffaf5;
+      border-radius: 22px;
+      box-shadow: 0 30px 90px rgba(20,15,13,.2);
+      transform: translateY(12px);
+      transition: .2s ease;
+    }
+
+    .modal.open .modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 22px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .modal-title {
+      color: var(--green);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+    }
+
+    .modal-subtitle {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .modal-body {
+      padding: 22px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--green);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fffdf9;
+      border-radius: 11px;
+      min-height: 44px;
+      padding: 11px 12px;
+      outline: none;
+      font-size: 12px;
+      color: var(--ink);
+    }
+
+    .form-group textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: rgba(15,61,58,.45);
+      box-shadow: 0 0 0 3px rgba(15,61,58,.06);
+    }
+
+    .available-box {
+      background: var(--soft);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 18px;
+    }
+
+    .available-label {
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+
+    .available-value {
+      margin-top: 4px;
+      font-size: 23px;
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1.55;
+      margin-top: 6px;
+    }
+
+    .modal-footer {
+      padding: 16px 22px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      gap: 9px;
+    }
+
+    .modal-footer .btn {
+      flex: 1;
+    }
+
+    /* =========================
+       TOAST
+    ========================== */
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 5000;
+      width: min(380px, calc(100vw - 44px));
+      background: var(--green);
+      color: #fff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.2);
+      transform: translateY(20px);
+      opacity: 0;
+      visibility: hidden;
+      transition: .22s ease;
+      font-size: 12px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toast.error {
+      background: var(--bordo);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 55px 20px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .spinner {
+      width: 26px;
+      height: 26px;
+      margin: 0 auto 12px;
+      border: 2px solid rgba(15,61,58,.13);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 1180px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      :root {
+        --sidebar-width: 245px;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        box-shadow: 20px 0 60px rgba(0,0,0,.15);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .mobile-menu {
+        display: grid;
+        place-items: center;
+      }
+
+      .topbar {
+        padding: 0 18px;
+      }
+
+      .content {
+        padding: 25px 18px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar-title {
+        display: none;
+      }
+
+      .content {
+        padding: 22px 13px 30px;
+      }
+
+      .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+        margin-bottom: 22px;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .header-actions .btn {
+        flex: 1;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+
+      .stat-card {
+        padding: 15px;
+        border-radius: 16px;
+      }
+
+      .stat-icon {
+        width: 29px;
+        height: 29px;
+      }
+
+      .stat-value {
+        font-size: 20px;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+        padding: 11px;
+      }
+
+      .table-wrap {
+        display: none;
+      }
+
+      .mobile-list {
+        display: block;
+      }
+
+      .table-header {
+        padding: 0 14px;
+      }
+
+      .drawer-body {
+        padding: 16px;
+      }
+
+      .drawer-header {
+        padding: 0 16px;
+      }
+
+      .drawer-footer {
+        padding: 13px 16px;
+      }
+
+      .detail-row {
+        grid-template-columns: 110px 1fr;
+      }
+
+      .modal {
+        padding: 12px;
+      }
+
+      .modal-card {
+        max-height: calc(100vh - 24px);
+      }
+
+      .modal-header,
+      .modal-body {
+        padding: 18px;
+      }
+
+      .modal-footer {
+        padding: 13px 18px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .topbar {
+        min-height: 66px;
+        padding: 0 12px;
+      }
+
+      .top-avatar,
+      .icon-button,
+      .mobile-menu {
+        width: 37px;
+        height: 37px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card-actions {
+        flex-direction: column;
+      }
+
+      .header-actions {
+        flex-direction: column;
+      }
+
+      .header-actions .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+      <div class="brand-name">K-Tickets</div>
+      <div class="brand-sub">Merchant CMS</div>
+    </div>
+
+    <div class="merchant-label">Merchant Workspace</div>
+
+    <nav class="nav">
+
+      <a href="dashboard.html">
+        <span class="nav-icon">⌂</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="events.html">
+        <span class="nav-icon">◫</span>
+        <span>My Events</span>
+      </a>
+
+      <a href="create-event.html">
+        <span class="nav-icon">＋</span>
+        <span>Create Event</span>
+      </a>
+
+      <a href="tickets.html">
+        <span class="nav-icon">▣</span>
+        <span>Tickets</span>
+      </a>
+
+      <a href="promotions.html">
+        <span class="nav-icon">%</span>
+        <span>Promotions</span>
+      </a>
+
+      <a href="sales.html">
+        <span class="nav-icon">◈</span>
+        <span>Sales</span>
+      </a>
+
+      <a href="withdrawals.html" class="active">
+        <span class="nav-icon">↗</span>
+        <span>Withdrawals</span>
+      </a>
+
+      <a href="settings.html">
+        <span class="nav-icon">⚙</span>
+        <span>Settings</span>
+      </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+      <div class="merchant-mini">
+        <div class="mini-avatar" id="sidebarAvatar">—</div>
+
+        <div class="mini-info">
+          <div class="mini-name" id="sidebarName">Loading...</div>
+          <div class="mini-role">Merchant</div>
+        </div>
+      </div>
+
+      <button class="nav" style="display:flex;" id="signOutBtn">
+        <span class="nav-icon">↪</span>
+        <span>Sign Out</span>
+      </button>
+
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <header class="topbar">
+
+      <div class="topbar-left">
+        <button class="mobile-menu" id="mobileMenuBtn" aria-label="Open menu">☰</button>
+        <span class="topbar-title">Merchant CMS / Withdrawals</span>
+      </div>
+
+      <div class="topbar-right">
+
+        <button class="icon-button" id="refreshBtn" title="Refresh">
+          ↻
+        </button>
+
+        <button class="icon-button" id="notificationBtn" title="Notifications">
+          ♢
+          <span class="notification-dot hidden" id="notificationBadge">0</span>
+        </button>
+
+        <a href="settings.html" class="top-avatar" id="topAvatar">—</a>
+
+      </div>
+
+    </header>
+
+    <section class="content">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+
+        <div>
+          <div class="eyebrow">Merchant Finance</div>
+          <h1>Withdrawals</h1>
+
+          <p class="page-description">
+            Request payouts from your available ticket-sale balance and track
+            every withdrawal through its review and settlement stages.
+          </p>
+        </div>
+
+        <div class="header-actions">
+
+          <button class="btn" id="refreshMainBtn">
+            ↻ Refresh
+          </button>
+
+          <button class="btn btn-primary" id="requestWithdrawalBtn">
+            ＋ Request Withdrawal
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid">
+
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-label">Available Balance</div>
+            <div class="stat-icon">◉</div>
+          </div>
+
+          <div class="stat-value" id="availableBalance">—</div>
+          <div class="stat-note">Based on settled merchant sales</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-label">Pending Withdrawals</div>
+            <div class="stat-icon">◷</div>
+          </div>
+
+          <div class="stat-value" id="pendingAmount">—</div>
+          <div class="stat-note">Requests awaiting completion</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-label">Completed</div>
+            <div class="stat-icon">✓</div>
+          </div>
+
+          <div class="stat-value" id="completedAmount">—</div>
+          <div class="stat-note">Successfully settled withdrawals</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-label">Requests</div>
+            <div class="stat-icon">↗</div>
+          </div>
+
+          <div class="stat-value" id="requestCount">—</div>
+          <div class="stat-note">Total withdrawal requests</div>
+        </div>
+
+      </div>
+
+      <!-- FILTERS -->
+      <div class="panel filters">
+
+        <div class="field">
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Search withdrawal ID, channel, reference..."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="field">
+          <select id="statusFilter">
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="requested">Requested</option>
+            <option value="processing">Processing</option>
+            <option value="approved">Approved</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+            <option value="failed">Failed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <select id="channelFilter">
+            <option value="all">All Channels</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <select id="dateFilter">
+            <option value="all">All Dates</option>
+            <option value="today">Today</option>
+            <option value="7">Last 7 Days</option>
+            <option value="30">Last 30 Days</option>
+            <option value="90">Last 90 Days</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- TABLE -->
+      <div class="panel table-panel">
+
+        <div class="table-header">
+
+          <div>
+            <div class="table-title">Withdrawal Requests</div>
+            <div class="table-count" id="tableCount">Loading...</div>
+          </div>
+
+          <button class="btn btn-small" id="exportBtn">
+            Export CSV
+          </button>
+
+        </div>
+
+        <div id="loadingState" class="loading">
+          <div class="spinner"></div>
+          Loading withdrawals...
+        </div>
+
+        <div id="desktopTable" class="table-wrap hidden">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Request</th>
+                <th>Amount</th>
+                <th>Channel</th>
+                <th>Destination</th>
+                <th>Status</th>
+                <th>Requested</th>
+                <th>Updated</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="withdrawalsBody"></tbody>
+
+          </table>
+
+        </div>
+
+        <div id="mobileList" class="mobile-list"></div>
+
+        <div id="emptyState" class="empty hidden">
+
+          <div class="empty-icon">↗</div>
+
+          <strong>No withdrawal requests found</strong>
+
+          <p>
+            Your withdrawal requests will appear here once they are created.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
+
+
+<!-- DETAIL DRAWER -->
+<aside class="drawer" id="detailDrawer">
+
+  <div class="drawer-header">
+
+    <div class="drawer-title">Withdrawal Details</div>
+
+    <button class="icon-button" id="closeDrawerBtn">
+      ×
+    </button>
+
+  </div>
+
+  <div class="drawer-body" id="drawerBody">
+    <!-- Dynamic -->
+  </div>
+
+  <div class="drawer-footer">
+
+    <button class="btn" id="closeDrawerFooterBtn">
+      Close
+    </button>
+
+    <button class="btn btn-danger hidden" id="cancelWithdrawalBtn">
+      Cancel Request
+    </button>
+
+  </div>
+
+</aside>
+
+
+<!-- REQUEST MODAL -->
+<div class="modal" id="withdrawalModal">
+
+  <div class="modal-card">
+
+    <div class="modal-header">
+
+      <div>
+        <div class="modal-title">Request Withdrawal</div>
+
+        <div class="modal-subtitle">
+          Submit a payout request from your available merchant balance.
+          Final processing is subject to platform verification.
+        </div>
+      </div>
+
+      <button class="icon-button" id="closeModalBtn">
+        ×
+      </button>
+
+    </div>
+
+    <form id="withdrawalForm">
+
+      <div class="modal-body">
+
+        <div class="available-box">
+
+          <div class="available-label">
+            Available Balance
+          </div>
+
+          <div class="available-value" id="modalAvailableBalance">
+            —
+          </div>
+
+        </div>
+
+        <div class="form-group">
+
+          <label for="amountInput">
+            Withdrawal Amount
+          </label>
+
+          <input
+            id="amountInput"
+            type="number"
+            min="0"
+            step="0.001"
+            placeholder="Enter amount"
+            required
+          />
+
+          <div class="helper">
+            Enter the amount you want to request. Currency and balance
+            availability are determined by your account and completed sales.
+          </div>
+
+        </div>
+
+        <div class="form-group">
+
+          <label for="channelInput">
+            Payout Channel
+          </label>
+
+          <select id="channelInput" required>
+            <option value="">Select payout channel</option>
+          </select>
+
+        </div>
+
+        <div class="form-group">
+
+          <label for="destinationInput">
+            Destination / Account Reference
+          </label>
+
+          <input
+            id="destinationInput"
+            type="text"
+            placeholder="Enter your approved payout destination"
+            required
+            autocomplete="off"
+          />
+
+          <div class="helper">
+            Use the payout destination associated with your merchant
+            settlement setup.
+          </div>
+
+        </div>
+
+        <div class="form-group">
+
+          <label for="notesInput">
+            Notes
+          </label>
+
+          <textarea
+            id="notesInput"
+            placeholder="Optional withdrawal notes..."
+          ></textarea>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button type="button" class="btn" id="cancelModalBtn">
+          Cancel
+        </button>
+
+        <button type="submit" class="btn btn-primary" id="submitWithdrawalBtn">
+          Submit Request
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+
+<script>
+  /* =========================================================
+     K-TICKETS MERCHANT WITHDRAWALS
+     Supabase-driven
+  ========================================================== */
+
+  const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL || "";
+
+  const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY || "";
+
+  let supabaseClient = null;
+
+  if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+  }
+
+  let currentUser = null;
+  let currentProfile = null;
+
+  let withdrawals = [];
+  let filteredWithdrawals = [];
+  let currentWithdrawal = null;
+
+  /*
+    Possible balance sources are intentionally handled flexibly.
+
+    The page first tries merchant balances / ledger-style data when
+    available. If your final schema uses a different balance model,
+    this function can be adapted without changing the UI.
+  */
+
+  let merchantBalance = null;
+  let balanceCurrency = null;
+
+  const POSSIBLE_WITHDRAWAL_TABLES = [
+    "withdrawals",
+    "withdrawal_requests"
+  ];
+
+  const POSSIBLE_BALANCE_TABLES = [
+    "merchant_balances",
+    "balances"
+  ];
+
+  const SUCCESS_ORDER_STATUSES = [
+    "paid",
+    "completed",
+    "confirmed",
+    "success"
+  ];
+
+  const PENDING_WITHDRAWAL_STATUSES = [
+    "pending",
+    "requested",
+    "processing",
+    "approved"
+  ];
+
+  const COMPLETED_WITHDRAWAL_STATUSES = [
+    "completed",
+    "paid",
+    "success"
+  ];
+
+
+  /* =========================================================
+     ELEMENTS
+  ========================================================== */
+
+  const sidebar = document.getElementById("sidebar");
+  const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+
+  const notificationBadge =
+    document.getElementById("notificationBadge");
+
+  const sidebarName =
+    document.getElementById("sidebarName");
+
+  const sidebarAvatar =
+    document.getElementById("sidebarAvatar");
+
+  const topAvatar =
+    document.getElementById("topAvatar");
+
+  const loadingState =
+    document.getElementById("loadingState");
+
+  const desktopTable =
+    document.getElementById("desktopTable");
+
+  const mobileList =
+    document.getElementById("mobileList");
+
+  const emptyState =
+    document.getElementById("emptyState");
+
+  const withdrawalsBody =
+    document.getElementById("withdrawalsBody");
+
+  const tableCount =
+    document.getElementById("tableCount");
+
+  const searchInput =
+    document.getElementById("searchInput");
+
+  const statusFilter =
+    document.getElementById("statusFilter");
+
+  const channelFilter =
+    document.getElementById("channelFilter");
+
+  const dateFilter =
+    document.getElementById("dateFilter");
+
+  const refreshBtn =
+    document.getElementById("refreshBtn");
+
+  const refreshMainBtn =
+    document.getElementById("refreshMainBtn");
+
+  const exportBtn =
+    document.getElementById("exportBtn");
+
+  const requestWithdrawalBtn =
+    document.getElementById("requestWithdrawalBtn");
+
+  const withdrawalModal =
+    document.getElementById("withdrawalModal");
+
+  const closeModalBtn =
+    document.getElementById("closeModalBtn");
+
+  const cancelModalBtn =
+    document.getElementById("cancelModalBtn");
+
+  const withdrawalForm =
+    document.getElementById("withdrawalForm");
+
+  const amountInput =
+    document.getElementById("amountInput");
+
+  const channelInput =
+    document.getElementById("channelInput");
+
+  const destinationInput =
+    document.getElementById("destinationInput");
+
+  const notesInput =
+    document.getElementById("notesInput");
+
+  const modalAvailableBalance =
+    document.getElementById("modalAvailableBalance");
+
+  const submitWithdrawalBtn =
+    document.getElementById("submitWithdrawalBtn");
+
+  const overlay =
+    document.getElementById("overlay");
+
+  const detailDrawer =
+    document.getElementById("detailDrawer");
+
+  const drawerBody =
+    document.getElementById("drawerBody");
+
+  const closeDrawerBtn =
+    document.getElementById("closeDrawerBtn");
+
+  const closeDrawerFooterBtn =
+    document.getElementById("closeDrawerFooterBtn");
+
+  const cancelWithdrawalBtn =
+    document.getElementById("cancelWithdrawalBtn");
+
+  const toast =
+    document.getElementById("toast");
+
+  const notificationBtn =
+    document.getElementById("notificationBtn");
+
+  const signOutBtn =
+    document.getElementById("signOutBtn");
+
+
+  /* =========================================================
+     HELPERS
+  ========================================================== */
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function shortId(id) {
+    if (!id) return "—";
+
+    const value = String(id);
+
+    if (value.length <= 14) {
+      return value;
+    }
+
+    return value.slice(0, 8) + "…" + value.slice(-4);
+  }
+
+  function initials(name) {
+    if (!name) return "—";
+
+    const parts = String(name)
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (!parts.length) return "—";
+
+    if (parts.length === 1) {
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+
+    return (
+      parts[0][0] +
+      parts[parts.length - 1][0]
+    ).toUpperCase();
+  }
+
+  function normalizeStatus(status) {
+    return String(status || "pending")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "_");
+  }
+
+  function prettyStatus(status) {
+    const value = normalizeStatus(status);
+
+    return value
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, letter => letter.toUpperCase());
+  }
+
+  function formatDate(value) {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "—";
+    }
+
+    return new Intl.DateTimeFormat(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }).format(date);
+  }
+
+  function formatDateTime(value) {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "—";
+    }
+
+    return new Intl.DateTimeFormat(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit"
+    }).format(date);
+  }
+
+  function formatNumber(value) {
+    if (value === null || value === undefined || value === "") {
+      return "—";
+    }
+
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+      return "—";
+    }
+
+    return new Intl.NumberFormat(undefined, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 3
+    }).format(number);
+  }
+
+  function currencyLabel(currency) {
+    return currency
+      ? String(currency).toUpperCase()
+      : "";
+  }
+
+  function formatMoney(value, currency) {
+    if (value === null || value === undefined || value === "") {
+      return "—";
+    }
+
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+      return "—";
+    }
+
+    const curr = currencyLabel(currency);
+
+    return curr
+      ? `${curr} ${formatNumber(number)}`
+      : formatNumber(number);
+  }
+
+  function getRowAmount(row) {
+    const possibleFields = [
+      "amount",
+      "requested_amount",
+      "withdrawal_amount",
+      "payout_amount",
+      "total",
+      "value"
+    ];
+
+    for (const field of possibleFields) {
+      if (
+        row &&
+        row[field] !== null &&
+        row[field] !== undefined &&
+        row[field] !== ""
+      ) {
+        const number = Number(row[field]);
+
+        if (Number.isFinite(number)) {
+          return number;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  function getRowCurrency(row) {
+    const possibleFields = [
+      "currency",
+      "settlement_currency",
+      "payout_currency"
+    ];
+
+    for (const field of possibleFields) {
+      if (row && row[field]) {
+        return String(row[field]).toUpperCase();
+      }
+    }
+
+    return balanceCurrency || "";
+  }
+
+  function getRowChannel(row) {
+    const possibleFields = [
+      "channel",
+      "payout_channel",
+      "payment_channel",
+      "method",
+      "withdrawal_method"
+    ];
+
+    for (const field of possibleFields) {
+      if (row && row[field]) {
+        return String(row[field]);
+      }
+    }
+
+    return "—";
+  }
+
+  function getRowDestination(row) {
+    const possibleFields = [
+      "destination",
+      "destination_reference",
+      "account_reference",
+      "account",
+      "phone",
+      "phone_number",
+      "payout_account"
+    ];
+
+    for (const field of possibleFields) {
+      if (row && row[field]) {
+        return String(row[field]);
+      }
+    }
+
+    return "—";
+  }
+
+  function getRowCreatedAt(row) {
+    return row?.created_at ||
+      row?.requested_at ||
+      row?.request_date ||
+      null;
+  }
+
+  function getRowUpdatedAt(row) {
+    return row?.updated_at ||
+      row?.processed_at ||
+      row?.completed_at ||
+      null;
+  }
+
+  function getRowReference(row) {
+    const possibleFields = [
+      "reference",
+      "transaction_reference",
+      "payout_reference",
+      "external_reference"
+    ];
+
+    for (const field of possibleFields) {
+      if (row && row[field]) {
+        return String(row[field]);
+      }
+    }
+
+    return "—";
+  }
+
+  function toastMessage(message, isError = false) {
+    toast.textContent = message;
+    toast.classList.toggle("error", isError);
+    toast.classList.add("show");
+
+    clearTimeout(window.__ktToastTimer);
+
+    window.__ktToastTimer = setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3200);
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove("open");
+  }
+
+  function openSidebar() {
+    sidebar.classList.add("open");
+  }
+
+  function formatError(error) {
+    return error?.message ||
+      error?.details ||
+      error?.hint ||
+      "Something went wrong.";
+  }
+
+
+  /* =========================================================
+     AUTH
+  ========================================================== */
+
+  async function requireMerchant() {
+
+    if (!supabaseClient) {
+      toastMessage(
+        "Supabase is not configured on this page.",
+        true
+      );
+
+      return false;
+    }
+
+    const {
+      data: {
+        user
+      },
+      error
+    } = await supabaseClient.auth.getUser();
+
+    if (error || !user) {
+      window.location.href = "../auth/login.html";
+      return false;
+    }
+
+    currentUser = user;
+
+    const {
+      data: profile,
+      error: profileError
+    } = await supabaseClient
+      .from("profiles")
+      .select("id, full_name, phone, role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profileError) {
+      console.error(profileError);
+
+      toastMessage(
+        "Unable to load your merchant profile.",
+        true
+      );
+
+      return false;
+    }
+
+    if (!profile || profile.role !== "merchant") {
+      toastMessage(
+        "This page is available to merchant accounts only.",
+        true
+      );
+
+      setTimeout(() => {
+        window.location.href = "../index.html";
+      }, 1200);
+
+      return false;
+    }
+
+    currentProfile = profile;
+
+    renderProfile();
+
+    return true;
+  }
+
+
+  function renderProfile() {
+
+    const name =
+      currentProfile?.full_name ||
+      currentUser?.user_metadata?.full_name ||
+      currentUser?.email ||
+      "Merchant";
+
+    const avatarText = initials(name);
+
+    sidebarName.textContent = name;
+    sidebarAvatar.textContent = avatarText;
+    topAvatar.textContent = avatarText;
+  }
+
+
+  /* =========================================================
+     NOTIFICATIONS
+  ========================================================== */
+
+  async function loadNotifications() {
+
+    if (!supabaseClient || !currentUser) {
+      return;
+    }
+
+    try {
+
+      const {
+        count,
+        error
+      } = await supabaseClient
+        .from("notifications")
+        .select("id", {
+          count: "exact",
+          head: true
+        })
+        .eq("user_id", currentUser.id)
+        .eq("is_read", false);
+
+      if (error) {
+        console.warn(
+          "Notification count unavailable:",
+          error.message
+        );
+
+        notificationBadge.classList.add("hidden");
+        return;
+      }
+
+      const total = Number(count || 0);
+
+      if (total > 0) {
+        notificationBadge.textContent =
+          total > 99 ? "99+" : total;
+
+        notificationBadge.classList.remove("hidden");
+      } else {
+        notificationBadge.classList.add("hidden");
+      }
+
+    } catch (error) {
+      console.warn(error);
+    }
+  }
+
+
+  /* =========================================================
+     WITHDRAWAL TABLE DISCOVERY
+  ========================================================== */
+
+  async function findWithdrawalTable() {
+
+    if (!supabaseClient || !currentUser) {
+      return null;
+    }
+
+    for (const tableName of POSSIBLE_WITHDRAWAL_TABLES) {
+
+      try {
+
+        const {
+          data,
+          error
+        } = await supabaseClient
+          .from(tableName)
+          .select("*")
+          .eq("merchant_id", currentUser.id)
+          .limit(1);
+
+        if (!error) {
+          return tableName;
+        }
+
+      } catch (error) {
+        console.warn(
+          `Unable to inspect ${tableName}`,
+          error
+        );
+      }
+    }
+
+    return null;
+  }
+
+
+  /* =========================================================
+     LOAD WITHDRAWALS
+  ========================================================== */
+
+  let withdrawalTableName = null;
+
+  async function loadWithdrawals() {
+
+    if (!supabaseClient || !currentUser) {
+      return;
+    }
+
+    showLoading();
+
+    withdrawalTableName =
+      await findWithdrawalTable();
+
+    if (!withdrawalTableName) {
+
+      withdrawals = [];
+
+      merchantBalance = null;
+      balanceCurrency = null;
+
+      renderEverything();
+
+      hideLoading();
+
+      /*
+        No schema is fabricated here.
+        Once the final withdrawals table exists,
+        the page automatically begins reading it.
+      */
+
+      return;
+    }
+
+    try {
+
+      const {
+        data,
+        error
+      } = await supabaseClient
+        .from(withdrawalTableName)
+        .select("*")
+        .eq("merchant_id", currentUser.id)
+        .order("created_at", {
+          ascending: false
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      withdrawals = Array.isArray(data)
+        ? data
+        : [];
+
+      await loadMerchantBalance();
+
+      populateChannelFilters();
+
+      renderEverything();
+
+    } catch (error) {
+
+      console.error(error);
+
+      withdrawals = [];
+
+      renderEverything();
+
+      toastMessage(
+        "Unable to load withdrawal requests: " +
+        formatError(error),
+        true
+      );
+
+    } finally {
+      hideLoading();
+    }
+  }
+
+
+  /* =========================================================
+     MERCHANT BALANCE
+  ========================================================== */
+
+  async function loadMerchantBalance() {
+
+    merchantBalance = null;
+    balanceCurrency = null;
+
+    /*
+      First attempt:
+      merchant_balances
+    */
+
+    for (const tableName of POSSIBLE_BALANCE_TABLES) {
+
+      try {
+
+        const {
+          data,
+          error
+        } = await supabaseClient
+          .from(tableName)
+          .select("*")
+          .eq("merchant_id", currentUser.id)
+          .limit(1)
+          .maybeSingle();
+
+        if (!error && data) {
+
+          const amountFields = [
+            "available_balance",
+            "available",
+            "balance",
+            "current_balance"
+          ];
+
+          for (const field of amountFields) {
+
+            if (
+              data[field] !== null &&
+              data[field] !== undefined
+            ) {
+
+              const amount =
+                Number(data[field]);
+
+              if (Number.isFinite(amount)) {
+                merchantBalance = amount;
+                break;
+              }
+            }
+          }
+
+          balanceCurrency =
+            data.currency ||
+            data.settlement_currency ||
+            data.payout_currency ||
+            null;
+
+          if (merchantBalance !== null) {
+            return;
+          }
+        }
+
+      } catch (error) {
+        console.warn(error);
+      }
+    }
+
+    /*
+      If no dedicated balance exists, calculate a conservative
+      available figure from successful merchant orders minus
+      outstanding withdrawal requests.
+
+      This is only used when the required relationships/columns
+      exist. It never invents a balance.
+    */
+
+    await calculateBalanceFromSales();
+  }
+
+
+  async function calculateBalanceFromSales() {
+
+    try {
+
+      const {
+        data: events,
+        error: eventsError
+      } = await supabaseClient
+        .from("events")
+        .select("id")
+        .eq("merchant_id", currentUser.id);
+
+      if (eventsError || !events?.length) {
+        return;
+      }
+
+      const eventIds =
+        events.map(event => event.id);
+
+      const {
+        data: orders,
+        error: ordersError
+      } = await supabaseClient
+        .from("orders")
+        .select(
+          "id, event_id, status, total, currency"
+        )
+        .in("event_id", eventIds);
+
+      if (ordersError || !orders) {
+        return;
+      }
+
+      let settled = 0;
+      let currency = null;
+
+      for (const order of orders) {
+
+        const status =
+          String(order.status || "")
+            .toLowerCase();
+
+        if (!SUCCESS_ORDER_STATUSES.includes(status)) {
+          continue;
+        }
+
+        const amount =
+          Number(order.total);
+
+        if (!Number.isFinite(amount)) {
+          continue;
+        }
+
+        settled += amount;
+
+        if (!currency && order.currency) {
+          currency =
+            String(order.currency).toUpperCase();
+        }
+      }
+
+      let requested = 0;
+
+      for (const withdrawal of withdrawals) {
+
+        const status =
+          normalizeStatus(withdrawal.status);
+
+        if (
+          PENDING_WITHDRAWAL_STATUSES.includes(status)
+        ) {
+
+          const amount =
+            getRowAmount(withdrawal);
+
+          if (amount !== null) {
+            requested += amount;
+          }
+        }
+      }
+
+      merchantBalance =
+        Math.max(0, settled - requested);
+
+      balanceCurrency =
+        currency || null;
+
+    } catch (error) {
+      console.warn(
+        "Unable to calculate balance from sales:",
+        error
+      );
+    }
+  }
+
+
+  /* =========================================================
+     FILTER CHANNELS
+  ========================================================== */
+
+  function populateChannelFilters() {
+
+    const current =
+      channelFilter.value;
+
+    const channels =
+      [...new Set(
+        withdrawals
+          .map(row => getRowChannel(row))
+          .filter(channel =>
+            channel &&
+            channel !== "—"
+          )
+      )]
+      .sort((a, b) =>
+        String(a).localeCompare(String(b))
+      );
+
+    channelFilter.innerHTML =
+      `<option value="all">All Channels</option>`;
+
+    channelInput.innerHTML =
+      `<option value="">Select payout channel</option>`;
+
+    channels.forEach(channel => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = channel;
+      option.textContent = channel;
+
+      channelFilter.appendChild(option);
+
+      const modalOption =
+        document.createElement("option");
+
+      modalOption.value = channel;
+      modalOption.textContent = channel;
+
+      channelInput.appendChild(modalOption);
+    });
+
+    /*
+      Common payout channels should only appear if they are
+      represented by actual account configuration or existing
+      withdrawal data.
+
+      We do not hardcode a usable payout channel into the DB.
+    */
+
+    if (
+      current &&
+      [...channelFilter.options]
+        .some(option => option.value === current)
+    ) {
+      channelFilter.value = current;
+    }
+  }
+
+
+  /* =========================================================
+     RENDER
+  ========================================================== */
+
+  function showLoading() {
+    loadingState.classList.remove("hidden");
+    desktopTable.classList.add("hidden");
+    mobileList.classList.add("hidden");
+    emptyState.classList.add("hidden");
+  }
+
+  function hideLoading() {
+    loadingState.classList.add("hidden");
+  }
+
+  function renderEverything() {
+
+    renderStats();
+
+    applyFilters();
+
+  }
+
+
+  function renderStats() {
+
+    const currency =
+      balanceCurrency || "";
+
+    document.getElementById(
+      "availableBalance"
+    ).textContent =
+      merchantBalance !== null
+        ? formatMoney(
+            merchantBalance,
+            currency
+          )
+        : "—";
+
+    document.getElementById(
+      "modalAvailableBalance"
+    ).textContent =
+      merchantBalance !== null
+        ? formatMoney(
+            merchantBalance,
+            currency
+          )
+        : "—";
+
+    let pending = 0;
+    let completed = 0;
+
+    for (const row of withdrawals) {
+
+      const status =
+        normalizeStatus(row.status);
+
+      const amount =
+        getRowAmount(row);
+
+      if (amount === null) {
+        continue;
+      }
+
+      if (
+        PENDING_WITHDRAWAL_STATUSES
+          .includes(status)
+      ) {
+        pending += amount;
+      }
+
+      if (
+        COMPLETED_WITHDRAWAL_STATUSES
+          .includes(status)
+      ) {
+        completed += amount;
+      }
+    }
+
+    document.getElementById(
+      "pendingAmount"
+    ).textContent =
+      withdrawals.length
+        ? formatMoney(pending, currency)
+        : "—";
+
+    document.getElementById(
+      "completedAmount"
+    ).textContent =
+      withdrawals.length
+        ? formatMoney(completed, currency)
+        : "—";
+
+    document.getElementById(
+      "requestCount"
+    ).textContent =
+      withdrawals.length;
+  }
+
+
+  function applyFilters() {
+
+    const query =
+      searchInput.value
+        .trim()
+        .toLowerCase();
+
+    const status =
+      statusFilter.value;
+
+    const channel =
+      channelFilter.value;
+
+    const dateRange =
+      dateFilter.value;
+
+    const now = Date.now();
+
+    filteredWithdrawals =
+      withdrawals.filter(row => {
+
+        const rowStatus =
+          normalizeStatus(row.status);
+
+        const rowChannel =
+          getRowChannel(row);
+
+        const createdAt =
+          getRowCreatedAt(row);
+
+        const searchText = [
+          row.id,
+          row.reference,
+          getRowReference(row),
+          rowStatus,
+          rowChannel,
+          getRowDestination(row),
+          row.notes,
+          row.note
+        ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+        if (
+          query &&
+          !searchText.includes(query)
+        ) {
+          return false;
+        }
+
+        if (
+          status !== "all" &&
+          rowStatus !== status
+        ) {
+          return false;
+        }
+
+        if (
+          channel !== "all" &&
+          rowChannel !== channel
+        ) {
+          return false;
+        }
+
+        if (dateRange !== "all") {
+
+          if (!createdAt) {
+            return false;
+          }
+
+          const date =
+            new Date(createdAt);
+
+          if (Number.isNaN(date.getTime())) {
+            return false;
+          }
+
+          const age =
+            now - date.getTime();
+
+          if (dateRange === "today") {
+
+            const start =
+              new Date();
+
+            start.setHours(
+              0, 0, 0, 0
+            );
+
+            if (
+              date.getTime() <
+              start.getTime()
+            ) {
+              return false;
+            }
+          }
+
+          if (dateRange !== "today") {
+
+            const days =
+              Number(dateRange);
+
+            if (
+              Number.isFinite(days) &&
+              age > days * 24 * 60 * 60 * 1000
+            ) {
+              return false;
+            }
+          }
+        }
+
+        return true;
+      });
+
+    renderTable();
+
+  }
+
+
+  function renderTable() {
+
+    tableCount.textContent =
+      `${filteredWithdrawals.length} request${
+        filteredWithdrawals.length === 1
+          ? ""
+          : "s"
+      }`;
+
+    if (!filteredWithdrawals.length) {
+
+      desktopTable.classList.add("hidden");
+      mobileList.classList.add("hidden");
+      emptyState.classList.remove("hidden");
+
+      return;
+    }
+
+    emptyState.classList.add("hidden");
+
+    desktopTable.classList.remove("hidden");
+
+    withdrawalsBody.innerHTML =
+      filteredWithdrawals
+        .map(renderDesktopRow)
+        .join("");
+
+    mobileList.innerHTML =
+      filteredWithdrawals
+        .map(renderMobileCard)
+        .join("");
+
+    mobileList.classList.add("hidden");
+  }
+
+
+  function renderDesktopRow(row) {
+
+    const status =
+      normalizeStatus(row.status);
+
+    const amount =
+      getRowAmount(row);
+
+    const currency =
+      getRowCurrency(row);
+
+    const channel =
+      getRowChannel(row);
+
+    const destination =
+      getRowDestination(row);
+
+    const createdAt =
+      getRowCreatedAt(row);
+
+    const updatedAt =
+      getRowUpdatedAt(row);
+
+    const requestId =
+      shortId(row.id);
+
+    return `
+      <tr>
+
+        <td>
+          <div class="id-cell">
+            ${escapeHtml(requestId)}
+          </div>
+
+          <div class="secondary-cell">
+            ${escapeHtml(
+              getRowReference(row)
+            )}
+          </div>
+        </td>
+
+        <td>
+          <div class="amount">
+            ${escapeHtml(
+              formatMoney(
+                amount,
+                currency
+              )
+            )}
+          </div>
+        </td>
+
+        <td>
+          <div class="primary-cell">
+            ${escapeHtml(channel)}
+          </div>
+        </td>
+
+        <td>
+          <div class="primary-cell">
+            ${escapeHtml(
+              maskDestination(destination)
+            )}
+          </div>
+        </td>
+
+        <td>
+          <span class="status status-${escapeHtml(status)}">
+            ${escapeHtml(
+              prettyStatus(status)
+            )}
+          </span>
+        </td>
+
+        <td>
+          ${escapeHtml(
+            formatDate(createdAt)
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            formatDate(updatedAt)
+          )}
+        </td>
+
+        <td>
+          <div class="actions">
+
+            <button
+              class="btn btn-small"
+              onclick="openWithdrawal('${encodeURIComponent(
+                String(row.id)
+              )}')"
+            >
+              View
+            </button>
+
+          </div>
+        </td>
+
+      </tr>
+    `;
+  }
+
+
+  function renderMobileCard(row) {
+
+    const status =
+      normalizeStatus(row.status);
+
+    const amount =
+      getRowAmount(row);
+
+    const currency =
+      getRowCurrency(row);
+
+    const channel =
+      getRowChannel(row);
+
+    const destination =
+      getRowDestination(row);
+
+    const createdAt =
+      getRowCreatedAt(row);
+
+    return `
+      <div class="withdrawal-card">
+
+        <div class="card-row">
+
+          <div>
+            <div class="card-label">
+              Withdrawal
+            </div>
+
+            <div class="card-value">
+              ${escapeHtml(
+                shortId(row.id)
+              )}
+            </div>
+
+            <div class="secondary-cell">
+              ${escapeHtml(
+                formatDate(createdAt)
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div class="card-amount">
+              ${escapeHtml(
+                formatMoney(
+                  amount,
+                  currency
+                )
+              )}
+            </div>
+
+            <span class="status status-${escapeHtml(status)}">
+              ${escapeHtml(
+                prettyStatus(status)
+              )}
+            </span>
+          </div>
+
+        </div>
+
+        <div class="card-grid">
+
+          <div>
+            <div class="card-label">
+              Channel
+            </div>
+
+            <div class="card-value">
+              ${escapeHtml(channel)}
+            </div>
+          </div>
+
+          <div>
+            <div class="card-label">
+              Destination
+            </div>
+
+            <div class="card-value">
+              ${escapeHtml(
+                maskDestination(destination)
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div class="card-label">
+              Reference
+            </div>
+
+            <div class="card-value">
+              ${escapeHtml(
+                getRowReference(row)
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div class="card-label">
+              Updated
+            </div>
+
+            <div class="card-value">
+              ${escapeHtml(
+                formatDate(
+                  getRowUpdatedAt(row)
+                )
+              )}
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card-actions">
+
+          <button
+            class="btn btn-small"
+            onclick="openWithdrawal('${encodeURIComponent(
+              String(row.id)
+            )}')"
+          >
+            View Details
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  }
+
+
+  function maskDestination(value) {
+
+    if (
+      !value ||
+      value === "—"
+    ) {
+      return "—";
+    }
+
+    const text =
+      String(value);
+
+    if (text.length <= 6) {
+      return "••••";
+    }
+
+    return (
+      text.slice(0, 3) +
+      "••••" +
+      text.slice(-3)
+    );
+  }
+
+
+  /* =========================================================
+     DETAIL DRAWER
+  ========================================================== */
+
+  window.openWithdrawal =
+    function(encodedId) {
+
+      const id =
+        decodeURIComponent(encodedId);
+
+      const row =
+        withdrawals.find(
+          item =>
+            String(item.id) === String(id)
+        );
+
+      if (!row) {
+        toastMessage(
+          "Withdrawal request could not be found.",
+          true
+        );
+
+        return;
+      }
+
+      currentWithdrawal = row;
+
+      const status =
+        normalizeStatus(row.status);
+
+      const amount =
+        getRowAmount(row);
+
+      const currency =
+        getRowCurrency(row);
+
+      const channel =
+        getRowChannel(row);
+
+      const destination =
+        getRowDestination(row);
+
+      const reference =
+        getRowReference(row);
+
+      const notes =
+        row.notes ||
+        row.note ||
+        "—";
+
+      drawerBody.innerHTML = `
+
+        <div class="detail-status">
+
+          <div>
+            <div class="card-label">
+              Requested Amount
+            </div>
+
+            <div class="detail-amount">
+              ${escapeHtml(
+                formatMoney(
+                  amount,
+                  currency
+                )
+              )}
+            </div>
+          </div>
+
+          <span class="status status-${escapeHtml(status)}">
+            ${escapeHtml(
+              prettyStatus(status)
+            )}
+          </span>
+
+        </div>
+
+        <div class="detail-section">
+
+          <h3>Request Information</h3>
+
+          <div class="detail-grid">
+
+            <div class="detail-row">
+              <div class="detail-key">
+                Withdrawal ID
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(
+                  row.id || "—"
+                )}
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-key">
+                Reference
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(reference)}
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-key">
+                Amount
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(
+                  formatMoney(
+                    amount,
+                    currency
+                  )
+                )}
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-key">
+                Currency
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(
+                  currency || "—"
+                )}
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-key">
+                Channel
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(channel)}
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-key">
+                Destination
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(destination)}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="detail-section">
+
+          <h3>Timeline</h3>
+
+          <div class="detail-grid">
+
+            <div class="detail-row">
+              <div class="detail-key">
+                Requested
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(
+                  formatDateTime(
+                    getRowCreatedAt(row)
+                  )
+                )}
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-key">
+                Last Updated
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(
+                  formatDateTime(
+                    getRowUpdatedAt(row)
+                  )
+                )}
+              </div>
+            </div>
+
+            ${
+              row.completed_at
+              ? `
+                <div class="detail-row">
+                  <div class="detail-key">
+                    Completed
+                  </div>
+
+                  <div class="detail-value">
+                    ${escapeHtml(
+                      formatDateTime(
+                        row.completed_at
+                      )
+                    )}
+                  </div>
+                </div>
+              `
+              : ""
+            }
+
+          </div>
+
+        </div>
+
+        <div class="detail-section">
+
+          <h3>Notes</h3>
+
+          <div class="detail-grid">
+
+            <div class="detail-row">
+
+              <div class="detail-key">
+                Merchant Notes
+              </div>
+
+              <div class="detail-value">
+                ${escapeHtml(notes)}
+              </div>
+
+            </div>
+
+            ${
+              row.admin_notes
+              ? `
+                <div class="detail-row">
+
+                  <div class="detail-key">
+                    Admin Notes
+                  </div>
+
+                  <div class="detail-value">
+                    ${escapeHtml(
+                      row.admin_notes
+                    )}
+                  </div>
+
+                </div>
+              `
+              : ""
+            }
+
+            ${
+              row.rejection_reason
+              ? `
+                <div class="detail-row">
+
+                  <div class="detail-key">
+                    Rejection Reason
+                  </div>
+
+                  <div class="detail-value">
+                    ${escapeHtml(
+                      row.rejection_reason
+                    )}
+                  </div>
+
+                </div>
+              `
+              : ""
+            }
+
+          </div>
+
+        </div>
+
+      `;
+
+      const canCancel =
+        [
+          "pending",
+          "requested"
+        ].includes(status);
+
+      cancelWithdrawalBtn
+        .classList.toggle(
+          "hidden",
+          !canCancel
+        );
+
+      overlay.classList.add("open");
+      detailDrawer.classList.add("open");
+    };
+
+
+  function closeDrawer() {
+
+    overlay.classList.remove("open");
+    detailDrawer.classList.remove("open");
+
+    currentWithdrawal = null;
+  }
+
+
+  /* =========================================================
+     WITHDRAWAL MODAL
+  ========================================================== */
+
+  function openWithdrawalModal() {
+
+    if (
+      merchantBalance === null ||
+      !Number.isFinite(
+        Number(merchantBalance)
+      )
+    ) {
+      toastMessage(
+        "Your available balance is not currently available.",
+        true
+      );
+
+      return;
+    }
+
+    if (merchantBalance <= 0) {
+      toastMessage(
+        "There is no available balance for withdrawal.",
+        true
+      );
+
+      return;
+    }
+
+    modalAvailableBalance.textContent =
+      formatMoney(
+        merchantBalance,
+        balanceCurrency
+      );
+
+    amountInput.value = "";
+    destinationInput.value = "";
+    notesInput.value = "";
+
+    withdrawalModal.classList.add("open");
+
+    setTimeout(() => {
+      amountInput.focus();
+    }, 150);
+  }
+
+
+  function closeWithdrawalModal() {
+
+    withdrawalModal.classList.remove("open");
+
+    withdrawalForm.reset();
+
+    modalAvailableBalance.textContent =
+      merchantBalance !== null
+        ? formatMoney(
+            merchantBalance,
+            balanceCurrency
+          )
+        : "—";
+  }
+
+
+  /* =========================================================
+     CREATE WITHDRAWAL
+  ========================================================== */
+
+  async function submitWithdrawal(event) {
+
+    event.preventDefault();
+
+    if (!supabaseClient || !currentUser) {
+      toastMessage(
+        "Your session is no longer available.",
+        true
+      );
+
+      return;
+    }
+
+    if (!withdrawalTableName) {
+
+      toastMessage(
+        "The withdrawals table is not available yet.",
+        true
+      );
+
+      return;
+    }
+
+    const amount =
+      Number(amountInput.value);
+
+    const channel =
+      channelInput.value.trim();
+
+    const destination =
+      destinationInput.value.trim();
+
+    const notes =
+      notesInput.value.trim();
+
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+      toastMessage(
+        "Enter a valid withdrawal amount.",
+        true
+      );
+
+      return;
+    }
+
+    if (
+      merchantBalance !== null &&
+      amount > Number(merchantBalance)
+    ) {
+      toastMessage(
+        "The requested amount exceeds your available balance.",
+        true
+      );
+
+      return;
+    }
+
+    if (!channel) {
+      toastMessage(
+        "Select a payout channel.",
+        true
+      );
+
+      return;
+    }
+
+    if (!destination) {
+      toastMessage(
+        "Enter your payout destination.",
+        true
+      );
+
+      return;
+    }
+
+    submitWithdrawalBtn.disabled = true;
+    submitWithdrawalBtn.textContent =
+      "Submitting...";
+
+    /*
+      Insert using a broadly compatible base schema.
+
+      If your final SQL uses different column names,
+      update this single object to match it.
+    */
+
+    const payload = {
+      merchant_id: currentUser.id,
+      amount: amount,
+      currency: balanceCurrency || null,
+      channel: channel,
+      destination: destination,
+      status: "pending",
+      notes: notes || null
+    };
+
+    try {
+
+      const {
+        error
+      } = await supabaseClient
+        .from(withdrawalTableName)
+        .insert(payload);
+
+      if (error) {
+        throw error;
+      }
+
+      closeWithdrawalModal();
+
+      toastMessage(
+        "Withdrawal request submitted successfully."
+      );
+
+      await loadWithdrawals();
+
+    } catch (error) {
+
+      console.error(error);
+
+      toastMessage(
+        "Unable to submit withdrawal: " +
+        formatError(error),
+        true
+      );
+
+    } finally {
+
+      submitWithdrawalBtn.disabled = false;
+      submitWithdrawalBtn.textContent =
+        "Submit Request";
+    }
+  }
+
+
+  /* =========================================================
+     CANCEL WITHDRAWAL
+  ========================================================== */
+
+  async function cancelCurrentWithdrawal() {
+
+    if (
+      !currentWithdrawal ||
+      !withdrawalTableName ||
+      !supabaseClient
+    ) {
+      return;
+    }
+
+    const status =
+      normalizeStatus(
+        currentWithdrawal.status
+      );
+
+    if (
+      ![
+        "pending",
+        "requested"
+      ].includes(status)
+    ) {
+      toastMessage(
+        "This withdrawal can no longer be cancelled.",
+        true
+      );
+
+      return;
+    }
+
+    const confirmed =
+      window.confirm(
+        "Cancel this withdrawal request?"
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    cancelWithdrawalBtn.disabled = true;
+    cancelWithdrawalBtn.textContent =
+      "Cancelling...";
+
+    try {
+
+      const {
+        error
+      } = await supabaseClient
+        .from(withdrawalTableName)
+        .update({
+          status: "cancelled",
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", currentWithdrawal.id)
+        .eq("merchant_id", currentUser.id);
+
+      if (error) {
+        throw error;
+      }
+
+      closeDrawer();
+
+      toastMessage(
+        "Withdrawal request cancelled."
+      );
+
+      await loadWithdrawals();
+
+    } catch (error) {
+
+      console.error(error);
+
+      toastMessage(
+        "Unable to cancel request: " +
+        formatError(error),
+        true
+      );
+
+    } finally {
+
+      cancelWithdrawalBtn.disabled = false;
+      cancelWithdrawalBtn.textContent =
+        "Cancel Request";
+    }
+  }
+
+
+  /* =========================================================
+     CSV EXPORT
+  ========================================================== */
+
+  function csvEscape(value) {
+
+    const text =
+      String(value ?? "");
+
+    if (
+      text.includes(",") ||
+      text.includes('"') ||
+      text.includes("\n")
+    ) {
+      return `"${text.replace(
+        /"/g,
+        '""'
+      )}"`;
+    }
+
+    return text;
+  }
+
+
+  function exportCSV() {
+
+    if (!filteredWithdrawals.length) {
+
+      toastMessage(
+        "There are no withdrawal records to export.",
+        true
+      );
+
+      return;
+    }
+
+    const headers = [
+      "Withdrawal ID",
+      "Amount",
+      "Currency",
+      "Channel",
+      "Destination",
+      "Status",
+      "Reference",
+      "Requested At",
+      "Updated At"
+    ];
+
+    const rows =
+      filteredWithdrawals.map(row => [
+
+        row.id || "",
+
+        getRowAmount(row) ?? "",
+
+        getRowCurrency(row),
+
+        getRowChannel(row),
+
+        getRowDestination(row),
+
+        normalizeStatus(row.status),
+
+        getRowReference(row),
+
+        getRowCreatedAt(row) || "",
+
+        getRowUpdatedAt(row) || ""
+
+      ]);
+
+    const csv = [
+      headers,
+      ...rows
+    ]
+      .map(row =>
+        row.map(csvEscape).join(",")
+      )
+      .join("\n");
+
+    const blob =
+      new Blob(
+        [csv],
+        {
+          type: "text/csv;charset=utf-8;"
+        }
+      );
+
+    const url =
+      URL.createObjectURL(blob);
+
+    const link =
+      document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+      `k-tickets-withdrawals-${new Date()
+        .toISOString()
+        .slice(0,10)}.csv`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(url);
+  }
+
+
+  /* =========================================================
+     EVENTS
+  ========================================================== */
+
+  mobileMenuBtn.addEventListener(
+    "click",
+    () => {
+      sidebar.classList.toggle("open");
+    }
+  );
+
+  refreshBtn.addEventListener(
+    "click",
+    loadWithdrawals
+  );
+
+  refreshMainBtn.addEventListener(
+    "click",
+    loadWithdrawals
+  );
+
+  exportBtn.addEventListener(
+    "click",
+    exportCSV
+  );
+
+  requestWithdrawalBtn.addEventListener(
+    "click",
+    openWithdrawalModal
+  );
+
+  closeModalBtn.addEventListener(
+    "click",
+    closeWithdrawalModal
+  );
+
+  cancelModalBtn.addEventListener(
+    "click",
+    closeWithdrawalModal
+  );
+
+  withdrawalForm.addEventListener(
+    "submit",
+    submitWithdrawal
+  );
+
+  overlay.addEventListener(
+    "click",
+    closeDrawer
+  );
+
+  closeDrawerBtn.addEventListener(
+    "click",
+    closeDrawer
+  );
+
+  closeDrawerFooterBtn.addEventListener(
+    "click",
+    closeDrawer
+  );
+
+  cancelWithdrawalBtn.addEventListener(
+    "click",
+    cancelCurrentWithdrawal
+  );
+
+  notificationBtn.addEventListener(
+    "click",
+    () => {
+      window.location.href =
+        "dashboard.html#notifications";
+    }
+  );
+
+  signOutBtn.addEventListener(
+    "click",
+    async () => {
+
+      if (!supabaseClient) {
+        return;
+      }
+
+      await supabaseClient.auth.signOut();
+
+      window.location.href =
+        "../auth/login.html";
+    }
+  );
+
+  searchInput.addEventListener(
+    "input",
+    applyFilters
+  );
+
+  statusFilter.addEventListener(
+    "change",
+    applyFilters
+  );
+
+  channelFilter.addEventListener(
+    "change",
+    applyFilters
+  );
+
+  dateFilter.addEventListener(
+    "change",
+    applyFilters
+  );
+
+  amountInput.addEventListener(
+    "input",
+    () => {
+
+      const amount =
+        Number(amountInput.value);
+
+      if (
+        merchantBalance !== null &&
+        Number.isFinite(amount) &&
+        amount > Number(merchantBalance)
+      ) {
+        amountInput.setCustomValidity(
+          "Withdrawal amount exceeds available balance."
+        );
+      } else {
+        amountInput.setCustomValidity("");
+      }
+    }
+  );
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (event.key === "Escape") {
+
+        closeWithdrawalModal();
+        closeDrawer();
+        closeSidebar();
+
+      }
+
+    }
+  );
+
+
+  /* =========================================================
+     INIT
+  ========================================================== */
+
+  async function init() {
+
+    const authenticated =
+      await requireMerchant();
+
+    if (!authenticated) {
+      return;
+    }
+
+    await Promise.all([
+      loadNotifications(),
+      loadWithdrawals()
+    ]);
+
+  }
+
+  init();
+
+</script>
+
+</body>
+</html>
