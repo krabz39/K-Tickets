@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +23,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
     <style>
 
         :root {
@@ -39,13 +37,11 @@
             --success: #087443;
         }
 
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
 
         body {
             min-height: 100vh;
@@ -54,13 +50,11 @@
             color: var(--black);
         }
 
-
         .page {
             min-height: 100vh;
             display: grid;
             grid-template-columns: 1fr 1fr;
         }
-
 
         /* LEFT */
 
@@ -75,7 +69,6 @@
             overflow: hidden;
         }
 
-
         .brand-panel::after {
             content: "";
             position: absolute;
@@ -87,7 +80,6 @@
             bottom: -150px;
         }
 
-
         .logo {
             font-size: 25px;
             font-weight: 800;
@@ -96,13 +88,11 @@
             z-index: 2;
         }
 
-
         .brand-content {
             max-width: 500px;
             position: relative;
             z-index: 2;
         }
-
 
         .brand-content h1 {
             font-size: clamp(45px, 6vw, 78px);
@@ -111,11 +101,9 @@
             letter-spacing: -3px;
         }
 
-
         .brand-content h1 span {
             color: var(--cream);
         }
-
 
         .brand-content p {
             font-size: 18px;
@@ -124,7 +112,6 @@
             max-width: 430px;
         }
 
-
         .points {
             display: flex;
             gap: 35px;
@@ -132,11 +119,9 @@
             z-index: 2;
         }
 
-
         .point {
             max-width: 150px;
         }
-
 
         .point strong {
             display: block;
@@ -144,13 +129,11 @@
             margin-bottom: 6px;
         }
 
-
         .point span {
             color: rgba(255,255,255,.6);
             font-size: 13px;
             line-height: 1.5;
         }
-
 
         /* RIGHT */
 
@@ -162,17 +145,14 @@
             padding: 45px;
         }
 
-
         .form-container {
             width: 100%;
             max-width: 440px;
         }
 
-
         .form-header {
             margin-bottom: 30px;
         }
-
 
         .eyebrow {
             color: var(--bordo);
@@ -183,19 +163,16 @@
             margin-bottom: 12px;
         }
 
-
         .form-header h2 {
             font-size: 38px;
             letter-spacing: -1.5px;
             margin-bottom: 10px;
         }
 
-
         .form-header p {
             color: var(--muted);
             line-height: 1.6;
         }
-
 
         .alert {
             display: none;
@@ -206,11 +183,9 @@
             margin-bottom: 20px;
         }
 
-
         .alert.show {
             display: block;
         }
-
 
         .alert.error {
             color: var(--danger);
@@ -218,18 +193,15 @@
             border: 1px solid #f5c2c0;
         }
 
-
         .alert.success {
             color: var(--success);
             background: #eefbf4;
             border: 1px solid #b7e3ca;
         }
 
-
         .field {
             margin-bottom: 18px;
         }
-
 
         .field label {
             display: block;
@@ -238,11 +210,9 @@
             margin-bottom: 8px;
         }
 
-
         .input-wrap {
             position: relative;
         }
-
 
         .field input {
             width: 100%;
@@ -255,12 +225,10 @@
             transition: .2s;
         }
 
-
         .field input:focus {
             border-color: var(--green);
             box-shadow: 0 0 0 3px rgba(15,61,58,.08);
         }
-
 
         .password-toggle {
             position: absolute;
@@ -275,7 +243,6 @@
             font-weight: 700;
         }
 
-
         .terms {
             display: flex;
             gap: 9px;
@@ -286,18 +253,15 @@
             margin: 8px 0 22px;
         }
 
-
         .terms input {
             margin-top: 3px;
             accent-color: var(--green);
         }
 
-
         .terms a {
             color: var(--bordo);
             font-weight: 700;
         }
-
 
         .submit-btn {
             width: 100%;
@@ -312,19 +276,16 @@
             transition: .2s;
         }
 
-
         .submit-btn:hover {
             transform: translateY(-1px);
             opacity: .94;
         }
-
 
         .submit-btn:disabled {
             opacity: .65;
             cursor: not-allowed;
             transform: none;
         }
-
 
         .login-link {
             text-align: center;
@@ -333,13 +294,11 @@
             font-size: 14px;
         }
 
-
         .login-link a {
             color: var(--bordo);
             font-weight: 800;
             text-decoration: none;
         }
-
 
         .footer {
             text-align: center;
@@ -347,7 +306,6 @@
             font-size: 11px;
             margin-top: 30px;
         }
-
 
         @media (max-width: 850px) {
 
@@ -374,7 +332,6 @@
 
         }
 
-
         @media (max-width: 480px) {
 
             .brand-panel {
@@ -400,19 +357,15 @@
 
 </head>
 
-
 <body>
 
-
 <div class="page">
-
 
     <section class="brand-panel">
 
         <div class="logo">
             K-Tickets
         </div>
-
 
         <div class="brand-content">
 
@@ -428,7 +381,6 @@
 
         </div>
 
-
         <div class="points">
 
             <div class="point">
@@ -438,14 +390,12 @@
                 </span>
             </div>
 
-
             <div class="point">
                 <strong>Book</strong>
                 <span>
                     Secure your tickets with ease.
                 </span>
             </div>
-
 
             <div class="point">
                 <strong>Experience</strong>
@@ -458,11 +408,9 @@
 
     </section>
 
-
     <section class="form-panel">
 
         <div class="form-container">
-
 
             <div class="form-header">
 
@@ -480,15 +428,12 @@
 
             </div>
 
-
             <div
                 id="alert"
                 class="alert"
             ></div>
 
-
             <form id="registerForm">
-
 
                 <div class="field">
 
@@ -507,7 +452,6 @@
 
                 </div>
 
-
                 <div class="field">
 
                     <label for="email">
@@ -524,7 +468,6 @@
 
                 </div>
 
-
                 <div class="field">
 
                     <label for="phone">
@@ -539,7 +482,6 @@
                     >
 
                 </div>
-
 
                 <div class="field">
 
@@ -570,7 +512,6 @@
 
                 </div>
 
-
                 <div class="field">
 
                     <label for="confirmPassword">
@@ -600,7 +541,6 @@
 
                 </div>
 
-
                 <label class="terms">
 
                     <input
@@ -616,7 +556,6 @@
 
                 </label>
 
-
                 <button
                     type="submit"
                     class="submit-btn"
@@ -625,20 +564,17 @@
                     Create Account
                 </button>
 
-
             </form>
-
 
             <div class="login-link">
 
                 Already have an account?
 
-                <a href="login.html">
+                <a href="/login.html">
                     Sign in
                 </a>
 
             </div>
-
 
             <div class="footer">
 
@@ -646,18 +582,16 @@
 
             </div>
 
-
         </div>
 
     </section>
 
 </div>
 
-
 <script>
 
 /* =========================================================
-   K-TICKETS SUPABASE CLIENT
+   K-TICKETS SUPABASE CONFIG
    ========================================================= */
 
 const SUPABASE_URL =
@@ -666,6 +600,10 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
+
+/* =========================================================
+   SUPABASE CLIENT
+   ========================================================= */
 
 const supabaseClient =
     window.supabase.createClient(
@@ -734,10 +672,14 @@ document
                 input.type === "text";
 
             input.type =
-                showing ? "password" : "text";
+                showing
+                    ? "password"
+                    : "text";
 
             this.textContent =
-                showing ? "SHOW" : "HIDE";
+                showing
+                    ? "SHOW"
+                    : "HIDE";
 
         }
     );
@@ -756,13 +698,104 @@ document
                 input.type === "text";
 
             input.type =
-                showing ? "password" : "text";
+                showing
+                    ? "password"
+                    : "text";
 
             this.textContent =
-                showing ? "SHOW" : "HIDE";
+                showing
+                    ? "SHOW"
+                    : "HIDE";
 
         }
     );
+
+
+/* =========================================================
+   PROFILE LOADER
+   ========================================================= */
+
+async function loadProfile(userId) {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                is_active
+            `)
+            .eq("id", userId)
+            .maybeSingle();
+
+
+    if (error) {
+
+        console.error(
+            "PROFILE QUERY ERROR:",
+            error
+        );
+
+        throw new Error(
+            "Profile query failed: " +
+            error.message
+        );
+
+    }
+
+
+    return data;
+
+}
+
+
+/* =========================================================
+   WAIT FOR PROFILE CREATED BY DATABASE TRIGGER
+   ========================================================= */
+
+async function waitForProfile(userId) {
+
+    for (
+        let attempt = 1;
+        attempt <= 10;
+        attempt++
+    ) {
+
+        console.log(
+            `Checking K-Tickets profile (${attempt}/10)...`
+        );
+
+
+        const profile =
+            await loadProfile(userId);
+
+
+        if (profile) {
+
+            return profile;
+
+        }
+
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    500
+                )
+        );
+
+    }
+
+
+    return null;
+
+}
 
 
 /* =========================================================
@@ -771,12 +804,16 @@ document
 
 registerForm.addEventListener(
     "submit",
-    async function (event) {
+    async function(event) {
 
         event.preventDefault();
 
-        alertBox.className = "alert";
-        alertBox.textContent = "";
+
+        alertBox.className =
+            "alert";
+
+        alertBox.textContent =
+            "";
 
 
         const fullName =
@@ -820,7 +857,7 @@ registerForm.addEventListener(
 
 
         /* -----------------------------------------
-           Validation
+           VALIDATION
            ----------------------------------------- */
 
         if (fullName.length < 2) {
@@ -830,6 +867,7 @@ registerForm.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -840,6 +878,7 @@ registerForm.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -850,6 +889,7 @@ registerForm.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -860,6 +900,7 @@ registerForm.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -870,6 +911,7 @@ registerForm.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -889,27 +931,28 @@ registerForm.addEventListener(
             const {
                 data,
                 error
-            } = await supabaseClient.auth.signUp({
+            } =
+                await supabaseClient.auth.signUp({
 
-                email: email,
+                    email,
 
-                password: password,
+                    password,
 
-                options: {
+                    options: {
 
-                    data: {
+                        data: {
 
-                        full_name:
-                            fullName,
+                            full_name:
+                                fullName,
 
-                        phone:
-                            phone || null
+                            phone:
+                                phone || null
+
+                        }
 
                     }
 
-                }
-
-            });
+                });
 
 
             if (error) {
@@ -928,27 +971,24 @@ registerForm.addEventListener(
             }
 
 
-            /*
-             * IMPORTANT:
-             *
-             * We DO NOT insert into profiles here.
-             *
-             * The database trigger:
-             *
-             * handle_new_user()
-             *
-             * creates:
-             *
-             * role = customer
-             *
-             * automatically.
-             */
+            const user =
+                data.user;
 
+
+            console.log(
+                "Supabase Auth user created:",
+                user.id
+            );
+
+
+            /* -----------------------------------------
+               EMAIL CONFIRMATION ENABLED
+               ----------------------------------------- */
 
             if (!data.session) {
 
                 showAlert(
-                    "Account created successfully. Please check your email to confirm your account before signing in.",
+                    "Account created successfully. Please check your email and confirm your account before signing in.",
                     "success"
                 );
 
@@ -961,72 +1001,20 @@ registerForm.addEventListener(
                 registerButton.textContent =
                     "Create Account";
 
+
                 return;
 
             }
 
 
             /* -----------------------------------------
-               Session exists immediately
+               WAIT FOR PROFILE TRIGGER
                ----------------------------------------- */
 
-            const user =
-                data.user;
-
-
-            /*
-             * Give the database trigger a moment
-             * before reading the profile.
-             */
-
-            let profile = null;
-
-
-            for (
-                let attempt = 0;
-                attempt < 5;
-                attempt++
-            ) {
-
-                const result =
-                    await supabaseClient
-                        .from("profiles")
-                        .select(
-                            "id, full_name, phone, role, is_active"
-                        )
-                        .eq("id", user.id)
-                        .maybeSingle();
-
-
-                if (result.error) {
-
-                    console.error(
-                        "PROFILE LOAD ERROR:",
-                        result.error
-                    );
-
-                }
-
-
-                if (result.data) {
-
-                    profile =
-                        result.data;
-
-                    break;
-
-                }
-
-
-                await new Promise(
-                    resolve =>
-                        setTimeout(
-                            resolve,
-                            400
-                        )
+            const profile =
+                await waitForProfile(
+                    user.id
                 );
-
-            }
 
 
             if (!profile) {
@@ -1037,6 +1025,16 @@ registerForm.addEventListener(
 
             }
 
+
+            console.log(
+                "K-Tickets profile created:",
+                profile
+            );
+
+
+            /* -----------------------------------------
+               ACCOUNT STATUS
+               ----------------------------------------- */
 
             if (!profile.is_active) {
 
@@ -1049,34 +1047,45 @@ registerForm.addEventListener(
             }
 
 
-            /*
-             * A public registration can ONLY
-             * become a customer.
-             *
-             * Never trust role from the browser.
-             */
+            /* -----------------------------------------
+               SECURITY:
+               PUBLIC REGISTRATION SHOULD CREATE
+               CUSTOMER ACCOUNTS ONLY.
+               
+               The role itself comes from the database
+               trigger, not from this browser page.
+               ----------------------------------------- */
 
             if (profile.role !== "customer") {
 
-                console.warn(
-                    "Unexpected signup role:",
+                console.error(
+                    "Unexpected registration role:",
                     profile.role
+                );
+
+                await supabaseClient.auth.signOut();
+
+                throw new Error(
+                    "Your account received an unexpected role. Please contact K-Tickets support."
                 );
 
             }
 
+
+            /* -----------------------------------------
+               SESSION STORAGE
+               ----------------------------------------- */
 
             sessionStorage.setItem(
                 "kt_user_id",
                 profile.id
             );
 
-
             sessionStorage.setItem(
                 "kt_user_name",
-                profile.full_name || fullName
+                profile.full_name ||
+                fullName
             );
-
 
             sessionStorage.setItem(
                 "kt_user_role",
@@ -1084,17 +1093,26 @@ registerForm.addEventListener(
             );
 
 
+            /* -----------------------------------------
+               SUCCESS
+               ----------------------------------------- */
+
             showAlert(
-                "Account created. Welcome to K-Tickets!",
+                "Account created successfully. Welcome to K-Tickets!",
                 "success"
             );
 
 
+            /*
+             * IMPORTANT:
+             * Root-relative path for Vercel.
+             */
+
             setTimeout(
-                function () {
+                function() {
 
                     window.location.replace(
-                        "customer/dashboard.html"
+                        "/customer/dashboard.html"
                     );
 
                 },
@@ -1105,13 +1123,13 @@ registerForm.addEventListener(
         } catch (error) {
 
             console.error(
-                "REGISTRATION ERROR:",
+                "K-TICKETS REGISTRATION ERROR:",
                 error
             );
 
 
             let message =
-                error.message ||
+                error?.message ||
                 "Unable to create your account.";
 
 
@@ -1131,13 +1149,9 @@ registerForm.addEventListener(
             }
 
 
-            if (
-                lower.includes(
-                    "password"
-                ) &&
-                lower.includes(
-                    "weak"
-                )
+            else if (
+                lower.includes("password") &&
+                lower.includes("weak")
             ) {
 
                 message =
@@ -1146,10 +1160,8 @@ registerForm.addEventListener(
             }
 
 
-            if (
-                lower.includes(
-                    "rate limit"
-                )
+            else if (
+                lower.includes("rate limit")
             ) {
 
                 message =

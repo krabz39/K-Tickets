@@ -1,9 +1,7 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
@@ -401,7 +399,6 @@
 
     </section>
 
-
     <section class="form-panel">
 
         <div class="form-container">
@@ -422,9 +419,7 @@
 
             </div>
 
-
             <div id="alert" class="alert"></div>
-
 
             <form id="loginForm">
 
@@ -443,7 +438,6 @@
                     >
 
                 </div>
-
 
                 <div class="field">
 
@@ -473,27 +467,28 @@
 
                 </div>
 
-
                 <div class="form-row">
 
                     <label class="remember">
+
                         <input
                             type="checkbox"
                             id="remember"
                             checked
                         >
+
                         Remember me
+
                     </label>
 
                     <a
-                        href="forgot-password.html"
+                        href="/forgot-password.html"
                         class="forgot"
                     >
                         Forgot password?
                     </a>
 
                 </div>
-
 
                 <button
                     type="submit"
@@ -505,12 +500,15 @@
 
             </form>
 
-
             <div class="register-link">
-                Don't have an account?
-                <a href="register.html">Create one</a>
-            </div>
 
+                Don't have an account?
+
+                <a href="/register.html">
+                    Create one
+                </a>
+
+            </div>
 
             <div class="footer">
                 © <span id="year"></span> K-Tickets
@@ -522,10 +520,10 @@
 
 </div>
 
-
 <script>
+
 /* =========================================================
-   K-TICKETS SUPABASE AUTH
+   K-TICKETS SUPABASE CONFIG
    ========================================================= */
 
 const SUPABASE_URL =
@@ -534,26 +532,44 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY,
-    {
-        auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
+
+/* =========================================================
+   SUPABASE CLIENT
+   ========================================================= */
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
         }
-    }
-);
+    );
 
 
 /* =========================================================
    ELEMENTS
    ========================================================= */
 
-const loginForm = document.getElementById("loginForm");
-const loginButton = document.getElementById("loginButton");
-const alertBox = document.getElementById("alert");
+const loginForm =
+    document.getElementById("loginForm");
+
+const loginButton =
+    document.getElementById("loginButton");
+
+const alertBox =
+    document.getElementById("alert");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
 
 document.getElementById("year").textContent =
     new Date().getFullYear();
@@ -588,6 +604,8 @@ function clearAlert() {
 
 /* =========================================================
    ROLE ROUTING
+   IMPORTANT:
+   ROOT-RELATIVE PATHS ARE USED FOR VERCEL
    ========================================================= */
 
 function getDashboard(role) {
@@ -595,16 +613,16 @@ function getDashboard(role) {
     switch (role) {
 
         case "admin":
-            return "admin/dashboard.html";
+            return "/admin/dashboard.html";
 
         case "merchant":
-            return "merchant/dashboard.html";
+            return "/merchant/dashboard.html";
 
         case "gate_staff":
-            return "gate/scan.html";
+            return "/gate/scan.html";
 
         case "customer":
-            return "customer/dashboard.html";
+            return "/customer/dashboard.html";
 
         default:
             return null;
@@ -614,7 +632,7 @@ function getDashboard(role) {
 
 
 /* =========================================================
-   LOAD PROFILE
+   LOAD USER PROFILE
    ========================================================= */
 
 async function loadProfile(userId) {
@@ -624,16 +642,21 @@ async function loadProfile(userId) {
         error
     } = await supabaseClient
         .from("profiles")
-        .select(
-            "id, full_name, phone, role, is_active"
-        )
+        .select(`
+            id,
+            full_name,
+            phone,
+            role,
+            is_active
+        `)
         .eq("id", userId)
         .maybeSingle();
+
 
     if (error) {
 
         console.error(
-            "PROFILE QUERY ERROR:",
+            "K-TICKETS PROFILE QUERY ERROR:",
             error
         );
 
@@ -644,6 +667,7 @@ async function loadProfile(userId) {
 
     }
 
+
     if (!data) {
 
         throw new Error(
@@ -652,26 +676,50 @@ async function loadProfile(userId) {
 
     }
 
+
     return data;
 
 }
 
 
 /* =========================================================
-   ROUTE USER
+   ROUTE AUTHENTICATED USER
    ========================================================= */
 
 async function routeUser(session) {
 
-    if (!session || !session.user) {
+    if (
+        !session ||
+        !session.user
+    ) {
         return;
     }
 
-    const user = session.user;
+
+    const user =
+        session.user;
+
+
+    console.log(
+        "Authenticated user:",
+        user.id,
+        user.email
+    );
+
 
     const profile =
         await loadProfile(user.id);
 
+
+    console.log(
+        "K-Tickets profile:",
+        profile
+    );
+
+
+    /* -----------------------------------------
+       ACCOUNT STATUS
+       ----------------------------------------- */
 
     if (!profile.is_active) {
 
@@ -684,6 +732,10 @@ async function routeUser(session) {
     }
 
 
+    /* -----------------------------------------
+       ROLE
+       ----------------------------------------- */
+
     const dashboard =
         getDashboard(profile.role);
 
@@ -693,13 +745,16 @@ async function routeUser(session) {
         await supabaseClient.auth.signOut();
 
         throw new Error(
-            "Your account has an unsupported K-Tickets role."
+            "Your account has an unsupported K-Tickets role: " +
+            profile.role
         );
 
     }
 
 
-    /* Store only non-sensitive UI information */
+    /* -----------------------------------------
+       UI SESSION DATA
+       ----------------------------------------- */
 
     sessionStorage.setItem(
         "kt_user_id",
@@ -708,7 +763,9 @@ async function routeUser(session) {
 
     sessionStorage.setItem(
         "kt_user_name",
-        profile.full_name || user.email
+        profile.full_name ||
+        user.email ||
+        "K-Tickets User"
     );
 
     sessionStorage.setItem(
@@ -717,39 +774,56 @@ async function routeUser(session) {
     );
 
 
-    window.location.replace(dashboard);
+    console.log(
+        "Redirecting to:",
+        dashboard
+    );
+
+
+    /* -----------------------------------------
+       VERCEL ROOT-RELATIVE REDIRECT
+       ----------------------------------------- */
+
+    window.location.replace(
+        dashboard
+    );
 
 }
 
 
 /* =========================================================
-   LOGIN
+   LOGIN FORM
    ========================================================= */
 
 loginForm.addEventListener(
     "submit",
-    async function (event) {
+    async function(event) {
 
         event.preventDefault();
 
         clearAlert();
 
+
         const email =
-            document.getElementById("email")
-                .value
-                .trim();
+            emailInput.value
+                .trim()
+                .toLowerCase();
 
         const password =
-            document.getElementById("password")
-                .value;
+            passwordInput.value;
 
-        if (!email || !password) {
+
+        if (
+            !email ||
+            !password
+        ) {
 
             showAlert(
                 "Please enter your email and password."
             );
 
             return;
+
         }
 
 
@@ -761,13 +835,19 @@ loginForm.addEventListener(
 
         try {
 
+            /* -----------------------------------------
+               SUPABASE AUTHENTICATION
+               ----------------------------------------- */
+
             const {
                 data,
                 error
-            } = await supabaseClient.auth.signInWithPassword({
-                email,
-                password
-            });
+            } =
+                await supabaseClient.auth
+                    .signInWithPassword({
+                        email,
+                        password
+                    });
 
 
             if (error) {
@@ -777,14 +857,27 @@ loginForm.addEventListener(
             }
 
 
-            if (!data.session) {
+            if (
+                !data ||
+                !data.session ||
+                !data.user
+            ) {
 
                 throw new Error(
-                    "Authentication succeeded but no session was returned."
+                    "Authentication succeeded but no valid session was returned."
                 );
 
             }
 
+
+            console.log(
+                "Supabase authentication successful."
+            );
+
+
+            /* -----------------------------------------
+               PROFILE + ROLE VERIFICATION
+               ----------------------------------------- */
 
             await routeUser(
                 data.session
@@ -794,19 +887,24 @@ loginForm.addEventListener(
         } catch (error) {
 
             console.error(
-                "LOGIN ERROR:",
+                "K-TICKETS LOGIN ERROR:",
                 error
             );
 
 
             let message =
-                error.message ||
+                error?.message ||
                 "Unable to sign in.";
 
 
+            const lower =
+                message.toLowerCase();
+
+
             if (
-                message.toLowerCase()
-                    .includes("invalid login credentials")
+                lower.includes(
+                    "invalid login credentials"
+                )
             ) {
 
                 message =
@@ -815,13 +913,27 @@ loginForm.addEventListener(
             }
 
 
-            if (
-                message.toLowerCase()
-                    .includes("email not confirmed")
+            else if (
+                lower.includes(
+                    "email not confirmed"
+                )
             ) {
 
                 message =
                     "Please confirm your email before signing in.";
+
+            }
+
+
+            else if (
+                lower.includes(
+                    "profile query failed"
+                )
+            ) {
+
+                message =
+                    "Your account was authenticated, but your K-Tickets profile could not be loaded. " +
+                    message;
 
             }
 
@@ -851,19 +963,22 @@ document
     .getElementById("togglePassword")
     .addEventListener(
         "click",
-        function () {
-
-            const password =
-                document.getElementById("password");
+        function() {
 
             const showing =
-                password.type === "text";
+                passwordInput.type === "text";
 
-            password.type =
-                showing ? "password" : "text";
+
+            passwordInput.type =
+                showing
+                    ? "password"
+                    : "text";
+
 
             this.textContent =
-                showing ? "SHOW" : "HIDE";
+                showing
+                    ? "SHOW"
+                    : "HIDE";
 
         }
     );
@@ -880,21 +995,32 @@ document
         const {
             data,
             error
-        } = await supabaseClient.auth.getSession();
+        } =
+            await supabaseClient.auth
+                .getSession();
 
 
         if (error) {
 
             console.error(
-                "SESSION ERROR:",
+                "K-TICKETS SESSION ERROR:",
                 error
             );
 
             return;
+
         }
 
 
-        if (data.session) {
+        if (
+            data &&
+            data.session
+        ) {
+
+            console.log(
+                "Existing Supabase session found."
+            );
+
 
             await routeUser(
                 data.session
@@ -905,7 +1031,7 @@ document
     } catch (error) {
 
         console.error(
-            "EXISTING SESSION ERROR:",
+            "EXISTING SESSION ROUTING ERROR:",
             error
         );
 
@@ -919,15 +1045,16 @@ document
    ========================================================= */
 
 supabaseClient.auth.onAuthStateChange(
-    function (event, session) {
+    function(event, session) {
 
         console.log(
-            "AUTH EVENT:",
+            "K-TICKETS AUTH EVENT:",
             event
         );
 
     }
 );
+
 </script>
 
 </body>
