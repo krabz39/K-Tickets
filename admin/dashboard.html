@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
 <meta name="referrer" content="same-origin">
 
 <title>Admin Dashboard | K-Tickets</title>
@@ -75,7 +76,7 @@ a{
 }
 
 .security-box{
-    width:min(420px,90%);
+    width:min(440px,90%);
     text-align:center;
 }
 
@@ -102,6 +103,34 @@ a{
     line-height:1.6;
 }
 
+.security-detail{
+    margin-top:14px;
+    padding:11px 13px;
+    border:1px solid rgba(245,218,191,.12);
+    border-radius:10px;
+    background:rgba(0,0,0,.12);
+    color:rgba(245,218,191,.52);
+    font-size:10px;
+    line-height:1.5;
+    word-break:break-word;
+    text-align:left;
+}
+
+.security-button{
+    margin-top:22px;
+    padding:12px 18px;
+    border:0;
+    border-radius:10px;
+    background:var(--cream);
+    color:var(--green);
+    font-weight:800;
+    transition:.2s ease;
+}
+
+.security-button:hover{
+    transform:translateY(-1px);
+}
+
 .loader{
     width:30px;
     height:30px;
@@ -113,7 +142,9 @@ a{
 }
 
 @keyframes spin{
-    to{transform:rotate(360deg);}
+    to{
+        transform:rotate(360deg);
+    }
 }
 
 #app{
@@ -371,6 +402,11 @@ a{
 
 .refresh-btn:hover{
     border-color:var(--green);
+}
+
+.refresh-btn:disabled{
+    opacity:.6;
+    cursor:wait;
 }
 
 /* =========================
@@ -655,6 +691,7 @@ a{
 }
 
 @media(max-width:1100px){
+
     .metrics{
         grid-template-columns:repeat(2,1fr);
     }
@@ -665,6 +702,7 @@ a{
 }
 
 @media(max-width:800px){
+
     .sidebar{
         transform:translateX(-100%);
         transition:.25s ease;
@@ -705,6 +743,7 @@ a{
 }
 
 @media(max-width:560px){
+
     .metrics{
         grid-template-columns:1fr;
     }
@@ -726,39 +765,73 @@ a{
 
 <body>
 
-<!-- SECURITY GATE -->
+<!-- =========================================================
+     SECURITY GATE
+========================================================= -->
+
 <div id="securityScreen">
+
     <div class="security-box">
+
         <div class="security-logo">K</div>
+
         <h1>Securing Admin Session</h1>
+
         <p>
             Verifying your authenticated session and administrator permissions.
         </p>
+
         <div class="loader"></div>
+
     </div>
+
 </div>
+
+
+<!-- =========================================================
+     APPLICATION
+========================================================= -->
 
 <div id="app">
 
-<!-- SIDEBAR -->
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
 <aside class="sidebar" id="sidebar">
 
     <div class="brand">
-        <div class="brand-main">K-TICKETS</div>
-        <div class="brand-sub">Administration CMS</div>
-        <div class="admin-badge">Administrator</div>
+
+        <div class="brand-main">
+            K-TICKETS
+        </div>
+
+        <div class="brand-sub">
+            Administration CMS
+        </div>
+
+        <div class="admin-badge">
+            Administrator
+        </div>
+
     </div>
+
 
     <nav class="nav">
 
-        <div class="nav-section">Overview</div>
+        <div class="nav-section">
+            Overview
+        </div>
 
         <a href="./dashboard.html" class="active">
             <span class="nav-icon">⌂</span>
             Dashboard
         </a>
 
-        <div class="nav-section">Marketplace</div>
+
+        <div class="nav-section">
+            Marketplace
+        </div>
 
         <a href="./events.html">
             <span class="nav-icon">◫</span>
@@ -780,7 +853,10 @@ a{
             Orders
         </a>
 
-        <div class="nav-section">Payments</div>
+
+        <div class="nav-section">
+            Payments
+        </div>
 
         <a href="./payments.html">
             <span class="nav-icon">◈</span>
@@ -797,7 +873,10 @@ a{
             Withdrawals
         </a>
 
-        <div class="nav-section">Finance & Control</div>
+
+        <div class="nav-section">
+            Finance &amp; Control
+        </div>
 
         <a href="./fees.html">
             <span class="nav-icon">%</span>
@@ -816,27 +895,47 @@ a{
 
     </nav>
 
+
     <div class="sidebar-footer">
+
         <div class="security-status">
+
             <span class="security-dot"></span>
+
             Protected administrator session
+
         </div>
+
     </div>
 
 </aside>
 
-<!-- MAIN -->
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
 <main class="main">
 
     <header class="topbar">
 
         <div style="display:flex;align-items:center;gap:10px;">
-            <button class="mobile-menu" id="mobileMenu" type="button">☰</button>
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+                type="button"
+                aria-label="Open navigation"
+            >
+                ☰
+            </button>
 
             <div class="breadcrumb">
                 Admin / <strong>Dashboard</strong>
             </div>
+
         </div>
+
 
         <div class="top-actions">
 
@@ -847,172 +946,420 @@ a{
                 onclick="window.location.href='./settings.html#notifications'"
             >
                 ♢
-                <span class="notification-dot" id="notificationDot" hidden></span>
+
+                <span
+                    class="notification-dot"
+                    id="notificationDot"
+                    hidden
+                ></span>
+
             </button>
 
+
             <div class="admin-user">
-                <div class="avatar" id="adminAvatar">A</div>
+
+                <div
+                    class="avatar"
+                    id="adminAvatar"
+                >
+                    A
+                </div>
+
 
                 <div class="user-info">
-                    <div class="user-name" id="adminName">Administrator</div>
-                    <div class="user-role">Platform Admin</div>
+
+                    <div
+                        class="user-name"
+                        id="adminName"
+                    >
+                        Administrator
+                    </div>
+
+                    <div class="user-role">
+                        Platform Admin
+                    </div>
+
                 </div>
+
             </div>
 
         </div>
 
     </header>
 
+
     <section class="content">
 
         <div class="page-heading">
 
             <div>
-                <div class="eyebrow">K-Tickets Control Center</div>
-                <h1 id="greeting">Dashboard</h1>
+
+                <div class="eyebrow">
+                    K-Tickets Control Center
+                </div>
+
+                <h1 id="greeting">
+                    Dashboard
+                </h1>
+
                 <p>
                     Monitor platform activity, payments, merchants and ticket operations.
                 </p>
+
             </div>
 
-            <button class="refresh-btn" id="refreshBtn" type="button">
+
+            <button
+                class="refresh-btn"
+                id="refreshBtn"
+                type="button"
+            >
                 ↻ Refresh
             </button>
 
         </div>
 
-        <!-- METRICS -->
+
+        <!-- =================================================
+             METRICS
+        ================================================== -->
+
         <section class="metrics">
 
             <div class="metric">
+
                 <div class="metric-top">
-                    <span class="metric-label">Events</span>
-                    <span class="metric-icon">◫</span>
+
+                    <span class="metric-label">
+                        Events
+                    </span>
+
+                    <span class="metric-icon">
+                        ◫
+                    </span>
+
                 </div>
-                <div class="metric-value" id="eventsCount">—</div>
-                <div class="metric-note">Platform event records</div>
+
+                <div
+                    class="metric-value"
+                    id="eventsCount"
+                >
+                    —
+                </div>
+
+                <div class="metric-note">
+                    Platform event records
+                </div>
+
             </div>
 
-            <div class="metric">
-                <div class="metric-top">
-                    <span class="metric-label">Merchants</span>
-                    <span class="metric-icon">♙</span>
-                </div>
-                <div class="metric-value" id="merchantsCount">—</div>
-                <div class="metric-note">Registered merchant accounts</div>
-            </div>
 
             <div class="metric">
+
                 <div class="metric-top">
-                    <span class="metric-label">Customers</span>
-                    <span class="metric-icon">♧</span>
+
+                    <span class="metric-label">
+                        Merchants
+                    </span>
+
+                    <span class="metric-icon">
+                        ♙
+                    </span>
+
                 </div>
-                <div class="metric-value" id="customersCount">—</div>
-                <div class="metric-note">Registered customer accounts</div>
+
+                <div
+                    class="metric-value"
+                    id="merchantsCount"
+                >
+                    —
+                </div>
+
+                <div class="metric-note">
+                    Registered merchant accounts
+                </div>
+
             </div>
 
+
             <div class="metric">
+
                 <div class="metric-top">
-                    <span class="metric-label">Orders</span>
-                    <span class="metric-icon">▤</span>
+
+                    <span class="metric-label">
+                        Customers
+                    </span>
+
+                    <span class="metric-icon">
+                        ♧
+                    </span>
+
                 </div>
-                <div class="metric-value" id="ordersCount">—</div>
-                <div class="metric-note">Orders recorded on platform</div>
+
+                <div
+                    class="metric-value"
+                    id="customersCount"
+                >
+                    —
+                </div>
+
+                <div class="metric-note">
+                    Registered customer accounts
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+
+                    <span class="metric-label">
+                        Orders
+                    </span>
+
+                    <span class="metric-icon">
+                        ▤
+                    </span>
+
+                </div>
+
+                <div
+                    class="metric-value"
+                    id="ordersCount"
+                >
+                    —
+                </div>
+
+                <div class="metric-note">
+                    Orders recorded on platform
+                </div>
+
             </div>
 
         </section>
 
+
+        <!-- =================================================
+             DASHBOARD GRID
+        ================================================== -->
+
         <section class="dashboard-grid">
 
+
             <!-- RECENT ACTIVITY -->
+
             <div class="card">
 
                 <div class="card-header">
+
                     <div>
-                        <div class="card-title">Recent Platform Activity</div>
+
+                        <div class="card-title">
+                            Recent Platform Activity
+                        </div>
+
                         <div class="card-subtitle">
                             Latest records available to the administrator
                         </div>
+
                     </div>
+
                 </div>
+
 
                 <div class="card-body">
 
-                    <div class="activity-list" id="activityList">
+                    <div
+                        class="activity-list"
+                        id="activityList"
+                    >
+
                         <div class="empty">
                             Loading activity…
                         </div>
+
                     </div>
 
                 </div>
 
             </div>
 
+
+            <!-- RIGHT COLUMN -->
+
             <div style="display:grid;gap:20px;">
 
+
                 <!-- QUICK ACTIONS -->
+
                 <div class="card">
 
                     <div class="card-header">
+
                         <div>
-                            <div class="card-title">Administration</div>
+
+                            <div class="card-title">
+                                Administration
+                            </div>
+
                             <div class="card-subtitle">
                                 Secure platform management
                             </div>
+
                         </div>
+
                     </div>
+
 
                     <div class="card-body">
 
                         <div class="quick-actions">
 
-                            <a class="quick-action" href="./events.html">
+
+                            <a
+                                class="quick-action"
+                                href="./events.html"
+                            >
+
                                 <div class="quick-action-left">
-                                    <div class="quick-action-icon">◫</div>
-                                    <span>Manage Events</span>
+
+                                    <div class="quick-action-icon">
+                                        ◫
+                                    </div>
+
+                                    <span>
+                                        Manage Events
+                                    </span>
+
                                 </div>
-                                <span class="arrow">›</span>
+
+                                <span class="arrow">
+                                    ›
+                                </span>
+
                             </a>
 
-                            <a class="quick-action" href="./merchants.html">
+
+                            <a
+                                class="quick-action"
+                                href="./merchants.html"
+                            >
+
                                 <div class="quick-action-left">
-                                    <div class="quick-action-icon">♙</div>
-                                    <span>Manage Merchants</span>
+
+                                    <div class="quick-action-icon">
+                                        ♙
+                                    </div>
+
+                                    <span>
+                                        Manage Merchants
+                                    </span>
+
                                 </div>
-                                <span class="arrow">›</span>
+
+                                <span class="arrow">
+                                    ›
+                                </span>
+
                             </a>
 
-                            <a class="quick-action" href="./payments.html">
+
+                            <a
+                                class="quick-action"
+                                href="./payments.html"
+                            >
+
                                 <div class="quick-action-left">
-                                    <div class="quick-action-icon">◈</div>
-                                    <span>Review Payments</span>
+
+                                    <div class="quick-action-icon">
+                                        ◈
+                                    </div>
+
+                                    <span>
+                                        Review Payments
+                                    </span>
+
                                 </div>
-                                <span class="arrow">›</span>
+
+                                <span class="arrow">
+                                    ›
+                                </span>
+
                             </a>
 
-                            <a class="quick-action" href="./wamd.html">
+
+                            <a
+                                class="quick-action"
+                                href="./wamd.html"
+                            >
+
                                 <div class="quick-action-left">
-                                    <div class="quick-action-icon">↔</div>
-                                    <span>Review WAMD</span>
+
+                                    <div class="quick-action-icon">
+                                        ↔
+                                    </div>
+
+                                    <span>
+                                        Review WAMD
+                                    </span>
+
                                 </div>
-                                <span class="arrow">›</span>
+
+                                <span class="arrow">
+                                    ›
+                                </span>
+
                             </a>
 
-                            <a class="quick-action" href="./withdrawals.html">
+
+                            <a
+                                class="quick-action"
+                                href="./withdrawals.html"
+                            >
+
                                 <div class="quick-action-left">
-                                    <div class="quick-action-icon">⇩</div>
-                                    <span>Withdrawals</span>
+
+                                    <div class="quick-action-icon">
+                                        ⇩
+                                    </div>
+
+                                    <span>
+                                        Withdrawals
+                                    </span>
+
                                 </div>
-                                <span class="arrow">›</span>
+
+                                <span class="arrow">
+                                    ›
+                                </span>
+
                             </a>
 
-                            <a class="quick-action" href="./reports.html">
+
+                            <a
+                                class="quick-action"
+                                href="./reports.html"
+                            >
+
                                 <div class="quick-action-left">
-                                    <div class="quick-action-icon">▥</div>
-                                    <span>Reports</span>
+
+                                    <div class="quick-action-icon">
+                                        ▥
+                                    </div>
+
+                                    <span>
+                                        Reports
+                                    </span>
+
                                 </div>
-                                <span class="arrow">›</span>
+
+                                <span class="arrow">
+                                    ›
+                                </span>
+
                             </a>
+
 
                         </div>
 
@@ -1020,55 +1367,103 @@ a{
 
                 </div>
 
+
                 <!-- SYSTEM STATUS -->
+
                 <div class="card">
 
                     <div class="card-header">
+
                         <div>
-                            <div class="card-title">Security Status</div>
+
+                            <div class="card-title">
+                                Security Status
+                            </div>
+
                             <div class="card-subtitle">
                                 Current browser session
                             </div>
+
                         </div>
+
                     </div>
+
 
                     <div class="card-body">
 
                         <div class="status-list">
 
-                            <div class="status-row">
-                                <span class="status-label">Authentication</span>
-                                <span class="status-state ok" id="authStatus">
-                                    Verified
-                                </span>
-                            </div>
 
                             <div class="status-row">
-                                <span class="status-label">Administrator Role</span>
-                                <span class="status-state ok" id="roleStatus">
+
+                                <span class="status-label">
+                                    Authentication
+                                </span>
+
+                                <span
+                                    class="status-state ok"
+                                    id="authStatus"
+                                >
                                     Verified
                                 </span>
+
                             </div>
 
+
                             <div class="status-row">
-                                <span class="status-label">Session</span>
-                                <span class="status-state ok" id="sessionStatus">
+
+                                <span class="status-label">
+                                    Administrator Role
+                                </span>
+
+                                <span
+                                    class="status-state ok"
+                                    id="roleStatus"
+                                >
+                                    Verified
+                                </span>
+
+                            </div>
+
+
+                            <div class="status-row">
+
+                                <span class="status-label">
+                                    Session
+                                </span>
+
+                                <span
+                                    class="status-state ok"
+                                    id="sessionStatus"
+                                >
                                     Active
                                 </span>
+
                             </div>
 
+
                             <div class="status-row">
-                                <span class="status-label">Database</span>
-                                <span class="status-state" id="databaseStatus">
+
+                                <span class="status-label">
+                                    Database
+                                </span>
+
+                                <span
+                                    class="status-state"
+                                    id="databaseStatus"
+                                >
                                     Checking
                                 </span>
+
                             </div>
+
 
                         </div>
 
                     </div>
 
                 </div>
+
 
             </div>
 
@@ -1080,36 +1475,30 @@ a{
 
 </div>
 
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
 <script>
 "use strict";
 
-/*
-    ============================================================
-    K-TICKETS ADMIN SECURITY CONFIG
-    ============================================================
 
-    IMPORTANT:
-    Only the public/anon key belongs in this browser application.
-
-    NEVER place:
-    - service_role key
-    - database password
-    - payment secrets
-    - M-Pesa secrets
-    - WAMD secrets
-    - SMTP credentials
-
-    in this file.
-*/
+/* ============================================================
+   SUPABASE CONFIGURATION
+============================================================ */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
 
 let supabaseClient = null;
+
 let currentUser = null;
+
 let currentProfile = null;
 
 
@@ -1140,7 +1529,7 @@ const activityList =
 
 
 /* ============================================================
-   SAFE TEXT
+   SAFE HTML
 ============================================================ */
 
 function escapeHTML(value){
@@ -1160,17 +1549,32 @@ function escapeHTML(value){
 
 function initializeSupabase(){
 
-    if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
+    if(
+        !SUPABASE_URL ||
+        !SUPABASE_PUBLISHABLE_KEY
+    ){
 
         throw new Error(
             "Supabase configuration is missing."
         );
     }
 
+
+    if(
+        !window.supabase ||
+        typeof window.supabase.createClient !== "function"
+    ){
+
+        throw new Error(
+            "Supabase JavaScript library failed to load."
+        );
+    }
+
+
     supabaseClient =
         window.supabase.createClient(
             SUPABASE_URL,
-            SUPABASE_ANON_KEY,
+            SUPABASE_PUBLISHABLE_KEY,
             {
                 auth:{
                     persistSession:true,
@@ -1183,7 +1587,7 @@ function initializeSupabase(){
 
 
 /* ============================================================
-   AUTHENTICATION + ADMIN AUTHORIZATION
+   SECURE ADMIN GATE
 ============================================================ */
 
 async function secureAdminGate(){
@@ -1192,34 +1596,66 @@ async function secureAdminGate(){
 
         initializeSupabase();
 
+
+        console.log(
+            "[K-Tickets] Supabase initialized."
+        );
+
+
+        /* -----------------------------------------
+           GET SESSION
+        ----------------------------------------- */
+
         const {
-            data:{
-                session
-            },
+            data,
             error:sessionError
         } =
             await supabaseClient.auth.getSession();
 
+
         if(sessionError){
+
+            console.error(
+                "[K-Tickets] Session error:",
+                sessionError
+            );
 
             throw sessionError;
         }
 
-        if(!session || !session.user){
+
+        const session =
+            data?.session;
+
+
+        if(
+            !session ||
+            !session.user
+        ){
+
+            console.warn(
+                "[K-Tickets] No active session."
+            );
 
             redirectToLogin();
+
             return false;
         }
 
-        currentUser = session.user;
 
-        /*
-            IMPORTANT:
+        currentUser =
+            session.user;
 
-            The role check is performed against the database.
 
-            UI hiding is NOT considered security.
-        */
+        console.log(
+            "[K-Tickets] Authenticated:",
+            currentUser.id
+        );
+
+
+        /* -----------------------------------------
+           LOAD PROFILE
+        ----------------------------------------- */
 
         const {
             data:profile,
@@ -1227,64 +1663,152 @@ async function secureAdminGate(){
         } =
             await supabaseClient
                 .from("profiles")
-                .select(`
-                    id,
-                    full_name,
-                    phone,
-                    role
-                `)
-                .eq("id",currentUser.id)
+                .select(
+                    "id, full_name, phone, role, is_active"
+                )
+                .eq(
+                    "id",
+                    currentUser.id
+                )
                 .maybeSingle();
+
 
         if(profileError){
 
-            throw profileError;
+            console.error(
+                "[K-Tickets] Profile query failed:",
+                profileError
+            );
+
+            throw new Error(
+                "Profile query failed: " +
+                profileError.message
+            );
         }
+
 
         if(!profile){
 
-            await safeSignOut();
-            redirectToLogin();
-            return false;
-        }
-
-        if(profile.role !== "admin"){
+            console.error(
+                "[K-Tickets] No profile found."
+            );
 
             await safeSignOut();
 
-            /*
-                Do not expose whether the account exists,
-                what its role is, or why authorization failed.
-            */
 
-            window.location.replace(
-                "../auth/login.html?error=unauthorized"
+            showSecurityFailure(
+                "Your authenticated account does not have a K-Tickets profile."
             );
 
             return false;
         }
 
-        currentProfile = profile;
 
-        /*
-            Update interface only AFTER authorization succeeds.
-        */
+        currentProfile =
+            profile;
+
+
+        console.log(
+            "[K-Tickets] Profile loaded:",
+            profile
+        );
+
+
+        /* -----------------------------------------
+           ACTIVE ACCOUNT CHECK
+        ----------------------------------------- */
+
+        if(profile.is_active === false){
+
+            await safeSignOut();
+
+
+            showSecurityFailure(
+                "This administrator account is currently inactive."
+            );
+
+            return false;
+        }
+
+
+        /* -----------------------------------------
+           ADMIN ROLE CHECK
+        ----------------------------------------- */
+
+        if(profile.role !== "admin"){
+
+            console.warn(
+                "[K-Tickets] Unauthorized role:",
+                profile.role
+            );
+
+
+            await safeSignOut();
+
+
+            window.location.replace(
+                "../login.html?error=unauthorized"
+            );
+
+
+            return false;
+        }
+
+
+        /* -----------------------------------------
+           AUTHORIZED
+        ----------------------------------------- */
+
+        console.log(
+            "[K-Tickets] Administrator verified."
+        );
+
 
         applyIdentity();
 
-        securityScreen.style.display = "none";
-        app.style.display = "block";
+
+        document.getElementById(
+            "authStatus"
+        ).textContent =
+            "Verified";
+
+
+        document.getElementById(
+            "roleStatus"
+        ).textContent =
+            "Verified";
+
+
+        document.getElementById(
+            "sessionStatus"
+        ).textContent =
+            "Active";
+
+
+        securityScreen.style.display =
+            "none";
+
+
+        app.style.display =
+            "block";
+
 
         return true;
+
 
     }catch(error){
 
         console.error(
-            "Admin authorization failure:",
+            "[K-Tickets] ADMIN AUTHORIZATION FAILURE:",
             error
         );
 
-        showSecurityFailure();
+
+        showSecurityFailure(
+            error.message ||
+            "The administrator session could not be verified."
+        );
+
 
         return false;
     }
@@ -1292,7 +1816,7 @@ async function secureAdminGate(){
 
 
 /* ============================================================
-   IDENTITY
+   APPLY ADMIN IDENTITY
 ============================================================ */
 
 function applyIdentity(){
@@ -1302,36 +1826,63 @@ function applyIdentity(){
         currentUser?.user_metadata?.full_name ||
         "Administrator";
 
-    adminName.textContent = name;
+
+    adminName.textContent =
+        name;
+
 
     const initials =
         name
             .trim()
             .split(/\s+/)
             .slice(0,2)
-            .map(part => part.charAt(0))
+            .map(
+                part =>
+                    part.charAt(0)
+            )
             .join("")
-            .toUpperCase() || "A";
+            .toUpperCase() ||
+        "A";
 
-    adminAvatar.textContent = initials;
 
-    const hour = new Date().getHours();
+    adminAvatar.textContent =
+        initials;
 
-    let period = "Good evening";
+
+    const hour =
+        new Date().getHours();
+
+
+    let period =
+        "Good evening";
+
 
     if(hour < 12){
-        period = "Good morning";
+
+        period =
+            "Good morning";
+
     }else if(hour < 18){
-        period = "Good afternoon";
+
+        period =
+            "Good afternoon";
     }
 
+
+    const firstName =
+        name
+            .trim()
+            .split(/\s+/)[0] ||
+        "Administrator";
+
+
     greeting.textContent =
-        `${period}, ${name.split(/\s+/)[0]}`;
+        `${period}, ${firstName}`;
 }
 
 
 /* ============================================================
-   DASHBOARD DATA
+   DASHBOARD
 ============================================================ */
 
 async function loadDashboard(){
@@ -1345,7 +1896,7 @@ async function loadDashboard(){
 
 
 /* ============================================================
-   COUNTS
+   COUNT TABLE
 ============================================================ */
 
 async function countTable(table){
@@ -1356,10 +1907,14 @@ async function countTable(table){
     } =
         await supabaseClient
             .from(table)
-            .select("*",{
-                count:"exact",
-                head:true
-            });
+            .select(
+                "*",
+                {
+                    count:"exact",
+                    head:true
+                }
+            );
+
 
     if(error){
 
@@ -1371,38 +1926,14 @@ async function countTable(table){
         return null;
     }
 
+
     return count ?? 0;
 }
 
 
-async function loadCounts(){
-
-    const [
-        events,
-        merchants,
-        customers,
-        orders
-    ] =
-        await Promise.all([
-            countTable("events"),
-            countProfilesByRole("merchant"),
-            countProfilesByRole("customer"),
-            countTable("orders")
-        ]);
-
-    document.getElementById("eventsCount").textContent =
-        formatNumber(events);
-
-    document.getElementById("merchantsCount").textContent =
-        formatNumber(merchants);
-
-    document.getElementById("customersCount").textContent =
-        formatNumber(customers);
-
-    document.getElementById("ordersCount").textContent =
-        formatNumber(orders);
-}
-
+/* ============================================================
+   COUNT PROFILES
+============================================================ */
 
 async function countProfilesByRole(role){
 
@@ -1419,7 +1950,11 @@ async function countProfilesByRole(role){
                     head:true
                 }
             )
-            .eq("role",role);
+            .eq(
+                "role",
+                role
+            );
+
 
     if(error){
 
@@ -1431,7 +1966,53 @@ async function countProfilesByRole(role){
         return null;
     }
 
+
     return count ?? 0;
+}
+
+
+/* ============================================================
+   LOAD COUNTS
+============================================================ */
+
+async function loadCounts(){
+
+    const [
+        events,
+        merchants,
+        customers,
+        orders
+    ] =
+        await Promise.all([
+            countTable("events"),
+            countProfilesByRole("merchant"),
+            countProfilesByRole("customer"),
+            countTable("orders")
+        ]);
+
+
+    document.getElementById(
+        "eventsCount"
+    ).textContent =
+        formatNumber(events);
+
+
+    document.getElementById(
+        "merchantsCount"
+    ).textContent =
+        formatNumber(merchants);
+
+
+    document.getElementById(
+        "customersCount"
+    ).textContent =
+        formatNumber(customers);
+
+
+    document.getElementById(
+        "ordersCount"
+    ).textContent =
+        formatNumber(orders);
 }
 
 
@@ -1447,11 +2028,13 @@ async function loadRecentActivity(){
         </div>
     `;
 
+
     const activities = [];
 
-    /*
-        Events
-    */
+
+    /* -----------------------------------------
+       EVENTS
+    ----------------------------------------- */
 
     const {
         data:eventRows,
@@ -1459,17 +2042,22 @@ async function loadRecentActivity(){
     } =
         await supabaseClient
             .from("events")
-            .select(`
-                id,
-                title,
-                created_at
-            `)
-            .order("created_at",{
-                ascending:false
-            })
+            .select(
+                "id, title, created_at"
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
             .limit(5);
 
-    if(!eventError && Array.isArray(eventRows)){
+
+    if(
+        !eventError &&
+        Array.isArray(eventRows)
+    ){
 
         eventRows.forEach(row => {
 
@@ -1482,11 +2070,18 @@ async function loadRecentActivity(){
 
         });
 
+    }else if(eventError){
+
+        console.warn(
+            "[K-Tickets] Event activity error:",
+            eventError
+        );
     }
 
-    /*
-        Orders
-    */
+
+    /* -----------------------------------------
+       ORDERS
+    ----------------------------------------- */
 
     const {
         data:orderRows,
@@ -1494,36 +2089,48 @@ async function loadRecentActivity(){
     } =
         await supabaseClient
             .from("orders")
-            .select(`
-                id,
-                status,
-                total,
-                currency,
-                created_at
-            `)
-            .order("created_at",{
-                ascending:false
-            })
+            .select(
+                "id, status, total, currency, created_at"
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
             .limit(5);
 
-    if(!orderError && Array.isArray(orderRows)){
+
+    if(
+        !orderError &&
+        Array.isArray(orderRows)
+    ){
 
         orderRows.forEach(row => {
 
             activities.push({
                 type:"order",
                 title:"Order activity",
-                detail:row.status || "Recorded",
+                detail:
+                    row.status ||
+                    "Recorded",
                 time:row.created_at
             });
 
         });
 
+    }else if(orderError){
+
+        console.warn(
+            "[K-Tickets] Order activity error:",
+            orderError
+        );
     }
 
-    /*
-        Profiles
-    */
+
+    /* -----------------------------------------
+       PROFILES
+    ----------------------------------------- */
 
     const {
         data:profileRows,
@@ -1531,44 +2138,71 @@ async function loadRecentActivity(){
     } =
         await supabaseClient
             .from("profiles")
-            .select(`
-                id,
-                full_name,
-                role
-            `)
-            .order("id",{
-                ascending:false
-            })
+            .select(
+                "id, full_name, role, created_at"
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
             .limit(5);
 
-    if(!profileError && Array.isArray(profileRows)){
+
+    if(
+        !profileError &&
+        Array.isArray(profileRows)
+    ){
 
         profileRows.forEach(row => {
 
             activities.push({
                 type:"account",
-                title:"Account record",
-                detail:row.role || "User",
-                time:null
+                title:"Account created",
+                detail:
+                    `${row.full_name || "User"} · ${row.role || "User"}`,
+                time:row.created_at
             });
 
         });
 
+    }else if(profileError){
+
+        console.warn(
+            "[K-Tickets] Profile activity error:",
+            profileError
+        );
     }
 
-    activities.sort((a,b)=>{
 
-        const aTime =
-            a.time ? new Date(a.time).getTime() : 0;
+    /* -----------------------------------------
+       SORT
+    ----------------------------------------- */
 
-        const bTime =
-            b.time ? new Date(b.time).getTime() : 0;
+    activities.sort(
+        (a,b)=>{
 
-        return bTime - aTime;
-    });
+            const aTime =
+                a.time
+                ? new Date(a.time).getTime()
+                : 0;
+
+
+            const bTime =
+                b.time
+                ? new Date(b.time).getTime()
+                : 0;
+
+
+            return bTime - aTime;
+        }
+    );
+
 
     const visible =
         activities.slice(0,8);
+
 
     if(!visible.length){
 
@@ -1581,22 +2215,28 @@ async function loadRecentActivity(){
         return;
     }
 
+
     activityList.innerHTML =
         visible.map(item => {
 
-            let icon = "•";
+            let icon =
+                "•";
+
 
             if(item.type === "event"){
                 icon = "◫";
             }
 
+
             if(item.type === "order"){
                 icon = "▤";
             }
 
+
             if(item.type === "account"){
                 icon = "♙";
             }
+
 
             return `
                 <div class="activity">
@@ -1643,32 +2283,46 @@ async function checkDatabase(){
             await supabaseClient
                 .from("profiles")
                 .select("id")
-                .eq("id",currentUser.id)
+                .eq(
+                    "id",
+                    currentUser.id
+                )
                 .maybeSingle();
+
 
         if(error){
 
             databaseStatus.textContent =
                 "Restricted";
 
+
             databaseStatus.className =
                 "status-state warning";
+
 
             return;
         }
 
+
         databaseStatus.textContent =
             "Connected";
+
 
         databaseStatus.className =
             "status-state ok";
 
+
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "[K-Tickets] Database check:",
+            error
+        );
+
 
         databaseStatus.textContent =
             "Unavailable";
+
 
         databaseStatus.className =
             "status-state error";
@@ -1677,18 +2331,28 @@ async function checkDatabase(){
 
 
 /* ============================================================
-   UTILITIES
+   FORMAT NUMBER
 ============================================================ */
 
 function formatNumber(value){
 
-    if(value === null || value === undefined){
+    if(
+        value === null ||
+        value === undefined
+    ){
+
         return "—";
     }
 
-    return Number(value).toLocaleString();
+
+    return Number(value)
+        .toLocaleString();
 }
 
+
+/* ============================================================
+   FORMAT DATE
+============================================================ */
 
 function formatDate(value){
 
@@ -1696,21 +2360,33 @@ function formatDate(value){
         return "";
     }
 
-    const date = new Date(value);
 
-    if(Number.isNaN(date.getTime())){
+    const date =
+        new Date(value);
+
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+
         return "";
     }
 
-    return date.toLocaleString([],{
-        dateStyle:"medium",
-        timeStyle:"short"
-    });
+
+    return date.toLocaleString(
+        [],
+        {
+            dateStyle:"medium",
+            timeStyle:"short"
+        }
+    );
 }
 
 
 /* ============================================================
-   SIGN OUT
+   SAFE SIGN OUT
 ============================================================ */
 
 async function safeSignOut(){
@@ -1725,17 +2401,21 @@ async function safeSignOut(){
     }catch(error){
 
         console.warn(
-            "Sign out warning:",
+            "[K-Tickets] Sign out warning:",
             error
         );
     }
 }
 
 
+/* ============================================================
+   REDIRECT TO LOGIN
+============================================================ */
+
 function redirectToLogin(){
 
     window.location.replace(
-        "../auth/login.html"
+        "../login.html"
     );
 }
 
@@ -1744,32 +2424,40 @@ function redirectToLogin(){
    SECURITY FAILURE
 ============================================================ */
 
-function showSecurityFailure(){
+function showSecurityFailure(
+    detail = ""
+){
 
     securityScreen.innerHTML = `
         <div class="security-box">
 
-            <div class="security-logo">!</div>
+            <div class="security-logo">
+                !
+            </div>
 
-            <h1>Access Unavailable</h1>
+            <h1>
+                Access Unavailable
+            </h1>
 
             <p>
                 This administrator session could not be verified.
                 Please sign in again.
             </p>
 
+            ${
+                detail
+                ? `
+                    <div class="security-detail">
+                        ${escapeHTML(detail)}
+                    </div>
+                `
+                : ""
+            }
+
             <button
                 type="button"
-                onclick="window.location.replace('../auth/login.html')"
-                style="
-                    margin-top:22px;
-                    padding:12px 18px;
-                    border:0;
-                    border-radius:10px;
-                    background:#F5DABF;
-                    color:#0F3D3A;
-                    font-weight:800;
-                "
+                class="security-button"
+                onclick="window.location.replace('../login.html')"
             >
                 Return to Login
             </button>
@@ -1780,7 +2468,7 @@ function showSecurityFailure(){
 
 
 /* ============================================================
-   SESSION MONITOR
+   AUTH SESSION MONITOR
 ============================================================ */
 
 function monitorAuth(){
@@ -1789,28 +2477,18 @@ function monitorAuth(){
         return;
     }
 
+
     supabaseClient.auth.onAuthStateChange(
-        async (event,session)=>{
+        async (
+            event,
+            session
+        )=>{
 
-            /*
-                If the session disappears while the admin
-                application is open, immediately leave it.
-            */
+            console.log(
+                "[K-Tickets] Auth event:",
+                event
+            );
 
-            if(!session){
-
-                window.location.replace(
-                    "../auth/login.html"
-                );
-
-                return;
-            }
-
-            /*
-                Do not trust a role change in local state.
-                Re-check the database when meaningful auth
-                state changes occur.
-            */
 
             if(
                 event === "SIGNED_OUT" ||
@@ -1818,9 +2496,22 @@ function monitorAuth(){
             ){
 
                 window.location.replace(
-                    "../auth/login.html"
+                    "../login.html"
                 );
+
+                return;
             }
+
+
+            if(!session){
+
+                window.location.replace(
+                    "../login.html"
+                );
+
+                return;
+            }
+
         }
     );
 }
@@ -1832,54 +2523,93 @@ function monitorAuth(){
 
 document
     .getElementById("mobileMenu")
-    .addEventListener("click",()=>{
+    .addEventListener(
+        "click",
+        ()=>{
 
-        document
-            .getElementById("sidebar")
-            .classList.toggle("open");
+            document
+                .getElementById("sidebar")
+                .classList.toggle("open");
 
-    });
-
-
-document
-    .getElementById("refreshBtn")
-    .addEventListener("click",async()=>{
-
-        const button =
-            document.getElementById("refreshBtn");
-
-        button.disabled = true;
-        button.textContent = "↻ Loading…";
-
-        try{
-
-            await loadDashboard();
-
-        }finally{
-
-            button.disabled = false;
-            button.textContent = "↻ Refresh";
         }
-
-    });
+    );
 
 
 /* ============================================================
-   START
+   REFRESH BUTTON
+============================================================ */
+
+document
+    .getElementById("refreshBtn")
+    .addEventListener(
+        "click",
+        async()=>{
+
+            const button =
+                document.getElementById(
+                    "refreshBtn"
+                );
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "↻ Loading…";
+
+
+            try{
+
+                await loadDashboard();
+
+            }catch(error){
+
+                console.error(
+                    "[K-Tickets] Dashboard refresh failed:",
+                    error
+                );
+
+            }finally{
+
+                button.disabled =
+                    false;
+
+
+                button.textContent =
+                    "↻ Refresh";
+            }
+
+        }
+    );
+
+
+/* ============================================================
+   START APPLICATION
 ============================================================ */
 
 (async function(){
 
+    console.log(
+        "[K-Tickets] Starting admin dashboard..."
+    );
+
+
     const authorized =
         await secureAdminGate();
 
+
     if(!authorized){
+
         return;
     }
 
+
     monitorAuth();
 
+
     await loadDashboard();
+
 
 })();
 </script>
