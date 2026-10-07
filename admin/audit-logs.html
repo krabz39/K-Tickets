@@ -1021,66 +1021,66 @@
 
         <div class="nav-section">Overview</div>
 
-        <a class="nav-link" href="./dashboard.html">
+        <a class="nav-link" href="/admin/dashboard.html">
             <span class="nav-icon">⌂</span>
             Dashboard
         </a>
 
         <div class="nav-section">Platform</div>
 
-        <a class="nav-link" href="./events.html">
+        <a class="nav-link" href="/admin/events.html">
             <span class="nav-icon">◫</span>
             Events
         </a>
 
-        <a class="nav-link" href="./merchants.html">
+        <a class="nav-link" href="/admin/merchants.html">
             <span class="nav-icon">♙</span>
             Merchants
         </a>
 
-        <a class="nav-link" href="./customers.html">
+        <a class="nav-link" href="/admin/customers.html">
             <span class="nav-icon">♧</span>
             Customers
         </a>
 
-        <a class="nav-link" href="./orders.html">
+        <a class="nav-link" href="/admin/orders.html">
             <span class="nav-icon">▤</span>
             Orders
         </a>
 
-        <a class="nav-link" href="./payments.html">
+        <a class="nav-link" href="/admin/payments.html">
             <span class="nav-icon">◈</span>
             Payments
         </a>
 
-        <a class="nav-link" href="./wamd.html">
+        <a class="nav-link" href="/admin/wamd.html">
             <span class="nav-icon">↔</span>
             WAMD
         </a>
 
-        <a class="nav-link" href="./withdrawals.html">
+        <a class="nav-link" href="/admin/withdrawals.html">
             <span class="nav-icon">⇧</span>
             Withdrawals
         </a>
 
-        <a class="nav-link" href="./fees.html">
+        <a class="nav-link" href="/admin/fees.html">
             <span class="nav-icon">%</span>
             Fees
         </a>
 
         <div class="nav-section">Control</div>
 
-        <a class="nav-link" href="./reports.html">
+        <a class="nav-link" href="/admin/reports.html">
             <span class="nav-icon">▥</span>
             Reports
         </a>
 
-        <a class="nav-link" href="./settings.html">
+        <a class="nav-link" href="/admin/settings.html">
             <span class="nav-icon">⚙</span>
             Settings
         </a>
 
-        <a class="nav-link active" href="./audit-logs.html">
+        <a class="nav-link active" href="/admin/audit-logs.html">
             <span class="nav-icon">◉</span>
             Audit Logs
         </a>
@@ -1408,10 +1408,10 @@
 */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
 const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 let supabaseClient = null;
 let currentUser = null;
@@ -1477,7 +1477,7 @@ function showToast(message, type = "") {
 
 function redirectLogin(reason = "") {
     const target =
-        "../auth/login.html" +
+        "/login.html" +
         (reason ? "?error=" + encodeURIComponent(reason) : "");
 
     window.location.replace(target);
@@ -2288,52 +2288,53 @@ async function loadAdminProfile() {
         error: sessionError
     } = await supabaseClient.auth.getSession();
 
-    if (
-        sessionError ||
-        !sessionData?.session?.user
-    ) {
+    if (sessionError) {
+        throw new Error(
+            `Session verification failed: ${sessionError.message}`
+        );
+    }
+
+    if (!sessionData?.session?.user) {
         redirectLogin("session_required");
         return false;
     }
 
-    currentUser =
-        sessionData.session.user;
+    currentUser = sessionData.session.user;
 
     const {
         data: profile,
         error: profileError
     } = await supabaseClient
         .from("profiles")
-        .select(`
-            id,
-            full_name,
-            phone,
-            role
-        `)
+        .select("id, full_name, phone, role, is_active")
         .eq("id", currentUser.id)
         .maybeSingle();
 
+    if (profileError) {
+        throw new Error(
+            `Admin profile query failed: ${profileError.message}`
+        );
+    }
+
+    if (!profile) {
+        throw new Error(
+            "No K-Tickets profile exists for this authenticated account."
+        );
+    }
+
     if (
-        profileError ||
-        !profile ||
-        normalizeRole(profile.role) !== "admin"
+        normalizeRole(profile.role) !== "admin" ||
+        profile.is_active !== true
     ) {
-
         await safeSignOut();
-
         redirectLogin("unauthorized");
-
         return false;
     }
 
-    currentProfile =
-        profile;
+    currentProfile = profile;
 
     $("adminName").textContent =
-        safeText(
-            profile.full_name,
-            "Administrator"
-        );
+        safeText(profile.full_name, "Administrator");
 
     $("adminAvatar").textContent =
         initials(profile.full_name);
@@ -2343,55 +2344,114 @@ async function loadAdminProfile() {
 
 async function loadAuditLogs() {
 
-    /*
-     * NOTE:
-     * The final audit_logs schema is not yet locked.
-     *
-     * This first attempts a broad read so the page can tolerate common
-     * audit-log schemas during development.
-     *
-     * For production, replace "*" with the exact approved column list.
-     */
-
     const {
         data,
         error
     } = await supabaseClient
         .from("audit_logs")
-        .select("*")
+        .select(`
+            id,
+            actor_id,
+            action,
+            entity_type,
+            entity_id,
+            old_data,
+            new_data,
+            ip_address,
+            user_agent,
+            created_at
+        `)
         .order("created_at", {
             ascending: false
         })
         .limit(5000);
 
     if (error) {
-
-        console.error(
-            "Audit log query failed:",
-            error
-        );
+        console.error("Audit log query failed:", error);
 
         allLogs = [];
         filteredLogs = [];
-
         updateStats([]);
+        renderLogs([]);
 
         $("resultCount").textContent =
             "Audit log data unavailable";
 
-        renderLogs([]);
-
         showToast(
-            "Audit logs could not be loaded. Check the audit_logs table and RLS policy.",
+            `Audit logs could not be loaded: ${error.message}`,
             "error"
         );
 
         return;
     }
 
-    allLogs =
-        (data || [])
-            .map(normalizeLog);
+    const rows = data || [];
+
+    // Resolve actor identity separately. This avoids depending on an
+    // assumed foreign-key relationship name while still using RLS.
+    const actorIds = [
+        ...new Set(
+            rows
+                .map(row => row.actor_id)
+                .filter(Boolean)
+        )
+    ];
+
+    let profilesById = new Map();
+
+    if (actorIds.length) {
+        const {
+            data: profiles,
+            error: profilesError
+        } = await supabaseClient
+            .from("profiles")
+            .select("id, full_name, role, is_active")
+            .in("id", actorIds);
+
+        if (profilesError) {
+            console.warn(
+                "Actor profile lookup failed:",
+                profilesError
+            );
+        } else {
+            profilesById = new Map(
+                (profiles || []).map(profile => [
+                    profile.id,
+                    profile
+                ])
+            );
+        }
+    }
+
+    allLogs = rows.map(row => {
+        const actor = profilesById.get(row.actor_id) || {};
+
+        const oldData = row.old_data ?? {};
+        const newData = row.new_data ?? {};
+
+        return normalizeLog({
+            ...row,
+
+            actor_profile: actor,
+
+            // These are derived display fields only. They are NOT written
+            // back to the database.
+            source: row.user_agent
+                ? "browser"
+                : "system",
+
+            description:
+                row.action
+                    ? `Audit action: ${prettyValue(row.action)}`
+                    : "",
+
+            metadata: {
+                old_data: oldData,
+                new_data: newData,
+                user_agent: row.user_agent ?? null
+            }
+        });
+    });
 
     populateActionFilter();
     applyFilters();
@@ -2538,24 +2598,71 @@ function setupSignOut() {
         );
 }
 
+function showSecurityFailure(error) {
+
+    const detail =
+        error?.message
+            ? String(error.message)
+            : "Unknown authorization error.";
+
+    securityGate.innerHTML = `
+        <div class="security-box">
+            <div class="security-icon">!</div>
+            <h2>Security Verification Failed</h2>
+            <p>
+                The administrator session could not be verified.
+                Please sign in again.
+            </p>
+
+            <div style="
+                margin-top:16px;
+                padding:12px;
+                border:1px solid rgba(245,218,191,.16);
+                border-radius:12px;
+                background:rgba(0,0,0,.12);
+                color:rgba(245,218,191,.72);
+                font-size:10px;
+                line-height:1.55;
+                text-align:left;
+                overflow-wrap:anywhere;
+            ">
+                ${escapeHtml(detail)}
+            </div>
+
+            <button
+                type="button"
+                onclick="window.location.replace('/login.html')"
+                style="
+                    width:100%;
+                    margin-top:16px;
+                    height:42px;
+                    border:0;
+                    border-radius:11px;
+                    background:var(--cream);
+                    color:var(--green);
+                    font-weight:900;
+                    cursor:pointer;
+                "
+            >
+                Return to Login
+            </button>
+        </div>
+    `;
+}
+
 async function initialize() {
 
-    if (
-        !SUPABASE_URL ||
-        !SUPABASE_ANON_KEY
-    ) {
+    if (!window.supabase?.createClient) {
+        showSecurityFailure(
+            new Error("Supabase client library failed to load.")
+        );
+        return;
+    }
 
-        securityGate.innerHTML = `
-            <div class="security-box">
-                <div class="security-icon">!</div>
-                <h2>Configuration Required</h2>
-                <p>
-                    Supabase configuration is missing.
-                    No administrator data has been loaded.
-                </p>
-            </div>
-        `;
-
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        showSecurityFailure(
+            new Error("Supabase configuration is missing.")
+        );
         return;
     }
 
@@ -2591,19 +2698,14 @@ async function initialize() {
         app.hidden = false;
         securityGate.classList.add("hidden");
 
-        /*
-         * If the session disappears while the page is open,
-         * immediately leave the protected admin area.
-         */
         supabaseClient.auth.onAuthStateChange(
             (event, session) => {
-
                 if (
                     event === "SIGNED_OUT" ||
                     !session?.user
                 ) {
-                    redirectLogin(
-                        "session_expired"
+                    window.location.replace(
+                        "/login.html?error=session_expired"
                     );
                 }
             }
@@ -2616,16 +2718,7 @@ async function initialize() {
             error
         );
 
-        securityGate.innerHTML = `
-            <div class="security-box">
-                <div class="security-icon">!</div>
-                <h2>Security Verification Failed</h2>
-                <p>
-                    The administrator session could not be verified.
-                    Please sign in again.
-                </p>
-            </div>
-        `;
+        showSecurityFailure(error);
     }
 }
 
