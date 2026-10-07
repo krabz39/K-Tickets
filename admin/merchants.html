@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="same-origin">
-
 <title>Merchants | K-Tickets Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -59,9 +58,7 @@ a{
     text-decoration:none;
 }
 
-/* ============================================================
-   SECURITY GATE
-============================================================ */
+/* SECURITY */
 
 #securityScreen{
     position:fixed;
@@ -75,7 +72,7 @@ a{
 }
 
 .security-box{
-    width:min(430px,90%);
+    width:min(450px,90%);
     text-align:center;
 }
 
@@ -103,6 +100,16 @@ a{
     line-height:1.6;
 }
 
+.security-box button{
+    margin-top:22px;
+    padding:12px 18px;
+    border:0;
+    border-radius:10px;
+    background:var(--cream);
+    color:var(--green);
+    font-weight:800;
+}
+
 .loader{
     width:30px;
     height:30px;
@@ -114,18 +121,14 @@ a{
 }
 
 @keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
+    to{transform:rotate(360deg)}
 }
 
 #app{
     display:none;
 }
 
-/* ============================================================
-   SIDEBAR
-============================================================ */
+/* SIDEBAR */
 
 .sidebar{
     position:fixed;
@@ -234,9 +237,7 @@ a{
     background:#6ec39f;
 }
 
-/* ============================================================
-   MAIN
-============================================================ */
+/* MAIN */
 
 .main{
     min-height:100vh;
@@ -320,9 +321,7 @@ a{
     font-size:10px;
 }
 
-/* ============================================================
-   CONTENT
-============================================================ */
+/* CONTENT */
 
 .content{
     max-width:1800px;
@@ -378,15 +377,12 @@ a{
     border-color:var(--green);
 }
 
-.btn.primary{
-    border-color:var(--bordo);
-    background:var(--bordo);
-    color:#fff;
+.btn:disabled{
+    opacity:.55;
+    cursor:not-allowed;
 }
 
-/* ============================================================
-   STATS
-============================================================ */
+/* STATS */
 
 .stats{
     display:grid;
@@ -417,9 +413,7 @@ a{
     font-weight:900;
 }
 
-/* ============================================================
-   CARD / TOOLBAR
-============================================================ */
+/* CARD / TOOLBAR */
 
 .card{
     overflow:hidden;
@@ -478,9 +472,7 @@ select{
     font-size:12px;
 }
 
-/* ============================================================
-   TABLE
-============================================================ */
+/* TABLE */
 
 .table-wrap{
     width:100%;
@@ -542,6 +534,7 @@ tr:last-child td{
     margin-top:4px;
     color:var(--muted);
     font-size:10px;
+    overflow-wrap:anywhere;
 }
 
 .role-badge{
@@ -581,15 +574,9 @@ tr:last-child td{
     background:rgba(38,112,92,.09);
 }
 
-.status.disabled,
-.status.suspended{
+.status.disabled{
     color:var(--danger);
     background:rgba(167,40,50,.08);
-}
-
-.status.pending{
-    color:var(--warning);
-    background:rgba(161,106,24,.09);
 }
 
 .status.unknown{
@@ -603,7 +590,7 @@ tr:last-child td{
 }
 
 .action{
-    padding:7px 9px;
+    padding:7px 10px;
     border:1px solid var(--border);
     border-radius:8px;
     background:#fff;
@@ -613,16 +600,10 @@ tr:last-child td{
 
 .action:hover{
     border-color:var(--green);
+    color:var(--green);
 }
 
-.action.danger:hover{
-    border-color:var(--danger);
-    color:var(--danger);
-}
-
-/* ============================================================
-   MOBILE CARDS
-============================================================ */
+/* MOBILE */
 
 .mobile-merchants{
     display:none;
@@ -659,7 +640,7 @@ tr:last-child td{
     margin-top:5px;
     color:var(--muted);
     font-size:10px;
-    line-height:1.6;
+    line-height:1.7;
     overflow-wrap:anywhere;
 }
 
@@ -670,9 +651,7 @@ tr:last-child td{
     margin-top:13px;
 }
 
-/* ============================================================
-   EMPTY / ERROR
-============================================================ */
+/* STATES */
 
 .empty{
     padding:50px 20px;
@@ -696,6 +675,7 @@ tr:last-child td{
     background:#fff3f3;
     color:var(--danger);
     font-size:12px;
+    line-height:1.5;
 }
 
 .loading{
@@ -704,10 +684,6 @@ tr:last-child td{
     text-align:center;
     font-size:12px;
 }
-
-/* ============================================================
-   MOBILE
-============================================================ */
 
 .mobile-menu{
     display:none;
@@ -718,8 +694,9 @@ tr:last-child td{
     background:#fff;
 }
 
-@media(max-width:1100px){
+/* RESPONSIVE */
 
+@media(max-width:1100px){
     .stats{
         grid-template-columns:repeat(2,1fr);
     }
@@ -815,79 +792,48 @@ tr:last-child td{
 
 <body>
 
-<!-- ============================================================
-     SECURITY SCREEN
-============================================================ -->
+<!-- SECURITY SCREEN -->
 
 <div id="securityScreen">
-
     <div class="security-box">
-
         <div class="security-logo">K</div>
-
         <h1>Securing Admin Session</h1>
-
         <p>
             Verifying authentication and administrator permissions.
         </p>
-
         <div class="loader"></div>
-
     </div>
-
 </div>
-
 
 <div id="app">
 
-<!-- ============================================================
-     SIDEBAR
-============================================================ -->
+<!-- SIDEBAR -->
 
 <aside class="sidebar" id="sidebar">
 
     <div class="brand">
-
-        <div class="brand-main">
-            K-TICKETS
-        </div>
-
-        <div class="brand-sub">
-            Administration CMS
-        </div>
-
-        <div class="admin-badge">
-            Administrator
-        </div>
-
+        <div class="brand-main">K-TICKETS</div>
+        <div class="brand-sub">Administration CMS</div>
+        <div class="admin-badge">Administrator</div>
     </div>
-
 
     <nav class="nav">
 
-        <div class="nav-section">
-            Overview
-        </div>
+        <div class="nav-section">Overview</div>
 
         <a href="./dashboard.html">
             <span class="nav-icon">⌂</span>
             Dashboard
         </a>
 
-
-        <div class="nav-section">
-            Marketplace
-        </div>
+        <div class="nav-section">Marketplace</div>
 
         <a href="./events.html">
             <span class="nav-icon">◫</span>
             Events
         </a>
 
-        <a
-            href="./merchants.html"
-            class="active"
-        >
+        <a href="./merchants.html" class="active">
             <span class="nav-icon">♙</span>
             Merchants
         </a>
@@ -902,10 +848,7 @@ tr:last-child td{
             Orders
         </a>
 
-
-        <div class="nav-section">
-            Payments
-        </div>
+        <div class="nav-section">Payments</div>
 
         <a href="./payments.html">
             <span class="nav-icon">◈</span>
@@ -922,10 +865,7 @@ tr:last-child td{
             Withdrawals
         </a>
 
-
-        <div class="nav-section">
-            Finance & Control
-        </div>
+        <div class="nav-section">Finance & Control</div>
 
         <a href="./fees.html">
             <span class="nav-icon">%</span>
@@ -944,323 +884,265 @@ tr:last-child td{
 
     </nav>
 
-
     <div class="sidebar-footer">
-
         <div class="security-status">
             <span class="security-dot"></span>
             Protected administrator session
         </div>
-
     </div>
 
 </aside>
 
-
-<!-- ============================================================
-     MAIN
-============================================================ -->
+<!-- MAIN -->
 
 <main class="main">
 
-<header class="topbar">
+    <header class="topbar">
 
-    <div style="display:flex;align-items:center;gap:10px;">
-
-        <button
-            class="mobile-menu"
-            id="mobileMenu"
-            type="button"
-        >
-            ☰
-        </button>
-
-        <div class="breadcrumb">
-            Admin / <strong>Merchants</strong>
-        </div>
-
-    </div>
-
-
-    <div class="top-actions">
-
-        <button
-            class="icon-button"
-            type="button"
-            title="Notifications"
-            onclick="window.location.href='./settings.html#notifications'"
-        >
-            ♢
-
-            <span
-                class="notification-dot"
-                id="notificationDot"
-                hidden
-            ></span>
-
-        </button>
-
-
-        <div class="admin-user">
-
-            <div
-                class="avatar"
-                id="adminAvatar"
-            >
-                A
-            </div>
-
-            <div>
-
-                <div
-                    class="user-name"
-                    id="adminName"
-                >
-                    Administrator
-                </div>
-
-                <div class="user-role">
-                    Platform Admin
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</header>
-
-
-<section class="content">
-
-    <div class="page-heading">
-
-        <div>
-
-            <div class="eyebrow">
-                Account Control
-            </div>
-
-            <h1>Merchants</h1>
-
-            <p>
-                Review merchant accounts and platform access.
-            </p>
-
-        </div>
-
-
-        <div class="heading-actions">
+        <div style="display:flex;align-items:center;gap:10px;">
 
             <button
-                class="btn"
-                id="refreshBtn"
+                class="mobile-menu"
+                id="mobileMenu"
                 type="button"
+                aria-label="Open navigation"
             >
-                ↻ Refresh
+                ☰
             </button>
 
-        </div>
-
-    </div>
-
-
-    <!-- ========================================================
-         STATS
-    ======================================================== -->
-
-    <section class="stats">
-
-        <div class="stat">
-
-            <div class="stat-label">
-                Total Merchants
+            <div class="breadcrumb">
+                Admin / <strong>Merchants</strong>
             </div>
 
-            <div
-                class="stat-value"
-                id="totalMerchants"
+        </div>
+
+        <div class="top-actions">
+
+            <button
+                class="icon-button"
+                type="button"
+                title="Notifications"
+                onclick="window.location.href='./settings.html#notifications'"
             >
-                —
-            </div>
+                ♢
+                <span
+                    class="notification-dot"
+                    id="notificationDot"
+                    hidden
+                ></span>
+            </button>
 
-        </div>
+            <div class="admin-user">
 
-
-        <div class="stat">
-
-            <div class="stat-label">
-                Active
-            </div>
-
-            <div
-                class="stat-value"
-                id="activeMerchants"
-            >
-                —
-            </div>
-
-        </div>
-
-
-        <div class="stat">
-
-            <div class="stat-label">
-                Disabled
-            </div>
-
-            <div
-                class="stat-value"
-                id="disabledMerchants"
-            >
-                —
-            </div>
-
-        </div>
-
-
-        <div class="stat">
-
-            <div class="stat-label">
-                Pending
-            </div>
-
-            <div
-                class="stat-value"
-                id="pendingMerchants"
-            >
-                —
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ========================================================
-         MERCHANT TABLE
-    ======================================================== -->
-
-    <section class="card">
-
-        <div class="toolbar">
-
-            <div class="search">
-
-                <span class="search-icon">
-                    ⌕
-                </span>
-
-                <input
-                    id="searchInput"
-                    type="search"
-                    autocomplete="off"
-                    placeholder="Search merchant name, email or phone..."
+                <div
+                    class="avatar"
+                    id="adminAvatar"
                 >
+                    A
+                </div>
+
+                <div>
+                    <div
+                        class="user-name"
+                        id="adminName"
+                    >
+                        Administrator
+                    </div>
+
+                    <div class="user-role">
+                        Platform Admin
+                    </div>
+                </div>
 
             </div>
 
+        </div>
 
-            <select id="statusFilter">
+    </header>
 
-                <option value="">
-                    All statuses
-                </option>
+    <section class="content">
 
-                <option value="active">
+        <div class="page-heading">
+
+            <div>
+                <div class="eyebrow">
+                    Account Control
+                </div>
+
+                <h1>Merchants</h1>
+
+                <p>
+                    Review merchant accounts and platform access.
+                </p>
+            </div>
+
+            <div class="heading-actions">
+
+                <button
+                    class="btn"
+                    id="refreshBtn"
+                    type="button"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- STATS -->
+
+        <section class="stats">
+
+            <div class="stat">
+                <div class="stat-label">
+                    Total Merchants
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="totalMerchants"
+                >
+                    —
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">
                     Active
-                </option>
+                </div>
 
-                <option value="disabled">
-                    Disabled
-                </option>
-
-                <option value="suspended">
-                    Suspended
-                </option>
-
-                <option value="pending">
-                    Pending
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div
-            id="errorBox"
-            class="error-box"
-            hidden
-        ></div>
-
-
-        <!-- DESKTOP -->
-
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>Merchant</th>
-                        <th>Contact</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Events</th>
-                        <th>Account ID</th>
-                        <th>Actions</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody id="merchantTable">
-
-                    <tr>
-
-                        <td colspan="7">
-
-                            <div class="loading">
-                                Loading merchants…
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <!-- MOBILE -->
-
-        <div
-            class="mobile-merchants"
-            id="mobileMerchants"
-        >
-
-            <div class="loading">
-                Loading merchants…
+                <div
+                    class="stat-value"
+                    id="activeMerchants"
+                >
+                    —
+                </div>
             </div>
 
-        </div>
+            <div class="stat">
+                <div class="stat-label">
+                    Inactive
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="disabledMerchants"
+                >
+                    —
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">
+                    Pending
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="pendingMerchants"
+                >
+                    0
+                </div>
+            </div>
+
+        </section>
+
+        <!-- MERCHANT TABLE -->
+
+        <section class="card">
+
+            <div class="toolbar">
+
+                <div class="search">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        id="searchInput"
+                        type="search"
+                        autocomplete="off"
+                        placeholder="Search merchant name, phone or account ID..."
+                    >
+
+                </div>
+
+                <select id="statusFilter">
+                    <option value="">
+                        All statuses
+                    </option>
+
+                    <option value="active">
+                        Active
+                    </option>
+
+                    <option value="inactive">
+                        Inactive
+                    </option>
+                </select>
+
+            </div>
+
+            <div
+                id="errorBox"
+                class="error-box"
+                hidden
+            ></div>
+
+            <!-- DESKTOP -->
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Merchant</th>
+                            <th>Contact</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Events</th>
+                            <th>Account ID</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="merchantTable">
+
+                        <tr>
+                            <td colspan="7">
+                                <div class="loading">
+                                    Loading merchants…
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- MOBILE -->
+
+            <div
+                class="mobile-merchants"
+                id="mobileMerchants"
+            >
+                <div class="loading">
+                    Loading merchants…
+                </div>
+            </div>
+
+        </section>
 
     </section>
-
-</section>
 
 </main>
 
 </div>
-
 
 <script>
 "use strict";
@@ -1270,34 +1152,43 @@ tr:last-child td{
 K-TICKETS ADMIN MERCHANTS
 ============================================================
 
-SECURITY PRINCIPLES
+No hardcoded production records.
 
-1. No service-role key in browser.
-2. No database password in browser.
-3. No payment credentials in browser.
-4. Every request is made under the authenticated
-   Supabase session.
-5. Actual authorization MUST be enforced by RLS/RPC.
-6. Merchant status changes should ultimately be handled
-   by a secure server-side RPC with audit logging.
+Real data sources:
+- public.profiles
+- public.events
+
+Security:
+- publishable Supabase key only
+- authenticated session required
+- public.profiles.role must be admin
+- public.profiles.is_active must be true
+- merchant account state comes from profiles.is_active
+- no auth.users/password/token data is exposed
+- no service-role key
+- no payment credentials
+
+Merchant status mutation is intentionally not performed here.
+It should be implemented through a SECURITY DEFINER RPC that:
+1. verifies the current authenticated admin
+2. verifies the merchant
+3. updates is_active atomically
+4. creates an audit log
 ============================================================
 */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 let supabaseClient = null;
-
 let currentUser = null;
 let currentProfile = null;
 
 let allMerchants = [];
-
 let merchantEventCounts = new Map();
-
 
 /* ============================================================
    ELEMENTS
@@ -1324,7 +1215,6 @@ const searchInput =
 const statusFilter =
     document.getElementById("statusFilter");
 
-
 /* ============================================================
    SUPABASE
 ============================================================ */
@@ -1333,18 +1223,23 @@ function initializeSupabase(){
 
     if(
         !SUPABASE_URL ||
-        !SUPABASE_ANON_KEY
+        !SUPABASE_PUBLISHABLE_KEY
     ){
-
         throw new Error(
             "Supabase configuration is missing."
+        );
+    }
+
+    if(!window.supabase?.createClient){
+        throw new Error(
+            "Supabase client library could not be loaded."
         );
     }
 
     supabaseClient =
         window.supabase.createClient(
             SUPABASE_URL,
-            SUPABASE_ANON_KEY,
+            SUPABASE_PUBLISHABLE_KEY,
             {
                 auth:{
                     persistSession:true,
@@ -1354,7 +1249,6 @@ function initializeSupabase(){
             }
         );
 }
-
 
 /* ============================================================
    ADMIN SECURITY GATE
@@ -1366,7 +1260,6 @@ async function secureAdminGate(){
 
         initializeSupabase();
 
-
         const {
             data:{
                 session
@@ -1375,31 +1268,19 @@ async function secureAdminGate(){
         } =
             await supabaseClient.auth.getSession();
 
-
         if(sessionError){
-
-            throw sessionError;
+            throw new Error(
+                `Session verification failed: ${sessionError.message}`
+            );
         }
 
-
         if(!session?.user){
-
-            redirectLogin();
-
+            redirectLogin("no_session");
             return false;
         }
 
-
         currentUser =
             session.user;
-
-
-        /*
-            Database role verification.
-
-            The browser never gets to decide that it is an
-            administrator.
-        */
 
         const {
             data:profile,
@@ -1411,7 +1292,8 @@ async function secureAdminGate(){
                     id,
                     full_name,
                     phone,
-                    role
+                    role,
+                    is_active
                 `)
                 .eq(
                     "id",
@@ -1419,41 +1301,40 @@ async function secureAdminGate(){
                 )
                 .maybeSingle();
 
-
         if(profileError){
-
-            throw profileError;
+            throw new Error(
+                `Profile query failed: ${profileError.message}`
+            );
         }
 
+        if(!profile){
+            throw new Error(
+                "No K-Tickets profile exists for this account."
+            );
+        }
 
         if(
-            !profile ||
-            profile.role !== "admin"
+            profile.role !== "admin" ||
+            profile.is_active !== true
         ){
 
             await safeSignOut();
 
-            window.location.replace(
-                "../auth/login.html?error=unauthorized"
-            );
+            redirectLogin("unauthorized");
 
             return false;
         }
 
-
         currentProfile =
             profile;
 
-
         applyIdentity();
-
 
         securityScreen.style.display =
             "none";
 
         app.style.display =
             "block";
-
 
         return true;
 
@@ -1464,12 +1345,14 @@ async function secureAdminGate(){
             error
         );
 
-        showSecurityFailure();
+        showSecurityFailure(
+            error?.message ||
+            "The administrator session could not be verified."
+        );
 
         return false;
     }
 }
-
 
 /* ============================================================
    ADMIN IDENTITY
@@ -1482,11 +1365,9 @@ function applyIdentity(){
         currentUser?.user_metadata?.full_name ||
         "Administrator";
 
-
     document
         .getElementById("adminName")
         .textContent = name;
-
 
     const initials =
         name
@@ -1500,12 +1381,10 @@ function applyIdentity(){
             .join("")
             .toUpperCase() || "A";
 
-
     document
         .getElementById("adminAvatar")
         .textContent = initials;
 }
-
 
 /* ============================================================
    LOAD MERCHANTS
@@ -1514,41 +1393,54 @@ function applyIdentity(){
 async function loadMerchants(){
 
     showLoading();
-
     hideError();
 
+    try{
 
-    /*
-        Profiles remain the source of truth for account identity.
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select(`
+                    id,
+                    full_name,
+                    phone,
+                    role,
+                    is_active,
+                    created_at,
+                    updated_at
+                `)
+                .eq(
+                    "role",
+                    "merchant"
+                )
+                .order(
+                    "full_name",
+                    {
+                        ascending:true,
+                        nullsFirst:false
+                    }
+                );
 
-        We request only fields required by this CMS.
-
-        RLS MUST restrict access to administrator accounts.
-    */
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("profiles")
-            .select(`
-                id,
-                full_name,
-                phone,
-                role
-            `)
-            .eq("role","merchant")
-            .order(
-                "full_name",
-                {
-                    ascending:true,
-                    nullsFirst:false
-                }
+        if(error){
+            throw new Error(
+                `Merchant records could not be loaded: ${error.message}`
             );
+        }
 
+        allMerchants =
+            Array.isArray(data)
+                ? data
+                : [];
 
-    if(error){
+        await loadEventCounts();
+
+        updateStats();
+        renderMerchants();
+
+    }catch(error){
 
         console.error(
             "Merchant query failed:",
@@ -1556,30 +1448,17 @@ async function loadMerchants(){
         );
 
         allMerchants = [];
+        merchantEventCounts = new Map();
 
-        showError(
-            "Merchant records could not be loaded. The server rejected the request or the profile schema is not ready."
-        );
-
+        updateStats();
         renderMerchants();
 
-        return;
+        showError(
+            error?.message ||
+            "Merchant records could not be loaded."
+        );
     }
-
-
-    allMerchants =
-        Array.isArray(data)
-        ? data
-        : [];
-
-
-    await loadEventCounts();
-
-    updateStats();
-
-    renderMerchants();
 }
-
 
 /* ============================================================
    EVENT COUNTS
@@ -1590,23 +1469,14 @@ async function loadEventCounts(){
     merchantEventCounts =
         new Map();
 
-
     if(!allMerchants.length){
         return;
     }
-
 
     const merchantIds =
         allMerchants.map(
             merchant => merchant.id
         );
-
-
-    /*
-        We intentionally do not request all event columns.
-
-        Only merchant ownership information is needed.
-    */
 
     const {
         data,
@@ -1623,7 +1493,6 @@ async function loadEventCounts(){
                 merchantIds
             );
 
-
     if(error){
 
         console.warn(
@@ -1634,28 +1503,29 @@ async function loadEventCounts(){
         return;
     }
 
-
     if(!Array.isArray(data)){
         return;
     }
 
-
     data.forEach(event => {
+
+        if(!event.merchant_id){
+            return;
+        }
 
         const merchantId =
             String(event.merchant_id);
 
-
         merchantEventCounts.set(
             merchantId,
-            (merchantEventCounts.get(
-                merchantId
-            ) || 0) + 1
+            (
+                merchantEventCounts.get(
+                    merchantId
+                ) || 0
+            ) + 1
         );
-
     });
 }
-
 
 /* ============================================================
    FILTER
@@ -1666,16 +1536,13 @@ function getFilteredMerchants(){
     let merchants =
         [...allMerchants];
 
-
     const search =
         searchInput.value
             .trim()
             .toLowerCase();
 
-
     const status =
         statusFilter.value;
-
 
     if(search){
 
@@ -1688,54 +1555,35 @@ function getFilteredMerchants(){
                         merchant.phone,
                         merchant.id
                     ]
-                    .filter(Boolean)
-                    .join(" ")
-                    .toLowerCase();
-
-
-                    /*
-                        Email is deliberately NOT expected in
-                        profiles.
-
-                        Supabase Auth email should not be assumed
-                        to be readable from profiles.
-
-                        We therefore don't fabricate an email
-                        value.
-                    */
+                        .filter(Boolean)
+                        .join(" ")
+                        .toLowerCase();
 
                     return haystack.includes(search);
                 }
             );
     }
 
-
-    /*
-        profiles schema currently has role but not a confirmed
-        account_status column.
-
-        Therefore status filtering is supported only when
-        the optional status field is present in returned data.
-    */
-
-    if(status){
+    if(status === "active"){
 
         merchants =
             merchants.filter(
                 merchant =>
-                    String(
-                        merchant.account_status ||
-                        merchant.status ||
-                        ""
-                    )
-                    .toLowerCase() === status
+                    merchant.is_active === true
             );
     }
 
+    if(status === "inactive"){
+
+        merchants =
+            merchants.filter(
+                merchant =>
+                    merchant.is_active === false
+            );
+    }
 
     return merchants;
 }
-
 
 /* ============================================================
    RENDER
@@ -1746,12 +1594,9 @@ function renderMerchants(){
     const merchants =
         getFilteredMerchants();
 
-
     renderDesktop(merchants);
-
     renderMobile(merchants);
 }
-
 
 /* ============================================================
    DESKTOP TABLE
@@ -1764,25 +1609,19 @@ function renderDesktop(merchants){
         merchantTable.innerHTML = `
             <tr>
                 <td colspan="7">
-
                     <div class="empty">
-
                         <strong>
                             No merchant accounts found
                         </strong>
-
-                        There are no records matching the
-                        current filters.
-
+                        There are no merchant records matching
+                        the current filters.
                     </div>
-
                 </td>
             </tr>
         `;
 
         return;
     }
-
 
     merchantTable.innerHTML =
         merchants
@@ -1791,105 +1630,82 @@ function renderDesktop(merchants){
 
                     const status =
                         normalizeStatus(
-                            merchant.account_status ||
-                            merchant.status
+                            merchant.is_active
                         );
-
 
                     const eventCount =
                         merchantEventCounts.get(
                             String(merchant.id)
                         ) || 0;
 
+                    const merchantName =
+                        merchant.full_name ||
+                        "Unnamed merchant";
 
                     return `
-
                         <tr>
 
                             <td>
-
                                 <div class="merchant-cell">
 
                                     <div class="merchant-avatar">
                                         ${escapeHTML(
                                             getInitials(
-                                                merchant.full_name
+                                                merchantName
                                             )
                                         )}
                                     </div>
 
-
                                     <div>
-
                                         <div class="merchant-name">
                                             ${escapeHTML(
-                                                merchant.full_name ||
-                                                "Unnamed merchant"
+                                                merchantName
                                             )}
                                         </div>
 
                                         <div class="merchant-meta">
                                             Merchant account
                                         </div>
-
                                     </div>
 
                                 </div>
-
                             </td>
 
-
                             <td>
-
-                                <div>
-                                    ${escapeHTML(
-                                        merchant.phone ||
-                                        "—"
-                                    )}
-                                </div>
-
+                                ${escapeHTML(
+                                    merchant.phone ||
+                                    "—"
+                                )}
                             </td>
 
-
                             <td>
-
                                 <span class="role-badge">
                                     ${escapeHTML(
                                         merchant.role ||
                                         "merchant"
                                     )}
                                 </span>
-
                             </td>
 
-
                             <td>
-
                                 <span class="status ${escapeHTML(status.className)}">
                                     ${escapeHTML(status.label)}
                                 </span>
-
                             </td>
-
 
                             <td>
                                 ${eventCount.toLocaleString()}
                             </td>
 
-
                             <td>
-
                                 <span class="merchant-meta">
                                     ${escapeHTML(
                                         merchant.id
                                     )}
                                 </span>
-
                             </td>
 
-
                             <td>
-
                                 <div class="actions">
 
                                     <button
@@ -1903,32 +1719,15 @@ function renderDesktop(merchants){
                                         View
                                     </button>
 
-
-                                    <button
-                                        type="button"
-                                        class="action danger"
-                                        data-action="status"
-                                        data-id="${escapeHTML(
-                                            merchant.id
-                                        )}"
-                                    >
-                                        ${status.isDisabled
-                                            ? "Enable"
-                                            : "Disable"}
-                                    </button>
-
                                 </div>
-
                             </td>
 
                         </tr>
-
                     `;
                 }
             )
             .join("");
 }
-
 
 /* ============================================================
    MOBILE
@@ -1940,20 +1739,16 @@ function renderMobile(merchants){
 
         mobileMerchants.innerHTML = `
             <div class="empty">
-
                 <strong>
                     No merchant accounts found
                 </strong>
-
-                There are no records matching the
-                current filters.
-
+                There are no merchant records matching
+                the current filters.
             </div>
         `;
 
         return;
     }
-
 
     mobileMerchants.innerHTML =
         merchants
@@ -1962,19 +1757,19 @@ function renderMobile(merchants){
 
                     const status =
                         normalizeStatus(
-                            merchant.account_status ||
-                            merchant.status
+                            merchant.is_active
                         );
-
 
                     const eventCount =
                         merchantEventCounts.get(
                             String(merchant.id)
                         ) || 0;
 
+                    const merchantName =
+                        merchant.full_name ||
+                        "Unnamed merchant";
 
                     return `
-
                         <article class="merchant-card">
 
                             <div class="merchant-card-top">
@@ -1983,8 +1778,7 @@ function renderMobile(merchants){
 
                                     <div class="merchant-card-name">
                                         ${escapeHTML(
-                                            merchant.full_name ||
-                                            "Unnamed merchant"
+                                            merchantName
                                         )}
                                     </div>
 
@@ -2012,13 +1806,11 @@ function renderMobile(merchants){
 
                                 </div>
 
-
                                 <span class="status ${escapeHTML(status.className)}">
                                     ${escapeHTML(status.label)}
                                 </span>
 
                             </div>
-
 
                             <div class="merchant-card-actions">
 
@@ -2030,33 +1822,17 @@ function renderMobile(merchants){
                                         merchant.id
                                     )}"
                                 >
-                                    View
-                                </button>
-
-
-                                <button
-                                    type="button"
-                                    class="action danger"
-                                    data-action="status"
-                                    data-id="${escapeHTML(
-                                        merchant.id
-                                    )}"
-                                >
-                                    ${status.isDisabled
-                                        ? "Enable"
-                                        : "Disable"}
+                                    View Merchant
                                 </button>
 
                             </div>
 
                         </article>
-
                     `;
                 }
             )
             .join("");
 }
-
 
 /* ============================================================
    STATS
@@ -2067,150 +1843,71 @@ function updateStats(){
     const total =
         allMerchants.length;
 
-
     const active =
         allMerchants.filter(
             merchant =>
-                isMerchantStatus(
-                    merchant,
-                    "active"
-                )
+                merchant.is_active === true
         ).length;
 
-
-    const disabled =
+    const inactive =
         allMerchants.filter(
             merchant =>
-                isMerchantStatus(
-                    merchant,
-                    "disabled"
-                ) ||
-                isMerchantStatus(
-                    merchant,
-                    "suspended"
-                )
+                merchant.is_active === false
         ).length;
-
-
-    const pending =
-        allMerchants.filter(
-            merchant =>
-                isMerchantStatus(
-                    merchant,
-                    "pending"
-                )
-        ).length;
-
 
     document.getElementById(
         "totalMerchants"
     ).textContent =
         total.toLocaleString();
 
-
     document.getElementById(
         "activeMerchants"
     ).textContent =
         active.toLocaleString();
 
-
     document.getElementById(
         "disabledMerchants"
     ).textContent =
-        disabled.toLocaleString();
+        inactive.toLocaleString();
 
-
+    /*
+        The current profiles schema does not contain a merchant
+        onboarding/pending status. Therefore this remains zero
+        rather than inventing pending accounts.
+    */
     document.getElementById(
         "pendingMerchants"
     ).textContent =
-        pending.toLocaleString();
+        "0";
 }
-
 
 /* ============================================================
    STATUS
 ============================================================ */
 
-function normalizeStatus(value){
+function normalizeStatus(isActive){
 
-    const status =
-        String(value || "")
-            .toLowerCase()
-            .trim();
-
-
-    if(status === "active"){
+    if(isActive === true){
 
         return {
             label:"Active",
-            className:"active",
-            isDisabled:false
+            className:"active"
         };
     }
 
-
-    if(
-        status === "disabled" ||
-        status === "suspended"
-    ){
+    if(isActive === false){
 
         return {
-            label:status === "suspended"
-                ? "Suspended"
-                : "Disabled",
-            className:
-                status === "suspended"
-                    ? "suspended"
-                    : "disabled",
-            isDisabled:true
+            label:"Inactive",
+            className:"disabled"
         };
     }
-
-
-    if(status === "pending"){
-
-        return {
-            label:"Pending",
-            className:"pending",
-            isDisabled:false
-        };
-    }
-
-
-    /*
-        No status column exists yet in the assumed profile
-        schema. Do NOT pretend the account is active.
-
-        This is intentionally neutral until the final
-        account-status schema is implemented.
-    */
 
     return {
-        label:"Unspecified",
-        className:"unknown",
-        isDisabled:false
+        label:"Unknown",
+        className:"unknown"
     };
 }
-
-
-function isMerchantStatus(
-    merchant,
-    expected
-){
-
-    const value =
-        String(
-            merchant.account_status ||
-            merchant.status ||
-            ""
-        )
-        .toLowerCase()
-        .trim();
-
-
-    return value === expected;
-}
-
 
 /* ============================================================
    ACTIONS
@@ -2228,144 +1925,22 @@ async function handleAction(
                 String(merchantId)
         );
 
-
     if(!merchant){
         return;
     }
 
-
     if(action === "view"){
 
-        /*
-            Keep account details inside the admin application.
-
-            A dedicated merchant detail page can later be added
-            without exposing authentication credentials.
-        */
-
         window.location.href =
-            "./merchants.html?id=" +
+            "./merchant-details.html?id=" +
             encodeURIComponent(
                 merchant.id
             );
-
-        return;
-    }
-
-
-    if(action === "status"){
-
-        await toggleMerchantStatus(
-            merchant
-        );
     }
 }
 
-
 /* ============================================================
-   STATUS CHANGE
-============================================================ */
-
-async function toggleMerchantStatus(
-    merchant
-){
-
-    const currentStatus =
-        String(
-            merchant.account_status ||
-            merchant.status ||
-            ""
-        )
-        .toLowerCase()
-        .trim();
-
-
-    let nextStatus;
-
-
-    if(currentStatus === "disabled"){
-
-        nextStatus =
-            "active";
-
-    }else if(currentStatus === "active"){
-
-        nextStatus =
-            "disabled";
-
-    }else{
-
-        /*
-            We don't silently change unspecified/pending/
-            suspended accounts.
-
-            This avoids accidentally granting access.
-        */
-
-        showError(
-            "This merchant's current account status cannot be changed from this screen yet."
-        );
-
-        return;
-    }
-
-
-    const confirmed =
-        window.confirm(
-            nextStatus === "disabled"
-            ? "Disable this merchant account?"
-            : "Enable this merchant account?"
-        );
-
-
-    if(!confirmed){
-        return;
-    }
-
-
-    /*
-        SECURITY IMPORTANT:
-
-        This UPDATE is intentionally written so it can be
-        replaced by a SECURITY DEFINER RPC.
-
-        Final production implementation should use something
-        like:
-
-        supabaseClient.rpc(
-            "admin_set_merchant_status",
-            {
-                p_merchant_id:merchant.id,
-                p_status:nextStatus
-            }
-        );
-
-        The RPC must:
-
-        - verify auth.uid()
-        - verify profiles.role = admin
-        - validate merchant account
-        - update status atomically
-        - create an audit log
-        - prevent privilege escalation
-    */
-
-    /*
-        Current schema does not yet confirm an account_status
-        column.
-
-        Therefore we DO NOT attempt an unsafe UPDATE against
-        a potentially nonexistent column.
-    */
-
-    showError(
-        "Merchant status controls are locked until the secure account-status RPC and database policy are installed."
-    );
-}
-
-
-/* ============================================================
-   EVENTS
+   EVENT HANDLERS
 ============================================================ */
 
 merchantTable.addEventListener(
@@ -2377,11 +1952,9 @@ merchantTable.addEventListener(
                 "button[data-action]"
             );
 
-
         if(!button){
             return;
         }
-
 
         handleAction(
             button.dataset.action,
@@ -2389,7 +1962,6 @@ merchantTable.addEventListener(
         );
     }
 );
-
 
 mobileMerchants.addEventListener(
     "click",
@@ -2400,11 +1972,9 @@ mobileMerchants.addEventListener(
                 "button[data-action]"
             );
 
-
         if(!button){
             return;
         }
-
 
         handleAction(
             button.dataset.action,
@@ -2412,7 +1982,6 @@ mobileMerchants.addEventListener(
         );
     }
 );
-
 
 /* ============================================================
    FILTERS
@@ -2423,12 +1992,10 @@ searchInput.addEventListener(
     renderMerchants
 );
 
-
 statusFilter.addEventListener(
     "change",
     renderMerchants
 );
-
 
 /* ============================================================
    REFRESH
@@ -2445,12 +2012,9 @@ document
                     "refreshBtn"
                 );
 
-
             button.disabled = true;
-
             button.textContent =
                 "↻ Loading…";
-
 
             try{
 
@@ -2459,13 +2023,11 @@ document
             }finally{
 
                 button.disabled = false;
-
                 button.textContent =
                     "↻ Refresh";
             }
         }
     );
-
 
 /* ============================================================
    MOBILE MENU
@@ -2483,6 +2045,20 @@ document
         }
     );
 
+document
+    .querySelectorAll(".sidebar .nav a")
+    .forEach(link => {
+
+        link.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .getElementById("sidebar")
+                    .classList.remove("open");
+            }
+        );
+    });
 
 /* ============================================================
    AUTH MONITOR
@@ -2493,42 +2069,29 @@ function monitorAuth(){
     supabaseClient.auth.onAuthStateChange(
         (event,session) => {
 
-            if(!session){
-
-                window.location.replace(
-                    "../auth/login.html"
-                );
-
-                return;
-            }
-
-
             if(
                 event === "SIGNED_OUT" ||
-                event === "USER_DELETED"
+                event === "USER_DELETED" ||
+                !session
             ){
 
-                window.location.replace(
-                    "../auth/login.html"
+                redirectLogin(
+                    "session_expired"
                 );
             }
         }
     );
 }
 
-
 /* ============================================================
    HELPERS
 ============================================================ */
 
-function getInitials(
-    name
-){
+function getInitials(name){
 
     if(!name){
         return "M";
     }
-
 
     return String(name)
         .trim()
@@ -2542,7 +2105,6 @@ function getInitials(
         .toUpperCase() || "M";
 }
 
-
 function escapeHTML(value){
 
     return String(value ?? "")
@@ -2553,21 +2115,17 @@ function escapeHTML(value){
         .replaceAll("'","&#039;");
 }
 
-
 function showLoading(){
 
     merchantTable.innerHTML = `
         <tr>
             <td colspan="7">
-
                 <div class="loading">
                     Loading merchants…
                 </div>
-
             </td>
         </tr>
     `;
-
 
     mobileMerchants.innerHTML = `
         <div class="loading">
@@ -2576,31 +2134,25 @@ function showLoading(){
     `;
 }
 
-
 function showError(message){
 
     errorBox.hidden = false;
-
     errorBox.textContent =
         message;
 }
 
-
 function hideError(){
 
     errorBox.hidden = true;
-
     errorBox.textContent =
         "";
 }
-
 
 async function safeSignOut(){
 
     try{
 
         if(supabaseClient){
-
             await supabaseClient.auth.signOut();
         }
 
@@ -2613,16 +2165,15 @@ async function safeSignOut(){
     }
 }
 
-
-function redirectLogin(){
+function redirectLogin(reason = "unauthorized"){
 
     window.location.replace(
-        "../auth/login.html"
+        "/login.html?error=" +
+        encodeURIComponent(reason)
     );
 }
 
-
-function showSecurityFailure(){
+function showSecurityFailure(message){
 
     securityScreen.innerHTML = `
 
@@ -2637,22 +2188,15 @@ function showSecurityFailure(){
             </h1>
 
             <p>
-                This administrator session could not
-                be verified. Please sign in again.
+                ${escapeHTML(
+                    message ||
+                    "This administrator session could not be verified."
+                )}
             </p>
 
             <button
                 type="button"
-                onclick="window.location.replace('../auth/login.html')"
-                style="
-                    margin-top:22px;
-                    padding:12px 18px;
-                    border:0;
-                    border-radius:10px;
-                    background:#F5DABF;
-                    color:#0F3D3A;
-                    font-weight:800;
-                "
+                onclick="window.location.replace('/login.html')"
             >
                 Return to Login
             </button>
@@ -2661,7 +2205,6 @@ function showSecurityFailure(){
 
     `;
 }
-
 
 /* ============================================================
    START
@@ -2672,14 +2215,11 @@ function showSecurityFailure(){
     const authorized =
         await secureAdminGate();
 
-
     if(!authorized){
         return;
     }
 
-
     monitorAuth();
-
 
     await loadMerchants();
 
