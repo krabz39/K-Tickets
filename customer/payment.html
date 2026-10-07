@@ -1,670 +1,1678 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Payment | K-Tickets</title>
+    <meta
+        name="robots"
+        content="noindex,nofollow,noarchive"
+    >
+
+    <meta
+        name="referrer"
+        content="same-origin"
+    >
 
     <meta
         name="description"
         content="Complete your K-Tickets payment."
     >
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>
+        Payment | K-Tickets
+    </title>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
 
     <style>
-        :root {
-            --bordo: #6C151E;
-            --bordo-dark: #531018;
-            --bordo-soft: #f4e5e4;
 
-            --green: #0F3D3A;
-            --green-dark: #092b29;
-            --green-soft: #e4efec;
+        :root{
+            --bordo:#6C151E;
+            --bordo-dark:#531018;
+            --bordo-soft:#f4e5e4;
 
-            --cream: #F5DABF;
-            --cream-light: #fff8f1;
+            --green:#0F3D3A;
+            --green-dark:#092b29;
+            --green-soft:#e4efec;
 
-            --white: #ffffff;
-            --ink: #202020;
-            --muted: #77716d;
-            --line: #e8e1da;
-            --surface: #fbfaf8;
-            --danger: #9b2029;
-            --warning: #8a6439;
+            --cream:#F5DABF;
+            --cream-light:#fff8f1;
 
-            --shadow-sm: 0 5px 20px rgba(30, 22, 18, .06);
-            --shadow-md: 0 20px 55px rgba(30, 22, 18, .12);
+            --white:#fff;
+            --ink:#202020;
+            --muted:#77716d;
+            --line:#e8e1da;
+            --surface:#fbfaf8;
 
-            --sidebar-width: 260px;
+            --danger:#9b2029;
+            --warning:#8a6439;
+            --warning-soft:#f6eedc;
+
+            --shadow-sm:
+                0 5px 20px rgba(30,22,18,.06);
+
+            --shadow-md:
+                0 20px 55px rgba(30,22,18,.12);
+
+            --sidebar-width:260px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
         }
 
-        body {
-            min-height: 100vh;
-            background: var(--surface);
-            color: var(--ink);
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+
+        body{
+            min-height:100vh;
+
+            background:var(--surface);
+
+            color:var(--ink);
+
             font-family:
                 Inter,
+                ui-sans-serif,
+                system-ui,
                 -apple-system,
                 BlinkMacSystemFont,
                 "Segoe UI",
                 sans-serif;
-            overflow-x: hidden;
+
+            overflow-x:hidden;
         }
+
 
         button,
-        input {
-            font: inherit;
+        input{
+            font:inherit;
         }
 
-        button {
-            border: 0;
-            cursor: pointer;
-        }
 
-        a {
-            color: inherit;
-            text-decoration: none;
+        button{
+            border:0;
+            cursor:pointer;
         }
 
-        .sidebar {
-            position: fixed;
-            inset: 0 auto 0 0;
-            width: var(--sidebar-width);
-            padding: 24px 16px;
-            background: var(--green);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
-        }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 10px 28px;
+        button:disabled{
+            cursor:not-allowed;
         }
 
-        .brand-mark {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            background: var(--cream);
-            color: var(--green);
-            display: grid;
-            place-items: center;
-            font-size: 20px;
-            font-weight: 900;
-        }
 
-        .brand-text strong {
-            display: block;
-            font-size: 17px;
-            letter-spacing: .08em;
+        a{
+            color:inherit;
+            text-decoration:none;
         }
 
-        .brand-text span {
-            display: block;
-            margin-top: 2px;
-            color: rgba(255,255,255,.55);
-            font-size: 10px;
-            letter-spacing: .15em;
-            text-transform: uppercase;
-        }
 
-        .nav-label {
-            margin: 5px 0 9px;
-            padding: 0 12px;
-            color: rgba(255,255,255,.4);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: .15em;
+        .hidden{
+            display:none !important;
         }
 
-        .nav {
-            display: grid;
-            gap: 5px;
-        }
 
-        .nav-link {
-            min-height: 46px;
-            padding: 0 13px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: rgba(255,255,255,.7);
-            font-size: 14px;
-        }
+        /* =========================================================
+           SIDEBAR
+           ========================================================= */
 
-        .nav-link:hover {
-            background: rgba(255,255,255,.08);
-            color: white;
-        }
+        .sidebar{
+            position:fixed;
+            inset:0 auto 0 0;
 
-        .nav-link.active {
-            background: var(--bordo);
-            color: white;
-        }
+            width:var(--sidebar-width);
 
-        .nav-icon {
-            width: 22px;
-            text-align: center;
-            font-size: 17px;
-        }
+            padding:24px 16px;
 
-        .sidebar-bottom {
-            margin-top: auto;
-            display: grid;
-            gap: 10px;
-        }
+            background:var(--green);
+            color:#fff;
 
-        .support-card {
-            padding: 15px;
-            border-radius: 15px;
-            background: rgba(255,255,255,.07);
-            border: 1px solid rgba(255,255,255,.08);
-        }
+            display:flex;
+            flex-direction:column;
 
-        .support-card small {
-            color: rgba(255,255,255,.5);
-            font-size: 10px;
-            text-transform: uppercase;
-        }
+            z-index:100;
 
-        .support-card strong {
-            display: block;
-            margin-top: 6px;
-            font-size: 13px;
+            overflow-y:auto;
         }
 
-        .logout-btn {
-            height: 42px;
-            border-radius: 11px;
-            background: transparent;
-            border: 1px solid rgba(255,255,255,.12);
-            color: rgba(255,255,255,.7);
-        }
 
-        .main {
-            width: calc(100% - var(--sidebar-width));
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-        }
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
 
-        .topbar {
-            min-height: 78px;
-            padding: 15px 34px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(255,255,255,.93);
-            border-bottom: 1px solid var(--line);
-            backdrop-filter: blur(16px);
+            padding:0 10px 28px;
         }
 
-        .mobile-menu {
-            display: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 11px;
-            background: var(--cream-light);
-            color: var(--green);
-        }
 
-        .breadcrumb {
-            color: var(--muted);
-            font-size: 11px;
-        }
+        .brand-mark{
+            width:42px;
+            height:42px;
 
-        .breadcrumb a {
-            color: var(--green);
-            font-weight: 700;
-        }
+            border-radius:12px;
 
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--bordo);
-            color: white;
-            display: grid;
-            place-items: center;
-            font-size: 12px;
-            font-weight: 800;
-        }
+            background:var(--cream);
+            color:var(--green);
 
-        .content {
-            max-width: 1000px;
-            margin: auto;
-            padding: 35px;
-        }
+            display:grid;
+            place-items:center;
 
-        .heading small {
-            display: block;
-            color: var(--bordo);
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .12em;
+            font-size:20px;
+            font-weight:950;
         }
 
-        .heading h1 {
-            margin-top: 8px;
-            color: var(--green);
-            font-size: clamp(28px, 3vw, 42px);
-            letter-spacing: -.04em;
-        }
 
-        .heading p {
-            margin-top: 8px;
-            color: var(--muted);
-            font-size: 13px;
-        }
+        .brand-text strong{
+            display:block;
 
-        .payment-layout {
-            margin-top: 25px;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 330px;
-            gap: 20px;
-            align-items: start;
-        }
+            font-size:17px;
 
-        .card {
-            background: white;
-            border: 1px solid var(--line);
-            border-radius: 22px;
-            padding: 23px;
-            box-shadow: var(--shadow-sm);
+            letter-spacing:.08em;
         }
 
-        .payment-methods {
-            display: grid;
-            gap: 10px;
-            margin-top: 18px;
-        }
 
-        .method {
-            padding: 17px;
-            border: 1px solid var(--line);
-            border-radius: 15px;
-            cursor: pointer;
-            transition: .2s ease;
-        }
+        .brand-text span{
+            display:block;
 
-        .method:hover {
-            border-color: var(--green);
-        }
+            margin-top:2px;
 
-        .method.active {
-            border-color: var(--bordo);
-            box-shadow: 0 0 0 2px rgba(108,21,30,.07);
-        }
+            color:rgba(255,255,255,.55);
 
-        .method-top {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+            font-size:10px;
 
-        .method-radio {
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--line);
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            flex-shrink: 0;
-        }
+            letter-spacing:.15em;
 
-        .method.active .method-radio {
-            border-color: var(--bordo);
+            text-transform:uppercase;
         }
 
-        .method.active .method-radio::after {
-            content: "";
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--bordo);
-        }
 
-        .method-name {
-            color: var(--green);
-            font-size: 13px;
-            font-weight: 800;
-        }
+        .nav-label{
+            margin:5px 0 9px;
+            padding:0 12px;
+
+            color:rgba(255,255,255,.4);
+
+            font-size:10px;
 
-        .method-description {
-            margin-top: 5px;
-            margin-left: 30px;
-            color: var(--muted);
-            font-size: 10px;
-            line-height: 1.6;
+            text-transform:uppercase;
+            letter-spacing:.15em;
         }
 
-        .payment-panel {
-            display: none;
-            margin-top: 17px;
-            padding: 17px;
-            border-radius: 15px;
-            background: var(--surface);
-            border: 1px solid var(--line);
+
+        .nav{
+            display:grid;
+            gap:5px;
         }
+
+
+        .nav-link{
+            min-height:46px;
+
+            padding:0 13px;
+
+            border-radius:12px;
 
-        .payment-panel.active {
-            display: block;
+            display:flex;
+            align-items:center;
+            gap:12px;
+
+            color:rgba(255,255,255,.7);
+
+            font-size:13px;
+            font-weight:750;
+
+            transition:
+                background .2s ease,
+                color .2s ease,
+                transform .2s ease;
         }
+
 
-        .field {
-            display: grid;
-            gap: 6px;
-            margin-top: 12px;
+        .nav-link:hover{
+            background:rgba(255,255,255,.08);
+            color:#fff;
+
+            transform:translateX(2px);
         }
+
 
-        .field:first-child {
-            margin-top: 0;
+        .nav-link.active{
+            background:var(--bordo);
+            color:#fff;
         }
+
+
+        .nav-icon{
+            width:22px;
+
+            text-align:center;
 
-        .field label {
-            color: var(--green);
-            font-size: 10px;
-            font-weight: 800;
+            font-size:17px;
         }
 
-        .field input {
-            width: 100%;
-            height: 45px;
-            padding: 0 13px;
-            border: 1px solid var(--line);
-            border-radius: 11px;
-            background: white;
-            outline: none;
-            font-size: 12px;
+
+        .sidebar-bottom{
+            margin-top:auto;
+
+            display:grid;
+            gap:10px;
+
+            padding-top:20px;
         }
+
 
-        .field input:focus {
-            border-color: var(--green);
+        .support-card{
+            padding:15px;
+
+            border-radius:15px;
+
+            background:rgba(255,255,255,.07);
+
+            border:1px solid rgba(255,255,255,.08);
         }
+
+
+        .support-card small{
+            color:rgba(255,255,255,.5);
 
-        .help-text {
-            margin-top: 8px;
-            color: var(--muted);
-            font-size: 9px;
-            line-height: 1.6;
+            font-size:9px;
+
+            text-transform:uppercase;
+            letter-spacing:.1em;
         }
+
+
+        .support-card strong{
+            display:block;
+
+            margin-top:6px;
 
-        .action-btn {
-            width: 100%;
-            height: 50px;
-            margin-top: 18px;
-            border-radius: 13px;
-            background: var(--bordo);
-            color: white;
-            font-size: 12px;
-            font-weight: 800;
+            font-size:12px;
         }
+
+
+        .logout-btn{
+            min-height:42px;
+
+            border-radius:11px;
+
+            background:transparent;
+
+            border:1px solid rgba(255,255,255,.12);
 
-        .action-btn:hover {
-            background: var(--bordo-dark);
+            color:rgba(255,255,255,.7);
+
+            font-size:11px;
+            font-weight:800;
         }
+
 
-        .action-btn:disabled {
-            opacity: .55;
-            cursor: not-allowed;
+        .logout-btn:hover{
+            background:rgba(255,255,255,.06);
+            color:#fff;
         }
+
+
+        /* =========================================================
+           MAIN
+           ========================================================= */
+
+        .main{
+            width:
+                calc(100% - var(--sidebar-width));
 
-        .order-card {
-            position: sticky;
-            top: 100px;
+            margin-left:
+                var(--sidebar-width);
+
+            min-height:100vh;
         }
+
+
+        .topbar{
+            min-height:78px;
+
+            padding:15px 34px;
+
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
 
-        .order-event {
-            margin-top: 15px;
-            padding: 14px;
-            border-radius: 14px;
-            background: var(--green-soft);
+            gap:20px;
+
+            position:sticky;
+            top:0;
+
+            z-index:50;
+
+            background:rgba(255,255,255,.93);
+
+            border-bottom:
+                1px solid var(--line);
+
+            backdrop-filter:blur(16px);
         }
+
 
-        .order-event small {
-            color: var(--green);
-            font-size: 9px;
-            text-transform: uppercase;
+        .topbar-left{
+            display:flex;
+            align-items:center;
+            gap:12px;
         }
+
+
+        .mobile-menu{
+            display:none;
+
+            width:42px;
+            height:42px;
 
-        .order-event strong {
-            display: block;
-            margin-top: 5px;
-            color: var(--green);
-            font-size: 13px;
+            border-radius:11px;
+
+            background:var(--cream-light);
+
+            color:var(--green);
+
+            font-size:18px;
         }
+
 
-        .row {
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            color: var(--muted);
-            font-size: 11px;
+        .breadcrumb{
+            color:var(--muted);
+
+            font-size:11px;
         }
+
 
-        .row strong {
-            color: var(--ink);
+        .breadcrumb a{
+            color:var(--green);
+
+            font-weight:800;
         }
+
+
+        .topbar-right{
+            display:flex;
+            align-items:center;
 
-        .divider {
-            height: 1px;
-            margin: 18px 0;
-            background: var(--line);
+            gap:10px;
         }
 
-        .total {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+
+        .notification-btn{
+            position:relative;
+
+            width:40px;
+            height:40px;
+
+            border-radius:11px;
+
+            background:var(--cream-light);
+
+            color:var(--green);
+
+            font-size:17px;
         }
+
+
+        .notification-dot{
+            position:absolute;
+
+            top:7px;
+            right:7px;
 
-        .total span {
-            color: var(--muted);
-            font-size: 11px;
+            width:7px;
+            height:7px;
+
+            border-radius:50%;
+
+            background:var(--bordo);
+
+            box-shadow:
+                0 0 0 3px var(--cream-light);
         }
+
+
+        .avatar{
+            width:40px;
+            height:40px;
 
-        .total strong {
-            color: var(--green);
-            font-size: 21px;
+            border-radius:50%;
+
+            background:var(--bordo);
+
+            color:#fff;
+
+            display:grid;
+            place-items:center;
+
+            font-size:11px;
+            font-weight:900;
         }
+
 
-        .status {
-            margin-top: 18px;
-            padding: 13px;
-            border-radius: 13px;
-            background: var(--surface);
-            border: 1px solid var(--line);
-            font-size: 10px;
-            line-height: 1.6;
+        /* =========================================================
+           CONTENT
+           ========================================================= */
+
+        .content{
+            width:min(
+                1040px,
+                calc(100% - 40px)
+            );
+
+            margin:0 auto;
+
+            padding:
+                38px
+                0
+                80px;
         }
+
 
-        .status strong {
-            color: var(--green);
+        .heading small{
+            display:block;
+
+            color:var(--bordo);
+
+            font-size:10px;
+            font-weight:900;
+
+            text-transform:uppercase;
+            letter-spacing:.13em;
         }
+
+
+        .heading h1{
+            margin-top:8px;
 
-        .error {
-            display: none;
-            margin-top: 18px;
-            padding: 14px;
-            border-radius: 12px;
-            background: var(--bordo-soft);
-            color: var(--danger);
-            font-size: 11px;
+            color:var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:
+                clamp(30px,4vw,43px);
+
+            line-height:1.05;
+
+            letter-spacing:-.04em;
         }
+
 
-        .loading {
-            padding: 60px 20px;
-            text-align: center;
-            color: var(--muted);
-            font-size: 12px;
+        .heading p{
+            max-width:650px;
+
+            margin-top:9px;
+
+            color:var(--muted);
+
+            font-size:12px;
+
+            line-height:1.7;
         }
+
 
-        .mobile-nav {
-            display: none;
+        /* =========================================================
+           ERROR
+           ========================================================= */
+
+        .error{
+            display:none;
+
+            margin-top:18px;
+
+            padding:14px 15px;
+
+            border-radius:13px;
+
+            background:var(--bordo-soft);
+
+            border:1px solid
+                rgba(108,21,30,.12);
+
+            color:var(--danger);
+
+            font-size:10px;
+
+            line-height:1.6;
         }
 
-        @media (max-width: 900px) {
 
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform .25s ease;
-            }
+        /* =========================================================
+           LOADING
+           ========================================================= */
 
-            .sidebar.open {
-                transform: translateX(0);
-            }
+        .loading{
+            margin-top:25px;
 
-            .main {
-                width: 100%;
-                margin-left: 0;
-            }
+            padding:60px 20px;
 
-            .mobile-menu {
-                display: block;
-            }
+            border:
+                1px solid var(--line);
 
-            .topbar {
-                padding: 14px 25px;
-            }
+            border-radius:22px;
 
-            .content {
-                padding: 25px;
-                padding-bottom: 100px;
-            }
+            background:#fff;
 
-            .payment-layout {
-                grid-template-columns: 1fr;
-            }
+            text-align:center;
 
-            .order-card {
-                position: static;
-            }
+            color:var(--muted);
 
-            .mobile-nav {
-                position: fixed;
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                left: 12px;
-                right: 12px;
-                bottom: 12px;
-                height: 64px;
-                border-radius: 19px;
-                background: rgba(15,61,58,.96);
-                z-index: 90;
-            }
+            font-size:12px;
+
+            box-shadow:var(--shadow-sm);
+        }
+
+
+        .spinner{
+            width:40px;
+            height:40px;
+
+            margin:0 auto 16px;
+
+            border:
+                3px solid
+                rgba(15,61,58,.10);
+
+            border-top-color:
+                var(--green);
+
+            border-radius:50%;
+
+            animation:
+                spin .8s linear infinite;
+        }
 
-            .mobile-nav a {
-                display: grid;
-                place-items: center;
-                align-content: center;
-                gap: 3px;
-                color: rgba(255,255,255,.55);
-                font-size: 10px;
-            }
 
-            .mobile-nav a.active {
-                color: var(--cream);
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
             }
         }
 
-        @media (max-width: 600px) {
 
-            .topbar {
-                padding: 12px 15px;
+        /* =========================================================
+           LAYOUT
+           ========================================================= */
+
+        .payment-layout{
+            margin-top:26px;
+
+            display:grid;
+
+            grid-template-columns:
+                minmax(0,1fr)
+                330px;
+
+            gap:20px;
+
+            align-items:start;
+        }
+
+
+        .card{
+            background:#fff;
+
+            border:
+                1px solid var(--line);
+
+            border-radius:22px;
+
+            padding:23px;
+
+            box-shadow:var(--shadow-sm);
+        }
+
+
+        .card h2{
+            color:var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:22px;
+        }
+
+
+        .card-subtitle{
+            margin-top:5px;
+
+            color:var(--muted);
+
+            font-size:10px;
+
+            line-height:1.6;
+        }
+
+
+        /* =========================================================
+           METHODS
+           ========================================================= */
+
+        .payment-methods{
+            display:grid;
+            gap:10px;
+
+            margin-top:19px;
+        }
+
+
+        .method{
+            padding:16px;
+
+            border:
+                1px solid var(--line);
+
+            border-radius:15px;
+
+            background:#fff;
+
+            cursor:pointer;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                transform .2s ease;
+        }
+
+
+        .method:hover{
+            border-color:
+                rgba(15,61,58,.28);
+
+            transform:translateY(-1px);
+        }
+
+
+        .method.active{
+            border-color:
+                var(--bordo);
+
+            box-shadow:
+                0 0 0 2px
+                rgba(108,21,30,.07);
+        }
+
+
+        .method-top{
+            display:flex;
+            align-items:center;
+
+            gap:12px;
+        }
+
+
+        .method-radio{
+            width:18px;
+            height:18px;
+
+            border:
+                2px solid
+                var(--line);
+
+            border-radius:50%;
+
+            display:grid;
+            place-items:center;
+
+            flex:0 0 auto;
+        }
+
+
+        .method.active .method-radio{
+            border-color:
+                var(--bordo);
+        }
+
+
+        .method.active .method-radio::after{
+            content:"";
+
+            width:8px;
+            height:8px;
+
+            border-radius:50%;
+
+            background:var(--bordo);
+        }
+
+
+        .method-name{
+            color:var(--green);
+
+            font-size:13px;
+            font-weight:900;
+        }
+
+
+        .method-badge{
+            margin-left:auto;
+
+            padding:5px 7px;
+
+            border-radius:999px;
+
+            background:var(--green-soft);
+
+            color:var(--green);
+
+            font-size:7px;
+            font-weight:950;
+
+            text-transform:uppercase;
+            letter-spacing:.07em;
+        }
+
+
+        .method-description{
+            margin-top:6px;
+            margin-left:30px;
+
+            color:var(--muted);
+
+            font-size:10px;
+
+            line-height:1.6;
+        }
+
+
+        /* =========================================================
+           PANELS
+           ========================================================= */
+
+        .payment-panel{
+            display:none;
+
+            margin-top:16px;
+
+            padding:17px;
+
+            border-radius:15px;
+
+            background:var(--surface);
+
+            border:
+                1px solid var(--line);
+        }
+
+
+        .payment-panel.active{
+            display:block;
+        }
+
+
+        .panel-title{
+            color:var(--green);
+
+            font-size:11px;
+            font-weight:950;
+
+            text-transform:uppercase;
+            letter-spacing:.07em;
+        }
+
+
+        .panel-description{
+            margin-top:6px;
+
+            color:var(--muted);
+
+            font-size:9px;
+
+            line-height:1.65;
+        }
+
+
+        /* =========================================================
+           FIELD
+           ========================================================= */
+
+        .field{
+            display:grid;
+            gap:6px;
+
+            margin-top:13px;
+        }
+
+
+        .field:first-child{
+            margin-top:0;
+        }
+
+
+        .field label{
+            color:var(--green);
+
+            font-size:10px;
+            font-weight:850;
+        }
+
+
+        .field input{
+            width:100%;
+
+            min-height:45px;
+
+            padding:
+                0
+                13px;
+
+            border:
+                1px solid var(--line);
+
+            border-radius:11px;
+
+            background:#fff;
+
+            outline:none;
+
+            color:var(--ink);
+
+            font-size:12px;
+        }
+
+
+        .field input:focus{
+            border-color:
+                var(--green);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(15,61,58,.05);
+        }
+
+
+        .help-text{
+            margin-top:8px;
+
+            color:var(--muted);
+
+            font-size:9px;
+
+            line-height:1.65;
+        }
+
+
+        .action-btn{
+            width:100%;
+
+            min-height:49px;
+
+            margin-top:17px;
+
+            border-radius:13px;
+
+            background:var(--bordo);
+
+            color:#fff;
+
+            font-size:11px;
+            font-weight:900;
+
+            transition:
+                transform .2s ease,
+                background .2s ease;
+        }
+
+
+        .action-btn:hover{
+            background:
+                var(--bordo-dark);
+
+            transform:translateY(-1px);
+        }
+
+
+        .action-btn:disabled{
+            opacity:.52;
+
+            transform:none;
+
+            cursor:not-allowed;
+        }
+
+
+        /* =========================================================
+           WAMD INFO
+           ========================================================= */
+
+        .wamd-note{
+            margin-top:12px;
+
+            padding:12px 13px;
+
+            border-radius:12px;
+
+            background:var(--warning-soft);
+
+            color:var(--warning);
+
+            font-size:9px;
+
+            line-height:1.65;
+        }
+
+
+        .wamd-reference{
+            margin-top:12px;
+
+            padding:12px 13px;
+
+            border-radius:12px;
+
+            background:#fff;
+
+            border:
+                1px solid var(--line);
+
+            color:var(--muted);
+
+            font-size:9px;
+
+            line-height:1.6;
+        }
+
+
+        /* =========================================================
+           ORDER CARD
+           ========================================================= */
+
+        .order-card{
+            position:sticky;
+
+            top:101px;
+        }
+
+
+        .order-event{
+            margin-top:15px;
+
+            padding:14px;
+
+            border-radius:14px;
+
+            background:var(--green-soft);
+        }
+
+
+        .order-event small{
+            color:var(--green);
+
+            font-size:8px;
+
+            text-transform:uppercase;
+            letter-spacing:.1em;
+        }
+
+
+        .order-event strong{
+            display:block;
+
+            margin-top:5px;
+
+            color:var(--green);
+
+            font-size:13px;
+
+            line-height:1.4;
+        }
+
+
+        .order-event-date{
+            margin-top:4px;
+
+            color:var(--muted);
+
+            font-size:9px;
+        }
+
+
+        .order-rows{
+            margin-top:15px;
+        }
+
+
+        .row{
+            display:flex;
+
+            justify-content:space-between;
+
+            gap:15px;
+
+            margin-top:10px;
+
+            color:var(--muted);
+
+            font-size:10px;
+
+            line-height:1.5;
+        }
+
+
+        .row:first-child{
+            margin-top:0;
+        }
+
+
+        .row span{
+            max-width:65%;
+        }
+
+
+        .row strong{
+            color:var(--ink);
+
+            text-align:right;
+
+            word-break:break-word;
+        }
+
+
+        .divider{
+            height:1px;
+
+            margin:
+                17px
+                0;
+
+            background:var(--line);
+        }
+
+
+        .fee-info{
+            display:flex;
+
+            justify-content:space-between;
+
+            gap:15px;
+
+            color:var(--muted);
+
+            font-size:9px;
+        }
+
+
+        .fee-info strong{
+            color:var(--green);
+        }
+
+
+        .total{
+            display:flex;
+
+            align-items:center;
+
+            justify-content:space-between;
+
+            gap:15px;
+        }
+
+
+        .total span{
+            color:var(--muted);
+
+            font-size:11px;
+        }
+
+
+        .total strong{
+            color:var(--green);
+
+            font-size:22px;
+
+            letter-spacing:-.03em;
+        }
+
+
+        .status-box{
+            margin-top:18px;
+
+            padding:13px;
+
+            border-radius:13px;
+
+            background:var(--surface);
+
+            border:
+                1px solid var(--line);
+
+            font-size:9px;
+
+            line-height:1.6;
+        }
+
+
+        .status-box strong{
+            color:var(--green);
+        }
+
+
+        .payment-window{
+            margin-top:9px;
+
+            color:var(--muted);
+
+            font-size:8px;
+
+            line-height:1.5;
+        }
+
+
+        /* =========================================================
+           STATE OVERLAY CARD
+           ========================================================= */
+
+        .result-card{
+            width:min(
+                680px,
+                100%
+            );
+
+            margin:
+                35px
+                auto
+                0;
+
+            padding:34px;
+
+            border:
+                1px solid var(--line);
+
+            border-radius:25px;
+
+            background:#fff;
+
+            box-shadow:var(--shadow-md);
+
+            text-align:center;
+        }
+
+
+        .result-icon{
+            width:72px;
+            height:72px;
+
+            margin:0 auto;
+
+            border-radius:50%;
+
+            display:grid;
+            place-items:center;
+
+            background:var(--green-soft);
+
+            color:var(--green);
+
+            font-size:28px;
+            font-weight:950;
+        }
+
+
+        .result-icon.pending{
+            background:var(--warning-soft);
+
+            color:var(--warning);
+        }
+
+
+        .result-icon.failed{
+            background:var(--bordo-soft);
+
+            color:var(--bordo);
+        }
+
+
+        .result-card small{
+            display:block;
+
+            margin-top:19px;
+
+            color:var(--bordo);
+
+            font-size:9px;
+            font-weight:950;
+
+            text-transform:uppercase;
+            letter-spacing:.14em;
+        }
+
+
+        .result-card h2{
+            margin-top:8px;
+
+            color:var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:
+                clamp(27px,4vw,39px);
+
+            line-height:1.08;
+
+            letter-spacing:-.035em;
+        }
+
+
+        .result-card p{
+            max-width:500px;
+
+            margin:11px auto 0;
+
+            color:var(--muted);
+
+            font-size:11px;
+
+            line-height:1.75;
+        }
+
+
+        .result-actions{
+            margin-top:21px;
+
+            display:grid;
+
+            grid-template-columns:
+                repeat(2,minmax(0,1fr));
+
+            gap:9px;
+        }
+
+
+        .result-btn{
+            min-height:45px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            padding:0 14px;
+
+            border-radius:12px;
+
+            font-size:10px;
+            font-weight:900;
+        }
+
+
+        .result-btn.primary{
+            background:var(--bordo);
+            color:#fff;
+        }
+
+
+        .result-btn.secondary{
+            background:#fff;
+
+            border:
+                1px solid var(--line);
+
+            color:var(--green);
+        }
+
+
+        /* =========================================================
+           MOBILE NAV
+           ========================================================= */
+
+        .mobile-nav{
+            display:none;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width:900px){
+
+            .sidebar{
+                transform:translateX(-100%);
+
+                transition:
+                    transform .25s ease;
             }
 
-            .breadcrumb {
-                display: none;
+
+            .sidebar.open{
+                transform:translateX(0);
             }
 
-            .content {
-                padding: 20px 15px 100px;
+
+            .main{
+                width:100%;
+                margin-left:0;
             }
 
-            .card {
-                padding: 17px;
-                border-radius: 18px;
+
+            .mobile-menu{
+                display:block;
             }
 
-            .method {
-                padding: 14px;
+
+            .topbar{
+                padding:
+                    14px
+                    25px;
+            }
+
+
+            .content{
+                width:
+                    min(
+                        calc(100% - 30px),
+                        1040px
+                    );
+
+                padding-bottom:100px;
+            }
+
+
+            .payment-layout{
+                grid-template-columns:1fr;
+            }
+
+
+            .order-card{
+                position:static;
+            }
+
+
+            .mobile-nav{
+                position:fixed;
+
+                display:grid;
+
+                grid-template-columns:
+                    repeat(4,1fr);
+
+                left:12px;
+                right:12px;
+                bottom:12px;
+
+                height:64px;
+
+                border-radius:19px;
+
+                background:
+                    rgba(15,61,58,.97);
+
+                z-index:90;
+
+                box-shadow:
+                    0 15px 50px
+                    rgba(0,0,0,.18);
+            }
+
+
+            .mobile-nav a{
+                display:grid;
+
+                place-items:center;
+
+                align-content:center;
+
+                gap:3px;
+
+                color:
+                    rgba(255,255,255,.55);
+
+                font-size:9px;
+            }
+
+
+            .mobile-nav a.active{
+                color:var(--cream);
+            }
+
+
+            .mobile-nav a span:first-child{
+                font-size:17px;
             }
         }
+
+
+        @media (max-width:600px){
+
+            .topbar{
+                padding:
+                    12px
+                    15px;
+            }
+
+
+            .breadcrumb{
+                display:none;
+            }
+
+
+            .content{
+                width:
+                    calc(100% - 20px);
+
+                padding:
+                    25px
+                    0
+                    100px;
+            }
+
+
+            .card{
+                padding:17px;
+
+                border-radius:18px;
+            }
+
+
+            .payment-panel{
+                padding:14px;
+            }
+
+
+            .result-card{
+                margin-top:20px;
+
+                padding:
+                    27px
+                    17px;
+
+                border-radius:21px;
+            }
+
+
+            .result-actions{
+                grid-template-columns:1fr;
+            }
+
+
+            .order-row{
+                gap:10px;
+            }
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
 <div class="app">
 
-    <aside class="sidebar" id="sidebar">
 
-        <a href="../index.html" class="brand">
+    <!-- =========================================================
+         SIDEBAR
+         ========================================================= -->
 
-            <div class="brand-mark">K</div>
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+        <a
+            href="../index.html"
+            class="brand"
+        >
+
+            <div class="brand-mark">
+                K
+            </div>
+
 
             <div class="brand-text">
-                <strong>K-TICKETS</strong>
-                <span>Customer</span>
+
+                <strong>
+                    K-TICKETS
+                </strong>
+
+                <span>
+                    Customer
+                </span>
+
             </div>
 
         </a>
 
-        <div class="nav-label">Menu</div>
+
+        <div class="nav-label">
+            Menu
+        </div>
+
 
         <nav class="nav">
 
-            <a href="dashboard.html" class="nav-link">
-                <span class="nav-icon">⌂</span>
+            <a
+                href="dashboard.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
                 Dashboard
+
             </a>
 
-            <a href="events.html" class="nav-link">
-                <span class="nav-icon">◫</span>
+
+            <a
+                href="events.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ◫
+                </span>
+
                 Discover Events
+
             </a>
 
-            <a href="my-tickets.html" class="nav-link">
-                <span class="nav-icon">▣</span>
+
+            <a
+                href="my-tickets.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ▣
+                </span>
+
                 My Tickets
+
             </a>
 
-            <a href="#" class="nav-link active">
-                <span class="nav-icon">◷</span>
-                Payment
+
+            <a
+                href="orders.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ▤
+                </span>
+
+                My Orders
+
+            </a>
+
+
+            <a
+                href="notifications.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ◇
+                </span>
+
+                Notifications
+
+            </a>
+
+
+            <div class="nav-label">
+                Account
+            </div>
+
+
+            <a
+                href="profile.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ◎
+                </span>
+
+                Profile
+
             </a>
 
         </nav>
 
+
         <div class="sidebar-bottom">
 
             <div class="support-card">
-                <small>Need help?</small>
-                <strong>K-Tickets Support</strong>
+
+                <small>
+                    Payment security
+                </small>
+
+                <strong>
+                    Secure K-Tickets checkout
+                </strong>
+
             </div>
 
-            <button class="logout-btn" onclick="logout()">
+
+            <button
+                type="button"
+                class="logout-btn"
+                id="logoutButton"
+            >
                 Log out
             </button>
 
@@ -672,56 +1680,126 @@
 
     </aside>
 
+
+    <!-- =========================================================
+         MAIN
+         ========================================================= -->
+
     <main class="main">
+
 
         <header class="topbar">
 
-            <button
-                class="mobile-menu"
-                onclick="toggleSidebar()"
-            >
-                ☰
-            </button>
 
-            <div class="breadcrumb">
-                <a href="dashboard.html">
-                    Dashboard
-                </a>
+            <div class="topbar-left">
 
-                <span> / Payment</span>
+                <button
+                    type="button"
+                    class="mobile-menu"
+                    id="mobileMenu"
+                    aria-label="Open menu"
+                >
+                    ☰
+                </button>
+
+
+                <div class="breadcrumb">
+
+                    <a href="dashboard.html">
+                        Dashboard
+                    </a>
+
+                    <span>
+                        &nbsp; / &nbsp; Payment
+                    </span>
+
+                </div>
+
             </div>
 
-            <div class="avatar" id="avatar">
-                —
+
+            <div class="topbar-right">
+
+                <button
+                    type="button"
+                    class="notification-btn"
+                    id="notificationButton"
+                    aria-label="Notifications"
+                >
+
+                    ◇
+
+                    <span
+                        id="notificationDot"
+                        class="notification-dot hidden"
+                    ></span>
+
+                </button>
+
+
+                <div
+                    class="avatar"
+                    id="avatar"
+                >
+                    K
+                </div>
+
             </div>
 
         </header>
 
+
+        <!-- =====================================================
+             PAYMENT CONTENT
+             ===================================================== -->
+
         <section class="content">
+
 
             <div class="heading">
 
-                <small>Payment</small>
+                <small>
+                    Secure checkout
+                </small>
 
-                <h1>Complete your payment.</h1>
+                <h1>
+                    Complete your payment.
+                </h1>
 
                 <p>
-                    Choose your preferred payment method.
+                    Choose your payment method below.
+                    K-Tickets will only confirm your order after
+                    the payment is verified by the trusted payment flow.
                 </p>
 
             </div>
+
 
             <div
                 class="error"
                 id="errorBox"
             ></div>
 
+
+            <!-- =================================================
+                 LOADING
+                 ================================================= -->
+
             <div
                 class="loading"
                 id="loading"
             >
-                Loading payment details...
+
+                <div class="spinner"></div>
+
+                Loading your order...
+
             </div>
+
+
+            <!-- =================================================
+                 PAYMENT LAYOUT
+                 ================================================= -->
 
             <div
                 class="payment-layout"
@@ -729,16 +1807,35 @@
                 style="display:none;"
             >
 
+
+                <!-- =============================================
+                     LEFT
+                     ============================================= -->
+
                 <section class="card">
 
-                    <h2>Payment method</h2>
+                    <h2>
+                        Payment method
+                    </h2>
+
+                    <p class="card-subtitle">
+                        Select how you would like to complete this order.
+                    </p>
+
 
                     <div class="payment-methods">
+
+
+                        <!-- =====================================
+                             M-PESA
+                             ===================================== -->
 
                         <div
                             class="method active"
                             data-method="mpesa"
-                            onclick="selectMethod('mpesa')"
+                            id="mpesaMethod"
+                            role="button"
+                            tabindex="0"
                         >
 
                             <div class="method-top">
@@ -749,19 +1846,34 @@
                                     M-Pesa
                                 </div>
 
+                                <span class="method-badge">
+                                    Auto
+                                </span>
+
                             </div>
 
+
                             <div class="method-description">
-                                Pay through an M-Pesa STK Push.
-                                Confirmation is handled automatically.
+
+                                Pay using an M-Pesa STK Push.
+                                Payment confirmation is handled by the
+                                trusted payment backend.
+
                             </div>
 
                         </div>
 
+
+                        <!-- =====================================
+                             WAMD
+                             ===================================== -->
+
                         <div
                             class="method"
                             data-method="wamd"
-                            onclick="selectMethod('wamd')"
+                            id="wamdMethod"
+                            role="button"
+                            tabindex="0"
                         >
 
                             <div class="method-top">
@@ -772,28 +1884,52 @@
                                     WAMD
                                 </div>
 
+                                <span class="method-badge">
+                                    Manual
+                                </span>
+
                             </div>
 
+
                             <div class="method-description">
-                                Make the WAMD payment using the
-                                instructions provided below, then
-                                submit your transaction ID.
+
+                                Complete the WAMD payment using the
+                                official K-Tickets payment instructions,
+                                then submit your transaction code for verification.
+
                             </div>
 
                         </div>
 
+
                     </div>
 
-                    <!-- MPESA -->
+
+                    <!-- =========================================
+                         M-PESA PANEL
+                         ========================================= -->
 
                     <div
                         class="payment-panel active"
                         id="mpesaPanel"
                     >
 
+                        <div class="panel-title">
+                            M-Pesa STK Push
+                        </div>
+
+
+                        <div class="panel-description">
+
+                            Enter the M-Pesa number that should receive
+                            the payment request.
+
+                        </div>
+
+
                         <div class="field">
 
-                            <label>
+                            <label for="mpesaPhone">
                                 M-Pesa phone number
                             </label>
 
@@ -807,76 +1943,216 @@
 
                         </div>
 
+
                         <p class="help-text">
-                            The payment request will be sent to
-                            the number entered above.
+
+                            The payment request will be sent by the
+                            secure M-Pesa payment service.
+                            Do not enter your M-Pesa PIN on this website.
+
                         </p>
 
+
                         <button
+                            type="button"
                             class="action-btn"
                             id="mpesaButton"
-                            onclick="startMpesaPayment()"
                         >
                             Request M-Pesa STK Push
                         </button>
 
                     </div>
 
-                    <!-- WAMD -->
+
+                    <!-- =========================================
+                         WAMD PANEL
+                         ========================================= -->
 
                     <div
                         class="payment-panel"
                         id="wamdPanel"
                     >
 
-                        <div id="wamdInstructions">
-                            Loading WAMD instructions...
+                        <div class="panel-title">
+                            WAMD payment
                         </div>
+
+
+                        <div class="panel-description">
+
+                            Complete the WAMD payment through the
+                            official K-Tickets payment channel available
+                            to you. Then submit the transaction code below.
+
+                        </div>
+
+
+                        <div class="wamd-note">
+
+                            WAMD is manually verified.
+                            Submitting a transaction code does not mark
+                            the order as paid. The payment remains pending
+                            until an authorized administrator verifies it.
+
+                        </div>
+
+
+                        <div class="wamd-reference">
+
+                            Use the exact transaction code/reference
+                            returned by your WAMD payment. The code is
+                            checked against the payment record before
+                            verification.
+
+                        </div>
+
 
                         <div class="field">
 
-                            <label>
-                                WAMD transaction ID
+                            <label for="wamdTransactionId">
+                                WAMD transaction code
                             </label>
 
                             <input
                                 id="wamdTransactionId"
                                 type="text"
                                 autocomplete="off"
-                                placeholder="Enter transaction ID"
+                                autocapitalize="characters"
+                                spellcheck="false"
+                                placeholder="Enter transaction code"
                             >
 
                         </div>
 
+
+                        <div class="field">
+
+                            <label for="wamdSenderName">
+                                Sender name
+                                <span
+                                    style="
+                                        color:var(--muted);
+                                        font-weight:600;
+                                    "
+                                >
+                                    (optional)
+                                </span>
+                            </label>
+
+                            <input
+                                id="wamdSenderName"
+                                type="text"
+                                autocomplete="name"
+                                placeholder="Name used for the payment"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="wamdSenderPhone">
+                                Sender phone
+                                <span
+                                    style="
+                                        color:var(--muted);
+                                        font-weight:600;
+                                    "
+                                >
+                                    (optional)
+                                </span>
+                            </label>
+
+                            <input
+                                id="wamdSenderPhone"
+                                type="tel"
+                                inputmode="tel"
+                                autocomplete="tel"
+                                placeholder="Phone used for the payment"
+                            >
+
+                        </div>
+
+
                         <button
+                            type="button"
                             class="action-btn"
                             id="wamdButton"
-                            onclick="submitWamdPayment()"
                         >
                             Submit WAMD Payment
                         </button>
 
                     </div>
 
+
+                    <!-- =========================================
+                         SECURITY NOTICE
+                         ========================================= -->
+
+                    <div
+                        class="status-box"
+                        style="margin-top:15px;"
+                    >
+
+                        <strong>
+                            Payment protection
+                        </strong>
+
+                        <br>
+
+                        K-Tickets does not trust browser-calculated
+                        payment totals. The order amount shown here comes
+                        from the database, while payment confirmation and
+                        ticket issuance are controlled by the trusted
+                        payment workflow.
+
+                    </div>
+
                 </section>
 
-                <aside class="card order-card">
 
-                    <h2>Your order</h2>
+                <!-- =============================================
+                     ORDER
+                     ============================================= -->
+
+                <aside
+                    class="card order-card"
+                >
+
+                    <h2>
+                        Your order
+                    </h2>
+
 
                     <div class="order-event">
 
-                        <small>Event</small>
+                        <small>
+                            Event
+                        </small>
 
                         <strong id="orderEvent">
                             —
                         </strong>
 
+                        <div
+                            class="order-event-date"
+                            id="orderEventDate"
+                        >
+                            —
+                        </div>
+
                     </div>
 
-                    <div id="orderRows"></div>
+
+                    <div
+                        class="order-rows"
+                        id="orderRows"
+                    >
+                    </div>
+
 
                     <div class="divider"></div>
+
 
                     <div class="row">
 
@@ -890,6 +2166,7 @@
 
                     </div>
 
+
                     <div class="row">
 
                         <span>
@@ -902,7 +2179,38 @@
 
                     </div>
 
+
+                    <div
+                        class="row hidden"
+                        id="discountRow"
+                    >
+
+                        <span>
+                            Discount
+                        </span>
+
+                        <strong id="discount">
+                            —
+                        </strong>
+
+                    </div>
+
+
                     <div class="divider"></div>
+
+
+                    <div class="fee-info">
+
+                        <span>
+                            Fee rate
+                        </span>
+
+                        <strong id="feePercentage">
+                            —
+                        </strong>
+
+                    </div>
+
 
                     <div class="total">
 
@@ -916,21 +2224,42 @@
 
                     </div>
 
-                    <div class="status">
+
+                    <div class="status-box">
 
                         <strong>
-                            Payment status:
+                            Order status:
                         </strong>
 
-                        <span id="paymentStatus">
-                            Awaiting payment
+                        <span
+                            id="orderStatus"
+                        >
+                            —
                         </span>
 
+                    </div>
+
+
+                    <div
+                        class="payment-window hidden"
+                        id="paymentWindow"
+                    >
                     </div>
 
                 </aside>
 
             </div>
+
+
+            <!-- =================================================
+                 RESULT
+                 ================================================= -->
+
+            <div
+                id="resultContainer"
+                class="hidden"
+            ></div>
+
 
         </section>
 
@@ -938,769 +2267,3139 @@
 
 </div>
 
+
+<!-- =============================================================
+     MOBILE NAV
+     ============================================================= -->
+
 <nav class="mobile-nav">
 
     <a href="dashboard.html">
-        <span>⌂</span>
-        <span>Home</span>
+
+        <span>
+            ⌂
+        </span>
+
+        <span>
+            Home
+        </span>
+
     </a>
+
 
     <a href="events.html">
-        <span>◫</span>
-        <span>Events</span>
+
+        <span>
+            ◫
+        </span>
+
+        <span>
+            Events
+        </span>
+
     </a>
 
-    <a href="my-tickets.html" class="active">
-        <span>▣</span>
-        <span>Tickets</span>
+
+    <a
+        href="my-tickets.html"
+        class="active"
+    >
+
+        <span>
+            ▣
+        </span>
+
+        <span>
+            Tickets
+        </span>
+
     </a>
 
-    <a href="#">
-        <span>◎</span>
-        <span>Account</span>
+
+    <a href="profile.html">
+
+        <span>
+            ◎
+        </span>
+
+        <span>
+            Account
+        </span>
+
     </a>
 
 </nav>
 
+
 <script>
 
-    /*
-        ============================================================
-        K-TICKETS PAYMENT
-        ============================================================
+/*
+    ================================================================
+    K-TICKETS — CUSTOMER PAYMENT
+    ================================================================
 
-        Supabase is the source of truth.
+    SOURCE OF TRUTH
+    ----------------------------------------------------------------
+    orders
+    payments
+    order_items
+    ticket_types
+    events
+    tickets
+    profiles
+    notifications
 
-        Browser:
-            - displays order
-            - collects payment input
-            - calls secure payment backend
-            - listens for order/payment status
+    CONFIRMED ORDER FIELDS
+    ----------------------------------------------------------------
+    id
+    order_number
+    user_id
+    event_id
+    status
+    subtotal
+    service_fee_percentage
+    service_fee
+    discount
+    total
+    currency
+    promotion_id
+    created_at
+    updated_at
+    paid_at
 
-        Backend:
-            - validates authenticated user
-            - validates order
-            - communicates with M-Pesa
-            - records provider reference
-            - confirms payment
-            - changes payment/order state
-            - triggers ticket generation
+    CONFIRMED PAYMENT FIELDS
+    ----------------------------------------------------------------
+    id
+    order_id
+    user_id
+    event_id
+    method
+    provider
+    status
+    amount
+    currency
+    reference
+    transaction_id
+    receipt_number
+    provider_transaction_id
+    raw_response
+    failure_reason
+    paid_at
+    created_at
+    updated_at
 
-        WAMD:
-            - customer submits transaction ID
-            - payment remains pending
-            - admin verifies
-            - backend changes status
-            - ticket generation follows
-    */
+    CONFIRMED WAMD FLOW
+    ----------------------------------------------------------------
+    1. Create a payment attempt through:
+         create_payment_attempt(p_order_id, p_method)
 
-    const SUPABASE_URL = "";
-    const SUPABASE_ANON_KEY = "";
+    2. Submit WAMD through:
+         submit_wamd_payment(
+             p_payment_id,
+             p_transaction_code,
+             p_sender_name,
+             p_sender_phone
+         )
 
-    let supabaseClient = null;
-    let currentUser = null;
-    let order = null;
-    let selectedMethod = "mpesa";
+    3. WAMD remains pending.
 
-    const params =
-        new URLSearchParams(
-            window.location.search
+    4. Admin verifies through:
+         admin_verify_wamd(...)
+
+    5. Trusted payment finalization changes the
+       payment/order state and issues tickets.
+
+    M-PESA FLOW
+    ----------------------------------------------------------------
+    1. Create a payment attempt.
+    2. Browser invokes the protected "mpesa-stk"
+       Edge Function.
+    3. Edge Function communicates with M-Pesa/Daraja.
+    4. Provider callback updates the payment.
+    5. Trusted finalization confirms the order.
+    6. Tickets are issued.
+    7. Customer is redirected to payment-success.html.
+
+    SECURITY
+    ----------------------------------------------------------------
+    • Browser contains only public/publishable Supabase credentials.
+    • No service-role key.
+    • No database password.
+    • No M-Pesa secret.
+    • No WAMD secret.
+    • No direct browser payment-status override.
+    • No direct order total manipulation.
+    • No client-side ticket issuance.
+*/
+
+
+/* ================================================================
+   SUPABASE
+   ================================================================ */
+
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
+        }
+    );
+
+
+/* ================================================================
+   STATE
+   ================================================================ */
+
+let currentUser =
+    null;
+
+let currentProfile =
+    null;
+
+let order =
+    null;
+
+let eventRecord =
+    null;
+
+let orderItems =
+    [];
+
+let ticketTypeMap =
+    new Map();
+
+let currentPayment =
+    null;
+
+let selectedMethod =
+    "mpesa";
+
+let realtimeChannel =
+    null;
+
+let pollingTimer =
+    null;
+
+let pollingAttempts =
+    0;
+
+const MAX_POLLING_ATTEMPTS =
+    72;
+
+const POLLING_INTERVAL =
+    5000;
+
+
+/* ================================================================
+   URL
+   ================================================================ */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const orderId =
+    params.get(
+        "order"
+    );
+
+
+/* ================================================================
+   HELPERS
+   ================================================================ */
+
+function $(id){
+
+    return document.getElementById(
+        id
+    );
+}
+
+
+function escapeHtml(value){
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+}
+
+
+function safeText(
+    value,
+    fallback = "—"
+){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return fallback;
+    }
+
+    const text =
+        String(
+            value
+        ).trim();
+
+    return text ||
+        fallback;
+}
+
+
+function normalizeStatus(
+    value
+){
+
+    return String(
+        value ||
+        "unknown"
+    )
+        .trim()
+        .toLowerCase();
+}
+
+
+function formatStatus(
+    value
+){
+
+    return String(
+        value ||
+        "unknown"
+    )
+        .trim()
+        .replaceAll(
+            "_",
+            " "
+        )
+        .replace(
+            /\b\w/g,
+            character =>
+                character.toUpperCase()
+        );
+}
+
+
+function formatDate(
+    value
+){
+
+    if(!value){
+        return "—";
+    }
+
+    const date =
+        new Date(
+            value
         );
 
-    const orderId =
-        params.get("order");
-
-    function showError(message) {
-
-        const box =
-            document.getElementById("errorBox");
-
-        box.textContent = message;
-        box.style.display = "block";
-
-        document.getElementById("loading")
-            .style.display = "none";
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+        return "—";
     }
 
-    function money(value) {
+    try{
 
-        if (
-            value === null ||
-            value === undefined
-        ) {
-            return "—";
-        }
+        return new Intl.DateTimeFormat(
+            undefined,
+            {
+                dateStyle:"medium",
+                timeStyle:"short"
+            }
+        ).format(
+            date
+        );
 
-        return `${Number(value).toFixed(3)} KWD`;
+    }catch(error){
+
+        return date.toLocaleString();
+    }
+}
+
+
+function formatMoney(
+    amount,
+    currency
+){
+
+    const numeric =
+        Number(
+            amount
+        );
+
+    if(
+        !Number.isFinite(
+            numeric
+        )
+    ){
+        return "—";
     }
 
-    async function initialise() {
+    if(!currency){
 
-        try {
-
-            if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-
-                throw new Error(
-                    "Supabase configuration is not connected yet."
-                );
+        return numeric.toLocaleString(
+            undefined,
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
             }
+        );
+    }
 
-            if (!orderId) {
+    try{
 
-                throw new Error(
-                    "No order was supplied."
-                );
+        return new Intl.NumberFormat(
+            undefined,
+            {
+                style:"currency",
+                currency:
+                    String(
+                        currency
+                    ).toUpperCase(),
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
             }
+        ).format(
+            numeric
+        );
 
-            supabaseClient =
-                window.supabase.createClient(
-                    SUPABASE_URL,
-                    SUPABASE_ANON_KEY
-                );
+    }catch(error){
 
-            const {
-                data: {
-                    user
+        return (
+            numeric.toLocaleString(
+                undefined,
+                {
+                    minimumFractionDigits:2,
+                    maximumFractionDigits:2
                 }
-            } =
-                await supabaseClient.auth.getUser();
+            ) +
+            " " +
+            currency
+        );
+    }
+}
 
-            if (!user) {
 
-                window.location.href =
-                    "../auth/login.html";
+function getInitials(
+    value
+){
 
-                return;
-            }
+    const text =
+        String(
+            value ||
+            ""
+        ).trim();
 
-            currentUser = user;
-
-            await loadOrder();
-            await loadPaymentSettings();
-
-            renderOrder();
-
-            subscribeToOrder();
-
-        } catch (error) {
-
-            console.error(error);
-
-            showError(
-                error.message ||
-                "Unable to load payment."
-            );
-        }
+    if(!text){
+        return "K";
     }
 
-    async function loadOrder() {
+    const parts =
+        text
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if(
+        parts.length === 1
+    ){
+
+        return parts[0]
+            .slice(
+                0,
+                2
+            )
+            .toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[
+            parts.length - 1
+        ][0]
+    ).toUpperCase();
+}
+
+
+function showError(
+    message
+){
+
+    const box =
+        $("errorBox");
+
+    box.textContent =
+        message ||
+        "Something went wrong.";
+
+    box.style.display =
+        "block";
+}
+
+
+function hideError(){
+
+    $("errorBox")
+        .style.display =
+        "none";
+
+    $("errorBox")
+        .textContent =
+        "";
+}
+
+
+function showLoading(
+    visible
+){
+
+    $("loading")
+        .classList.toggle(
+            "hidden",
+            !visible
+        );
+}
+
+
+function isPaidStatus(
+    status
+){
+
+    return [
+        "paid",
+        "completed",
+        "confirmed"
+    ].includes(
+        normalizeStatus(
+            status
+        )
+    );
+}
+
+
+function isPendingStatus(
+    status
+){
+
+    return [
+        "awaiting_payment",
+        "pending",
+        "processing",
+        "payment_pending",
+        "awaiting_verification",
+        "verification_pending"
+    ].includes(
+        normalizeStatus(
+            status
+        )
+    );
+}
+
+
+function isFailedStatus(
+    status
+){
+
+    return [
+        "failed",
+        "cancelled",
+        "canceled",
+        "expired"
+    ].includes(
+        normalizeStatus(
+            status
+        )
+    );
+}
+
+
+function isRefundedStatus(
+    status
+){
+
+    return (
+        normalizeStatus(
+            status
+        ) ===
+        "refunded"
+    );
+}
+
+
+/* ================================================================
+   AUTH
+   ================================================================ */
+
+async function requireUser(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getUser();
+
+    if(error){
+        throw error;
+    }
+
+    if(!data.user){
+
+        window.location.href =
+            "../login.html";
+
+        return null;
+    }
+
+    return data.user;
+}
+
+
+async function loadProfile(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                avatar_url,
+                is_active
+            `)
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+    if(error){
+        throw error;
+    }
+
+    if(!data){
+
+        throw new Error(
+            "Your K-Tickets profile could not be loaded."
+        );
+    }
+
+    if(
+        data.is_active === false
+    ){
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+            "../login.html";
+
+        return null;
+    }
+
+    currentProfile =
+        data;
+
+    const displayName =
+        safeText(
+            data.full_name,
+            safeText(
+                currentUser.email,
+                "Customer"
+            )
+        );
+
+    $("avatar")
+        .textContent =
+        getInitials(
+            displayName
+        );
+}
+
+
+/* ================================================================
+   ORDER
+   ================================================================ */
+
+async function loadOrder(){
+
+    if(!orderId){
+
+        throw new Error(
+            "No order reference was supplied."
+        );
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("orders")
+            .select(`
+                id,
+                order_number,
+                user_id,
+                event_id,
+                status,
+                subtotal,
+                service_fee_percentage,
+                service_fee,
+                discount,
+                total,
+                currency,
+                promotion_id,
+                created_at,
+                updated_at,
+                paid_at
+            `)
+            .eq(
+                "id",
+                orderId
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+
+    if(error){
+        throw error;
+    }
+
+
+    if(!data){
+
+        throw new Error(
+            "Order could not be found or is not available to this account."
+        );
+    }
+
+
+    order =
+        data;
+
+
+    await Promise.all([
+        loadEvent(),
+        loadOrderItems(),
+        loadLatestPayment()
+    ]);
+}
+
+
+/* ================================================================
+   EVENT
+   ================================================================ */
+
+async function loadEvent(){
+
+    eventRecord =
+        null;
+
+
+    if(
+        !order?.event_id
+    ){
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("events")
+            .select(`
+                id,
+                title,
+                start_at
+            `)
+            .eq(
+                "id",
+                order.event_id
+            )
+            .maybeSingle();
+
+
+    if(error){
+
+        console.warn(
+            "Event lookup unavailable:",
+            error
+        );
+
+        return;
+    }
+
+
+    eventRecord =
+        data || null;
+}
+
+
+/* ================================================================
+   ORDER ITEMS
+   ================================================================ */
+
+async function loadOrderItems(){
+
+    orderItems =
+        [];
+
+    ticketTypeMap =
+        new Map();
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("order_items")
+            .select("*")
+            .eq(
+                "order_id",
+                order.id
+            );
+
+
+    if(error){
+
+        console.warn(
+            "Order items could not be loaded:",
+            error
+        );
+
+        return;
+    }
+
+
+    orderItems =
+        Array.isArray(
+            data
+        )
+            ? data
+            : [];
+
+
+    const ticketTypeIds =
+        [
+            ...new Set(
+                orderItems
+                    .map(
+                        item =>
+                            item.ticket_type_id
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+
+    if(
+        !ticketTypeIds.length
+    ){
+        return;
+    }
+
+
+    const {
+        data: ticketTypes,
+        error: ticketTypeError
+    } =
+        await supabaseClient
+            .from("ticket_types")
+            .select(`
+                id,
+                event_id,
+                name,
+                description,
+                price,
+                currency
+            `)
+            .in(
+                "id",
+                ticketTypeIds
+            );
+
+
+    if(ticketTypeError){
+
+        console.warn(
+            "Ticket type enrichment unavailable:",
+            ticketTypeError
+        );
+
+        return;
+    }
+
+
+    ticketTypeMap =
+        new Map(
+            (
+                Array.isArray(
+                    ticketTypes
+                )
+                    ? ticketTypes
+                    : []
+            ).map(
+                ticket => [
+                    ticket.id,
+                    ticket
+                ]
+            )
+        );
+}
+
+
+/* ================================================================
+   PAYMENT
+   ================================================================ */
+
+async function loadLatestPayment(){
+
+    currentPayment =
+        null;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("payments")
+            .select(`
+                id,
+                order_id,
+                user_id,
+                event_id,
+                method,
+                provider,
+                status,
+                amount,
+                currency,
+                reference,
+                transaction_id,
+                receipt_number,
+                provider_transaction_id,
+                failure_reason,
+                paid_at,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "order_id",
+                order.id
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
+            .limit(1);
+
+
+    if(error){
+        throw error;
+    }
+
+
+    currentPayment =
+        Array.isArray(
+            data
+        )
+            ? (
+                data[0] ||
+                null
+            )
+            : null;
+}
+
+
+/* ================================================================
+   FIND / REUSE PAYMENT ATTEMPT
+   ================================================================ */
+
+async function findExistingPayment(
+    method
+){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("payments")
+            .select(`
+                id,
+                order_id,
+                user_id,
+                event_id,
+                method,
+                provider,
+                status,
+                amount,
+                currency,
+                reference,
+                transaction_id,
+                receipt_number,
+                provider_transaction_id,
+                failure_reason,
+                paid_at,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "order_id",
+                order.id
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .eq(
+                "method",
+                method
+            )
+            .in(
+                "status",
+                [
+                    "pending",
+                    "processing"
+                ]
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
+            .limit(1);
+
+
+    if(error){
+
+        console.warn(
+            "Existing payment lookup failed:",
+            error
+        );
+
+        return null;
+    }
+
+
+    return (
+        Array.isArray(
+            data
+        )
+            ? (
+                data[0] ||
+                null
+            )
+            : null
+    );
+}
+
+
+/* ================================================================
+   CREATE PAYMENT ATTEMPT
+   ================================================================ */
+
+async function createPaymentAttempt(
+    method
+){
+
+    const existing =
+        await findExistingPayment(
+            method
+        );
+
+
+    if(existing){
+
+        currentPayment =
+            existing;
+
+        return existing;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.rpc(
+            "create_payment_attempt",
+            {
+                p_order_id:
+                    order.id,
+
+                p_method:
+                    method
+            }
+        );
+
+
+    if(error){
+        throw error;
+    }
+
+
+    /*
+        The RPC can return:
+
+            UUID
+
+        or:
+
+            { id: "UUID" }
+
+        or:
+
+            [{ id: "UUID" }]
+    */
+
+    let paymentId =
+        null;
+
+
+    if(
+        typeof data ===
+        "string"
+    ){
+
+        paymentId =
+            data;
+
+    }else if(
+        Array.isArray(
+            data
+        )
+    ){
+
+        paymentId =
+            data[0]?.id ||
+            data[0];
+
+    }else if(
+        data &&
+        typeof data ===
+        "object"
+    ){
+
+        paymentId =
+            data.id ||
+            data.payment_id;
+    }
+
+
+    if(!paymentId){
 
         /*
-            The final schema can use an orders view that joins:
-
-            orders
-            events
-            order_items
-            ticket_types
-
-            RLS must guarantee that the authenticated customer
-            can only retrieve their own order.
+            Some implementations may create the payment
+            and return no id. Re-read the latest attempt.
         */
 
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from("orders")
-                .select(`
-                    *,
-                    events(*),
-                    order_items(
-                        *,
-                        ticket_types(*)
-                    )
-                `)
-                .eq("id", orderId)
-                .single();
+        const refreshed =
+            await findExistingPayment(
+                method
+            );
 
-        if (error) {
-            throw error;
-        }
 
-        if (!data) {
+        if(
+            !refreshed?.id
+        ){
 
             throw new Error(
-                "Order could not be found."
+                "The payment attempt was not created."
             );
         }
 
-        order = data;
+
+        currentPayment =
+            refreshed;
+
+        return refreshed;
     }
 
-    async function loadPaymentSettings() {
 
-        /*
-            Payment settings must be stored in Supabase.
+    /*
+        Re-read the payment under RLS
+        instead of trusting returned fields.
+    */
 
-            Example records can include:
+    const {
+        data: payment,
+        error: paymentError
+    } =
+        await supabaseClient
+            .from("payments")
+            .select(`
+                id,
+                order_id,
+                user_id,
+                event_id,
+                method,
+                provider,
+                status,
+                amount,
+                currency,
+                reference,
+                transaction_id,
+                receipt_number,
+                provider_transaction_id,
+                failure_reason,
+                paid_at,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "id",
+                paymentId
+            )
+            .eq(
+                "order_id",
+                order.id
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .maybeSingle();
 
-            payment_settings
-              - method
-              - enabled
-              - instructions
-              - display_name
-              - phone/account details
-        */
 
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from("payment_settings")
-                .select("*")
-                .eq("enabled", true);
-
-        if (error) {
-
-            /*
-                If this table is not created yet, the page can
-                still render the order. Payment configuration
-                will be connected once the final schema exists.
-            */
-
-            console.warn(
-                "Payment settings unavailable:",
-                error
-            );
-
-            return;
-        }
-
-        const wamd =
-            (data || []).find(
-                item =>
-                    String(item.method)
-                        .toLowerCase() === "wamd"
-            );
-
-        if (wamd) {
-
-            renderWamdInstructions(wamd);
-
-        } else {
-
-            document.getElementById(
-                "wamdInstructions"
-            ).innerHTML = `
-                <p class="help-text">
-                    WAMD payment instructions are currently
-                    unavailable.
-                </p>
-            `;
-        }
+    if(paymentError){
+        throw paymentError;
     }
 
-    function renderWamdInstructions(settings) {
 
-        const container =
-            document.getElementById(
-                "wamdInstructions"
-            );
+    if(!payment){
 
-        /*
-            Render admin-provided instruction text.
-
-            Do not hardcode WAMD account/payment information here.
-        */
-
-        container.innerHTML = `
-            <div class="status">
-                ${escapeHTML(
-                    settings.instructions ||
-                    "Follow the payment instructions provided by K-Tickets."
-                )}
-            </div>
-        `;
+        throw new Error(
+            "The payment attempt could not be retrieved."
+        );
     }
 
-    function renderOrder() {
 
-        const event =
-            order.events || {};
+    currentPayment =
+        payment;
 
-        document.getElementById("orderEvent")
-            .textContent =
-            event.name ||
-            event.title ||
-            "Event";
 
-        const rows =
-            document.getElementById("orderRows");
+    return payment;
+}
 
-        rows.innerHTML = "";
 
-        (order.order_items || [])
-            .forEach(item => {
+/* ================================================================
+   NORMALIZE PHONE
+   ================================================================ */
+
+function normalizePhone(
+    value
+){
+
+    return String(
+        value ||
+        ""
+    )
+        .trim()
+        .replace(
+            /[\s\-()]/g,
+            ""
+        );
+}
+
+
+/* ================================================================
+   VALIDATE PAYABLE ORDER
+   ================================================================ */
+
+function ensureOrderPayable(){
+
+    const status =
+        normalizeStatus(
+            order.status
+        );
+
+
+    if(
+        isPaidStatus(
+            status
+        )
+    ){
+
+        redirectToSuccess();
+
+        return false;
+    }
+
+
+    if(
+        isRefundedStatus(
+            status
+        )
+    ){
+
+        throw new Error(
+            "This order has already been refunded."
+        );
+    }
+
+
+    if(
+        isFailedStatus(
+            status
+        )
+    ){
+
+        throw new Error(
+            "This order is no longer payable."
+        );
+    }
+
+
+    return true;
+}
+
+
+/* ================================================================
+   RENDER ORDER
+   ================================================================ */
+
+function renderOrder(){
+
+    const currency =
+        order.currency ||
+        currentPayment?.currency ||
+        "";
+
+
+    $("orderEvent")
+        .textContent =
+        safeText(
+            eventRecord?.title,
+            "Event unavailable"
+        );
+
+
+    $("orderEventDate")
+        .textContent =
+        eventRecord?.start_at
+            ? formatDate(
+                eventRecord.start_at
+            )
+            : "Event date unavailable";
+
+
+    const rows =
+        $("orderRows");
+
+
+    rows.innerHTML =
+        "";
+
+
+    if(
+        orderItems.length
+    ){
+
+        orderItems.forEach(
+            item => {
 
                 const ticket =
-                    item.ticket_types || {};
+                    ticketTypeMap.get(
+                        item.ticket_type_id
+                    );
+
+
+                const quantity =
+                    Number(
+                        item.quantity
+                    );
+
+
+                const safeQuantity =
+                    Number.isFinite(
+                        quantity
+                    )
+                        ? quantity
+                        : 0;
+
+
+                const itemTotalCandidate =
+                    item.total ??
+                    item.line_total;
+
+
+                let amount =
+                    Number(
+                        itemTotalCandidate
+                    );
+
+
+                if(
+                    !Number.isFinite(
+                        amount
+                    )
+                ){
+
+                    const unitPrice =
+                        Number(
+                            item.unit_price ??
+                            item.price ??
+                            ticket?.price
+                        );
+
+
+                    if(
+                        Number.isFinite(
+                            unitPrice
+                        )
+                    ){
+
+                        amount =
+                            unitPrice *
+                            safeQuantity;
+                    }
+                }
+
+
+                const label =
+                    ticket?.name ||
+                    item.ticket_name ||
+                    item.name ||
+                    "Ticket";
+
 
                 const row =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
 
-                row.className = "row";
+
+                row.className =
+                    "row";
+
 
                 row.innerHTML = `
 
                     <span>
-                        ${escapeHTML(
-                            ticket.name ||
-                            ticket.title ||
-                            "Ticket"
+                        ${escapeHtml(
+                            label
                         )}
-                        × ${Number(
-                            item.quantity || 0
+                        ×
+                        ${escapeHtml(
+                            String(
+                                safeQuantity
+                            )
                         )}
                     </span>
 
+
                     <strong>
-                        ${money(
-                            item.total ||
-                            (
-                                Number(ticket.price || 0) *
-                                Number(item.quantity || 0)
+                        ${escapeHtml(
+                            formatMoney(
+                                amount,
+                                ticket?.currency ||
+                                currency
                             )
                         )}
                     </strong>
 
                 `;
 
-                rows.appendChild(row);
-            });
 
-        document.getElementById("subtotal")
-            .textContent =
-            money(order.subtotal);
+                rows.appendChild(
+                    row
+                );
+            }
+        );
 
-        document.getElementById("serviceFee")
-            .textContent =
-            money(order.service_fee);
+    }else{
 
-        document.getElementById("total")
-            .textContent =
-            money(order.total);
+        rows.innerHTML = `
 
-        document.getElementById("paymentStatus")
-            .textContent =
-            formatStatus(
-                order.payment_status ||
-                "pending"
-            );
+            <div class="row">
 
-        document.getElementById("loading")
-            .style.display = "none";
+                <span>
+                    Ticket items
+                </span>
 
-        document.getElementById("paymentLayout")
-            .style.display = "grid";
+                <strong>
+                    —
+                </strong>
 
+            </div>
+
+        `;
     }
 
-    function selectMethod(method) {
 
-        selectedMethod = method;
+    $("subtotal")
+        .textContent =
+        formatMoney(
+            order.subtotal,
+            currency
+        );
 
-        document
-            .querySelectorAll(".method")
-            .forEach(item => {
 
-                item.classList.toggle(
+    $("serviceFee")
+        .textContent =
+        formatMoney(
+            order.service_fee,
+            currency
+        );
+
+
+    const discount =
+        Number(
+            order.discount
+        );
+
+
+    if(
+        Number.isFinite(
+            discount
+        ) &&
+        discount !== 0
+    ){
+
+        $("discountRow")
+            .classList
+            .remove(
+                "hidden"
+            );
+
+        $("discount")
+            .textContent =
+            formatMoney(
+                discount,
+                currency
+            );
+
+    }else{
+
+        $("discountRow")
+            .classList
+            .add(
+                "hidden"
+            );
+    }
+
+
+    $("total")
+        .textContent =
+        formatMoney(
+            order.total,
+            currency
+        );
+
+
+    const feePercentage =
+        Number(
+            order.service_fee_percentage
+        );
+
+
+    $("feePercentage")
+        .textContent =
+        Number.isFinite(
+            feePercentage
+        )
+            ? `${feePercentage}%`
+            : "—";
+
+
+    $("orderStatus")
+        .textContent =
+        formatStatus(
+            order.status
+        );
+
+
+    renderCurrentPaymentSummary();
+}
+
+
+/* ================================================================
+   PAYMENT SUMMARY
+   ================================================================ */
+
+function renderCurrentPaymentSummary(){
+
+    const status =
+        normalizeStatus(
+            order?.status
+        );
+
+
+    if(
+        isPaidStatus(
+            status
+        )
+    ){
+
+        $("paymentWindow")
+            .classList
+            .add(
+                "hidden"
+            );
+
+        return;
+    }
+
+
+    if(
+        isPendingStatus(
+            status
+        )
+    ){
+
+        $("paymentWindow")
+            .classList
+            .remove(
+                "hidden"
+            );
+
+        $("paymentWindow")
+            .textContent =
+            "Payment is still awaiting confirmation.";
+
+        return;
+    }
+
+
+    $("paymentWindow")
+        .classList
+        .add(
+            "hidden"
+        );
+}
+
+
+/* ================================================================
+   SELECT METHOD
+   ================================================================ */
+
+function selectMethod(
+    method
+){
+
+    selectedMethod =
+        method;
+
+
+    document
+        .querySelectorAll(
+            ".method"
+        )
+        .forEach(
+            element => {
+
+                element.classList.toggle(
                     "active",
-                    item.dataset.method === method
+                    element.dataset.method ===
+                    method
                 );
+            }
+        );
 
-            });
 
-        document
-            .getElementById("mpesaPanel")
-            .classList.toggle(
-                "active",
-                method === "mpesa"
+    $("mpesaPanel")
+        .classList.toggle(
+            "active",
+            method === "mpesa"
+        );
+
+
+    $("wamdPanel")
+        .classList.toggle(
+            "active",
+            method === "wamd"
+        );
+
+
+    hideError();
+}
+
+
+function setupMethodSelection(){
+
+    [
+        $("mpesaMethod"),
+        $("wamdMethod")
+    ].forEach(
+        element => {
+
+            element.addEventListener(
+                "click",
+                () => {
+
+                    selectMethod(
+                        element.dataset.method
+                    );
+                }
             );
 
-        document
-            .getElementById("wamdPanel")
-            .classList.toggle(
-                "active",
-                method === "wamd"
+
+            element.addEventListener(
+                "keydown",
+                event => {
+
+                    if(
+                        event.key ===
+                        "Enter" ||
+                        event.key ===
+                        " "
+                    ){
+
+                        event.preventDefault();
+
+                        selectMethod(
+                            element.dataset.method
+                        );
+                    }
+                }
             );
+        }
+    );
+}
+
+
+/* ================================================================
+   M-PESA
+   ================================================================ */
+
+async function startMpesaPayment(){
+
+    hideError();
+
+
+    if(
+        !ensureOrderPayable()
+    ){
+        return;
     }
 
-    async function startMpesaPayment() {
 
-        const input =
-            document.getElementById(
-                "mpesaPhone"
+    const phoneInput =
+        $("mpesaPhone");
+
+
+    const phone =
+        normalizePhone(
+            phoneInput.value
+        );
+
+
+    if(!phone){
+
+        showError(
+            "Enter the M-Pesa phone number that should receive the payment request."
+        );
+
+        phoneInput.focus();
+
+        return;
+    }
+
+
+    if(
+        phone.length <
+        8
+    ){
+
+        showError(
+            "Enter a valid M-Pesa phone number."
+        );
+
+        phoneInput.focus();
+
+        return;
+    }
+
+
+    const button =
+        $("mpesaButton");
+
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Preparing payment...";
+
+
+    try{
+
+        const payment =
+            await createPaymentAttempt(
+                "mpesa"
             );
 
-        const phone =
-            input.value.trim();
 
-        if (!phone) {
-
-            showError(
-                "Enter the M-Pesa phone number."
+        const existingStatus =
+            normalizeStatus(
+                payment.status
             );
 
-            return;
-        }
 
-        const button =
-            document.getElementById(
-                "mpesaButton"
-            );
+        /*
+            If this payment is already processing,
+            do not send another STK Push.
+        */
 
-        button.disabled = true;
-        button.textContent =
-            "Sending STK Push...";
-
-        try {
-
-            /*
-                The browser should call a secure Edge Function.
-
-                The function should:
-
-                - authenticate the Supabase user
-                - verify ownership of order
-                - verify order is payable
-                - verify amount
-                - call Daraja
-                - save provider reference
-                - update payment status
-
-                Example endpoint:
-
-                supabase.functions.invoke(
-                    "mpesa-stk",
-                    {
-                        body: {
-                            order_id: orderId,
-                            phone
-                        }
-                    }
-                )
-            */
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient.functions.invoke(
-                    "mpesa-stk",
-                    {
-                        body: {
-                            order_id: orderId,
-                            phone
-                        }
-                    }
-                );
-
-            if (error) {
-                throw error;
-            }
-
-            if (
-                data &&
-                data.success === false
-            ) {
-                throw new Error(
-                    data.message ||
-                    "M-Pesa payment could not be started."
-                );
-            }
-
-            document.getElementById(
-                "paymentStatus"
-            ).textContent =
-                "STK Push sent. Waiting for confirmation...";
+        if(
+            existingStatus ===
+            "processing"
+        ){
 
             button.textContent =
                 "Waiting for confirmation...";
 
-            /*
-                Status is subsequently controlled by the
-                backend/database, not by this button.
-            */
-
             monitorPayment();
 
-        } catch (error) {
-
-            console.error(error);
-
-            showError(
-                error.message ||
-                "Unable to start M-Pesa payment."
-            );
-
-            button.disabled = false;
-            button.textContent =
-                "Request M-Pesa STK Push";
+            return;
         }
+
+
+        button.textContent =
+            "Sending STK Push...";
+
+
+        /*
+            Protected Edge Function.
+
+            The Edge Function MUST:
+                - authenticate the user
+                - verify order ownership
+                - verify payment ownership
+                - verify payable amount
+                - call M-Pesa/Daraja
+                - store provider identifiers
+                - set payment to processing
+        */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .functions
+                .invoke(
+                    "mpesa-stk",
+                    {
+                        body:{
+                            order_id:
+                                order.id,
+
+                            payment_id:
+                                payment.id,
+
+                            phone
+                        }
+                    }
+                );
+
+
+        if(error){
+            throw error;
+        }
+
+
+        if(
+            data &&
+            data.success === false
+        ){
+
+            throw new Error(
+                data.message ||
+                "The M-Pesa payment request could not be started."
+            );
+        }
+
+
+        /*
+            Re-read payment and order state.
+        */
+
+        await refreshOrderState();
+
+
+        button.textContent =
+            "Waiting for confirmation...";
+
+        button.disabled =
+            true;
+
+
+        monitorPayment();
+
+
+    }catch(error){
+
+        console.error(
+            "M-Pesa payment error:",
+            error
+        );
+
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "Request M-Pesa STK Push";
+
+
+        showError(
+            error?.message ||
+            "Unable to start the M-Pesa payment."
+        );
+    }
+}
+
+
+/* ================================================================
+   WAMD
+   ================================================================ */
+
+async function submitWamdPayment(){
+
+    hideError();
+
+
+    if(
+        !ensureOrderPayable()
+    ){
+        return;
     }
 
-    async function submitWamdPayment() {
 
-        const input =
-            document.getElementById(
-                "wamdTransactionId"
+    const transactionInput =
+        $("wamdTransactionId");
+
+
+    const senderName =
+        $("wamdSenderName")
+            .value
+            .trim();
+
+
+    const senderPhone =
+        normalizePhone(
+            $("wamdSenderPhone")
+                .value
+        );
+
+
+    const transactionCode =
+        transactionInput
+            .value
+            .trim()
+            .toUpperCase();
+
+
+    if(!transactionCode){
+
+        showError(
+            "Enter the WAMD transaction code."
+        );
+
+        transactionInput.focus();
+
+        return;
+    }
+
+
+    if(
+        transactionCode.length <
+        3
+    ){
+
+        showError(
+            "Enter the complete WAMD transaction code."
+        );
+
+        transactionInput.focus();
+
+        return;
+    }
+
+
+    const button =
+        $("wamdButton");
+
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Preparing submission...";
+
+
+    try{
+
+        const payment =
+            await createPaymentAttempt(
+                "wamd"
             );
 
-        const transactionId =
-            input.value.trim();
 
-        if (!transactionId) {
+        button.textContent =
+            "Submitting transaction...";
 
-            showError(
-                "Enter your WAMD transaction ID."
+
+        /*
+            IMPORTANT:
+            WAMD does not become paid here.
+
+            submit_wamd_payment()
+            creates/updates the pending WAMD submission.
+        */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .rpc(
+                    "submit_wamd_payment",
+                    {
+                        p_payment_id:
+                            payment.id,
+
+                        p_transaction_code:
+                            transactionCode,
+
+                        p_sender_name:
+                            senderName ||
+                            null,
+
+                        p_sender_phone:
+                            senderPhone ||
+                            null
+                    }
+                );
+
+
+        if(error){
+            throw error;
+        }
+
+
+        if(
+            data === null ||
+            data === undefined
+        ){
+
+            throw new Error(
+                "WAMD submission was not accepted."
+            );
+        }
+
+
+        /*
+            Confirm the current order/payment state
+            from Supabase rather than trusting the RPC payload.
+        */
+
+        await refreshOrderState();
+
+
+        window.location.href =
+            `payment-success.html?order=${
+                encodeURIComponent(
+                    order.id
+                )
+            }`;
+
+
+    }catch(error){
+
+        console.error(
+            "WAMD submission error:",
+            error
+        );
+
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "Submit WAMD Payment";
+
+
+        showError(
+            error?.message ||
+            "Unable to submit the WAMD payment."
+        );
+    }
+}
+
+
+/* ================================================================
+   REFRESH STATE
+   ================================================================ */
+
+async function refreshOrderState(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("orders")
+            .select(`
+                id,
+                order_number,
+                user_id,
+                event_id,
+                status,
+                subtotal,
+                service_fee_percentage,
+                service_fee,
+                discount,
+                total,
+                currency,
+                promotion_id,
+                created_at,
+                updated_at,
+                paid_at
+            `)
+            .eq(
+                "id",
+                orderId
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+
+    if(error){
+        throw error;
+    }
+
+
+    if(!data){
+
+        throw new Error(
+            "The order is no longer available."
+        );
+    }
+
+
+    order =
+        data;
+
+
+    await Promise.all([
+        loadLatestPayment(),
+        loadTicketsForOrder()
+    ]);
+
+
+    renderOrder();
+
+
+    evaluateOrderState();
+}
+
+
+/* ================================================================
+   TICKETS
+   ================================================================ */
+
+let currentTickets = [];
+
+
+async function loadTicketsForOrder(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("tickets")
+            .select(`
+                id,
+                order_id,
+                user_id,
+                event_id,
+                ticket_code,
+                status,
+                issued_at,
+                checked_in_at
+            `)
+            .eq(
+                "order_id",
+                orderId
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            );
+
+
+    if(error){
+
+        console.warn(
+            "Ticket lookup unavailable:",
+            error
+        );
+
+        currentTickets =
+            [];
+
+        return;
+    }
+
+
+    currentTickets =
+        Array.isArray(
+            data
+        )
+            ? data
+            : [];
+}
+
+
+/* ================================================================
+   EVALUATE ORDER STATE
+   ================================================================ */
+
+function evaluateOrderState(){
+
+    if(!order){
+        return;
+    }
+
+
+    const status =
+        normalizeStatus(
+            order.status
+        );
+
+
+    if(
+        isPaidStatus(
+            status
+        )
+    ){
+
+        stopMonitoring();
+
+        redirectToSuccess();
+
+        return;
+    }
+
+
+    if(
+        isFailedStatus(
+            status
+        ) ||
+        isRefundedStatus(
+            status
+        )
+    ){
+
+        stopMonitoring();
+
+        renderTerminalMessage();
+
+        return;
+    }
+
+
+    if(
+        isPendingStatus(
+            status
+        )
+    ){
+
+        updatePaymentStatusText();
+
+        return;
+    }
+
+
+    updatePaymentStatusText();
+}
+
+
+/* ================================================================
+   STATUS TEXT
+   ================================================================ */
+
+function updatePaymentStatusText(){
+
+    if(!order){
+        return;
+    }
+
+
+    const status =
+        normalizeStatus(
+            order.status
+        );
+
+
+    $("orderStatus")
+        .textContent =
+        formatStatus(
+            status
+        );
+
+
+    renderCurrentPaymentSummary();
+
+
+    if(
+        currentPayment
+    ){
+
+        const paymentStatus =
+            normalizeStatus(
+                currentPayment.status
+            );
+
+
+        if(
+            paymentStatus ===
+            "processing"
+        ){
+
+            $("paymentWindow")
+                .classList
+                .remove(
+                    "hidden"
+                );
+
+            $("paymentWindow")
+                .textContent =
+                "Payment request sent. Waiting for provider confirmation.";
+
+        }else if(
+            paymentStatus ===
+            "pending"
+        ){
+
+            $("paymentWindow")
+                .classList
+                .remove(
+                    "hidden"
+                );
+
+            $("paymentWindow")
+                .textContent =
+                "Payment record is pending confirmation.";
+
+        }else{
+
+            renderCurrentPaymentSummary();
+        }
+    }
+}
+
+
+/* ================================================================
+   TERMINAL MESSAGE
+   ================================================================ */
+
+function renderTerminalMessage(){
+
+    const status =
+        normalizeStatus(
+            order?.status
+        );
+
+
+    $("paymentLayout")
+        .style.display =
+        "none";
+
+
+    $("loading")
+        .classList
+        .add(
+            "hidden"
+        );
+
+
+    $("resultContainer")
+        .classList
+        .remove(
+            "hidden"
+        );
+
+
+    if(
+        isRefundedStatus(
+            status
+        )
+    ){
+
+        $("resultContainer")
+            .innerHTML = `
+
+                <div class="result-card">
+
+                    <div class="result-icon pending">
+                        ↺
+                    </div>
+
+                    <small>
+                        Order refunded
+                    </small>
+
+                    <h2>
+                        This order has been refunded.
+                    </h2>
+
+                    <p>
+                        The payment associated with this order
+                        has been refunded and the order cannot
+                        be paid again.
+                    </p>
+
+                    <div class="result-actions">
+
+                        <a
+                            href="orders.html"
+                            class="result-btn primary"
+                        >
+                            View My Orders
+                        </a>
+
+                        <a
+                            href="events.html"
+                            class="result-btn secondary"
+                        >
+                            Browse Events
+                        </a>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        return;
+    }
+
+
+    $("resultContainer")
+        .innerHTML = `
+
+            <div class="result-card">
+
+                <div class="result-icon failed">
+                    ×
+                </div>
+
+                <small>
+                    Payment unavailable
+                </small>
+
+                <h2>
+                    This order is no longer payable.
+                </h2>
+
+                <p>
+                    The current order state is
+                    <strong>
+                        ${escapeHtml(
+                            formatStatus(
+                                status
+                            )
+                        )}
+                    </strong>.
+                    No new payment should be attempted for
+                    this order.
+                </p>
+
+                <div class="result-actions">
+
+                    <a
+                        href="orders.html"
+                        class="result-btn primary"
+                    >
+                        View My Orders
+                    </a>
+
+                    <a
+                        href="events.html"
+                        class="result-btn secondary"
+                    >
+                        Browse Events
+                    </a>
+
+                </div>
+
+            </div>
+
+        `;
+}
+
+
+/* ================================================================
+   SUCCESS REDIRECT
+   ================================================================ */
+
+function redirectToSuccess(){
+
+    window.location.href =
+        `payment-success.html?order=${
+            encodeURIComponent(
+                order.id
+            )
+        }`;
+}
+
+
+/* ================================================================
+   MONITOR PAYMENT
+   ================================================================ */
+
+function monitorPayment(){
+
+    if(
+        pollingTimer
+    ){
+        return;
+    }
+
+
+    pollingAttempts =
+        0;
+
+
+    pollingTimer =
+        setInterval(
+            async () => {
+
+                pollingAttempts += 1;
+
+
+                if(
+                    pollingAttempts >
+                    MAX_POLLING_ATTEMPTS
+                ){
+
+                    stopMonitoring();
+
+                    return;
+                }
+
+
+                try{
+
+                    await refreshOrderState();
+
+                }catch(error){
+
+                    console.warn(
+                        "Payment status polling failed:",
+                        error
+                    );
+                }
+
+            },
+            POLLING_INTERVAL
+        );
+}
+
+
+function stopMonitoring(){
+
+    if(
+        pollingTimer
+    ){
+
+        clearInterval(
+            pollingTimer
+        );
+
+        pollingTimer =
+            null;
+    }
+}
+
+
+/* ================================================================
+   REALTIME
+   ================================================================ */
+
+function subscribeToRealtime(){
+
+    if(
+        realtimeChannel ||
+        !orderId
+    ){
+        return;
+    }
+
+
+    realtimeChannel =
+        supabaseClient
+            .channel(
+                `customer-payment-${orderId}`
+            )
+
+
+            /*
+                Order state.
+            */
+
+            .on(
+                "postgres_changes",
+                {
+                    event:"UPDATE",
+                    schema:"public",
+                    table:"orders",
+                    filter:
+                        `id=eq.${orderId}`
+                },
+                async () => {
+
+                    try{
+
+                        await refreshOrderState();
+
+                    }catch(error){
+
+                        console.warn(
+                            "Realtime order refresh failed:",
+                            error
+                        );
+                    }
+                }
+            )
+
+
+            /*
+                Payment attempt state.
+            */
+
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"payments",
+                    filter:
+                        `order_id=eq.${orderId}`
+                },
+                async () => {
+
+                    try{
+
+                        await refreshOrderState();
+
+                    }catch(error){
+
+                        console.warn(
+                            "Realtime payment refresh failed:",
+                            error
+                        );
+                    }
+                }
+            )
+
+
+            /*
+                Ticket issuance.
+            */
+
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"tickets",
+                    filter:
+                        `order_id=eq.${orderId}`
+                },
+                async () => {
+
+                    try{
+
+                        await refreshOrderState();
+
+                    }catch(error){
+
+                        console.warn(
+                            "Realtime ticket refresh failed:",
+                            error
+                        );
+                    }
+                }
+            )
+
+
+            .subscribe(
+                status => {
+
+                    if(
+                        status ===
+                        "CHANNEL_ERROR"
+                    ){
+
+                        console.warn(
+                            "Payment realtime channel error."
+                        );
+                    }
+                }
+            );
+}
+
+
+/* ================================================================
+   NOTIFICATION BADGE
+   ================================================================ */
+
+async function loadNotificationBadge(){
+
+    try{
+
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select(
+                    "id",
+                    {
+                        count:"exact",
+                        head:true
+                    }
+                )
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .eq(
+                    "is_read",
+                    false
+                );
+
+
+        if(error){
+
+            console.warn(
+                "Notification badge unavailable:",
+                error
             );
 
             return;
         }
 
-        const button =
-            document.getElementById(
-                "wamdButton"
+
+        $("notificationDot")
+            .classList
+            .toggle(
+                "hidden",
+                !count
             );
 
-        button.disabled = true;
-        button.textContent =
-            "Submitting...";
+    }catch(error){
 
-        try {
+        console.warn(
+            "Notification count failed:",
+            error
+        );
+    }
+}
 
-            /*
-                WAMD is intentionally NOT automatically
-                considered successful.
 
-                It creates a pending verification record.
+/* ================================================================
+   SUBMIT BUTTON EVENTS
+   ================================================================ */
 
-                Admin later verifies the transaction.
-            */
+$("mpesaButton")
+    .addEventListener(
+        "click",
+        startMpesaPayment
+    );
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .from("payment_submissions")
-                    .insert({
-                        order_id: orderId,
-                        payment_method: "wamd",
-                        transaction_id: transactionId,
-                        status: "pending"
-                    })
-                    .select()
-                    .single();
 
-            if (error) {
-                throw error;
-            }
+$("wamdButton")
+    .addEventListener(
+        "click",
+        submitWamdPayment
+    );
 
-            if (!data) {
 
-                throw new Error(
-                    "Payment submission failed."
+/* ================================================================
+   INPUT CLEANUP
+   ================================================================ */
+
+$("wamdTransactionId")
+    .addEventListener(
+        "input",
+        event => {
+
+            event.target.value =
+                event.target.value
+                    .toUpperCase()
+                    .replace(
+                        /\s+/g,
+                        ""
+                    );
+        }
+    );
+
+
+/* ================================================================
+   MOBILE MENU
+   ================================================================ */
+
+$("mobileMenu")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("sidebar")
+                .classList
+                .toggle(
+                    "open"
                 );
-            }
+        }
+    );
 
-            /*
-                Go to success/pending screen.
-            */
+
+document
+    .querySelectorAll(
+        ".nav-link"
+    )
+    .forEach(
+        link => {
+
+            link.addEventListener(
+                "click",
+                () => {
+
+                    $("sidebar")
+                        .classList
+                        .remove(
+                            "open"
+                        );
+                }
+            );
+        }
+    );
+
+
+/* ================================================================
+   NOTIFICATIONS
+   ================================================================ */
+
+$("notificationButton")
+    .addEventListener(
+        "click",
+        () => {
 
             window.location.href =
-                `payment-success.html?order=${encodeURIComponent(orderId)}`;
-
-        } catch (error) {
-
-            console.error(error);
-
-            showError(
-                error.message ||
-                "Unable to submit WAMD payment."
-            );
-
-            button.disabled = false;
-            button.textContent =
-                "Submit WAMD Payment";
+                "notifications.html";
         }
-    }
+    );
 
-    function subscribeToOrder() {
 
-        /*
-            Supabase Realtime lets the customer see the
-            payment state change without refreshing.
+/* ================================================================
+   LOGOUT
+   ================================================================ */
 
-            Example states:
+$("logoutButton")
+    .addEventListener(
+        "click",
+        async () => {
 
-            pending
-            processing
-            paid
-            failed
-            expired
-        */
+            try{
 
-        supabaseClient
-            .channel(`order-${orderId}`)
-            .on(
-                "postgres_changes",
-                {
-                    event: "UPDATE",
-                    schema: "public",
-                    table: "orders",
-                    filter: `id=eq.${orderId}`
-                },
-                payload => {
+                stopMonitoring();
 
-                    order =
-                        {
-                            ...order,
-                            ...payload.new
-                        };
+                if(
+                    realtimeChannel
+                ){
 
-                    const status =
-                        payload.new.payment_status;
-
-                    document.getElementById(
-                        "paymentStatus"
-                    ).textContent =
-                        formatStatus(status);
-
-                    if (
-                        status === "paid" ||
-                        status === "completed"
-                    ) {
-
-                        window.location.href =
-                            `payment-success.html?order=${encodeURIComponent(orderId)}`;
-                    }
-                }
-            )
-            .subscribe();
-    }
-
-    function monitorPayment() {
-
-        /*
-            Realtime is the primary mechanism.
-
-            This fallback simply refreshes the order state
-            periodically in case realtime is unavailable.
-        */
-
-        let attempts = 0;
-
-        const timer =
-            setInterval(
-                async () => {
-
-                    attempts++;
-
-                    if (attempts > 60) {
-
-                        clearInterval(timer);
-
-                        return;
-                    }
-
-                    try {
-
-                        const {
-                            data
-                        } =
-                            await supabaseClient
-                                .from("orders")
-                                .select("payment_status")
-                                .eq("id", orderId)
-                                .single();
-
-                        if (!data) return;
-
-                        const status =
-                            data.payment_status;
-
-                        document.getElementById(
-                            "paymentStatus"
-                        ).textContent =
-                            formatStatus(status);
-
-                        if (
-                            status === "paid" ||
-                            status === "completed"
-                        ) {
-
-                            clearInterval(timer);
-
-                            window.location.href =
-                                `payment-success.html?order=${encodeURIComponent(orderId)}`;
-                        }
-
-                    } catch (error) {
-
-                        console.warn(
-                            "Payment polling error:",
-                            error
+                    await supabaseClient
+                        .removeChannel(
+                            realtimeChannel
                         );
-                    }
 
-                },
-                5000
-            );
+                    realtimeChannel =
+                        null;
+                }
+
+
+                await supabaseClient
+                    .auth
+                    .signOut();
+
+
+                window.location.href =
+                    "../login.html";
+
+            }catch(error){
+
+                console.error(
+                    "Logout failed:",
+                    error
+                );
+
+                showError(
+                    "Unable to sign out. Please try again."
+                );
+            }
+        }
+    );
+
+
+/* ================================================================
+   AUTH STATE
+   ================================================================ */
+
+supabaseClient.auth.onAuthStateChange(
+    (
+        event,
+        session
+    ) => {
+
+        if(
+            event ===
+                "SIGNED_OUT" ||
+            !session?.user
+        ){
+
+            stopMonitoring();
+
+            window.location.href =
+                "../login.html";
+        }
     }
+);
 
-    function formatStatus(status) {
 
-        return String(status || "pending")
-            .replaceAll("_", " ")
-            .replace(/\b\w/g, char =>
-                char.toUpperCase()
-            );
-    }
+/* ================================================================
+   INITIALIZATION
+   ================================================================ */
 
-    function escapeHTML(value) {
+async function initialize(){
 
-        return String(value ?? "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
+    try{
 
-    function toggleSidebar() {
+        hideError();
 
-        document
-            .getElementById("sidebar")
-            .classList
-            .toggle("open");
-    }
+        showLoading(
+            true
+        );
 
-    async function logout() {
 
-        if (supabaseClient) {
-            await supabaseClient.auth.signOut();
+        currentUser =
+            await requireUser();
+
+
+        if(!currentUser){
+            return;
         }
 
-        window.location.href =
-            "../auth/login.html";
-    }
 
-    initialise();
+        await loadProfile();
+
+
+        await loadOrder();
+
+
+        /*
+            A paid order should never expose a payment form.
+        */
+
+        if(
+            isPaidStatus(
+                order.status
+            )
+        ){
+
+            redirectToSuccess();
+
+            return;
+        }
+
+
+        /*
+            Closed orders should show a terminal state.
+        */
+
+        if(
+            isFailedStatus(
+                order.status
+            ) ||
+            isRefundedStatus(
+                order.status
+            )
+        ){
+
+            renderTerminalMessage();
+
+            return;
+        }
+
+
+        renderOrder();
+
+
+        $("paymentLayout")
+            .style.display =
+            "grid";
+
+
+        showLoading(
+            false
+        );
+
+
+        await loadNotificationBadge();
+
+
+        setupMethodSelection();
+
+
+        subscribeToRealtime();
+
+
+        /*
+            Resume monitoring if this order already has
+            an active payment attempt.
+        */
+
+        if(
+            currentPayment &&
+            [
+                "pending",
+                "processing"
+            ].includes(
+                normalizeStatus(
+                    currentPayment.status
+                )
+            )
+        ){
+
+            monitorPayment();
+
+            updatePaymentStatusText();
+        }
+
+
+    }catch(error){
+
+        console.error(
+            "Payment page initialization failed:",
+            error
+        );
+
+
+        showLoading(
+            false
+        );
+
+
+        $("paymentLayout")
+            .style.display =
+            "none";
+
+
+        showError(
+            error?.message ||
+            "Unable to load the payment page."
+        );
+    }
+}
+
+
+/* ================================================================
+   CLEANUP
+   ================================================================ */
+
+window.addEventListener(
+    "beforeunload",
+    async () => {
+
+        stopMonitoring();
+
+        if(
+            realtimeChannel
+        ){
+
+            try{
+
+                await supabaseClient
+                    .removeChannel(
+                        realtimeChannel
+                    );
+
+            }catch(error){
+
+                console.warn(
+                    "Realtime cleanup failed:",
+                    error
+                );
+            }
+        }
+    }
+);
+
+
+initialize();
 
 </script>
+
 
 </body>
 </html>

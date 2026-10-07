@@ -9,303 +9,1383 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>My Profile | K-Tickets</title>
+    <meta
+        name="robots"
+        content="noindex,nofollow,noarchive"
+    >
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta
+        name="referrer"
+        content="same-origin"
+    >
+
+    <meta
+        name="description"
+        content="Manage your K-Tickets customer profile."
+    >
+
+    <title>
+        My Profile | K-Tickets
+    </title>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
 
     <style>
 
-        :root {
-            --bordo: #6C151E;
-            --green: #0F3D3A;
-            --cream: #F5DABF;
-            --white: #ffffff;
-            --dark: #171414;
-            --muted: #756b67;
-            --border: rgba(15,61,58,.12);
+        :root{
+            --bordo:#6C151E;
+            --bordo-dark:#531018;
+            --bordo-soft:#f5e4e5;
+
+            --green:#0F3D3A;
+            --green-dark:#092b29;
+            --green-soft:#e6f0ed;
+
+            --cream:#F5DABF;
+            --cream-light:#fff8f1;
+
+            --white:#fff;
+            --dark:#171414;
+            --muted:#756b67;
+            --muted-light:#9b918b;
+
+            --surface:#fbf7f2;
+
+            --border:rgba(15,61,58,.12);
+
+            --shadow:
+                0 18px 50px rgba(15,61,58,.08);
+
+            --shadow-sm:
+                0 8px 25px rgba(15,61,58,.05);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
         }
 
-        body {
-            min-height: 100vh;
-            background: #fbf7f2;
-            color: var(--dark);
-            font-family: Inter, Arial, sans-serif;
+
+        html{
+            scroll-behavior:smooth;
         }
 
-        a {
-            text-decoration: none;
-            color: inherit;
+
+        body{
+            min-height:100vh;
+
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(245,218,191,.35),
+                    transparent 30%
+                ),
+                var(--surface);
+
+            color:var(--dark);
+
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            overflow-x:hidden;
         }
+
+
+        body.modal-open{
+            overflow:hidden;
+        }
+
 
         button,
-        input {
-            font: inherit;
+        input{
+            font:inherit;
         }
 
-        .topbar {
-            height: 74px;
-            background: var(--green);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
+
+        button{
+            border:0;
+            cursor:pointer;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 11px;
+
+        button:disabled{
+            cursor:not-allowed;
         }
 
-        .mark {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: var(--cream);
-            color: var(--green);
-            display: grid;
-            place-items: center;
-            font-weight: 900;
+
+        a{
+            color:inherit;
+            text-decoration:none;
         }
 
-        .back {
-            color: rgba(255,255,255,.8);
-            font-size: 12px;
-            font-weight: 700;
+
+        .hidden{
+            display:none !important;
         }
 
-        .content {
-            width: min(900px, calc(100% - 28px));
-            margin: auto;
-            padding: 45px 0 70px;
+
+        /* =========================================================
+           TOPBAR
+           ========================================================= */
+
+        .topbar{
+            height:74px;
+
+            background:var(--green);
+
+            color:#fff;
+
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+
+            gap:16px;
+
+            padding:
+                0
+                30px;
+
+            position:sticky;
+            top:0;
+
+            z-index:50;
+
+            box-shadow:
+                0 2px 12px
+                rgba(15,61,58,.08);
         }
 
-        .heading {
-            margin-bottom: 25px;
+
+        .brand{
+            display:flex;
+            align-items:center;
+
+            gap:11px;
+
+            min-width:0;
         }
 
-        .heading h1 {
-            color: var(--green);
-            font-family: Georgia, serif;
-            font-size: clamp(32px, 5vw, 46px);
+
+        .mark{
+            width:40px;
+            height:40px;
+
+            border-radius:12px;
+
+            background:var(--cream);
+
+            color:var(--green);
+
+            display:grid;
+            place-items:center;
+
+            font-size:15px;
+            font-weight:950;
+
+            flex:0 0 auto;
         }
 
-        .heading p {
-            color: var(--muted);
-            margin-top: 7px;
+
+        .brand-copy{
+            min-width:0;
         }
 
-        .card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            box-shadow: 0 18px 50px rgba(15,61,58,.08);
-            padding: 28px;
-            margin-bottom: 18px;
+
+        .brand-copy strong{
+            display:block;
+
+            font-size:13px;
+
+            letter-spacing:.07em;
         }
 
-        .card h2 {
-            color: var(--green);
-            font-family: Georgia, serif;
-            font-size: 24px;
-            margin-bottom: 20px;
+
+        .brand-copy span{
+            display:block;
+
+            margin-top:2px;
+
+            color:rgba(255,255,255,.55);
+
+            font-size:8px;
+
+            text-transform:uppercase;
+
+            letter-spacing:.12em;
         }
 
-        .avatar {
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            background: var(--cream);
-            color: var(--green);
-            display: grid;
-            place-items: center;
-            font-size: 28px;
-            font-weight: 900;
-            margin-bottom: 20px;
+
+        .topbar-actions{
+            display:flex;
+            align-items:center;
+
+            gap:9px;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2,1fr);
-            gap: 18px;
+
+        .topbar-button{
+            min-height:37px;
+
+            padding:
+                0
+                11px;
+
+            border-radius:10px;
+
+            background:
+                rgba(255,255,255,.07);
+
+            border:
+                1px solid
+                rgba(255,255,255,.12);
+
+            color:
+                rgba(255,255,255,.82);
+
+            font-size:10px;
+            font-weight:850;
+
+            transition:
+                background .2s ease,
+                transform .2s ease,
+                color .2s ease;
         }
 
-        .field {
-            display: grid;
-            gap: 7px;
+
+        .topbar-button:hover{
+            background:
+                rgba(255,255,255,.12);
+
+            color:#fff;
+
+            transform:translateY(-1px);
         }
 
-        .field.full {
-            grid-column: 1 / -1;
+
+        .avatar-top{
+            width:39px;
+            height:39px;
+
+            border-radius:50%;
+
+            background:var(--bordo);
+
+            color:#fff;
+
+            display:grid;
+            place-items:center;
+
+            font-size:11px;
+            font-weight:950;
         }
 
-        label {
-            color: var(--green);
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: .5px;
+
+        /* =========================================================
+           CONTENT
+           ========================================================= */
+
+        .content{
+            width:
+                min(
+                    980px,
+                    calc(100% - 28px)
+                );
+
+            margin:
+                0
+                auto;
+
+            padding:
+                42px
+                0
+                75px;
         }
 
-        input {
-            width: 100%;
-            padding: 13px 14px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            outline: none;
-            background: #fff;
-            color: var(--dark);
+
+        .heading{
+            margin-bottom:24px;
         }
 
-        input:focus {
-            border-color: var(--green);
+
+        .heading small{
+            display:block;
+
+            color:var(--bordo);
+
+            font-size:9px;
+            font-weight:950;
+
+            text-transform:uppercase;
+
+            letter-spacing:.13em;
         }
 
-        input[readonly] {
-            background: #f8f4ef;
-            color: var(--muted);
+
+        .heading h1{
+            margin-top:7px;
+
+            color:var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:
+                clamp(32px,5vw,47px);
+
+            line-height:1.03;
+
+            letter-spacing:-.045em;
         }
 
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 22px;
+
+        .heading p{
+            max-width:650px;
+
+            margin-top:8px;
+
+            color:var(--muted);
+
+            font-size:11px;
+
+            line-height:1.7;
         }
 
-        .btn {
-            border: 0;
-            padding: 13px 17px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 900;
+
+        /* =========================================================
+           PROFILE HERO
+           ========================================================= */
+
+        .profile-hero{
+            margin-bottom:17px;
+
+            padding:20px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:21px;
+
+            background:#fff;
+
+            box-shadow:var(--shadow-sm);
+
+            display:flex;
+            align-items:center;
+
+            justify-content:space-between;
+
+            gap:18px;
         }
 
-        .primary {
-            background: var(--green);
-            color: white;
+
+        .hero-left{
+            display:flex;
+            align-items:center;
+
+            gap:15px;
+
+            min-width:0;
         }
 
-        .secondary {
-            background: var(--cream);
-            color: var(--green);
+
+        .hero-avatar{
+            width:68px;
+            height:68px;
+
+            border-radius:50%;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    var(--cream),
+                    #ead1b2
+                );
+
+            color:var(--green);
+
+            display:grid;
+            place-items:center;
+
+            font-size:24px;
+            font-weight:950;
+
+            flex:0 0 auto;
         }
 
-        .danger {
-            background: #f5e3e4;
-            color: var(--bordo);
+
+        .hero-copy{
+            min-width:0;
         }
 
-        .message {
-            display: none;
-            padding: 12px 14px;
-            border-radius: 11px;
-            margin-top: 15px;
-            font-size: 12px;
-            line-height: 1.5;
+
+        .hero-copy h2{
+            color:var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:23px;
+
+            line-height:1.1;
         }
 
-        .message.show {
-            display: block;
+
+        .hero-copy p{
+            margin-top:5px;
+
+            color:var(--muted);
+
+            font-size:10px;
         }
 
-        .message.success {
-            background: #e8f2ef;
-            color: var(--green);
+
+        .account-badge{
+            flex:0 0 auto;
+
+            min-height:28px;
+
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+
+            padding:
+                0
+                10px;
+
+            border-radius:999px;
+
+            background:var(--green-soft);
+
+            color:var(--green);
+
+            font-size:8px;
+
+            font-weight:950;
+
+            text-transform:uppercase;
+            letter-spacing:.08em;
         }
 
-        .message.error {
-            background: #f5e3e4;
-            color: var(--bordo);
+
+        /* =========================================================
+           CARDS
+           ========================================================= */
+
+        .card{
+            margin-bottom:17px;
+
+            padding:25px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:21px;
+
+            background:#fff;
+
+            box-shadow:var(--shadow);
         }
 
-        .security-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            padding: 17px 0;
-            border-bottom: 1px solid var(--border);
+
+        .card-header{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+
+            gap:15px;
+
+            margin-bottom:19px;
         }
 
-        .security-row:last-child {
-            border-bottom: 0;
+
+        .card-heading h2{
+            color:var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:22px;
         }
 
-        .security-title {
-            color: var(--green);
-            font-weight: 800;
-            font-size: 13px;
+
+        .card-heading p{
+            margin-top:4px;
+
+            color:var(--muted);
+
+            font-size:9px;
+
+            line-height:1.6;
         }
 
-        .security-sub {
-            color: var(--muted);
-            font-size: 11px;
-            margin-top: 4px;
+
+        /* =========================================================
+           FORM
+           ========================================================= */
+
+        .form-grid{
+            display:grid;
+
+            grid-template-columns:
+                repeat(2,minmax(0,1fr));
+
+            gap:16px;
         }
 
-        .loader {
-            width: 36px;
-            height: 36px;
-            border: 3px solid rgba(15,61,58,.12);
-            border-top-color: var(--green);
-            border-radius: 50%;
-            animation: spin .8s linear infinite;
-            margin: 70px auto;
+
+        .field{
+            display:grid;
+
+            gap:7px;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+
+        .field.full{
+            grid-column:
+                1 / -1;
+        }
+
+
+        .field label{
+            color:var(--green);
+
+            font-size:9px;
+            font-weight:950;
+
+            text-transform:uppercase;
+
+            letter-spacing:.07em;
+        }
+
+
+        .field input{
+            width:100%;
+
+            min-height:45px;
+
+            padding:
+                0
+                13px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:11px;
+
+            outline:none;
+
+            background:#fff;
+
+            color:var(--dark);
+
+            font-size:11px;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+
+        .field input::placeholder{
+            color:#b1a7a1;
+        }
+
+
+        .field input:focus{
+            border-color:
+                rgba(15,61,58,.3);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(15,61,58,.05);
+        }
+
+
+        .field input[readonly]{
+            background:#f8f4ef;
+
+            color:var(--muted);
+
+            cursor:not-allowed;
+        }
+
+
+        .field-help{
+            color:var(--muted-light);
+
+            font-size:8px;
+
+            line-height:1.5;
+        }
+
+
+        .form-actions{
+            display:flex;
+
+            justify-content:flex-end;
+
+            gap:9px;
+
+            margin-top:19px;
+        }
+
+
+        .btn{
+            min-height:43px;
+
+            padding:
+                0
+                15px;
+
+            border-radius:11px;
+
+            font-size:10px;
+            font-weight:900;
+
+            transition:
+                transform .2s ease,
+                filter .2s ease,
+                background .2s ease;
+        }
+
+
+        .btn:hover{
+            transform:translateY(-1px);
+        }
+
+
+        .btn.primary{
+            background:var(--green);
+
+            color:#fff;
+        }
+
+
+        .btn.primary:hover{
+            background:var(--green-dark);
+        }
+
+
+        .btn.secondary{
+            background:var(--cream);
+
+            color:var(--green);
+        }
+
+
+        .btn.danger{
+            background:var(--bordo-soft);
+
+            color:var(--bordo);
+        }
+
+
+        .btn:disabled{
+            opacity:.5;
+
+            transform:none;
+        }
+
+
+        /* =========================================================
+           MESSAGE
+           ========================================================= */
+
+        .message{
+            display:none;
+
+            margin-top:14px;
+
+            padding:
+                12px
+                13px;
+
+            border-radius:11px;
+
+            font-size:10px;
+
+            line-height:1.6;
+        }
+
+
+        .message.show{
+            display:block;
+        }
+
+
+        .message.success{
+            background:var(--green-soft);
+
+            color:var(--green);
+        }
+
+
+        .message.error{
+            background:var(--bordo-soft);
+
+            color:var(--bordo);
+        }
+
+
+        /* =========================================================
+           ACCOUNT DETAILS
+           ========================================================= */
+
+        .details-grid{
+            display:grid;
+
+            grid-template-columns:
+                repeat(3,minmax(0,1fr));
+
+            gap:10px;
+        }
+
+
+        .detail{
+            padding:14px;
+
+            border:
+                1px solid
+                rgba(15,61,58,.08);
+
+            border-radius:13px;
+
+            background:
+                #fffcf8;
+        }
+
+
+        .detail-label{
+            color:var(--muted-light);
+
+            font-size:8px;
+
+            font-weight:900;
+
+            text-transform:uppercase;
+
+            letter-spacing:.08em;
+        }
+
+
+        .detail-value{
+            margin-top:6px;
+
+            color:var(--green);
+
+            font-size:10px;
+
+            font-weight:850;
+
+            line-height:1.45;
+
+            word-break:break-word;
+        }
+
+
+        .mono{
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Monaco,
+                Consolas,
+                monospace;
+
+            font-size:8px;
+        }
+
+
+        /* =========================================================
+           SECURITY
+           ========================================================= */
+
+        .security-list{
+            display:grid;
+            gap:0;
+        }
+
+
+        .security-row{
+            min-height:69px;
+
+            padding:
+                14px
+                0;
+
+            border-bottom:
+                1px solid var(--border);
+
+            display:flex;
+            align-items:center;
+
+            justify-content:space-between;
+
+            gap:18px;
+        }
+
+
+        .security-row:first-child{
+            padding-top:0;
+        }
+
+
+        .security-row:last-child{
+            padding-bottom:0;
+
+            border-bottom:0;
+        }
+
+
+        .security-left{
+            min-width:0;
+        }
+
+
+        .security-title{
+            color:var(--green);
+
+            font-size:11px;
+            font-weight:900;
+        }
+
+
+        .security-sub{
+            margin-top:4px;
+
+            color:var(--muted);
+
+            font-size:9px;
+
+            line-height:1.6;
+        }
+
+
+        .security-state{
+            flex:0 0 auto;
+
+            padding:
+                6px
+                9px;
+
+            border-radius:999px;
+
+            background:var(--green-soft);
+
+            color:var(--green);
+
+            font-size:7px;
+            font-weight:950;
+
+            text-transform:uppercase;
+
+            letter-spacing:.07em;
+        }
+
+
+        /* =========================================================
+           LOADER
+           ========================================================= */
+
+        .loader-wrap{
+            padding:
+                75px
+                20px;
+
+            display:grid;
+            place-items:center;
+        }
+
+
+        .loader{
+            width:36px;
+            height:36px;
+
+            border:
+                3px solid
+                rgba(15,61,58,.12);
+
+            border-top-color:
+                var(--green);
+
+            border-radius:50%;
+
+            animation:
+                spin .8s linear infinite;
+        }
+
+
+        @keyframes spin{
+
+            to{
+                transform:rotate(360deg);
             }
         }
 
-        .hidden {
-            display: none !important;
+
+        /* =========================================================
+           ERROR STATE
+           ========================================================= */
+
+        .error-card{
+            padding:30px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:20px;
+
+            background:#fff;
+
+            text-align:center;
+
+            box-shadow:var(--shadow);
         }
 
-        @media (max-width: 600px) {
 
-            .topbar {
-                padding: 0 16px;
+        .error-icon{
+            width:55px;
+            height:55px;
+
+            margin:0 auto 14px;
+
+            border-radius:50%;
+
+            display:grid;
+            place-items:center;
+
+            background:var(--bordo-soft);
+
+            color:var(--bordo);
+
+            font-size:21px;
+            font-weight:950;
+        }
+
+
+        .error-card h2{
+            color:var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:24px;
+        }
+
+
+        .error-card p{
+            max-width:560px;
+
+            margin:
+                8px
+                auto
+                18px;
+
+            color:var(--muted);
+
+            font-size:10px;
+
+            line-height:1.7;
+        }
+
+
+        /* =========================================================
+           PASSWORD MODAL
+           ========================================================= */
+
+        .modal{
+            position:fixed;
+
+            inset:0;
+
+            z-index:200;
+
+            display:grid;
+
+            place-items:center;
+
+            padding:18px;
+
+            background:
+                rgba(10,20,19,.42);
+
+            backdrop-filter:
+                blur(5px);
+        }
+
+
+        .modal-card{
+            width:
+                min(
+                    500px,
+                    100%
+                );
+
+            padding:25px;
+
+            border-radius:20px;
+
+            background:#fff;
+
+            border:
+                1px solid var(--border);
+
+            box-shadow:
+                0 30px 90px
+                rgba(0,0,0,.2);
+        }
+
+
+        .modal-top{
+            display:flex;
+
+            align-items:flex-start;
+
+            justify-content:space-between;
+
+            gap:15px;
+        }
+
+
+        .modal-top h2{
+            color:var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:23px;
+        }
+
+
+        .modal-top p{
+            margin-top:5px;
+
+            color:var(--muted);
+
+            font-size:9px;
+
+            line-height:1.6;
+        }
+
+
+        .close-modal{
+            width:35px;
+            height:35px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:10px;
+
+            background:#fff;
+
+            color:var(--green);
+
+            font-size:17px;
+        }
+
+
+        .modal-body{
+            margin-top:20px;
+        }
+
+
+        .password-step{
+            display:none;
+        }
+
+
+        .password-step.active{
+            display:block;
+        }
+
+
+        .password-note{
+            padding:12px 13px;
+
+            border-radius:11px;
+
+            background:var(--green-soft);
+
+            color:var(--green);
+
+            font-size:9px;
+
+            line-height:1.65;
+        }
+
+
+        .password-actions{
+            display:grid;
+
+            grid-template-columns:
+                repeat(2,minmax(0,1fr));
+
+            gap:9px;
+
+            margin-top:15px;
+        }
+
+
+        /* =========================================================
+           TOAST
+           ========================================================= */
+
+        .toast{
+            position:fixed;
+
+            left:50%;
+            bottom:22px;
+
+            z-index:300;
+
+            max-width:
+                min(
+                    92vw,
+                    480px
+                );
+
+            padding:
+                12px
+                15px;
+
+            border-radius:12px;
+
+            background:var(--green);
+
+            color:#fff;
+
+            font-size:9px;
+            font-weight:800;
+
+            box-shadow:
+                0 15px 50px
+                rgba(0,0,0,.2);
+
+            transform:
+                translate(-50%,20px);
+
+            opacity:0;
+
+            pointer-events:none;
+
+            transition:
+                opacity .22s ease,
+                transform .22s ease;
+        }
+
+
+        .toast.show{
+            opacity:1;
+
+            transform:
+                translate(-50%,0);
+        }
+
+
+        .toast.error{
+            background:var(--bordo);
+        }
+
+
+        /* =========================================================
+           MOBILE NAV
+           ========================================================= */
+
+        .mobile-nav{
+            display:none;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width:700px){
+
+            .topbar{
+                padding:
+                    0
+                    16px;
             }
 
-            .content {
-                width: min(100% - 18px, 900px);
-                padding-top: 30px;
+
+            .topbar-button.account-link{
+                display:none;
             }
 
-            .card {
-                padding: 21px;
+
+            .content{
+                width:
+                    calc(100% - 18px);
+
+                padding-top:
+                    30px;
             }
 
-            .form-grid {
-                grid-template-columns: 1fr;
+
+            .profile-hero{
+                align-items:flex-start;
+
+                flex-direction:column;
             }
 
-            .field.full {
-                grid-column: auto;
+
+            .account-badge{
+                align-self:flex-start;
             }
 
-            .actions {
-                display: grid;
-                grid-template-columns: 1fr;
+
+            .form-grid{
+                grid-template-columns:1fr;
             }
 
-            .actions .btn {
-                width: 100%;
+
+            .field.full{
+                grid-column:auto;
             }
 
-            .security-row {
-                align-items: flex-start;
-                flex-direction: column;
+
+            .details-grid{
+                grid-template-columns:1fr;
+            }
+
+
+            .form-actions{
+                display:grid;
+
+                grid-template-columns:1fr;
+            }
+
+
+            .form-actions .btn{
+                width:100%;
+            }
+
+
+            .security-row{
+                align-items:flex-start;
+
+                flex-direction:column;
+            }
+
+
+            .security-state{
+                align-self:flex-start;
+            }
+
+
+            .mobile-nav{
+                position:fixed;
+
+                display:grid;
+
+                grid-template-columns:
+                    repeat(4,1fr);
+
+                left:12px;
+                right:12px;
+                bottom:12px;
+
+                height:64px;
+
+                border-radius:19px;
+
+                background:
+                    rgba(15,61,58,.97);
+
+                z-index:90;
+
+                box-shadow:
+                    0 15px 50px
+                    rgba(0,0,0,.18);
+            }
+
+
+            .mobile-nav a{
+                display:grid;
+
+                place-items:center;
+
+                align-content:center;
+
+                gap:3px;
+
+                color:
+                    rgba(255,255,255,.55);
+
+                font-size:9px;
+            }
+
+
+            .mobile-nav a.active{
+                color:var(--cream);
+            }
+
+
+            .mobile-nav a span:first-child{
+                font-size:17px;
+            }
+        }
+
+
+        @media (max-width:520px){
+
+            .heading h1{
+                font-size:34px;
+            }
+
+
+            .card{
+                padding:19px;
+
+                border-radius:18px;
+            }
+
+
+            .profile-hero{
+                padding:17px;
+
+                border-radius:18px;
+            }
+
+
+            .hero-avatar{
+                width:60px;
+                height:60px;
+
+                font-size:21px;
+            }
+
+
+            .hero-copy h2{
+                font-size:21px;
+            }
+
+
+            .password-actions{
+                grid-template-columns:1fr;
             }
         }
 
@@ -313,72 +1393,218 @@
 
 </head>
 
+
 <body>
+
 
 <header class="topbar">
 
-    <div class="brand">
+    <a
+        href="../index.html"
+        class="brand"
+    >
 
         <div class="mark">
             K
         </div>
 
-        <strong>
-            K-Tickets
-        </strong>
+        <div class="brand-copy">
+
+            <strong>
+                K-Tickets
+            </strong>
+
+            <span>
+                Customer
+            </span>
+
+        </div>
+
+    </a>
+
+
+    <div class="topbar-actions">
+
+        <a
+            href="notifications.html"
+            class="topbar-button"
+        >
+            Notifications
+        </a>
+
+
+        <a
+            href="dashboard.html"
+            class="topbar-button account-link"
+        >
+            Dashboard
+        </a>
+
+
+        <div
+            class="avatar-top"
+            id="topAvatar"
+        >
+            K
+        </div>
 
     </div>
 
-    <a
-        href="dashboard.html"
-        class="back"
-    >
-        ← Dashboard
-    </a>
-
 </header>
+
 
 <main class="content">
 
+
+    <!-- =========================================================
+         HEADING
+         ========================================================= -->
+
     <section class="heading">
+
+        <small>
+            Account
+        </small>
 
         <h1>
             My Profile
         </h1>
 
         <p>
-            Manage the account information connected
-            to your K-Tickets account.
+            Manage the customer information connected to your
+            K-Tickets account and protect your account access.
         </p>
 
     </section>
 
-    <div
-        class="loader"
+
+    <!-- =========================================================
+         LOADER
+         ========================================================= -->
+
+    <section
+        class="loader-wrap"
         id="loader"
-    ></div>
+    >
+
+        <div class="loader"></div>
+
+    </section>
+
+
+    <!-- =========================================================
+         PAGE ERROR
+         ========================================================= -->
+
+    <section
+        class="error-card hidden"
+        id="pageError"
+    >
+
+        <div class="error-icon">
+            !
+        </div>
+
+        <h2>
+            Unable to load your profile
+        </h2>
+
+        <p id="pageErrorText">
+            Something went wrong while loading your account.
+        </p>
+
+        <button
+            type="button"
+            class="btn primary"
+            id="retryButton"
+        >
+            Try Again
+        </button>
+
+    </section>
+
+
+    <!-- =========================================================
+         PROFILE CONTENT
+         ========================================================= -->
 
     <div
-        id="profileArea"
+        id="profileContent"
         class="hidden"
     >
 
-        <section class="card">
 
-            <h2>
-                Account Information
-            </h2>
+        <!-- =====================================================
+             PROFILE HERO
+             ===================================================== -->
 
-            <div
-                class="avatar"
-                id="avatar"
-            >
-                K
+        <section class="profile-hero">
+
+            <div class="hero-left">
+
+                <div
+                    class="hero-avatar"
+                    id="heroAvatar"
+                >
+                    K
+                </div>
+
+
+                <div class="hero-copy">
+
+                    <h2 id="heroName">
+                        Customer
+                    </h2>
+
+                    <p id="heroEmail">
+                        —
+                    </p>
+
+                </div>
+
             </div>
 
-            <form id="profileForm">
+
+            <div
+                class="account-badge"
+                id="accountBadge"
+            >
+                Customer
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ACCOUNT INFORMATION
+             ===================================================== -->
+
+        <section class="card">
+
+            <div class="card-header">
+
+                <div class="card-heading">
+
+                    <h2>
+                        Account Information
+                    </h2>
+
+                    <p>
+                        Update the profile information used by K-Tickets.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                id="profileForm"
+                novalidate
+            >
 
                 <div class="form-grid">
+
 
                     <div class="field">
 
@@ -390,10 +1616,16 @@
                             id="fullName"
                             type="text"
                             autocomplete="name"
+                            maxlength="150"
                             required
                         >
 
+                        <div class="field-help">
+                            This is the name displayed across your K-Tickets account.
+                        </div>
+
                     </div>
+
 
                     <div class="field">
 
@@ -407,7 +1639,12 @@
                             readonly
                         >
 
+                        <div class="field-help">
+                            Authentication email is managed by Supabase Auth.
+                        </div>
+
                     </div>
+
 
                     <div class="field">
 
@@ -418,10 +1655,18 @@
                         <input
                             id="phone"
                             type="tel"
+                            inputmode="tel"
                             autocomplete="tel"
+                            maxlength="40"
+                            placeholder="Add your phone number"
                         >
 
+                        <div class="field-help">
+                            Keep this current for payment and account-related communication.
+                        </div>
+
                     </div>
+
 
                     <div class="field">
 
@@ -435,21 +1680,56 @@
                             readonly
                         >
 
+                        <div class="field-help">
+                            Your application role cannot be changed from this page.
+                        </div>
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label for="profileId">
+                            Profile ID
+                        </label>
+
+                        <input
+                            id="profileId"
+                            type="text"
+                            readonly
+                        >
+
+                        <div class="field-help">
+                            Your unique Supabase profile identifier.
+                        </div>
+
                     </div>
 
                 </div>
 
+
                 <div
                     class="message"
                     id="profileMessage"
+                    aria-live="polite"
                 ></div>
 
-                <div class="actions">
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn secondary"
+                        id="refreshProfileButton"
+                    >
+                        Refresh
+                    </button>
+
 
                     <button
                         type="submit"
                         class="btn primary"
-                        id="saveBtn"
+                        id="saveButton"
                     >
                         Save Changes
                     </button>
@@ -460,467 +1740,1906 @@
 
         </section>
 
+
+        <!-- =====================================================
+             ACCOUNT STATUS
+             ===================================================== -->
+
         <section class="card">
 
-            <h2>
-                Security
-            </h2>
+            <div class="card-header">
 
-            <div class="security-row">
+                <div class="card-heading">
 
-                <div>
+                    <h2>
+                        Account Details
+                    </h2>
 
-                    <div class="security-title">
-                        Password
-                    </div>
-
-                    <div class="security-sub">
-                        Update your account password through
-                        the secure authentication system.
-                    </div>
+                    <p>
+                        Information currently associated with your authenticated profile.
+                    </p>
 
                 </div>
-
-                <button
-                    class="btn secondary"
-                    id="passwordBtn"
-                >
-                    Change Password
-                </button>
 
             </div>
 
-            <div class="security-row">
 
-                <div>
+            <div class="details-grid">
 
-                    <div class="security-title">
-                        Sign Out
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        Account Type
                     </div>
 
-                    <div class="security-sub">
-                        End your current authenticated session.
+                    <div
+                        class="detail-value"
+                        id="detailRole"
+                    >
+                        —
                     </div>
 
                 </div>
 
-                <button
-                    class="btn danger"
-                    id="logoutBtn"
-                >
-                    Sign Out
-                </button>
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        Account State
+                    </div>
+
+                    <div
+                        class="detail-value"
+                        id="detailState"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        Profile Created
+                    </div>
+
+                    <div
+                        class="detail-value"
+                        id="detailCreated"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        Profile Updated
+                    </div>
+
+                    <div
+                        class="detail-value"
+                        id="detailUpdated"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        Phone
+                    </div>
+
+                    <div
+                        class="detail-value"
+                        id="detailPhone"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        Profile ID
+                    </div>
+
+                    <div
+                        class="detail-value mono"
+                        id="detailId"
+                    >
+                        —
+                    </div>
+
+                </div>
 
             </div>
 
         </section>
 
+
+        <!-- =====================================================
+             SECURITY
+             ===================================================== -->
+
+        <section class="card">
+
+            <div class="card-header">
+
+                <div class="card-heading">
+
+                    <h2>
+                        Security
+                    </h2>
+
+                    <p>
+                        Manage authentication without exposing your password to this page.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="security-list">
+
+
+                <div class="security-row">
+
+                    <div class="security-left">
+
+                        <div class="security-title">
+                            Password
+                        </div>
+
+                        <div class="security-sub">
+                            Request a secure Supabase password-reset email.
+                        </div>
+
+                    </div>
+
+
+                    <span class="security-state">
+                        Protected
+                    </span>
+
+
+                    <button
+                        type="button"
+                        class="btn secondary"
+                        id="passwordButton"
+                    >
+                        Change Password
+                    </button>
+
+                </div>
+
+
+                <div class="security-row">
+
+                    <div class="security-left">
+
+                        <div class="security-title">
+                            Sign Out
+                        </div>
+
+                        <div class="security-sub">
+                            End the current authenticated K-Tickets session.
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn danger"
+                        id="logoutButton"
+                    >
+                        Sign Out
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             NAVIGATION
+             ===================================================== -->
+
+        <section
+            class="card"
+            style="margin-bottom:0;"
+        >
+
+            <div class="card-header">
+
+                <div class="card-heading">
+
+                    <h2>
+                        K-Tickets
+                    </h2>
+
+                    <p>
+                        Continue managing your tickets and orders.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="form-actions"
+                style="
+                    justify-content:flex-start;
+                    margin-top:0;
+                "
+            >
+
+                <a
+                    href="dashboard.html"
+                    class="btn primary"
+                >
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="orders.html"
+                    class="btn secondary"
+                >
+                    My Orders
+                </a>
+
+
+                <a
+                    href="my-tickets.html"
+                    class="btn secondary"
+                >
+                    My Tickets
+                </a>
+
+            </div>
+
+        </section>
+
+
     </div>
 
 </main>
 
+
+<!-- =============================================================
+     MOBILE NAV
+     ============================================================= -->
+
+<nav class="mobile-nav">
+
+
+    <a href="dashboard.html">
+
+        <span>
+            ⌂
+        </span>
+
+        <span>
+            Home
+        </span>
+
+    </a>
+
+
+    <a href="events.html">
+
+        <span>
+            ◫
+        </span>
+
+        <span>
+            Events
+        </span>
+
+    </a>
+
+
+    <a href="orders.html">
+
+        <span>
+            ▤
+        </span>
+
+        <span>
+            Orders
+        </span>
+
+    </a>
+
+
+    <a
+        href="profile.html"
+        class="active"
+    >
+
+        <span>
+            ◎
+        </span>
+
+        <span>
+            Account
+        </span>
+
+    </a>
+
+</nav>
+
+
+<!-- =============================================================
+     PASSWORD MODAL
+     ============================================================= -->
+
+<div
+    class="modal hidden"
+    id="passwordModal"
+    aria-hidden="true"
+>
+
+
+    <div class="modal-card">
+
+
+        <div class="modal-top">
+
+            <div>
+
+                <h2>
+                    Change Password
+                </h2>
+
+                <p>
+                    We will send a secure password-reset link to your
+                    authenticated email address.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="close-modal"
+                id="closePasswordModal"
+                aria-label="Close password dialog"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+            <div
+                class="password-step active"
+                id="passwordStep"
+            >
+
+                <div class="password-note">
+
+                    Your password is handled by Supabase Auth.
+                    This page never asks for or stores your current password.
+
+                </div>
+
+
+                <div
+                    class="message"
+                    id="passwordMessage"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="password-actions">
+
+                    <button
+                        type="button"
+                        class="btn secondary"
+                        id="cancelPasswordButton"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn primary"
+                        id="sendPasswordButton"
+                    >
+                        Send Reset Email
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     TOAST
+     ============================================================= -->
+
+<div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+></div>
+
+
 <script>
 
-    const SUPABASE_URL =
-        window.KTICKETS_SUPABASE_URL || "";
+/*
+    ================================================================
+    K-TICKETS — CUSTOMER PROFILE
+    ================================================================
 
-    const SUPABASE_ANON_KEY =
-        window.KTICKETS_SUPABASE_ANON_KEY || "";
+    SECURITY MODEL
+    ----------------------------------------------------------------
+    • Supabase public/publishable key only.
+    • No service-role key.
+    • No database password.
+    • No payment credentials.
+    • Passwords are never read by this page.
+    • Application role is READ-ONLY here.
+    • Profile updates are limited to:
+          full_name
+          phone
+    • RLS must restrict profile access to auth.uid().
+    • Account role changes must remain server/admin controlled.
 
-    let supabaseClient = null;
-    let currentUser = null;
+    CONFIRMED PROFILES TABLE
+    ----------------------------------------------------------------
+        id
+        full_name
+        phone
+        role
+        avatar_url
+        is_active
+        created_at
+        updated_at
 
-    function initializeSupabase() {
+    AUTHENTICATION
+    ----------------------------------------------------------------
+        Supabase Auth owns the authentication email/password.
 
-        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    PASSWORD RESET
+    ----------------------------------------------------------------
+        The page uses Supabase Auth's resetPasswordForEmail()
+        with the actual K-Tickets root-level reset-password page.
 
-            throw new Error(
-                "Supabase configuration has not been added yet."
-            );
+    IMPORTANT
+    ----------------------------------------------------------------
+    The browser never receives or stores the user's password.
+*/
+
+
+/* ================================================================
+   SUPABASE
+   ================================================================ */
+
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
         }
+    );
 
-        supabaseClient =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_ANON_KEY
-            );
-    }
 
-    function getInitial(name) {
+/* ================================================================
+   STATE
+   ================================================================ */
 
-        return (
-            String(name || "K")
-                .trim()
-                .charAt(0)
-                .toUpperCase() ||
-            "K"
+let currentUser =
+    null;
+
+let currentProfile =
+    null;
+
+let toastTimer =
+    null;
+
+
+/* ================================================================
+   HELPERS
+   ================================================================ */
+
+function $(id){
+
+    return document.getElementById(
+        id
+    );
+}
+
+
+function escapeHtml(value){
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
         );
+}
+
+
+function safeText(
+    value,
+    fallback = "—"
+){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+
+        return fallback;
     }
 
-    function showMessage(
-        message,
-        type
-    ) {
 
-        const element =
-            document.getElementById(
-                "profileMessage"
+    const text =
+        String(
+            value
+        ).trim();
+
+
+    return text ||
+        fallback;
+}
+
+
+function formatRole(
+    role
+){
+
+    return String(
+        role ||
+        "customer"
+    )
+        .replaceAll(
+            "_",
+            " "
+        )
+        .replace(
+            /\b\w/g,
+            character =>
+                character.toUpperCase()
+        );
+}
+
+
+function formatDate(
+    value
+){
+
+    if(!value){
+
+        return "—";
+    }
+
+
+    const date =
+        new Date(
+            value
+        );
+
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+
+        return "—";
+    }
+
+
+    try{
+
+        return new Intl.DateTimeFormat(
+            undefined,
+            {
+                dateStyle:"medium",
+                timeStyle:"short"
+            }
+        ).format(
+            date
+        );
+
+    }catch(error){
+
+        return date.toLocaleString();
+    }
+}
+
+
+function getInitials(
+    value
+){
+
+    const text =
+        String(
+            value ||
+            ""
+        ).trim();
+
+
+    if(!text){
+        return "K";
+    }
+
+
+    const parts =
+        text
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    if(
+        parts.length === 1
+    ){
+
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
+    }
+
+
+    return (
+        parts[0].charAt(0) +
+        parts[
+            parts.length - 1
+        ].charAt(0)
+    ).toUpperCase();
+}
+
+
+function showToast(
+    message,
+    isError = false
+){
+
+    const toast =
+        $("toast");
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toast.textContent =
+        message ||
+        "Done";
+
+
+    toast.classList.toggle(
+        "error",
+        Boolean(
+            isError
+        )
+    );
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            3200
+        );
+}
+
+
+function showProfileMessage(
+    message,
+    type
+){
+
+    const element =
+        $("profileMessage");
+
+
+    element.textContent =
+        message ||
+        "";
+
+
+    element.className =
+        `message show ${type}`;
+}
+
+
+function clearProfileMessage(){
+
+    $("profileMessage")
+        .className =
+        "message";
+
+    $("profileMessage")
+        .textContent =
+        "";
+}
+
+
+function showPasswordMessage(
+    message,
+    type
+){
+
+    const element =
+        $("passwordMessage");
+
+
+    element.textContent =
+        message ||
+        "";
+
+
+    element.className =
+        `message show ${type}`;
+}
+
+
+function clearPasswordMessage(){
+
+    $("passwordMessage")
+        .className =
+        "message";
+
+    $("passwordMessage")
+        .textContent =
+        "";
+}
+
+
+/* ================================================================
+   LOADING / ERROR
+   ================================================================ */
+
+function setPageLoading(
+    loading
+){
+
+    $("loader")
+        .classList.toggle(
+            "hidden",
+            !loading
+        );
+
+
+    $("profileContent")
+        .classList.toggle(
+            "hidden",
+            loading
+        );
+
+
+    if(loading){
+
+        $("pageError")
+            .classList.add(
+                "hidden"
             );
+    }
+}
 
-        element.textContent =
-            message;
 
-        element.className =
-            `message show ${type}`;
+function showPageError(
+    message
+){
+
+    $("loader")
+        .classList.add(
+            "hidden"
+        );
+
+
+    $("profileContent")
+        .classList.add(
+            "hidden"
+        );
+
+
+    $("pageError")
+        .classList
+        .remove(
+            "hidden"
+        );
+
+
+    $("pageErrorText")
+        .textContent =
+        message ||
+        "Unable to load your profile.";
+}
+
+
+/* ================================================================
+   AUTHENTICATION
+   ================================================================ */
+
+async function getAuthenticatedUser(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getUser();
+
+
+    if(error){
+        throw error;
     }
 
-    async function loadProfile() {
 
-        const {
-            data,
-            error
-        } = await supabaseClient.auth.getUser();
+    if(!data.user){
 
-        if (error) {
-            throw error;
-        }
+        window.location.href =
+            "../login.html";
 
-        currentUser =
-            data.user;
+        return null;
+    }
 
-        if (!currentUser) {
 
-            window.location.href =
-                "../auth/login.html";
+    return data.user;
+}
 
-            return;
-        }
 
-        const {
-            data: profile,
-            error: profileError
-        } = await supabaseClient
+/* ================================================================
+   LOAD PROFILE
+   ================================================================ */
+
+async function loadProfile(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
             .from("profiles")
             .select(`
                 id,
                 full_name,
                 phone,
-                role
+                role,
+                avatar_url,
+                is_active,
+                created_at,
+                updated_at
             `)
-            .eq("id", currentUser.id)
+            .eq(
+                "id",
+                currentUser.id
+            )
             .maybeSingle();
 
-        if (profileError) {
-            throw profileError;
-        }
 
-        const record =
-            profile || {};
+    if(error){
+        throw error;
+    }
 
-        document.getElementById(
-            "fullName"
-        ).value =
-            record.full_name ||
-            currentUser.user_metadata?.full_name ||
-            "";
 
-        document.getElementById(
-            "email"
-        ).value =
-            currentUser.email || "";
+    if(!data){
 
-        document.getElementById(
-            "phone"
-        ).value =
-            record.phone ||
-            currentUser.user_metadata?.phone ||
-            "";
-
-        document.getElementById(
-            "role"
-        ).value =
-            record.role ||
-            "customer";
-
-        document.getElementById(
-            "avatar"
-        ).textContent =
-            getInitial(
-                record.full_name
-            );
-
-        document.getElementById(
-            "loader"
-        ).classList.add(
-            "hidden"
-        );
-
-        document.getElementById(
-            "profileArea"
-        ).classList.remove(
-            "hidden"
+        throw new Error(
+            "Your K-Tickets profile does not exist yet."
         );
     }
 
-    async function saveProfile(event) {
 
-        event.preventDefault();
+    if(
+        data.is_active === false
+    ){
 
-        if (!currentUser) {
-            return;
-        }
+        await supabaseClient
+            .auth
+            .signOut();
 
-        const saveBtn =
-            document.getElementById(
-                "saveBtn"
-            );
 
-        const fullName =
-            document.getElementById(
-                "fullName"
-            ).value
+        window.location.href =
+            "../login.html";
+
+
+        return null;
+    }
+
+
+    currentProfile =
+        data;
+
+
+    renderProfile(
+        data
+    );
+
+
+    return data;
+}
+
+
+/* ================================================================
+   RENDER PROFILE
+   ================================================================ */
+
+function renderProfile(
+    profile
+){
+
+    const displayName =
+        safeText(
+            profile.full_name,
+            safeText(
+                currentUser?.email,
+                "Customer"
+            )
+        );
+
+
+    const role =
+        formatRole(
+            profile.role
+        );
+
+
+    const initials =
+        getInitials(
+            displayName
+        );
+
+
+    /*
+        Topbar
+    */
+
+    $("topAvatar")
+        .textContent =
+        initials;
+
+
+    /*
+        Hero
+    */
+
+    $("heroAvatar")
+        .textContent =
+        initials;
+
+
+    $("heroName")
+        .textContent =
+        displayName;
+
+
+    $("heroEmail")
+        .textContent =
+        safeText(
+            currentUser?.email,
+            "Email unavailable"
+        );
+
+
+    $("accountBadge")
+        .textContent =
+        role;
+
+
+    /*
+        Editable form
+    */
+
+    $("fullName")
+        .value =
+        profile.full_name ||
+        "";
+
+
+    $("email")
+        .value =
+        currentUser?.email ||
+        "";
+
+
+    $("phone")
+        .value =
+        profile.phone ||
+        "";
+
+
+    $("role")
+        .value =
+        role;
+
+
+    $("profileId")
+        .value =
+        profile.id ||
+        "";
+
+
+    /*
+        Account detail cards
+    */
+
+    $("detailRole")
+        .textContent =
+        role;
+
+
+    $("detailState")
+        .textContent =
+        profile.is_active === false
+            ? "Inactive"
+            : "Active";
+
+
+    $("detailCreated")
+        .textContent =
+        formatDate(
+            profile.created_at
+        );
+
+
+    $("detailUpdated")
+        .textContent =
+        formatDate(
+            profile.updated_at
+        );
+
+
+    $("detailPhone")
+        .textContent =
+        safeText(
+            profile.phone
+        );
+
+
+    $("detailId")
+        .textContent =
+        safeText(
+            profile.id
+        );
+}
+
+
+/* ================================================================
+   SAVE PROFILE
+   ================================================================ */
+
+async function saveProfile(
+    event
+){
+
+    event.preventDefault();
+
+
+    clearProfileMessage();
+
+
+    if(!currentUser){
+
+        return;
+    }
+
+
+    const fullName =
+        $("fullName")
+            .value
             .trim();
 
-        const phone =
-            document.getElementById(
-                "phone"
-            ).value
+
+    const phone =
+        $("phone")
+            .value
             .trim();
 
-        if (!fullName) {
 
-            showMessage(
-                "Full name is required.",
-                "error"
-            );
+    if(!fullName){
 
-            return;
-        }
+        showProfileMessage(
+            "Full name is required.",
+            "error"
+        );
 
-        saveBtn.disabled = true;
+        $("fullName")
+            .focus();
 
-        saveBtn.textContent =
-            "Saving...";
+        return;
+    }
 
-        try {
 
-            const {
-                error
-            } = await supabaseClient
+    if(
+        fullName.length >
+        150
+    ){
+
+        showProfileMessage(
+            "Full name is too long.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(
+        phone.length >
+        40
+    ){
+
+        showProfileMessage(
+            "Phone number is too long.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const button =
+        $("saveButton");
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "Saving...";
+
+
+    try{
+
+        /*
+            IMPORTANT:
+            Update only fields the customer is allowed
+            to change.
+
+            Do not use upsert() here.
+            The profile was created by the Auth trigger
+            and should already exist.
+        */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
                 .from("profiles")
-                .upsert(
-                    {
-                        id: currentUser.id,
-                        full_name: fullName,
-                        phone: phone
-                    },
-                    {
-                        onConflict: "id"
-                    }
-                );
+                .update({
+                    full_name:
+                        fullName,
 
-            if (error) {
-                throw error;
-            }
+                    phone:
+                        phone ||
+                        null,
 
-            /*
-             * Keep Auth metadata synchronized where
-             * appropriate. The database profile remains
-             * the application's source of truth.
-             */
+                    updated_at:
+                        new Date()
+                            .toISOString()
+                })
+                .eq(
+                    "id",
+                    currentUser.id
+                )
+                .select(`
+                    id,
+                    full_name,
+                    phone,
+                    role,
+                    avatar_url,
+                    is_active,
+                    created_at,
+                    updated_at
+                `)
+                .maybeSingle();
 
-            const {
-                error: authError
-            } = await supabaseClient.auth
-                .updateUser({
-                    data: {
-                        full_name: fullName,
-                        phone: phone
-                    }
-                });
 
-            if (authError) {
-                console.warn(
-                    "Auth metadata update failed:",
-                    authError
-                );
-            }
-
-            document.getElementById(
-                "avatar"
-            ).textContent =
-                getInitial(fullName);
-
-            showMessage(
-                "Your profile has been updated.",
-                "success"
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-            showMessage(
-                error.message ||
-                "Unable to save your profile.",
-                "error"
-            );
-
-        } finally {
-
-            saveBtn.disabled = false;
-
-            saveBtn.textContent =
-                "Save Changes";
-        }
-    }
-
-    async function changePassword() {
-
-        if (!currentUser?.email) {
-            return;
+        if(error){
+            throw error;
         }
 
-        const button =
-            document.getElementById(
-                "passwordBtn"
-            );
 
-        button.disabled = true;
+        if(!data){
+
+            throw new Error(
+                "Your profile was not updated. Supabase RLS may be blocking the update."
+            );
+        }
+
+
+        currentProfile =
+            data;
+
+
+        renderProfile(
+            data
+        );
+
+
+        showProfileMessage(
+            "Your profile has been updated successfully.",
+            "success"
+        );
+
+
+        showToast(
+            "Profile updated."
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Profile update failed:",
+            error
+        );
+
+
+        showProfileMessage(
+            error?.message ||
+            "Unable to save your profile.",
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled =
+            false;
+
 
         button.textContent =
-            "Sending...";
+            "Save Changes";
+    }
+}
 
-        try {
 
-            const {
-                error
-            } = await supabaseClient.auth
+/* ================================================================
+   REFRESH PROFILE
+   ================================================================ */
+
+async function refreshProfile(){
+
+    const button =
+        $("refreshProfileButton");
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "Loading...";
+
+
+    clearProfileMessage();
+
+
+    try{
+
+        await loadProfile();
+
+
+        showProfileMessage(
+            "Profile information refreshed.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Profile refresh failed:",
+            error
+        );
+
+
+        showProfileMessage(
+            error?.message ||
+            "Unable to refresh your profile.",
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled =
+            false;
+
+
+        button.textContent =
+            "Refresh";
+    }
+}
+
+
+/* ================================================================
+   PASSWORD MODAL
+   ================================================================ */
+
+function openPasswordModal(){
+
+    clearPasswordMessage();
+
+
+    $("passwordModal")
+        .classList
+        .remove(
+            "hidden"
+        );
+
+
+    $("passwordModal")
+        .setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+    document.body
+        .classList
+        .add(
+            "modal-open"
+        );
+}
+
+
+function closePasswordModal(){
+
+    $("passwordModal")
+        .classList
+        .add(
+            "hidden"
+        );
+
+
+    $("passwordModal")
+        .setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+    document.body
+        .classList
+        .remove(
+            "modal-open"
+        );
+
+
+    clearPasswordMessage();
+}
+
+
+/* ================================================================
+   SEND PASSWORD RESET EMAIL
+   ================================================================ */
+
+async function sendPasswordReset(){
+
+    clearPasswordMessage();
+
+
+    if(
+        !currentUser?.email
+    ){
+
+        showPasswordMessage(
+            "No authentication email is available for this account.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const button =
+        $("sendPasswordButton");
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "Sending...";
+
+
+    try{
+
+        /*
+            The actual public page is:
+
+                /reset-password.html
+
+            This avoids the old /auth/reset-password.html
+            route that existed in the original page.
+        */
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
                 .resetPasswordForEmail(
                     currentUser.email,
                     {
                         redirectTo:
-                            `${window.location.origin}/auth/reset-password.html`
+                            `${window.location.origin}/reset-password.html`
                     }
                 );
 
-            if (error) {
-                throw error;
-            }
 
-            alert(
-                "A password reset email has been sent to your account."
-            );
+        if(error){
+            throw error;
+        }
 
-        } catch (error) {
 
-            alert(
-                error.message ||
-                "Unable to send password reset email."
-            );
+        showPasswordMessage(
+            "Password reset instructions have been sent to your authentication email.",
+            "success"
+        );
 
-        } finally {
 
-            button.disabled = false;
+        showToast(
+            "Password reset email sent."
+        );
 
-            button.textContent =
-                "Change Password";
+
+        button.textContent =
+            "Email Sent";
+
+
+        setTimeout(
+            () => {
+
+                if(
+                    !document.body
+                        .contains(
+                            button
+                        )
+                ){
+                    return;
+                }
+
+
+                button.disabled =
+                    false;
+
+
+                button.textContent =
+                    "Send Reset Email";
+
+            },
+            3000
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Password reset request failed:",
+            error
+        );
+
+
+        showPasswordMessage(
+            error?.message ||
+            "Unable to send the password reset email.",
+            "error"
+        );
+
+
+        button.disabled =
+            false;
+
+
+        button.textContent =
+            "Send Reset Email";
+    }
+}
+
+
+/* ================================================================
+   LOGOUT
+   ================================================================ */
+
+async function logout(){
+
+    const button =
+        $("logoutButton");
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "Signing out...";
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
+                .signOut();
+
+
+        if(error){
+            throw error;
+        }
+
+
+        window.location.href =
+            "../login.html";
+
+
+    }catch(error){
+
+        console.error(
+            "Logout failed:",
+            error
+        );
+
+
+        button.disabled =
+            false;
+
+
+        button.textContent =
+            "Sign Out";
+
+
+        showToast(
+            error?.message ||
+            "Unable to sign out.",
+            true
+        );
+    }
+}
+
+
+/* ================================================================
+   AUTH STATE
+   ================================================================ */
+
+supabaseClient.auth.onAuthStateChange(
+    (
+        event,
+        session
+    ) => {
+
+        if(
+            event === "SIGNED_OUT" ||
+            !session?.user
+        ){
+
+            window.location.href =
+                "../login.html";
         }
     }
+);
 
-    async function logout() {
 
-        if (!supabaseClient) {
+/* ================================================================
+   UI EVENTS
+   ================================================================ */
+
+$("profileForm")
+    .addEventListener(
+        "submit",
+        saveProfile
+    );
+
+
+$("refreshProfileButton")
+    .addEventListener(
+        "click",
+        refreshProfile
+    );
+
+
+$("passwordButton")
+    .addEventListener(
+        "click",
+        openPasswordModal
+    );
+
+
+$("closePasswordModal")
+    .addEventListener(
+        "click",
+        closePasswordModal
+    );
+
+
+$("cancelPasswordButton")
+    .addEventListener(
+        "click",
+        closePasswordModal
+    );
+
+
+$("sendPasswordButton")
+    .addEventListener(
+        "click",
+        sendPasswordReset
+    );
+
+
+$("logoutButton")
+    .addEventListener(
+        "click",
+        logout
+    );
+
+
+$("retryButton")
+    .addEventListener(
+        "click",
+        initializePage
+    );
+
+
+$("passwordModal")
+    .addEventListener(
+        "click",
+        event => {
+
+            if(
+                event.target ===
+                $("passwordModal")
+            ){
+
+                closePasswordModal();
+            }
+        }
+    );
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key ===
+            "Escape"
+        ){
+
+            if(
+                !$("passwordModal")
+                    .classList
+                    .contains(
+                        "hidden"
+                    )
+            ){
+
+                closePasswordModal();
+            }
+        }
+    }
+);
+
+
+/* ================================================================
+   INITIALIZE
+   ================================================================ */
+
+async function initializePage(){
+
+    setPageLoading(
+        true
+    );
+
+
+    try{
+
+        currentUser =
+            await getAuthenticatedUser();
+
+
+        if(!currentUser){
             return;
         }
 
-        await supabaseClient.auth.signOut();
 
-        window.location.href =
-            "../auth/login.html";
+        await loadProfile();
+
+
+        $("loader")
+            .classList
+            .add(
+                "hidden"
+            );
+
+
+        $("profileContent")
+            .classList
+            .remove(
+                "hidden"
+            );
+
+
+        await loadNotificationBadge();
+
+
+    }catch(error){
+
+        console.error(
+            "Customer profile initialization failed:",
+            error
+        );
+
+
+        showPageError(
+            error?.message ||
+            "Unable to load your profile."
+        );
     }
+}
 
-    async function loadPage() {
 
-        try {
+/* ================================================================
+   NOTIFICATION BADGE
+   ================================================================ */
 
-            initializeSupabase();
+async function loadNotificationBadge(){
 
-            await loadProfile();
+    /*
+        The profile page does not display an unread count,
+        but this function deliberately keeps notification access
+        scoped to the authenticated customer.
 
-        } catch (error) {
+        It is available for future header badge integration.
+    */
 
-            console.error(error);
+    try{
 
-            document.getElementById(
-                "loader"
-            ).classList.add(
-                "hidden"
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select(
+                    "id",
+                    {
+                        count:"exact",
+                        head:true
+                    }
+                )
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .eq(
+                    "is_read",
+                    false
+                );
+
+
+        if(error){
+
+            console.warn(
+                "Notification badge query unavailable:",
+                error
             );
 
-            document.getElementById(
-                "profileArea"
-            ).innerHTML = `
-
-                <section class="card">
-
-                    <h2>
-                        Unable to load profile
-                    </h2>
-
-                    <p style="
-                        color:#756b67;
-                        line-height:1.6;
-                    ">
-                        ${String(
-                            error.message ||
-                            "Please try again."
-                        )
-                            .replaceAll(
-                                "<",
-                                "&lt;"
-                            )
-                            .replaceAll(
-                                ">",
-                                "&gt;"
-                            )}
-                    </p>
-
-                </section>
-            `;
-
-            document.getElementById(
-                "profileArea"
-            ).classList.remove(
-                "hidden"
-            );
+            return;
         }
+
+
+        const notificationLink =
+            document.querySelector(
+                'a[href="notifications.html"]'
+            );
+
+
+        if(!notificationLink){
+            return;
+        }
+
+
+        if(count){
+
+            notificationLink.textContent =
+                `Notifications (${count})`;
+
+        }else{
+
+            notificationLink.textContent =
+                "Notifications";
+        }
+
+
+    }catch(error){
+
+        console.warn(
+            "Notification count failed:",
+            error
+        );
     }
+}
 
-    document
-        .getElementById("profileForm")
-        .addEventListener(
-            "submit",
-            saveProfile
-        );
 
-    document
-        .getElementById("passwordBtn")
-        .addEventListener(
-            "click",
-            changePassword
-        );
+/* ================================================================
+   START
+   ================================================================ */
 
-    document
-        .getElementById("logoutBtn")
-        .addEventListener(
-            "click",
-            logout
-        );
-
-    loadPage();
+initializePage();
 
 </script>
+
 
 </body>
 </html>

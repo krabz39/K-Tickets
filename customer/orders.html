@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -9,816 +8,4308 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <meta
+        name="robots"
+        content="noindex,nofollow,noarchive"
+    >
+
+    <meta
+        name="referrer"
+        content="same-origin"
+    >
+
     <title>My Orders | K-Tickets</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
 
     <style>
-
-        :root {
-            --bordo: #6C151E;
-            --green: #0F3D3A;
-            --cream: #F5DABF;
-            --white: #fff;
-            --dark: #171414;
-            --muted: #756b67;
-            --border: rgba(15,61,58,.12);
+        :root{
+            --bordo:#6C151E;
+            --green:#0F3D3A;
+            --cream:#F5DABF;
+            --cream-soft:#fbf7f2;
+            --white:#ffffff;
+            --ink:#171414;
+            --muted:#756b67;
+            --muted-2:#9a8f89;
+            --line:rgba(15,61,58,.11);
+            --line-dark:rgba(255,255,255,.11);
+            --success:#1d6a57;
+            --warning:#9a6515;
+            --danger:#8d2630;
+            --shadow:0 18px 50px rgba(15,61,58,.08);
+            --radius:22px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
         }
 
-        body {
-            min-height: 100vh;
-            background: #fbf7f2;
-            color: var(--dark);
-            font-family: Inter, Arial, sans-serif;
+        html{
+            scroll-behavior:smooth;
         }
 
-        a {
-            text-decoration: none;
-            color: inherit;
+        body{
+            min-height:100vh;
+            background:var(--cream-soft);
+            color:var(--ink);
+            font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        }
+
+        body.modal-open{
+            overflow:hidden;
+        }
+
+        a{
+            color:inherit;
+            text-decoration:none;
         }
 
         button,
-        input {
-            font: inherit;
+        input{
+            font:inherit;
         }
 
-        .topbar {
-            height: 74px;
-            background: var(--green);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
+        button{
+            cursor:pointer;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 11px;
+        .hidden{
+            display:none !important;
         }
 
-        .mark {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: var(--cream);
-            color: var(--green);
-            display: grid;
-            place-items: center;
-            font-weight: 900;
+        /* =========================================================
+           APP
+           ========================================================= */
+
+        .app{
+            min-height:100vh;
+            display:flex;
         }
 
-        .back {
-            font-size: 12px;
-            font-weight: 700;
-            color: rgba(255,255,255,.8);
+        /* =========================================================
+           SIDEBAR
+           ========================================================= */
+
+        .sidebar{
+            width:250px;
+            min-height:100vh;
+            position:sticky;
+            top:0;
+            align-self:flex-start;
+            background:var(--green);
+            color:var(--white);
+            padding:22px 16px;
+            display:flex;
+            flex-direction:column;
+            z-index:40;
         }
 
-        .content {
-            width: min(1100px, calc(100% - 28px));
-            margin: auto;
-            padding: 45px 0 70px;
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:11px;
+            padding:8px 10px 22px;
+            border-bottom:1px solid var(--line-dark);
         }
 
-        .heading {
-            margin-bottom: 28px;
+        .brand-mark{
+            width:42px;
+            height:42px;
+            border-radius:13px;
+            background:var(--cream);
+            color:var(--green);
+            display:grid;
+            place-items:center;
+            font-size:17px;
+            font-weight:950;
+            letter-spacing:-.04em;
+            flex:0 0 auto;
         }
 
-        .heading h1 {
-            color: var(--green);
-            font-family: Georgia, serif;
-            font-size: clamp(31px, 5vw, 45px);
+        .brand-copy{
+            min-width:0;
         }
 
-        .heading p {
-            color: var(--muted);
-            margin-top: 7px;
+        .brand-copy strong{
+            display:block;
+            font-size:14px;
+            letter-spacing:.05em;
         }
 
-        .toolbar {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+        .brand-copy span{
+            display:block;
+            margin-top:2px;
+            color:rgba(255,255,255,.61);
+            font-size:10px;
+            letter-spacing:.08em;
+            text-transform:uppercase;
         }
 
-        .search {
-            min-width: min(100%, 360px);
+        .nav-label{
+            margin:24px 10px 9px;
+            color:rgba(255,255,255,.39);
+            font-size:9px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.14em;
         }
 
-        .search input {
-            width: 100%;
-            border: 1px solid var(--border);
-            background: white;
-            border-radius: 13px;
-            padding: 13px 15px;
-            outline: none;
+        .nav{
+            display:grid;
+            gap:4px;
         }
 
-        .search input:focus {
-            border-color: var(--green);
+        .nav-link{
+            min-height:42px;
+            display:flex;
+            align-items:center;
+            gap:11px;
+            padding:10px 12px;
+            border-radius:12px;
+            color:rgba(255,255,255,.76);
+            font-size:12px;
+            font-weight:750;
+            transition:
+                background .2s ease,
+                color .2s ease,
+                transform .2s ease;
         }
 
-        .filters {
-            display: flex;
-            gap: 7px;
+        .nav-link:hover{
+            background:rgba(255,255,255,.07);
+            color:var(--white);
+            transform:translateX(2px);
         }
 
-        .filter {
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--green);
-            border-radius: 11px;
-            padding: 10px 14px;
-            font-size: 12px;
-            font-weight: 800;
+        .nav-link.active{
+            background:rgba(245,218,191,.13);
+            color:var(--cream);
         }
 
-        .filter.active {
-            background: var(--green);
-            color: white;
+        .nav-icon{
+            width:22px;
+            text-align:center;
+            font-size:15px;
+            flex:0 0 auto;
         }
 
-        .orders {
-            display: grid;
-            gap: 13px;
+        .sidebar-footer{
+            margin-top:auto;
+            padding:17px 10px 4px;
+            border-top:1px solid var(--line-dark);
         }
 
-        .order {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 19px;
-            padding: 21px;
-            display: grid;
-            grid-template-columns: minmax(0,1fr) auto auto;
-            gap: 20px;
-            align-items: center;
-            box-shadow: 0 12px 35px rgba(15,61,58,.06);
+        .sidebar-footer p{
+            color:rgba(255,255,255,.43);
+            font-size:10px;
+            line-height:1.6;
         }
 
-        .order-title {
-            color: var(--green);
-            font-weight: 900;
+        /* =========================================================
+           MAIN
+           ========================================================= */
+
+        .main{
+            min-width:0;
+            flex:1;
         }
 
-        .order-id {
-            margin-top: 5px;
-            color: var(--muted);
-            font-family: monospace;
-            font-size: 11px;
-            word-break: break-all;
+        .topbar{
+            min-height:78px;
+            position:sticky;
+            top:0;
+            z-index:30;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:18px;
+            padding:0 30px;
+            background:rgba(251,247,242,.92);
+            border-bottom:1px solid var(--line);
+            backdrop-filter:blur(16px);
         }
 
-        .order-date {
-            color: var(--muted);
-            font-size: 12px;
+        .topbar-left{
+            display:flex;
+            align-items:center;
+            gap:13px;
+            min-width:0;
         }
 
-        .order-status {
-            padding: 8px 11px;
-            border-radius: 50px;
-            background: #e8f2ef;
-            color: var(--green);
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
+        .mobile-menu{
+            width:40px;
+            height:40px;
+            border:1px solid var(--line);
+            border-radius:12px;
+            background:var(--white);
+            color:var(--green);
+            display:none;
+            place-items:center;
+            font-size:17px;
+            font-weight:900;
         }
 
-        .order-status.failed,
-        .order-status.cancelled,
-        .order-status.refunded {
-            background: #f5e3e4;
-            color: var(--bordo);
+        .page-heading h1{
+            color:var(--green);
+            font-family:Georgia,"Times New Roman",serif;
+            font-size:clamp(24px,3vw,32px);
+            letter-spacing:-.025em;
         }
 
-        .view {
-            background: var(--cream);
-            color: var(--green);
-            border-radius: 10px;
-            padding: 9px 12px;
-            font-size: 11px;
-            font-weight: 900;
+        .page-heading p{
+            margin-top:3px;
+            color:var(--muted);
+            font-size:11px;
         }
 
-        .state {
-            padding: 55px 20px;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            text-align: center;
+        .topbar-actions{
+            display:flex;
+            align-items:center;
+            gap:9px;
         }
 
-        .state h2 {
-            color: var(--green);
-            font-family: Georgia, serif;
+        .icon-btn{
+            position:relative;
+            width:41px;
+            height:41px;
+            border:1px solid var(--line);
+            border-radius:12px;
+            background:var(--white);
+            color:var(--green);
+            display:grid;
+            place-items:center;
+            font-size:17px;
+            transition:
+                transform .2s ease,
+                border-color .2s ease,
+                background .2s ease;
         }
 
-        .state p {
-            color: var(--muted);
-            line-height: 1.6;
-            margin: 8px auto 20px;
+        .icon-btn:hover{
+            transform:translateY(-1px);
+            border-color:rgba(15,61,58,.2);
+            background:#fffdfa;
         }
 
-        .loader {
-            width: 36px;
-            height: 36px;
-            border: 3px solid rgba(15,61,58,.12);
-            border-top-color: var(--green);
-            border-radius: 50%;
-            animation: spin .8s linear infinite;
-            margin: 0 auto 16px;
+        .notification-dot{
+            width:7px;
+            height:7px;
+            position:absolute;
+            top:7px;
+            right:7px;
+            border-radius:50%;
+            background:var(--bordo);
+            box-shadow:0 0 0 3px var(--white);
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        .account-chip{
+            display:flex;
+            align-items:center;
+            gap:9px;
+            padding-left:8px;
+        }
+
+        .account-avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            background:var(--green);
+            color:var(--cream);
+            display:grid;
+            place-items:center;
+            font-size:11px;
+            font-weight:950;
+        }
+
+        .account-meta{
+            min-width:0;
+        }
+
+        .account-meta strong{
+            display:block;
+            max-width:150px;
+            color:var(--green);
+            font-size:11px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .account-meta span{
+            display:block;
+            margin-top:2px;
+            color:var(--muted);
+            font-size:9px;
+        }
+
+        /* =========================================================
+           CONTENT
+           ========================================================= */
+
+        .content{
+            width:min(1180px,calc(100% - 44px));
+            margin:0 auto;
+            padding:36px 0 70px;
+        }
+
+        .intro-row{
+            display:flex;
+            align-items:flex-end;
+            justify-content:space-between;
+            gap:20px;
+            margin-bottom:24px;
+        }
+
+        .intro-copy h2{
+            color:var(--green);
+            font-family:Georgia,"Times New Roman",serif;
+            font-size:clamp(26px,4vw,38px);
+            letter-spacing:-.03em;
+        }
+
+        .intro-copy p{
+            max-width:680px;
+            margin-top:7px;
+            color:var(--muted);
+            font-size:12px;
+            line-height:1.7;
+        }
+
+        .refresh-button{
+            min-height:42px;
+            padding:0 14px;
+            border:1px solid var(--line);
+            border-radius:12px;
+            background:var(--white);
+            color:var(--green);
+            font-size:11px;
+            font-weight:900;
+            transition:
+                transform .2s ease,
+                border-color .2s ease,
+                background .2s ease;
+        }
+
+        .refresh-button:hover{
+            transform:translateY(-1px);
+            border-color:rgba(15,61,58,.2);
+            background:#fffdfa;
+        }
+
+        /* =========================================================
+           STATS
+           ========================================================= */
+
+        .stats{
+            display:grid;
+            grid-template-columns:repeat(4,minmax(0,1fr));
+            gap:12px;
+            margin-bottom:18px;
+        }
+
+        .stat-card{
+            padding:17px;
+            border:1px solid var(--line);
+            border-radius:17px;
+            background:var(--white);
+            box-shadow:0 10px 30px rgba(15,61,58,.035);
+        }
+
+        .stat-label{
+            color:var(--muted);
+            font-size:10px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+        }
+
+        .stat-value{
+            margin-top:9px;
+            color:var(--green);
+            font-size:25px;
+            font-weight:950;
+            letter-spacing:-.03em;
+        }
+
+        /* =========================================================
+           TOOLBAR
+           ========================================================= */
+
+        .toolbar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:14px;
+            flex-wrap:wrap;
+            margin-bottom:14px;
+        }
+
+        .search-wrap{
+            position:relative;
+            flex:1 1 280px;
+            max-width:430px;
+        }
+
+        .search-icon{
+            position:absolute;
+            top:50%;
+            left:13px;
+            transform:translateY(-50%);
+            color:var(--muted-2);
+            font-size:13px;
+            pointer-events:none;
+        }
+
+        .search-input{
+            width:100%;
+            min-height:44px;
+            padding:0 14px 0 37px;
+            border:1px solid var(--line);
+            border-radius:13px;
+            outline:none;
+            background:var(--white);
+            color:var(--ink);
+            font-size:12px;
+            transition:border-color .2s ease,box-shadow .2s ease;
+        }
+
+        .search-input::placeholder{
+            color:#aaa09a;
+        }
+
+        .search-input:focus{
+            border-color:rgba(15,61,58,.28);
+            box-shadow:0 0 0 4px rgba(15,61,58,.05);
+        }
+
+        .filters{
+            display:flex;
+            align-items:center;
+            gap:7px;
+            overflow-x:auto;
+            scrollbar-width:none;
+        }
+
+        .filters::-webkit-scrollbar{
+            display:none;
+        }
+
+        .filter-button{
+            flex:0 0 auto;
+            min-height:39px;
+            padding:0 13px;
+            border:1px solid var(--line);
+            border-radius:11px;
+            background:var(--white);
+            color:var(--green);
+            font-size:10px;
+            font-weight:900;
+            white-space:nowrap;
+            transition:
+                background .2s ease,
+                color .2s ease,
+                border-color .2s ease;
+        }
+
+        .filter-button:hover{
+            border-color:rgba(15,61,58,.2);
+        }
+
+        .filter-button.active{
+            background:var(--green);
+            border-color:var(--green);
+            color:var(--white);
+        }
+
+        .result-meta{
+            margin-bottom:11px;
+            color:var(--muted);
+            font-size:10px;
+        }
+
+        /* =========================================================
+           ORDERS
+           ========================================================= */
+
+        .orders{
+            display:grid;
+            gap:12px;
+        }
+
+        .order-card{
+            border:1px solid var(--line);
+            border-radius:20px;
+            background:var(--white);
+            box-shadow:0 12px 36px rgba(15,61,58,.05);
+            overflow:hidden;
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                border-color .2s ease;
+        }
+
+        .order-card:hover{
+            transform:translateY(-2px);
+            box-shadow:var(--shadow);
+            border-color:rgba(15,61,58,.17);
+        }
+
+        .order-main{
+            display:grid;
+            grid-template-columns:minmax(0,1fr) auto auto auto;
+            align-items:center;
+            gap:18px;
+            padding:20px;
+        }
+
+        .order-event{
+            min-width:0;
+        }
+
+        .event-kicker{
+            display:flex;
+            align-items:center;
+            gap:7px;
+            margin-bottom:5px;
+            color:var(--muted);
+            font-size:9px;
+            font-weight:900;
+            letter-spacing:.09em;
+            text-transform:uppercase;
+        }
+
+        .event-kicker .dot{
+            width:5px;
+            height:5px;
+            border-radius:50%;
+            background:var(--bordo);
+        }
+
+        .order-title{
+            color:var(--green);
+            font-size:14px;
+            font-weight:950;
+            line-height:1.35;
+            word-break:break-word;
+        }
+
+        .order-number{
+            margin-top:5px;
+            color:var(--muted);
+            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+            font-size:10px;
+            word-break:break-all;
+        }
+
+        .order-date{
+            margin-top:6px;
+            color:var(--muted-2);
+            font-size:10px;
+        }
+
+        .order-column{
+            min-width:90px;
+        }
+
+        .column-label{
+            color:var(--muted-2);
+            font-size:8px;
+            font-weight:900;
+            letter-spacing:.09em;
+            text-transform:uppercase;
+        }
+
+        .column-value{
+            margin-top:5px;
+            color:var(--ink);
+            font-size:12px;
+            font-weight:850;
+            white-space:nowrap;
+        }
+
+        .column-value.money{
+            color:var(--green);
+            font-size:13px;
+        }
+
+        .status-badge{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-height:29px;
+            padding:0 10px;
+            border-radius:999px;
+            background:#e9f3ef;
+            color:var(--success);
+            font-size:9px;
+            font-weight:950;
+            text-transform:uppercase;
+            letter-spacing:.06em;
+            white-space:nowrap;
+        }
+
+        .status-badge.pending{
+            background:#f8f0df;
+            color:var(--warning);
+        }
+
+        .status-badge.failed,
+        .status-badge.cancelled,
+        .status-badge.canceled,
+        .status-badge.refunded{
+            background:#f6e5e6;
+            color:var(--danger);
+        }
+
+        .status-badge.processing{
+            background:#eaf0f3;
+            color:#31566a;
+        }
+
+        .view-button{
+            min-height:38px;
+            padding:0 12px;
+            border:0;
+            border-radius:10px;
+            background:var(--cream);
+            color:var(--green);
+            font-size:10px;
+            font-weight:950;
+            white-space:nowrap;
+            transition:
+                transform .2s ease,
+                filter .2s ease;
+        }
+
+        .view-button:hover{
+            transform:translateY(-1px);
+            filter:brightness(.98);
+        }
+
+        .order-footer{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            padding:11px 20px;
+            border-top:1px solid rgba(15,61,58,.07);
+            background:#fffcf8;
+        }
+
+        .footer-info{
+            color:var(--muted);
+            font-size:9px;
+        }
+
+        .footer-link{
+            color:var(--green);
+            font-size:9px;
+            font-weight:900;
+        }
+
+        /* =========================================================
+           STATES
+           ========================================================= */
+
+        .state{
+            padding:58px 24px;
+            border:1px solid var(--line);
+            border-radius:21px;
+            background:var(--white);
+            text-align:center;
+            box-shadow:0 12px 35px rgba(15,61,58,.045);
+        }
+
+        .state-icon{
+            width:54px;
+            height:54px;
+            margin:0 auto 14px;
+            border-radius:17px;
+            display:grid;
+            place-items:center;
+            background:#edf2ef;
+            color:var(--green);
+            font-size:21px;
+            font-weight:950;
+        }
+
+        .state h3{
+            color:var(--green);
+            font-family:Georgia,"Times New Roman",serif;
+            font-size:23px;
+        }
+
+        .state p{
+            max-width:510px;
+            margin:8px auto 20px;
+            color:var(--muted);
+            font-size:11px;
+            line-height:1.7;
+        }
+
+        .state-action{
+            min-height:42px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:0 15px;
+            border-radius:11px;
+            background:var(--green);
+            color:var(--white);
+            font-size:10px;
+            font-weight:900;
+        }
+
+        .loader{
+            width:38px;
+            height:38px;
+            margin:0 auto 16px;
+            border:3px solid rgba(15,61,58,.1);
+            border-top-color:var(--green);
+            border-radius:50%;
+            animation:spin .8s linear infinite;
+        }
+
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
             }
         }
 
-        .hidden {
-            display: none !important;
+        /* =========================================================
+           DRAWER / MODAL
+           ========================================================= */
+
+        .modal{
+            position:fixed;
+            inset:0;
+            z-index:100;
+            display:flex;
+            align-items:stretch;
+            justify-content:flex-end;
+            background:rgba(16,19,18,.34);
+            backdrop-filter:blur(5px);
         }
 
-        @media (max-width: 700px) {
-
-            .order {
-                grid-template-columns: 1fr auto;
-            }
-
-            .order-date {
-                display: none;
-            }
+        .modal-panel{
+            width:min(590px,100%);
+            height:100%;
+            overflow:auto;
+            background:#fffdfa;
+            box-shadow:-24px 0 70px rgba(0,0,0,.18);
+            animation:slideIn .25s ease;
         }
 
-        @media (max-width: 500px) {
-
-            .topbar {
-                padding: 0 16px;
+        @keyframes slideIn{
+            from{
+                transform:translateX(25px);
+                opacity:.4;
             }
-
-            .content {
-                width: min(100% - 18px, 1100px);
-                padding-top: 30px;
-            }
-
-            .toolbar {
-                display: grid;
-            }
-
-            .search {
-                min-width: 100%;
-            }
-
-            .filters {
-                width: 100%;
-            }
-
-            .filter {
-                flex: 1;
-            }
-
-            .order {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .view {
-                text-align: center;
+            to{
+                transform:translateX(0);
+                opacity:1;
             }
         }
 
+        .modal-header{
+            position:sticky;
+            top:0;
+            z-index:2;
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:15px;
+            padding:20px 22px;
+            background:rgba(255,253,250,.94);
+            border-bottom:1px solid var(--line);
+            backdrop-filter:blur(14px);
+        }
+
+        .modal-eyebrow{
+            color:var(--bordo);
+            font-size:9px;
+            font-weight:950;
+            text-transform:uppercase;
+            letter-spacing:.12em;
+        }
+
+        .modal-title{
+            margin-top:5px;
+            color:var(--green);
+            font-family:Georgia,"Times New Roman",serif;
+            font-size:25px;
+            line-height:1.2;
+        }
+
+        .close-modal{
+            width:37px;
+            height:37px;
+            flex:0 0 auto;
+            border:1px solid var(--line);
+            border-radius:11px;
+            background:var(--white);
+            color:var(--green);
+            font-size:16px;
+            font-weight:900;
+        }
+
+        .modal-body{
+            padding:22px;
+        }
+
+        .modal-status-row{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-bottom:18px;
+        }
+
+        .modal-order-number{
+            color:var(--muted);
+            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+            font-size:10px;
+            word-break:break-all;
+        }
+
+        .detail-grid{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:10px;
+            margin-bottom:18px;
+        }
+
+        .detail-card{
+            padding:14px;
+            border:1px solid var(--line);
+            border-radius:15px;
+            background:var(--white);
+        }
+
+        .detail-card-label{
+            color:var(--muted-2);
+            font-size:8px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.09em;
+        }
+
+        .detail-card-value{
+            margin-top:5px;
+            color:var(--green);
+            font-size:12px;
+            font-weight:900;
+            line-height:1.45;
+            word-break:break-word;
+        }
+
+        .section-card{
+            margin-bottom:14px;
+            padding:16px;
+            border:1px solid var(--line);
+            border-radius:17px;
+            background:var(--white);
+        }
+
+        .section-card h4{
+            margin-bottom:12px;
+            color:var(--green);
+            font-size:11px;
+            font-weight:950;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+        }
+
+        .summary-row{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:16px;
+            padding:9px 0;
+            border-bottom:1px solid rgba(15,61,58,.07);
+        }
+
+        .summary-row:last-child{
+            border-bottom:0;
+            padding-bottom:0;
+        }
+
+        .summary-row:first-child{
+            padding-top:0;
+        }
+
+        .summary-row span{
+            color:var(--muted);
+            font-size:10px;
+        }
+
+        .summary-row strong{
+            color:var(--ink);
+            font-size:11px;
+            text-align:right;
+        }
+
+        .summary-row.total{
+            margin-top:3px;
+            padding-top:12px;
+            border-top:1px solid rgba(15,61,58,.1);
+            border-bottom:0;
+        }
+
+        .summary-row.total span,
+        .summary-row.total strong{
+            color:var(--green);
+            font-size:13px;
+            font-weight:950;
+        }
+
+        .payment-record{
+            display:grid;
+            gap:9px;
+        }
+
+        .payment-line{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:16px;
+        }
+
+        .payment-line span{
+            color:var(--muted);
+            font-size:9px;
+        }
+
+        .payment-line strong{
+            max-width:62%;
+            color:var(--ink);
+            font-size:10px;
+            text-align:right;
+            word-break:break-word;
+        }
+
+        .ticket-mini-list{
+            display:grid;
+            gap:8px;
+        }
+
+        .ticket-mini{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            padding:10px 11px;
+            border:1px solid rgba(15,61,58,.08);
+            border-radius:12px;
+            background:#fffcf8;
+        }
+
+        .ticket-mini-code{
+            color:var(--green);
+            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+            font-size:9px;
+            word-break:break-all;
+        }
+
+        .ticket-mini-status{
+            flex:0 0 auto;
+            color:var(--muted);
+            font-size:8px;
+            font-weight:900;
+            text-transform:uppercase;
+        }
+
+        .modal-actions{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:9px;
+            margin-top:18px;
+        }
+
+        .primary-action,
+        .secondary-action{
+            min-height:44px;
+            border-radius:12px;
+            font-size:10px;
+            font-weight:950;
+        }
+
+        .primary-action{
+            border:0;
+            background:var(--green);
+            color:var(--white);
+        }
+
+        .secondary-action{
+            border:1px solid var(--line);
+            background:var(--white);
+            color:var(--green);
+        }
+
+        .primary-action:disabled{
+            opacity:.5;
+            cursor:not-allowed;
+        }
+
+        /* =========================================================
+           TOAST
+           ========================================================= */
+
+        .toast{
+            position:fixed;
+            left:50%;
+            bottom:22px;
+            z-index:200;
+            max-width:min(92vw,480px);
+            padding:12px 15px;
+            transform:translate(-50%,20px);
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:12px;
+            background:var(--green);
+            color:var(--white);
+            box-shadow:0 15px 50px rgba(0,0,0,.18);
+            font-size:10px;
+            font-weight:800;
+            opacity:0;
+            pointer-events:none;
+            transition:
+                opacity .22s ease,
+                transform .22s ease;
+        }
+
+        .toast.show{
+            opacity:1;
+            transform:translate(-50%,0);
+        }
+
+        .toast.error{
+            background:var(--bordo);
+        }
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width:1050px){
+
+            .sidebar{
+                width:220px;
+            }
+
+            .order-main{
+                grid-template-columns:minmax(0,1fr) auto auto;
+            }
+
+            .order-card .order-column:nth-of-type(2){
+                display:none;
+            }
+
+            .stats{
+                grid-template-columns:repeat(2,minmax(0,1fr));
+            }
+        }
+
+        @media (max-width:800px){
+
+            .sidebar{
+                width:230px;
+                position:fixed;
+                left:0;
+                top:0;
+                transform:translateX(-102%);
+                transition:transform .25s ease;
+                box-shadow:18px 0 50px rgba(0,0,0,.18);
+            }
+
+            .sidebar.open{
+                transform:translateX(0);
+            }
+
+            .sidebar::after{
+                content:"";
+                position:fixed;
+                inset:0;
+                left:230px;
+                background:rgba(0,0,0,.3);
+                display:none;
+            }
+
+            .sidebar.open::after{
+                display:block;
+            }
+
+            .mobile-menu{
+                display:grid;
+            }
+
+            .topbar{
+                padding:0 20px;
+            }
+
+            .content{
+                width:min(100% - 28px,1180px);
+            }
+        }
+
+        @media (max-width:700px){
+
+            .account-meta{
+                display:none;
+            }
+
+            .intro-row{
+                align-items:flex-start;
+                flex-direction:column;
+            }
+
+            .refresh-button{
+                width:100%;
+            }
+
+            .order-main{
+                grid-template-columns:minmax(0,1fr) auto;
+                gap:13px;
+            }
+
+            .order-card .order-column:nth-of-type(1){
+                display:none;
+            }
+
+            .order-footer{
+                align-items:flex-start;
+                flex-direction:column;
+            }
+        }
+
+        @media (max-width:520px){
+
+            .topbar{
+                min-height:68px;
+                padding:0 14px;
+            }
+
+            .page-heading h1{
+                font-size:24px;
+            }
+
+            .content{
+                width:calc(100% - 18px);
+                padding-top:25px;
+            }
+
+            .stats{
+                grid-template-columns:1fr 1fr;
+                gap:9px;
+            }
+
+            .stat-card{
+                padding:14px;
+            }
+
+            .stat-value{
+                font-size:21px;
+            }
+
+            .toolbar{
+                display:grid;
+            }
+
+            .search-wrap{
+                max-width:none;
+            }
+
+            .filters{
+                width:100%;
+            }
+
+            .order-main{
+                grid-template-columns:1fr;
+            }
+
+            .order-main .view-button{
+                width:100%;
+            }
+
+            .detail-grid{
+                grid-template-columns:1fr;
+            }
+
+            .modal-body{
+                padding:16px;
+            }
+
+            .modal-header{
+                padding:16px;
+            }
+
+            .modal-actions{
+                grid-template-columns:1fr;
+            }
+        }
     </style>
-
 </head>
 
 <body>
 
-<header class="topbar">
+<div class="app">
 
-    <div class="brand">
+    <!-- =========================================================
+         SIDEBAR
+         ========================================================= -->
 
-        <div class="mark">
-            K
-        </div>
-
-        <strong>
-            K-Tickets
-        </strong>
-
-    </div>
-
-    <a
-        href="dashboard.html"
-        class="back"
+    <aside
+        class="sidebar"
+        id="sidebar"
     >
-        ← Dashboard
-    </a>
-
-</header>
-
-<main class="content">
-
-    <section class="heading">
-
-        <h1>
-            My Orders
-        </h1>
-
-        <p>
-            View purchases and payment records connected
-            to your account.
-        </p>
-
-    </section>
-
-    <div class="toolbar">
-
-        <div class="search">
-
-            <input
-                id="search"
-                type="search"
-                placeholder="Search orders..."
-                autocomplete="off"
-            >
-
-        </div>
-
-        <div class="filters">
-
-            <button
-                class="filter active"
-                data-filter="all"
-            >
-                All
-            </button>
-
-            <button
-                class="filter"
-                data-filter="paid"
-            >
-                Paid
-            </button>
-
-            <button
-                class="filter"
-                data-filter="pending"
-            >
-                Pending
-            </button>
-
-        </div>
-
-    </div>
-
-    <div
-        class="state"
-        id="loading"
-    >
-
-        <div class="loader"></div>
-
-        <h2>
-            Loading orders
-        </h2>
-
-        <p>
-            Retrieving your account records.
-        </p>
-
-    </div>
-
-    <div
-        class="state hidden"
-        id="empty"
-    >
-
-        <h2>
-            No orders yet
-        </h2>
-
-        <p>
-            Your completed and pending purchases
-            will appear here.
-        </p>
 
         <a
-            href="events.html"
-            style="
-                display:inline-block;
-                background:#0F3D3A;
-                color:white;
-                padding:12px 16px;
-                border-radius:12px;
-                font-weight:800;
-                font-size:12px;
-            "
+            href="../index.html"
+            class="brand"
         >
-            Browse Events
+
+            <div class="brand-mark">
+                K
+            </div>
+
+            <div class="brand-copy">
+                <strong>K-Tickets</strong>
+                <span>Customer</span>
+            </div>
+
         </a>
 
-    </div>
+        <div class="nav-label">
+            Menu
+        </div>
 
-    <div
-        class="state hidden"
-        id="noResults"
-    >
+        <nav class="nav">
 
-        <h2>
-            No matching orders
-        </h2>
+            <a
+                href="dashboard.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
 
-        <p>
-            Try another search or status filter.
-        </p>
+            <a
+                href="events.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">◫</span>
+                Discover Events
+            </a>
 
-    </div>
+            <a
+                href="my-tickets.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">▣</span>
+                My Tickets
+            </a>
 
-    <div
-        class="orders hidden"
-        id="orders"
-    ></div>
+            <a
+                href="orders.html"
+                class="nav-link active"
+            >
+                <span class="nav-icon">▤</span>
+                My Orders
+            </a>
 
-</main>
+            <a
+                href="notifications.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">◇</span>
+                Notifications
+            </a>
+
+            <div class="nav-label">
+                Account
+            </div>
+
+            <a
+                href="profile.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">◎</span>
+                Profile
+            </a>
+
+            <a
+                href="#"
+                class="nav-link"
+                id="logoutLink"
+            >
+                <span class="nav-icon">↪</span>
+                Sign Out
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <p>
+                Your order history is loaded from your authenticated K-Tickets account.
+            </p>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================================================
+         MAIN
+         ========================================================= -->
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    type="button"
+                    class="mobile-menu"
+                    id="mobileMenu"
+                    aria-label="Open menu"
+                >
+                    ☰
+                </button>
+
+                <div class="page-heading">
+
+                    <h1>
+                        My Orders
+                    </h1>
+
+                    <p>
+                        Purchases, payment status and order history
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+                <button
+                    type="button"
+                    class="icon-btn"
+                    id="notificationButton"
+                    aria-label="Open notifications"
+                    title="Notifications"
+                >
+
+                    ◇
+
+                    <span
+                        class="notification-dot hidden"
+                        id="notificationDot"
+                    ></span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="icon-btn"
+                    id="refreshButton"
+                    aria-label="Refresh orders"
+                    title="Refresh"
+                >
+                    ↻
+                </button>
+
+
+                <div class="account-chip">
+
+                    <div
+                        class="account-avatar"
+                        id="accountAvatar"
+                    >
+                        K
+                    </div>
+
+                    <div class="account-meta">
+
+                        <strong id="accountName">
+                            Customer
+                        </strong>
+
+                        <span>
+                            K-Tickets account
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             CONTENT
+             ===================================================== -->
+
+        <section class="content">
+
+            <div class="intro-row">
+
+                <div class="intro-copy">
+
+                    <h2>
+                        Order history
+                    </h2>
+
+                    <p>
+                        Review your ticket purchases, payment records,
+                        totals and ticket activity directly from your account.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="refresh-button"
+                    id="refreshButtonMain"
+                >
+                    ↻ Refresh orders
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 STATS
+                 ================================================= -->
+
+            <section class="stats">
+
+                <article class="stat-card">
+
+                    <div class="stat-label">
+                        Total Orders
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statTotal"
+                    >
+                        —
+                    </div>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <div class="stat-label">
+                        Paid
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statPaid"
+                    >
+                        —
+                    </div>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <div class="stat-label">
+                        Pending
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statPending"
+                    >
+                        —
+                    </div>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <div class="stat-label">
+                        Failed / Closed
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statClosed"
+                    >
+                        —
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- =================================================
+                 TOOLBAR
+                 ================================================= -->
+
+            <div class="toolbar">
+
+                <div class="search-wrap">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        id="searchInput"
+                        class="search-input"
+                        type="search"
+                        placeholder="Search by event, order number or payment reference..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+
+                </div>
+
+
+                <div class="filters">
+
+                    <button
+                        type="button"
+                        class="filter-button active"
+                        data-filter="all"
+                    >
+                        All
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-button"
+                        data-filter="paid"
+                    >
+                        Paid
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-button"
+                        data-filter="pending"
+                    >
+                        Pending
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-button"
+                        data-filter="failed"
+                    >
+                        Failed
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-button"
+                        data-filter="refunded"
+                    >
+                        Refunded
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="result-meta"
+                id="resultMeta"
+            >
+                Loading orders...
+            </div>
+
+
+            <!-- =================================================
+                 LOADING
+                 ================================================= -->
+
+            <section
+                class="state"
+                id="loadingState"
+            >
+
+                <div class="loader"></div>
+
+                <h3>
+                    Loading your orders
+                </h3>
+
+                <p>
+                    Retrieving your authenticated purchase history from K-Tickets.
+                </p>
+
+            </section>
+
+
+            <!-- =================================================
+                 EMPTY
+                 ================================================= -->
+
+            <section
+                class="state hidden"
+                id="emptyState"
+            >
+
+                <div class="state-icon">
+                    ▤
+                </div>
+
+                <h3>
+                    No orders yet
+                </h3>
+
+                <p>
+                    Your K-Tickets purchases will appear here after an order
+                    has been created from your account.
+                </p>
+
+                <a
+                    href="events.html"
+                    class="state-action"
+                >
+                    Browse Events
+                </a>
+
+            </section>
+
+
+            <!-- =================================================
+                 NO RESULTS
+                 ================================================= -->
+
+            <section
+                class="state hidden"
+                id="noResultsState"
+            >
+
+                <div class="state-icon">
+                    ⌕
+                </div>
+
+                <h3>
+                    No matching orders
+                </h3>
+
+                <p>
+                    No order in your account matches the current search or status filter.
+                </p>
+
+            </section>
+
+
+            <!-- =================================================
+                 ORDERS
+                 ================================================= -->
+
+            <section
+                class="orders hidden"
+                id="ordersList"
+            ></section>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =============================================================
+     ORDER DETAIL MODAL
+     ============================================================= -->
+
+<div
+    class="modal hidden"
+    id="orderModal"
+    aria-hidden="true"
+>
+
+    <aside class="modal-panel">
+
+        <header class="modal-header">
+
+            <div>
+
+                <div
+                    class="modal-eyebrow"
+                    id="modalEyebrow"
+                >
+                    Order details
+                </div>
+
+                <h2
+                    class="modal-title"
+                    id="modalTitle"
+                >
+                    Order
+                </h2>
+
+            </div>
+
+            <button
+                type="button"
+                class="close-modal"
+                id="closeModal"
+                aria-label="Close order details"
+            >
+                ×
+            </button>
+
+        </header>
+
+
+        <div class="modal-body">
+
+            <div class="modal-status-row">
+
+                <div
+                    class="modal-order-number"
+                    id="modalOrderNumber"
+                >
+                    —
+                </div>
+
+                <span
+                    class="status-badge"
+                    id="modalStatus"
+                >
+                    —
+                </span>
+
+            </div>
+
+
+            <!-- =============================================
+                 CORE DETAILS
+                 ============================================= -->
+
+            <div class="detail-grid">
+
+                <div class="detail-card">
+
+                    <div class="detail-card-label">
+                        Created
+                    </div>
+
+                    <div
+                        class="detail-card-value"
+                        id="detailCreated"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail-card">
+
+                    <div class="detail-card-label">
+                        Payment completed
+                    </div>
+
+                    <div
+                        class="detail-card-value"
+                        id="detailPaidAt"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail-card">
+
+                    <div class="detail-card-label">
+                        Event
+                    </div>
+
+                    <div
+                        class="detail-card-value"
+                        id="detailEventDate"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail-card">
+
+                    <div class="detail-card-label">
+                        Tickets
+                    </div>
+
+                    <div
+                        class="detail-card-value"
+                        id="detailTicketCount"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 ORDER TOTAL
+                 ============================================= -->
+
+            <section class="section-card">
+
+                <h4>
+                    Order Summary
+                </h4>
+
+                <div class="summary-row">
+
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <strong id="detailSubtotal">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Service fee
+                    </span>
+
+                    <strong id="detailServiceFee">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div
+                    class="summary-row hidden"
+                    id="discountRow"
+                >
+
+                    <span>
+                        Discount
+                    </span>
+
+                    <strong id="detailDiscount">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong id="detailTotal">
+                        —
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 PAYMENT
+                 ============================================= -->
+
+            <section
+                class="section-card"
+                id="paymentSection"
+            >
+
+                <h4>
+                    Payment
+                </h4>
+
+                <div
+                    class="payment-record"
+                    id="paymentRecord"
+                >
+
+                    <div class="payment-line">
+                        <span>Status</span>
+                        <strong>—</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 TICKETS
+                 ============================================= -->
+
+            <section
+                class="section-card hidden"
+                id="ticketsSection"
+            >
+
+                <h4>
+                    Issued Tickets
+                </h4>
+
+                <div
+                    class="ticket-mini-list"
+                    id="ticketMiniList"
+                ></div>
+
+            </section>
+
+
+            <!-- =============================================
+                 ACTIONS
+                 ============================================= -->
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="primary-action"
+                    id="primaryModalAction"
+                >
+                    Continue to Payment
+                </button>
+
+                <a
+                    href="my-tickets.html"
+                    class="secondary-action"
+                    id="ticketsModalAction"
+                    style="
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                    "
+                >
+                    My Tickets
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+</div>
+
+
+<!-- =============================================================
+     TOAST
+     ============================================================= -->
+
+<div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+></div>
+
 
 <script>
+/*
+    ================================================================
+    K-TICKETS — CUSTOMER ORDERS
+    ================================================================
 
-    const SUPABASE_URL =
-        window.KTICKETS_SUPABASE_URL || "";
+    SECURITY MODEL
+    ----------------------------------------------------------------
+    • Supabase browser client uses public/publishable credentials only.
+    • No service-role key is exposed here.
+    • No database password is exposed here.
+    • Orders are filtered by the authenticated user's id.
+    • Final authorization remains Supabase Auth + RLS.
+    • Payment finalization is NOT performed by this page.
+    • This page is read-focused.
+    • Continue-to-payment only redirects to the payment UI.
+    • No fake production/customer/order data is generated.
 
-    const SUPABASE_ANON_KEY =
-        window.KTICKETS_SUPABASE_ANON_KEY || "";
+    CONFIRMED TABLES USED
+    ----------------------------------------------------------------
+    orders
+    events
+    payments
+    tickets
+    profiles
+    notifications
 
-    let supabaseClient = null;
+    CONFIRMED ORDER FIELDS USED
+    ----------------------------------------------------------------
+    id
+    order_number
+    user_id
+    event_id
+    status
+    subtotal
+    service_fee_percentage
+    service_fee
+    discount
+    total
+    currency
+    promotion_id
+    created_at
+    updated_at
+    paid_at
 
-    let allOrders = [];
-    let activeFilter = "all";
+    CONFIRMED PAYMENT FIELDS USED
+    ----------------------------------------------------------------
+    id
+    order_id
+    user_id
+    event_id
+    method
+    provider
+    status
+    amount
+    currency
+    reference
+    transaction_id
+    receipt_number
+    provider_transaction_id
+    failure_reason
+    paid_at
+    created_at
+    updated_at
 
-    function initializeSupabase() {
+    CONFIRMED TICKET FIELDS USED
+    ----------------------------------------------------------------
+    id
+    order_id
+    event_id
+    ticket_code
+    status
+    issued_at
+    checked_in_at
+*/
 
-        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-            throw new Error(
-                "Supabase configuration has not been added yet."
-            );
+
+/* ================================================================
+   SUPABASE
+   ================================================================ */
+
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
         }
+    );
 
-        supabaseClient =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_ANON_KEY
-            );
+
+/* ================================================================
+   STATE
+   ================================================================ */
+
+let currentUser = null;
+let currentProfile = null;
+
+let allOrders = [];
+let activeFilter = "all";
+
+let orderEvents = new Map();
+let orderPayments = new Map();
+let orderTickets = new Map();
+
+let currentModalOrderId = null;
+
+let realtimeChannel = null;
+
+let toastTimer = null;
+
+
+/* ================================================================
+   HELPERS
+   ================================================================ */
+
+function $(id){
+    return document.getElementById(id);
+}
+
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+
+function safeText(
+    value,
+    fallback = "—"
+){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return fallback;
     }
 
-    function escapeHtml(value) {
+    const text =
+        String(value).trim();
 
-        return String(value ?? "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
+    return text || fallback;
+}
+
+
+function formatDate(
+    value,
+    fallback = "Date unavailable"
+){
+
+    if(!value){
+        return fallback;
     }
 
-    function formatDate(value) {
+    const date =
+        new Date(value);
 
-        if (!value) {
-            return "Date unavailable";
-        }
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+        return fallback;
+    }
 
-        const date =
-            new Date(value);
-
-        if (Number.isNaN(date.getTime())) {
-            return "Date unavailable";
-        }
+    try{
 
         return new Intl.DateTimeFormat(
             undefined,
             {
-                dateStyle: "medium",
-                timeStyle: "short"
+                dateStyle:"medium",
+                timeStyle:"short"
             }
         ).format(date);
+
+    }catch(error){
+
+        return date.toLocaleString();
+    }
+}
+
+
+function formatEventDate(value){
+
+    if(!value){
+        return "Event date unavailable";
     }
 
-    function formatStatus(value) {
+    const date =
+        new Date(value);
 
-        return String(value || "unknown")
-            .replaceAll("_", " ")
-            .replace(/\b\w/g, c => c.toUpperCase());
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+        return "Event date unavailable";
     }
 
-    async function getUser() {
+    try{
 
-        const {
-            data,
-            error
-        } = await supabaseClient.auth.getUser();
+        return new Intl.DateTimeFormat(
+            undefined,
+            {
+                dateStyle:"medium",
+                timeStyle:"short"
+            }
+        ).format(date);
 
-        if (error) {
-            throw error;
-        }
+    }catch(error){
 
-        if (!data.user) {
+        return date.toLocaleString();
+    }
+}
 
-            window.location.href =
-                "../auth/login.html";
 
-            return null;
-        }
+function formatMoney(
+    amount,
+    currency
+){
 
-        return data.user;
+    const numeric =
+        Number(amount);
+
+    if(
+        !Number.isFinite(numeric)
+    ){
+        return "—";
     }
 
-    async function loadOrders(user) {
+    if(!currency){
+        return numeric.toLocaleString(
+            undefined,
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+    }
 
-        const {
-            data,
-            error
-        } = await supabaseClient
+    try{
+
+        return new Intl.NumberFormat(
+            undefined,
+            {
+                style:"currency",
+                currency:String(currency).toUpperCase(),
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        ).format(numeric);
+
+    }catch(error){
+
+        return `${numeric.toLocaleString(
+            undefined,
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        )} ${currency}`;
+    }
+}
+
+
+function formatStatus(value){
+
+    const normalized =
+        String(
+            value ||
+            "unknown"
+        )
+            .trim()
+            .toLowerCase();
+
+    return normalized
+        .replaceAll("_"," ")
+        .replace(/\b\w/g,letter =>
+            letter.toUpperCase()
+        );
+}
+
+
+function statusClass(value){
+
+    return String(
+        value ||
+        "unknown"
+    )
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g,"_");
+}
+
+
+function isPaidStatus(status){
+
+    return [
+        "paid",
+        "completed",
+        "confirmed"
+    ].includes(
+        String(status || "")
+            .toLowerCase()
+    );
+}
+
+
+function isPendingStatus(status){
+
+    return [
+        "pending",
+        "processing",
+        "payment_pending",
+        "awaiting_payment",
+        "awaiting_verification"
+    ].includes(
+        String(status || "")
+            .toLowerCase()
+    );
+}
+
+
+function isFailedStatus(status){
+
+    return [
+        "failed",
+        "cancelled",
+        "canceled"
+    ].includes(
+        String(status || "")
+            .toLowerCase()
+    );
+}
+
+
+function isRefundedStatus(status){
+
+    return [
+        "refunded"
+    ].includes(
+        String(status || "")
+            .toLowerCase()
+    );
+}
+
+
+function normalizeStatus(value){
+
+    return String(
+        value ||
+        "unknown"
+    )
+        .trim()
+        .toLowerCase();
+}
+
+
+function getInitials(name){
+
+    const value =
+        String(
+            name ||
+            ""
+        ).trim();
+
+    if(!value){
+        return "K";
+    }
+
+    const parts =
+        value
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if(
+        parts.length === 1
+    ){
+
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
+    }
+
+    return (
+        parts[0].charAt(0) +
+        parts[parts.length - 1].charAt(0)
+    ).toUpperCase();
+}
+
+
+function showToast(
+    message,
+    isError = false
+){
+
+    const toast =
+        $("toast");
+
+    clearTimeout(
+        toastTimer
+    );
+
+    toast.textContent =
+        message || "Done";
+
+    toast.classList.toggle(
+        "error",
+        Boolean(isError)
+    );
+
+    toast.classList.add(
+        "show"
+    );
+
+    toastTimer =
+        setTimeout(
+            () => {
+                toast.classList.remove(
+                    "show"
+                );
+            },
+            3200
+        );
+}
+
+
+function setLoading(
+    visible
+){
+
+    $("loadingState")
+        .classList.toggle(
+            "hidden",
+            !visible
+        );
+}
+
+
+function closeSidebar(){
+
+    $("sidebar")
+        .classList.remove(
+            "open"
+        );
+}
+
+
+/* ================================================================
+   AUTHENTICATION
+   ================================================================ */
+
+async function requireAuthenticatedUser(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getUser();
+
+    if(error){
+        throw error;
+    }
+
+    if(!data.user){
+
+        window.location.href =
+            "../login.html";
+
+        return null;
+    }
+
+    return data.user;
+}
+
+
+async function loadProfile(user){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                avatar_url,
+                is_active
+            `)
+            .eq(
+                "id",
+                user.id
+            )
+            .maybeSingle();
+
+    if(error){
+        throw error;
+    }
+
+    if(!data){
+
+        throw new Error(
+            "Your K-Tickets profile could not be loaded."
+        );
+    }
+
+    if(data.is_active === false){
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+            "../login.html";
+
+        return null;
+    }
+
+    currentProfile =
+        data;
+
+    const displayName =
+        safeText(
+            data.full_name,
+            safeText(
+                user.email,
+                "Customer"
+            )
+        );
+
+    $("accountName")
+        .textContent =
+        displayName;
+
+    $("accountAvatar")
+        .textContent =
+        getInitials(displayName);
+
+    return data;
+}
+
+
+/* ================================================================
+   LOAD CORE ORDERS
+   ================================================================ */
+
+async function loadOrders(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
             .from("orders")
             .select(`
                 id,
+                order_number,
                 user_id,
                 event_id,
                 status,
                 subtotal,
+                service_fee_percentage,
                 service_fee,
+                discount,
                 total,
                 currency,
-                created_at
+                promotion_id,
+                created_at,
+                updated_at,
+                paid_at
             `)
-            .eq("user_id", user.id)
-            .order("created_at", {
-                ascending: false
-            });
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
+            .limit(2000);
 
-        if (error) {
-            throw error;
-        }
+    if(error){
+        throw error;
+    }
 
-        const orders =
-            data || [];
+    allOrders =
+        Array.isArray(data)
+            ? data
+            : [];
 
-        const eventIds = [
+    orderEvents =
+        new Map();
+
+    orderPayments =
+        new Map();
+
+    orderTickets =
+        new Map();
+
+    await Promise.all([
+        loadOrderEvents(),
+        loadOrderPayments(),
+        loadOrderTickets()
+    ]);
+
+    updateStats();
+
+    renderOrders();
+}
+
+
+/* ================================================================
+   EVENT ENRICHMENT
+   ================================================================ */
+
+async function loadOrderEvents(){
+
+    const eventIds =
+        [
             ...new Set(
-                orders
-                    .map(order => order.event_id)
+                allOrders
+                    .map(
+                        order =>
+                            order.event_id
+                    )
                     .filter(Boolean)
             )
         ];
 
-        let events = [];
+    if(!eventIds.length){
+        return;
+    }
 
-        if (eventIds.length) {
+    try{
 
-            const response =
-                await supabaseClient
-                    .from("events")
-                    .select(`
-                        id,
-                        title,
-                        start_at
-                    `)
-                    .in("id", eventIds);
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("events")
+                .select(`
+                    id,
+                    title,
+                    start_at
+                `)
+                .in(
+                    "id",
+                    eventIds
+                );
 
-            if (response.error) {
-                throw response.error;
-            }
+        if(error){
 
-            events =
-                response.data || [];
+            console.warn(
+                "Event enrichment unavailable:",
+                error
+            );
+
+            return;
         }
 
-        const eventMap =
+        orderEvents =
             new Map(
-                events.map(event =>
-                    [event.id, event]
+                (
+                    Array.isArray(data)
+                        ? data
+                        : []
+                ).map(
+                    event => [
+                        event.id,
+                        event
+                    ]
                 )
             );
 
-        allOrders =
-            orders.map(order => ({
-                ...order,
-                event:
-                    eventMap.get(
-                        order.event_id
-                    ) || null
-            }));
+    }catch(error){
 
-        render();
+        console.warn(
+            "Event enrichment failed:",
+            error
+        );
+    }
+}
+
+
+/* ================================================================
+   PAYMENT ENRICHMENT
+   ================================================================ */
+
+async function loadOrderPayments(){
+
+    const orderIds =
+        [
+            ...new Set(
+                allOrders
+                    .map(
+                        order =>
+                            order.id
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+    if(!orderIds.length){
+        return;
     }
 
-    function render() {
+    try{
 
-        const ordersElement =
-            document.getElementById("orders");
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("payments")
+                .select(`
+                    id,
+                    order_id,
+                    user_id,
+                    event_id,
+                    method,
+                    provider,
+                    status,
+                    amount,
+                    currency,
+                    reference,
+                    transaction_id,
+                    receipt_number,
+                    provider_transaction_id,
+                    failure_reason,
+                    paid_at,
+                    created_at,
+                    updated_at
+                `)
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .in(
+                    "order_id",
+                    orderIds
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                );
 
-        const searchTerm =
-            document.getElementById("search")
-                .value
-                .trim()
-                .toLowerCase();
+        if(error){
 
-        let filtered =
-            allOrders.filter(order => {
+            console.warn(
+                "Payment enrichment unavailable:",
+                error
+            );
 
-                const status =
-                    String(order.status || "")
-                        .toLowerCase();
+            return;
+        }
 
-                if (
-                    activeFilter === "paid" &&
-                    ![
-                        "paid",
-                        "completed",
-                        "confirmed"
-                    ].includes(status)
-                ) {
-                    return false;
+        const rows =
+            Array.isArray(data)
+                ? data
+                : [];
+
+        /*
+            Keep the newest payment attempt per order.
+        */
+
+        rows.forEach(
+            payment => {
+
+                if(
+                    !orderPayments.has(
+                        payment.order_id
+                    )
+                ){
+
+                    orderPayments.set(
+                        payment.order_id,
+                        payment
+                    );
+                }
+            }
+        );
+
+    }catch(error){
+
+        console.warn(
+            "Payment enrichment failed:",
+            error
+        );
+    }
+}
+
+
+/* ================================================================
+   TICKET ENRICHMENT
+   ================================================================ */
+
+async function loadOrderTickets(){
+
+    const orderIds =
+        [
+            ...new Set(
+                allOrders
+                    .map(
+                        order =>
+                            order.id
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+    if(!orderIds.length){
+        return;
+    }
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("tickets")
+                .select(`
+                    id,
+                    order_id,
+                    event_id,
+                    ticket_code,
+                    status,
+                    issued_at,
+                    checked_in_at
+                `)
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .in(
+                    "order_id",
+                    orderIds
+                )
+                .order(
+                    "issued_at",
+                    {
+                        ascending:false
+                    }
+                );
+
+        if(error){
+
+            console.warn(
+                "Ticket enrichment unavailable:",
+                error
+            );
+
+            return;
+        }
+
+        const rows =
+            Array.isArray(data)
+                ? data
+                : [];
+
+        rows.forEach(
+            ticket => {
+
+                if(
+                    !orderTickets.has(
+                        ticket.order_id
+                    )
+                ){
+
+                    orderTickets.set(
+                        ticket.order_id,
+                        []
+                    );
                 }
 
-                if (
-                    activeFilter === "pending" &&
-                    ![
-                        "pending",
-                        "payment_pending",
-                        "awaiting_payment",
-                        "awaiting_verification"
-                    ].includes(status)
-                ) {
-                    return false;
-                }
+                orderTickets
+                    .get(ticket.order_id)
+                    .push(ticket);
+            }
+        );
 
-                if (!searchTerm) {
-                    return true;
-                }
+    }catch(error){
 
-                return [
-                    order.id,
-                    order.event?.title,
+        console.warn(
+            "Ticket enrichment failed:",
+            error
+        );
+    }
+}
+
+
+/* ================================================================
+   STATS
+   ================================================================ */
+
+function updateStats(){
+
+    const total =
+        allOrders.length;
+
+    const paid =
+        allOrders.filter(
+            order =>
+                isPaidStatus(
                     order.status
-                ]
-                    .join(" ")
-                    .toLowerCase()
-                    .includes(searchTerm);
-            });
+                )
+        ).length;
 
-        document
-            .getElementById("loading")
-            .classList.add("hidden");
+    const pending =
+        allOrders.filter(
+            order =>
+                isPendingStatus(
+                    order.status
+                )
+        ).length;
 
-        document
-            .getElementById("empty")
-            .classList.add("hidden");
+    const closed =
+        allOrders.filter(
+            order =>
+                isFailedStatus(
+                    order.status
+                ) ||
+                isRefundedStatus(
+                    order.status
+                )
+        ).length;
 
-        document
-            .getElementById("noResults")
-            .classList.add("hidden");
+    $("statTotal")
+        .textContent =
+        total.toLocaleString();
 
-        ordersElement.classList.add("hidden");
+    $("statPaid")
+        .textContent =
+        paid.toLocaleString();
 
-        if (!allOrders.length) {
+    $("statPending")
+        .textContent =
+        pending.toLocaleString();
 
-            document
-                .getElementById("empty")
-                .classList.remove("hidden");
+    $("statClosed")
+        .textContent =
+        closed.toLocaleString();
+}
 
-            return;
+
+/* ================================================================
+   FILTERING
+   ================================================================ */
+
+function matchesFilter(
+    order
+){
+
+    const status =
+        normalizeStatus(
+            order.status
+        );
+
+    if(
+        activeFilter === "all"
+    ){
+        return true;
+    }
+
+    if(
+        activeFilter === "paid"
+    ){
+
+        return isPaidStatus(
+            status
+        );
+    }
+
+    if(
+        activeFilter === "pending"
+    ){
+
+        return isPendingStatus(
+            status
+        );
+    }
+
+    if(
+        activeFilter === "failed"
+    ){
+
+        return isFailedStatus(
+            status
+        );
+            }
+
+    if(
+        activeFilter === "refunded"
+    ){
+
+        return isRefundedStatus(
+            status
+        );
+    }
+
+    return true;
+}
+
+
+function matchesSearch(
+    order,
+    searchTerm
+){
+
+    if(!searchTerm){
+        return true;
+    }
+
+    const event =
+        orderEvents.get(
+            order.event_id
+        );
+
+    const payment =
+        orderPayments.get(
+            order.id
+        );
+
+    const values = [
+
+        order.id,
+
+        order.order_number,
+
+        order.status,
+
+        order.currency,
+
+        order.promotion_id,
+
+        event?.title,
+
+        payment?.method,
+
+        payment?.provider,
+
+        payment?.reference,
+
+        payment?.transaction_id,
+
+        payment?.receipt_number,
+
+        payment?.provider_transaction_id
+
+    ];
+
+    return values
+        .filter(
+            value =>
+                value !== null &&
+                value !== undefined
+        )
+        .join(" ")
+        .toLowerCase()
+        .includes(
+            searchTerm
+        );
+}
+
+
+function getFilteredOrders(){
+
+    const searchTerm =
+        $("searchInput")
+            .value
+            .trim()
+            .toLowerCase();
+
+    return allOrders.filter(
+        order => {
+
+            return (
+                matchesFilter(order) &&
+                matchesSearch(
+                    order,
+                    searchTerm
+                )
+            );
+        }
+    );
+}
+
+
+/* ================================================================
+   ORDER CARD
+   ================================================================ */
+
+function renderOrderCard(
+    order
+){
+
+    const event =
+        orderEvents.get(
+            order.event_id
+        );
+
+    const payment =
+        orderPayments.get(
+            order.id
+        );
+
+    const tickets =
+        orderTickets.get(
+            order.id
+        ) || [];
+
+    const status =
+        normalizeStatus(
+            order.status
+        );
+
+    const statusCss =
+        escapeHtml(
+            statusClass(status)
+        );
+
+    const title =
+        safeText(
+            event?.title,
+            "Event unavailable"
+        );
+
+    const orderReference =
+        safeText(
+            order.order_number,
+            order.id
+        );
+
+    const ticketText =
+        tickets.length === 1
+            ? "1 ticket"
+            : tickets.length > 1
+                ? `${tickets.length} tickets`
+                : "No tickets issued";
+
+    const paymentText =
+        payment?.method ||
+        payment?.provider ||
+        "No payment attempt";
+
+    return `
+        <article class="order-card">
+
+            <div class="order-main">
+
+                <div class="order-event">
+
+                    <div class="event-kicker">
+                        <span class="dot"></span>
+                        Ticket Order
+                    </div>
+
+                    <div class="order-title">
+                        ${escapeHtml(title)}
+                    </div>
+
+                    <div class="order-number">
+                        ${escapeHtml(orderReference)}
+                    </div>
+
+                    <div class="order-date">
+                        ${escapeHtml(
+                            formatDate(
+                                order.created_at
+                            )
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="order-column">
+
+                    <div class="column-label">
+                        Tickets
+                    </div>
+
+                    <div class="column-value">
+                        ${escapeHtml(ticketText)}
+                    </div>
+
+                </div>
+
+
+                <div class="order-column">
+
+                    <div class="column-label">
+                        Payment
+                    </div>
+
+                    <div class="column-value">
+                        ${escapeHtml(
+                            formatStatus(
+                                paymentText
+                            )
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="order-column">
+
+                    <div class="column-label">
+                        Total
+                    </div>
+
+                    <div class="column-value money">
+                        ${escapeHtml(
+                            formatMoney(
+                                order.total,
+                                order.currency
+                            )
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span
+                        class="status-badge ${statusCss}"
+                    >
+                        ${escapeHtml(
+                            formatStatus(status)
+                        )}
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="view-button"
+                    data-order-id="${escapeHtml(order.id)}"
+                >
+                    View Details
+                </button>
+
+            </div>
+
+
+            <div class="order-footer">
+
+                <div class="footer-info">
+
+                    ${
+                        event?.start_at
+                            ? `Event: ${escapeHtml(
+                                formatEventDate(
+                                    event.start_at
+                                )
+                            )}`
+                            : "Event date unavailable"
+                    }
+
+                </div>
+
+
+                <a
+                    href="my-tickets.html"
+                    class="footer-link"
+                >
+                    My Tickets →
+                </a>
+
+            </div>
+
+        </article>
+    `;
+}
+
+
+/* ================================================================
+   RENDER
+   ================================================================ */
+
+function renderOrders(){
+
+    const filtered =
+        getFilteredOrders();
+
+    const ordersList =
+        $("ordersList");
+
+    $("loadingState")
+        .classList.add("hidden");
+
+    $("emptyState")
+        .classList.add("hidden");
+
+    $("noResultsState")
+        .classList.add("hidden");
+
+    ordersList
+        .classList.add("hidden");
+
+    if(
+        !allOrders.length
+    ){
+
+        $("resultMeta")
+            .textContent =
+            "No orders in your account.";
+
+        $("emptyState")
+            .classList.remove("hidden");
+
+        return;
+    }
+
+    if(
+        !filtered.length
+    ){
+
+        $("resultMeta")
+            .textContent =
+            "No orders match the current search or filter.";
+
+        $("noResultsState")
+            .classList.remove("hidden");
+
+        return;
+    }
+
+    $("resultMeta")
+        .textContent =
+        `${filtered.length.toLocaleString()} ${
+            filtered.length === 1
+                ? "order"
+                : "orders"
+        }`;
+
+    ordersList
+        .innerHTML =
+        filtered
+            .map(
+                renderOrderCard
+            )
+            .join("");
+
+    ordersList
+        .classList.remove("hidden");
+
+    bindOrderButtons();
+}
+
+
+function bindOrderButtons(){
+
+    document
+        .querySelectorAll(
+            ".view-button"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const orderId =
+                            button.dataset.orderId;
+
+                        openOrderModal(
+                            orderId
+                        );
+                    }
+                );
+            }
+        );
+}
+
+
+/* ================================================================
+   MODAL
+   ================================================================ */
+
+function findOrder(
+    orderId
+){
+
+    return allOrders.find(
+        order =>
+            String(order.id) ===
+            String(orderId)
+    ) || null;
+}
+
+
+function renderPaymentDetails(
+    order,
+    payment
+){
+
+    const container =
+        $("paymentRecord");
+
+    if(!payment){
+
+        container.innerHTML = `
+            <div class="payment-line">
+                <span>Status</span>
+                <strong>No payment record found</strong>
+            </div>
+        `;
+
+        return;
+    }
+
+    const reference =
+        payment.reference ||
+        payment.transaction_id ||
+        payment.receipt_number ||
+        payment.provider_transaction_id;
+
+    container.innerHTML = `
+
+        <div class="payment-line">
+
+            <span>
+                Method
+            </span>
+
+            <strong>
+                ${escapeHtml(
+                    safeText(
+                        payment.method
+                            ? formatStatus(
+                                payment.method
+                            )
+                            : payment.provider
+                                ? formatStatus(
+                                    payment.provider
+                                )
+                            : "Not specified"
+                    )
+                )}
+            </strong>
+
+        </div>
+
+
+        <div class="payment-line">
+
+            <span>
+                Status
+            </span>
+
+            <strong>
+                ${escapeHtml(
+                    formatStatus(
+                        payment.status
+                    )
+                )}
+            </strong>
+
+        </div>
+
+
+        <div class="payment-line">
+
+            <span>
+                Amount
+            </span>
+
+            <strong>
+                ${escapeHtml(
+                    formatMoney(
+                        payment.amount,
+                        payment.currency ||
+                        order.currency
+                    )
+                )}
+            </strong>
+
+        </div>
+
+
+        ${
+            reference
+                ? `
+                    <div class="payment-line">
+
+                        <span>
+                            Reference
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(
+                                reference
+                            )}
+                        </strong>
+
+                    </div>
+                `
+                : ""
         }
 
-        if (!filtered.length) {
 
-            document
-                .getElementById("noResults")
-                .classList.remove("hidden");
+        ${
+            payment.paid_at
+                ? `
+                    <div class="payment-line">
 
-            return;
-        }
+                        <span>
+                            Paid at
+                        </span>
 
-        ordersElement.classList.remove("hidden");
-
-        ordersElement.innerHTML =
-            filtered.map(order => {
-
-                const status =
-                    String(
-                        order.status ||
-                        "unknown"
-                    ).toLowerCase();
-
-                return `
-                    <article class="order">
-
-                        <div>
-
-                            <div class="order-title">
-                                ${escapeHtml(
-                                    order.event?.title ||
-                                    "Order"
-                                )}
-                            </div>
-
-                            <div class="order-id">
-                                Order ${escapeHtml(order.id)}
-                            </div>
-
-                        </div>
-
-                        <div class="order-date">
+                        <strong>
                             ${escapeHtml(
                                 formatDate(
-                                    order.created_at
+                                    payment.paid_at
+                                )
+                            )}
+                        </strong>
+
+                    </div>
+                `
+                : ""
+        }
+
+
+        ${
+            payment.failure_reason
+                ? `
+                    <div class="payment-line">
+
+                        <span>
+                            Failure reason
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(
+                                payment.failure_reason
+                            )}
+                        </strong>
+
+                    </div>
+                `
+                : ""
+        }
+
+    `;
+}
+
+
+function renderTickets(
+    tickets
+){
+
+    const section =
+        $("ticketsSection");
+
+    const list =
+        $("ticketMiniList");
+
+    if(
+        !Array.isArray(tickets) ||
+        !tickets.length
+    ){
+
+        section.classList.add(
+            "hidden"
+        );
+
+        list.innerHTML = "";
+
+        return;
+    }
+
+    section.classList.remove(
+        "hidden"
+    );
+
+    list.innerHTML =
+        tickets
+            .map(
+                ticket => `
+                    <div class="ticket-mini">
+
+                        <div class="ticket-mini-code">
+                            ${escapeHtml(
+                                safeText(
+                                    ticket.ticket_code
                                 )
                             )}
                         </div>
 
-                        <div
-                            class="order-status ${escapeHtml(status)}"
-                        >
+                        <div class="ticket-mini-status">
                             ${escapeHtml(
-                                formatStatus(status)
+                                formatStatus(
+                                    ticket.status
+                                )
                             )}
                         </div>
 
-                        <a
-                            class="view"
-                            href="order.html?id=${encodeURIComponent(order.id)}"
-                        >
-                            View Order
-                        </a>
+                    </div>
+                `
+            )
+            .join("");
+}
 
-                    </article>
-                `;
 
-            }).join("");
-    }
+function setupModalActions(
+    order
+){
 
-    async function loadPage() {
+    const primary =
+        $("primaryModalAction");
 
-        try {
-
-            initializeSupabase();
-
-            const user =
-                await getUser();
-
-            if (!user) {
-                return;
-            }
-
-            await loadOrders(user);
-
-        } catch (error) {
-
-            console.error(error);
-
-            document
-                .getElementById("loading")
-                .innerHTML = `
-                    <h2>
-                        Unable to load orders
-                    </h2>
-
-                    <p>
-                        ${escapeHtml(
-                            error.message ||
-                            "Please try again."
-                        )}
-                    </p>
-                `;
-        }
-    }
-
-    document
-        .getElementById("search")
-        .addEventListener(
-            "input",
-            render
+    const status =
+        normalizeStatus(
+            order.status
         );
 
-    document
-        .querySelectorAll(".filter")
-        .forEach(button => {
+    const paid =
+        isPaidStatus(status);
+
+    const pending =
+        isPendingStatus(status);
+
+    if(pending){
+
+        primary.disabled = false;
+
+        primary.textContent =
+            "Continue to Payment";
+
+        primary.onclick =
+            () => {
+
+                window.location.href =
+                    `payment.html?order=${encodeURIComponent(
+                        order.id
+                    )}`;
+            };
+
+    }else if(paid){
+
+        primary.disabled = false;
+
+        primary.textContent =
+            "View My Tickets";
+
+        primary.onclick =
+            () => {
+
+                window.location.href =
+                    "my-tickets.html";
+            };
+
+    }else{
+
+        primary.disabled = true;
+
+        primary.textContent =
+            "Payment Unavailable";
+
+        primary.onclick = null;
+    }
+
+    $("ticketsModalAction")
+        .classList.toggle(
+            "hidden",
+            !paid &&
+            !(orderTickets.get(order.id) || []).length
+        );
+}
+
+
+function openOrderModal(
+    orderId
+){
+
+    const order =
+        findOrder(orderId);
+
+    if(!order){
+        showToast(
+            "That order could not be found.",
+            true
+        );
+
+        return;
+    }
+
+    currentModalOrderId =
+        order.id;
+
+    const event =
+        orderEvents.get(
+            order.event_id
+        );
+
+    const payment =
+        orderPayments.get(
+            order.id
+        );
+
+    const tickets =
+        orderTickets.get(
+            order.id
+        ) || [];
+
+    $("modalEyebrow")
+        .textContent =
+        event?.title
+            ? "Ticket order"
+            : "Order details";
+
+    $("modalTitle")
+        .textContent =
+        safeText(
+            event?.title,
+            "Order"
+        );
+
+    $("modalOrderNumber")
+        .textContent =
+        `Order ${
+            safeText(
+                order.order_number,
+                order.id
+            )
+        }`;
+
+    const status =
+        normalizeStatus(
+            order.status
+        );
+
+    const statusElement =
+        $("modalStatus");
+
+    statusElement.className =
+        `status-badge ${escapeHtml(
+            statusClass(status)
+        )}`;
+
+    statusElement.textContent =
+        formatStatus(status);
+
+
+    $("detailCreated")
+        .textContent =
+        formatDate(
+            order.created_at
+        );
+
+
+    $("detailPaidAt")
+        .textContent =
+        order.paid_at
+            ? formatDate(
+                order.paid_at
+            )
+            : payment?.paid_at
+                ? formatDate(
+                    payment.paid_at
+                )
+                : "Not paid";
+
+
+    $("detailEventDate")
+        .textContent =
+        event?.start_at
+            ? formatEventDate(
+                event.start_at
+            )
+            : "Event date unavailable";
+
+
+    $("detailTicketCount")
+        .textContent =
+        tickets.length
+            ? `${tickets.length} ${
+                tickets.length === 1
+                    ? "ticket"
+                    : "tickets"
+            }`
+            : "No tickets issued";
+
+
+    $("detailSubtotal")
+        .textContent =
+        formatMoney(
+            order.subtotal,
+            order.currency
+        );
+
+
+    const serviceFee =
+        Number(
+            order.service_fee
+        );
+
+    $("detailServiceFee")
+        .textContent =
+        Number.isFinite(
+            serviceFee
+        )
+            ? formatMoney(
+                serviceFee,
+                order.currency
+            )
+            : "—";
+
+
+    const discount =
+        Number(
+            order.discount
+        );
+
+    if(
+        Number.isFinite(discount) &&
+        discount !== 0
+    ){
+
+        $("discountRow")
+            .classList.remove(
+                "hidden"
+            );
+
+        $("detailDiscount")
+            .textContent =
+            formatMoney(
+                discount,
+                order.currency
+            );
+
+    }else{
+
+        $("discountRow")
+            .classList.add(
+                "hidden"
+            );
+    }
+
+
+    $("detailTotal")
+        .textContent =
+        formatMoney(
+            order.total,
+            order.currency
+        );
+
+
+    renderPaymentDetails(
+        order,
+        payment
+    );
+
+    renderTickets(
+        tickets
+    );
+
+    setupModalActions(
+        order
+    );
+
+
+    $("orderModal")
+        .classList.remove(
+            "hidden"
+        );
+
+    $("orderModal")
+        .setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+    document.body
+        .classList.add(
+            "modal-open"
+        );
+}
+
+
+function closeOrderModal(){
+
+    currentModalOrderId =
+        null;
+
+    $("orderModal")
+        .classList.add(
+            "hidden"
+        );
+
+    $("orderModal")
+        .setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    document.body
+        .classList.remove(
+            "modal-open"
+        );
+}
+
+
+/* ================================================================
+   NOTIFICATION BADGE
+   ================================================================ */
+
+async function loadNotificationBadge(){
+
+    try{
+
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select(
+                    "id",
+                    {
+                        count:"exact",
+                        head:true
+                    }
+                )
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .eq(
+                    "is_read",
+                    false
+                );
+
+        if(error){
+
+            console.warn(
+                "Notification badge unavailable:",
+                error
+            );
+
+            return;
+        }
+
+        $("notificationDot")
+            .classList.toggle(
+                "hidden",
+                !count
+            );
+
+    }catch(error){
+
+        console.warn(
+            "Notification badge failed:",
+            error
+        );
+    }
+}
+
+
+/* ================================================================
+   REALTIME
+   ================================================================ */
+
+function subscribeToChanges(){
+
+    if(
+        realtimeChannel
+    ){
+        return;
+    }
+
+    realtimeChannel =
+        supabaseClient
+            .channel(
+                `customer-orders-${currentUser.id}`
+            )
+
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"orders",
+                    filter:`user_id=eq.${currentUser.id}`
+                },
+                () => {
+
+                    refreshOrders(
+                        false
+                    );
+                }
+            )
+
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"payments",
+                    filter:`user_id=eq.${currentUser.id}`
+                },
+                () => {
+
+                    refreshOrders(
+                        false
+                    );
+                }
+            )
+
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"tickets",
+                    filter:`user_id=eq.${currentUser.id}`
+                },
+                () => {
+
+                    refreshOrders(
+                        false
+                    );
+                }
+            )
+
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"notifications",
+                    filter:`user_id=eq.${currentUser.id}`
+                },
+                () => {
+
+                    loadNotificationBadge();
+                }
+            )
+
+            .subscribe(
+                status => {
+
+                    if(
+                        status ===
+                        "CHANNEL_ERROR"
+                    ){
+
+                        console.warn(
+                            "Realtime order channel error."
+                        );
+                    }
+                }
+            );
+}
+
+
+/* ================================================================
+   REFRESH
+   ================================================================ */
+
+async function refreshOrders(
+    showLoader = true
+){
+
+    if(showLoader){
+
+        setLoading(
+            true
+        );
+
+        $("resultMeta")
+            .textContent =
+            "Loading orders...";
+    }
+
+    try{
+
+        await loadOrders();
+
+        await loadNotificationBadge();
+
+    }catch(error){
+
+        console.error(
+            "Orders load failed:",
+            error
+        );
+
+        $("loadingState")
+            .classList.add(
+                "hidden"
+            );
+
+        $("emptyState")
+            .classList.add(
+                "hidden"
+            );
+
+        $("noResultsState")
+            .classList.add(
+                "hidden"
+            );
+
+        $("ordersList")
+            .classList.add(
+                "hidden"
+            );
+
+        $("resultMeta")
+            .textContent =
+            "Unable to load your order history.";
+
+        showToast(
+            error?.message ||
+            "Unable to load your orders.",
+            true
+        );
+
+    }finally{
+
+        setLoading(
+            false
+        );
+    }
+}
+
+
+/* ================================================================
+   SIGN OUT
+   ================================================================ */
+
+async function logout(){
+
+    try{
+
+        const {
+            error
+        } =
+            await supabaseClient.auth.signOut();
+
+        if(error){
+            throw error;
+        }
+
+        window.location.href =
+            "../login.html";
+
+    }catch(error){
+
+        console.error(
+            "Logout failed:",
+            error
+        );
+
+        showToast(
+            "Unable to sign out. Please try again.",
+            true
+        );
+    }
+}
+
+
+/* ================================================================
+   UI EVENTS
+   ================================================================ */
+
+$("mobileMenu")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("sidebar")
+                .classList.toggle(
+                    "open"
+                );
+        }
+    );
+
+
+$("notificationButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "notifications.html";
+        }
+    );
+
+
+$("refreshButton")
+    .addEventListener(
+        "click",
+        async () => {
+
+            await refreshOrders(
+                true
+            );
+        }
+    );
+
+
+$("refreshButtonMain")
+    .addEventListener(
+        "click",
+        async () => {
+
+            await refreshOrders(
+                true
+            );
+        }
+    );
+
+
+$("searchInput")
+    .addEventListener(
+        "input",
+        () => {
+
+            renderOrders();
+        }
+    );
+
+
+document
+    .querySelectorAll(
+        ".filter-button"
+    )
+    .forEach(
+        button => {
 
             button.addEventListener(
                 "click",
                 () => {
 
                     document
-                        .querySelectorAll(".filter")
-                        .forEach(btn =>
-                            btn.classList.remove(
-                                "active"
-                            )
+                        .querySelectorAll(
+                            ".filter-button"
+                        )
+                        .forEach(
+                            item => {
+
+                                item.classList.remove(
+                                    "active"
+                                );
+                            }
                         );
 
                     button.classList.add(
@@ -826,16 +4317,141 @@
                     );
 
                     activeFilter =
-                        button.dataset.filter;
+                        button.dataset.filter ||
+                        "all";
 
-                    render();
+                    renderOrders();
                 }
             );
+        }
+    );
 
-        });
 
-    loadPage();
+$("closeModal")
+    .addEventListener(
+        "click",
+        closeOrderModal
+    );
 
+
+$("orderModal")
+    .addEventListener(
+        "click",
+        event => {
+
+            if(
+                event.target ===
+                $("orderModal")
+            ){
+
+                closeOrderModal();
+            }
+        }
+    );
+
+
+document
+    .addEventListener(
+        "keydown",
+        event => {
+
+            if(
+                event.key ===
+                "Escape"
+            ){
+
+                if(
+                    !$("orderModal")
+                        .classList
+                        .contains("hidden")
+                ){
+
+                    closeOrderModal();
+                }
+
+                closeSidebar();
+            }
+        }
+    );
+
+
+$("logoutLink")
+    .addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+
+            logout();
+        }
+    );
+
+
+/* ================================================================
+   INITIALIZE
+   ================================================================ */
+
+async function initializePage(){
+
+    try{
+
+        currentUser =
+            await requireAuthenticatedUser();
+
+        if(!currentUser){
+            return;
+        }
+
+        await loadProfile(
+            currentUser
+        );
+
+        await refreshOrders(
+            true
+        );
+
+        subscribeToChanges();
+
+    }catch(error){
+
+        console.error(
+            "Customer orders initialization failed:",
+            error
+        );
+
+        setLoading(
+            false
+        );
+
+        $("ordersList")
+            .classList.add(
+                "hidden"
+            );
+
+        $("emptyState")
+            .classList.add(
+                "hidden"
+            );
+
+        $("noResultsState")
+            .classList.add(
+                "hidden"
+            );
+
+        $("resultMeta")
+            .textContent =
+            "Your order history could not be loaded.";
+
+        showToast(
+            error?.message ||
+            "Unable to initialize the orders page.",
+            true
+        );
+    }
+}
+
+
+initializePage();
 </script>
 
 </body>

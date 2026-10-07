@@ -1,7 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -19,51 +20,98 @@
         content="same-origin"
     >
 
-    <title>K-Tickets — Gate Staff Profile</title>
+    <meta
+        name="description"
+        content="K-Tickets Gate Staff profile and assigned event access."
+    >
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>
+        K-Tickets — Gate Staff Profile
+    </title>
+
+
+    <!-- SUPABASE -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
 
     <style>
-        :root {
-            --bordo: #6C151E;
-            --green: #0F3D3A;
-            --cream: #F5DABF;
 
-            --white: #fff;
-            --bg: #f7f2ed;
-            --soft: #fbf7f3;
-            --line: #e6ddd6;
+        :root{
 
-            --ink: #24302f;
-            --muted: #727b79;
+            --bordo:#6C151E;
+            --bordo-dark:#541018;
+            --bordo-soft:#f5e5e6;
 
-            --success: #14704f;
-            --success-bg: #eaf7f1;
+            --green:#0F3D3A;
+            --green-dark:#092c2a;
+            --green-soft:#e7f1ef;
 
-            --danger: #9b2935;
-            --danger-bg: #fff0f1;
+            --cream:#F5DABF;
+            --cream-soft:#fff8f1;
+
+            --white:#fff;
+
+            --bg:#f7f2ed;
+            --soft:#fbf7f3;
+            --line:#e5ddd6;
+
+            --ink:#24302f;
+            --muted:#727b79;
+
+            --success:#14704f;
+            --success-bg:#eaf7f1;
+
+            --warning:#88652e;
+            --warning-bg:#fff5e4;
+
+            --danger:#9b2935;
+            --danger-bg:#fff0f1;
 
             --shadow:
-                0 18px 55px rgba(15,61,58,.10);
+                0 18px 55px
+                rgba(15,61,58,.10);
 
-            --radius: 18px;
+            --shadow-small:
+                0 8px 28px
+                rgba(15,61,58,.06);
+
+            --radius:18px;
         }
 
-        * {
-            box-sizing: border-box;
+
+        *{
+            box-sizing:border-box;
         }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+
+        body{
+
+            margin:0;
+
+            min-height:100vh;
+
             background:
                 radial-gradient(
                     circle at top right,
                     rgba(108,21,30,.08),
                     transparent 30%
                 ),
+                radial-gradient(
+                    circle at bottom left,
+                    rgba(15,61,58,.05),
+                    transparent 35%
+                ),
                 var(--bg);
-            color: var(--ink);
+
+            color:var(--ink);
+
             font-family:
                 Inter,
                 -apple-system,
@@ -73,561 +121,1443 @@
                 sans-serif;
         }
 
+
         button,
-        input {
-            font: inherit;
+        input{
+            font:inherit;
         }
 
-        button {
-            cursor: pointer;
+
+        button{
+            cursor:pointer;
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
+
+        button:disabled{
+            cursor:not-allowed;
+
+            opacity:.55;
         }
 
-        .app {
-            min-height: 100vh;
-            display: grid;
-            grid-template-columns: 245px minmax(0,1fr);
+
+        a{
+            color:inherit;
+
+            text-decoration:none;
         }
 
-        /* =========================
+
+        .hidden{
+            display:none !important;
+        }
+
+
+        /* =========================================================
+           APP
+        ========================================================= */
+
+        .app{
+
+            min-height:100vh;
+
+            display:grid;
+
+            grid-template-columns:
+                245px
+                minmax(0,1fr);
+        }
+
+
+        /* =========================================================
            SIDEBAR
-        ========================== */
+        ========================================================= */
 
-        .sidebar {
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            padding: 22px 15px;
-            background: var(--green);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
+        .sidebar{
+
+            position:sticky;
+
+            top:0;
+
+            height:100vh;
+
+            padding:
+                20px
+                15px;
+
+            background:var(--green);
+
+            color:#fff;
+
+            display:flex;
+
+            flex-direction:column;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 5px 8px 25px;
+
+        .brand{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:10px;
+
+            padding:
+                5px
+                8px
+                25px;
         }
 
-        .brand-mark {
-            width: 40px;
-            height: 40px;
-            display: grid;
-            place-items: center;
-            border-radius: 12px;
-            background: var(--bordo);
-            font-size: 13px;
-            font-weight: 900;
+
+        .brand-mark{
+
+            width:41px;
+            height:41px;
+
+            flex:0 0 auto;
+
+            border-radius:12px;
+
+            background:var(--bordo);
+
+            color:#fff;
+
+            display:grid;
+
+            place-items:center;
+
+            font-size:12px;
+
+            font-weight:950;
+
+            letter-spacing:.04em;
         }
 
-        .brand-name {
-            font-size: 17px;
-            font-weight: 900;
-            letter-spacing: .7px;
+
+        .brand-name{
+
+            font-size:17px;
+
+            font-weight:950;
+
+            letter-spacing:.7px;
         }
 
-        .brand-role {
-            margin-top: 2px;
-            color: #bcd0cc;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+
+        .brand-role{
+
+            margin-top:2px;
+
+            color:#bcd0cc;
+
+            font-size:8px;
+
+            font-weight:800;
+
+            letter-spacing:1px;
+
+            text-transform:uppercase;
         }
 
-        .nav {
-            display: grid;
-            gap: 5px;
+
+        .nav{
+
+            display:grid;
+
+            gap:5px;
         }
 
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            min-height: 44px;
-            padding: 10px 12px;
-            border-radius: 11px;
-            color: #d5e1df;
-            font-size: 12px;
-            font-weight: 800;
+
+        .nav-link{
+
+            min-height:44px;
+
+            padding:
+                10px
+                12px;
+
+            display:flex;
+
+            align-items:center;
+
+            gap:11px;
+
+            border-radius:11px;
+
+            color:#d5e1df;
+
+            font-size:12px;
+
+            font-weight:850;
         }
+
 
         .nav-link:hover,
-        .nav-link.active {
-            background: rgba(255,255,255,.10);
-            color: #fff;
+        .nav-link.active{
+
+            background:
+                rgba(255,255,255,.10);
+
+            color:#fff;
         }
 
-        .nav-icon {
-            width: 23px;
-            text-align: center;
-            font-size: 14px;
+
+        .nav-icon{
+
+            width:23px;
+
+            text-align:center;
+
+            font-size:14px;
         }
 
-        .sidebar-spacer {
-            flex: 1;
+
+        .sidebar-spacer{
+            flex:1;
         }
 
-        .staff-mini {
-            padding: 14px;
-            border: 1px solid rgba(255,255,255,.10);
-            border-radius: 14px;
-            background: rgba(255,255,255,.06);
+
+        .staff-mini{
+
+            padding:14px;
+
+            border:
+                1px solid
+                rgba(255,255,255,.10);
+
+            border-radius:14px;
+
+            background:
+                rgba(255,255,255,.06);
         }
 
-        .staff-mini-name {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-size: 12px;
-            font-weight: 900;
+
+        .staff-mini-name{
+
+            overflow:hidden;
+
+            text-overflow:ellipsis;
+
+            white-space:nowrap;
+
+            font-size:12px;
+
+            font-weight:900;
         }
 
-        .staff-mini-role {
-            margin-top: 3px;
-            color: #bcd0cc;
-            font-size: 10px;
+
+        .staff-mini-role{
+
+            margin-top:3px;
+
+            color:#bcd0cc;
+
+            font-size:9px;
+
+            line-height:1.5;
         }
 
-        .logout-btn {
-            width: 100%;
-            margin-top: 10px;
-            border: 1px solid rgba(255,255,255,.14);
-            border-radius: 9px;
-            padding: 9px;
-            background: transparent;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 800;
+
+        .logout-btn{
+
+            width:100%;
+
+            margin-top:10px;
+
+            min-height:40px;
+
+            padding:9px;
+
+            border:
+                1px solid
+                rgba(255,255,255,.14);
+
+            border-radius:9px;
+
+            background:transparent;
+
+            color:#fff;
+
+            font-size:10px;
+
+            font-weight:850;
         }
 
-        .logout-btn:hover {
-            background: rgba(255,255,255,.08);
+
+        .logout-btn:hover{
+
+            background:
+                rgba(255,255,255,.08);
         }
 
-        /* =========================
+
+        /* =========================================================
            MAIN
-        ========================== */
+        ========================================================= */
 
-        .main {
-            min-width: 0;
-            padding: 25px;
+        .main{
+
+            min-width:0;
+
+            padding:25px;
         }
 
-        .main-inner {
-            width: min(1050px,100%);
-            margin: 0 auto;
+
+        .main-inner{
+
+            width:
+                min(
+                    1080px,
+                    100%
+                );
+
+            margin:
+                0
+                auto;
         }
 
-        .topbar {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 20px;
-            margin-bottom: 24px;
+
+        /* =========================================================
+           PAGE HEADER
+        ========================================================= */
+
+        .topbar{
+
+            display:flex;
+
+            align-items:flex-start;
+
+            justify-content:space-between;
+
+            gap:20px;
+
+            margin-bottom:24px;
         }
 
-        .eyebrow {
-            color: var(--bordo);
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 1.4px;
-            text-transform: uppercase;
+
+        .eyebrow{
+
+            color:var(--bordo);
+
+            font-size:9px;
+
+            font-weight:950;
+
+            letter-spacing:1.4px;
+
+            text-transform:uppercase;
         }
 
-        h1 {
-            margin: 5px 0 0;
-            color: var(--green);
-            font-size: clamp(25px,3vw,34px);
-            letter-spacing: -.6px;
+
+        h1{
+
+            margin:
+                5px
+                0
+                0;
+
+            color:var(--green);
+
+            font-size:
+                clamp(
+                    25px,
+                    3vw,
+                    35px
+                );
+
+            line-height:1.08;
+
+            letter-spacing:-.7px;
         }
 
-        .welcome {
-            margin-top: 6px;
-            color: var(--muted);
-            font-size: 13px;
+
+        .welcome{
+
+            margin-top:7px;
+
+            color:var(--muted);
+
+            font-size:12px;
+
+            line-height:1.6;
         }
 
-        .identity {
-            text-align: right;
+
+        .header-actions{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:8px;
+
+            flex-wrap:wrap;
         }
 
-        .identity-name {
-            color: var(--green);
-            font-size: 13px;
-            font-weight: 900;
+
+        .identity{
+
+            min-width:160px;
+
+            text-align:right;
         }
 
-        .identity-role {
-            margin-top: 3px;
-            color: var(--muted);
-            font-size: 10px;
-            letter-spacing: .8px;
-            text-transform: uppercase;
+
+        .identity-name{
+
+            color:var(--green);
+
+            font-size:13px;
+
+            font-weight:950;
         }
 
-        /* =========================
+
+        .identity-role{
+
+            margin-top:3px;
+
+            color:var(--muted);
+
+            font-size:8px;
+
+            font-weight:800;
+
+            letter-spacing:.8px;
+
+            text-transform:uppercase;
+        }
+
+
+        .header-btn{
+
+            min-height:38px;
+
+            padding:
+                0
+                12px;
+
+            border:
+                1px solid
+                var(--line);
+
+            border-radius:10px;
+
+            background:#fff;
+
+            color:var(--green);
+
+            font-size:9px;
+
+            font-weight:900;
+        }
+
+
+        .header-btn:hover{
+
+            background:var(--cream-soft);
+        }
+
+
+        /* =========================================================
            PROFILE GRID
-        ========================== */
+        ========================================================= */
 
-        .profile-grid {
-            display: grid;
-            grid-template-columns: minmax(0,1fr) 340px;
-            gap: 18px;
+        .profile-grid{
+
+            display:grid;
+
+            grid-template-columns:
+                minmax(0,1fr)
+                340px;
+
+            gap:18px;
         }
 
-        .card {
-            overflow: hidden;
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            background: var(--white);
-            box-shadow: var(--shadow);
+
+        .card{
+
+            overflow:hidden;
+
+            border:
+                1px solid
+                var(--line);
+
+            border-radius:var(--radius);
+
+            background:var(--white);
+
+            box-shadow:var(--shadow);
         }
 
-        .card-head {
-            padding: 20px;
-            border-bottom: 1px solid var(--line);
+
+        .card-head{
+
+            padding:19px 20px;
+
+            border-bottom:
+                1px solid
+                var(--line);
         }
 
-        .card-title {
-            color: var(--green);
-            font-size: 15px;
-            font-weight: 900;
+
+        .card-title{
+
+            color:var(--green);
+
+            font-size:14px;
+
+            font-weight:950;
         }
 
-        .card-subtitle {
-            margin-top: 4px;
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.5;
+
+        .card-subtitle{
+
+            margin-top:4px;
+
+            color:var(--muted);
+
+            font-size:10px;
+
+            line-height:1.6;
         }
 
-        /* =========================
+
+        /* =========================================================
            PROFILE HERO
-        ========================== */
+        ========================================================= */
 
-        .profile-hero {
-            display: flex;
-            align-items: center;
-            gap: 17px;
-            padding: 25px;
+        .profile-hero{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:17px;
+
+            padding:24px 25px;
+
             background:
                 linear-gradient(
                     135deg,
                     var(--green),
                     #14534e
                 );
-            color: #fff;
+
+            color:#fff;
         }
 
-        .avatar {
-            width: 70px;
-            height: 70px;
-            flex: 0 0 auto;
-            display: grid;
-            place-items: center;
-            border-radius: 50%;
-            background: var(--cream);
-            color: var(--green);
-            font-size: 24px;
-            font-weight: 900;
+
+        .avatar{
+
+            width:70px;
+            height:70px;
+
+            flex:0 0 auto;
+
+            display:grid;
+
+            place-items:center;
+
+            border-radius:50%;
+
+            background:var(--cream);
+
+            color:var(--green);
+
+            font-size:23px;
+
+            font-weight:950;
         }
 
-        .hero-name {
-            font-size: 21px;
-            font-weight: 900;
+
+        .hero-name{
+
+            font-size:21px;
+
+            font-weight:950;
+
+            line-height:1.1;
         }
 
-        .hero-role {
-            margin-top: 5px;
-            color: #c9d9d6;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+
+        .hero-role{
+
+            margin-top:5px;
+
+            color:#c9d9d6;
+
+            font-size:8px;
+
+            font-weight:850;
+
+            letter-spacing:1px;
+
+            text-transform:uppercase;
         }
 
-        .active-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 11px;
-            padding: 6px 9px;
-            border-radius: 30px;
-            background: rgba(255,255,255,.10);
-            color: #e5fff4;
-            font-size: 9px;
-            font-weight: 900;
-            text-transform: uppercase;
+
+        .active-badge{
+
+            display:inline-flex;
+
+            align-items:center;
+
+            gap:6px;
+
+            margin-top:11px;
+
+            padding:
+                6px
+                9px;
+
+            border-radius:30px;
+
+            background:
+                rgba(255,255,255,.10);
+
+            color:#e5fff4;
+
+            font-size:8px;
+
+            font-weight:950;
+
+            text-transform:uppercase;
         }
 
-        .active-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #8fe1c2;
+
+        .active-dot{
+
+            width:6px;
+            height:6px;
+
+            border-radius:50%;
+
+            background:#8fe1c2;
         }
 
-        /* =========================
-           INFORMATION
-        ========================== */
 
-        .details {
-            padding: 22px;
+        .active-badge.suspended{
+
+            color:#ffe1e4;
+
+            background:
+                rgba(108,21,30,.35);
         }
 
-        .detail-grid {
-            display: grid;
-            grid-template-columns: repeat(2,minmax(0,1fr));
-            gap: 20px;
+
+        .active-badge.suspended .active-dot{
+
+            background:#f3a3ac;
         }
 
-        .label {
-            color: var(--muted);
-            font-size: 9px;
-            font-weight: 900;
-            letter-spacing: .9px;
-            text-transform: uppercase;
+
+        /* =========================================================
+           DETAILS
+        ========================================================= */
+
+        .details{
+
+            padding:22px;
         }
 
-        .value {
-            margin-top: 5px;
-            color: var(--ink);
-            font-size: 13px;
-            font-weight: 800;
-            word-break: break-word;
+
+        .detail-grid{
+
+            display:grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0,1fr)
+                );
+
+            gap:20px;
         }
 
-        .divider {
-            height: 1px;
-            margin: 25px 0;
-            background: var(--line);
+
+        .detail{
+
+            min-width:0;
         }
 
-        /* =========================
+
+        .label{
+
+            color:var(--muted);
+
+            font-size:8px;
+
+            font-weight:950;
+
+            letter-spacing:.9px;
+
+            text-transform:uppercase;
+        }
+
+
+        .value{
+
+            margin-top:5px;
+
+            color:var(--ink);
+
+            font-size:12px;
+
+            font-weight:850;
+
+            line-height:1.5;
+
+            word-break:break-word;
+        }
+
+
+        .value.mono{
+
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Monaco,
+                Consolas,
+                monospace;
+
+            font-size:9px;
+        }
+
+
+        .divider{
+
+            height:1px;
+
+            margin:
+                24px
+                0;
+
+            background:var(--line);
+        }
+
+
+        /* =========================================================
            ASSIGNMENTS
-        ========================== */
+        ========================================================= */
 
-        .event-list {
-            display: grid;
-            gap: 10px;
+        .assignment-summary{
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:space-between;
+
+            gap:10px;
+
+            margin-bottom:14px;
         }
 
-        .event {
-            padding: 15px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            background: var(--soft);
+
+        .assignment-count{
+
+            color:var(--green);
+
+            font-size:11px;
+
+            font-weight:900;
         }
 
-        .event-title {
-            color: var(--green);
-            font-size: 13px;
-            font-weight: 900;
+
+        .assignment-note{
+
+            color:var(--muted);
+
+            font-size:8px;
         }
 
-        .event-meta {
-            margin-top: 5px;
-            color: var(--muted);
-            font-size: 10px;
-            line-height: 1.6;
+
+        .event-list{
+
+            display:grid;
+
+            gap:10px;
         }
 
-        .event-status {
-            display: inline-flex;
-            margin-top: 8px;
-            padding: 5px 8px;
-            border-radius: 20px;
-            background: var(--success-bg);
-            color: var(--success);
-            font-size: 8px;
-            font-weight: 900;
-            text-transform: uppercase;
+
+        .event{
+
+            padding:14px;
+
+            border:
+                1px solid
+                var(--line);
+
+            border-radius:12px;
+
+            background:var(--soft);
         }
 
-        .empty {
-            padding: 25px;
-            border: 1px dashed var(--line);
-            border-radius: 12px;
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.6;
-            text-align: center;
+
+        .event-top{
+
+            display:flex;
+
+            align-items:flex-start;
+
+            justify-content:space-between;
+
+            gap:12px;
         }
 
-        /* =========================
-           SECURITY CARD
-        ========================== */
 
-        .security {
-            padding: 20px;
+        .event-title{
+
+            min-width:0;
+
+            color:var(--green);
+
+            font-size:12px;
+
+            font-weight:950;
+
+            line-height:1.45;
         }
 
-        .security-box {
-            padding: 15px;
-            border-radius: 12px;
-            background: var(--soft);
-            border: 1px solid var(--line);
+
+        .event-status{
+
+            flex:0 0 auto;
+
+            display:inline-flex;
+
+            align-items:center;
+
+            min-height:23px;
+
+            padding:
+                0
+                7px;
+
+            border-radius:20px;
+
+            background:
+                var(--success-bg);
+
+            color:var(--success);
+
+            font-size:7px;
+
+            font-weight:950;
+
+            text-transform:uppercase;
         }
 
-        .security-title {
-            color: var(--green);
-            font-size: 12px;
-            font-weight: 900;
+
+        .event-status.warning{
+
+            background:
+                var(--warning-bg);
+
+            color:var(--warning);
         }
 
-        .security-text {
-            margin-top: 7px;
-            color: var(--muted);
-            font-size: 10px;
-            line-height: 1.7;
+
+        .event-status.danger{
+
+            background:
+                var(--danger-bg);
+
+            color:var(--danger);
         }
 
-        .security-rules {
-            display: grid;
-            gap: 9px;
-            margin-top: 15px;
+
+        .event-meta{
+
+            margin-top:7px;
+
+            color:var(--muted);
+
+            font-size:9px;
+
+            line-height:1.7;
         }
 
-        .security-rule {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 10px;
-            line-height: 1.5;
+
+        .event-id{
+
+            margin-top:8px;
+
+            color:#9a918a;
+
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Monaco,
+                Consolas,
+                monospace;
+
+            font-size:7px;
+
+            overflow-wrap:anywhere;
         }
 
-        .rule-dot {
-            flex: 0 0 auto;
-            width: 6px;
-            height: 6px;
-            margin-top: 4px;
-            border-radius: 50%;
-            background: var(--bordo);
+
+        .empty{
+
+            padding:27px 20px;
+
+            border:
+                1px dashed
+                var(--line);
+
+            border-radius:12px;
+
+            background:var(--soft);
+
+            color:var(--muted);
+
+            font-size:10px;
+
+            line-height:1.7;
+
+            text-align:center;
         }
 
-        .action {
-            width: 100%;
-            min-height: 43px;
-            margin-top: 15px;
-            border: 0;
-            border-radius: 10px;
-            background: var(--bordo);
-            color: #fff;
-            font-size: 11px;
-            font-weight: 900;
+
+        /* =========================================================
+           SECURITY
+        ========================================================= */
+
+        .security{
+
+            padding:20px;
         }
 
-        .action:hover {
-            background: #581119;
+
+        .security-box{
+
+            padding:15px;
+
+            border:
+                1px solid
+                var(--line);
+
+            border-radius:12px;
+
+            background:var(--soft);
         }
 
-        /* =========================
-           LOADING / ERROR
-        ========================== */
 
-        .loading {
-            color: var(--muted);
-            font-size: 11px;
+        .security-title{
+
+            color:var(--green);
+
+            font-size:12px;
+
+            font-weight:950;
         }
 
-        .error {
-            padding: 14px;
-            border: 1px solid #efd3d6;
-            border-radius: 11px;
-            background: var(--danger-bg);
-            color: var(--danger);
-            font-size: 11px;
-            line-height: 1.6;
+
+        .security-text{
+
+            margin-top:7px;
+
+            color:var(--muted);
+
+            font-size:9px;
+
+            line-height:1.75;
         }
 
-        /* =========================
+
+        .security-rules{
+
+            display:grid;
+
+            gap:9px;
+
+            margin-top:15px;
+        }
+
+
+        .security-rule{
+
+            display:flex;
+
+            align-items:flex-start;
+
+            gap:8px;
+
+            color:var(--muted);
+
+            font-size:9px;
+
+            line-height:1.55;
+        }
+
+
+        .rule-dot{
+
+            flex:0 0 auto;
+
+            width:6px;
+            height:6px;
+
+            margin-top:4px;
+
+            border-radius:50%;
+
+            background:var(--bordo);
+        }
+
+
+        .security-rule.allowed .rule-dot{
+
+            background:var(--success);
+        }
+
+
+        .security-rule.restricted .rule-dot{
+
+            background:var(--bordo);
+        }
+
+
+        .action{
+
+            width:100%;
+
+            min-height:43px;
+
+            margin-top:15px;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            border:
+                1px solid
+                var(--bordo);
+
+            border-radius:10px;
+
+            background:var(--bordo);
+
+            color:#fff;
+
+            font-size:10px;
+
+            font-weight:950;
+        }
+
+
+        .action:hover{
+
+            background:var(--bordo-dark);
+        }
+
+
+        .action.secondary{
+
+            margin-top:9px;
+
+            border-color:var(--line);
+
+            background:#fff;
+
+            color:var(--green);
+        }
+
+
+        .action.secondary:hover{
+
+            background:var(--cream-soft);
+        }
+
+
+        /* =========================================================
+           ASSIGNMENT RECORDS
+        ========================================================= */
+
+        .assignment-records{
+
+            margin-top:15px;
+        }
+
+
+        .assignment-record{
+
+            padding:11px 0;
+
+            border-bottom:
+                1px solid
+                var(--line);
+        }
+
+
+        .assignment-record:last-child{
+
+            border-bottom:0;
+
+            padding-bottom:0;
+        }
+
+
+        .assignment-record:first-child{
+
+            padding-top:0;
+        }
+
+
+        .assignment-record-label{
+
+            color:var(--muted);
+
+            font-size:7px;
+
+            font-weight:950;
+
+            text-transform:uppercase;
+
+            letter-spacing:.08em;
+        }
+
+
+        .assignment-record-value{
+
+            margin-top:4px;
+
+            color:var(--green);
+
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Monaco,
+                Consolas,
+                monospace;
+
+            font-size:8px;
+
+            line-height:1.5;
+
+            overflow-wrap:anywhere;
+        }
+
+
+        /* =========================================================
+           ERROR / LOADING
+        ========================================================= */
+
+        .loading{
+
+            padding:27px 20px;
+
+            border:
+                1px dashed
+                var(--line);
+
+            border-radius:12px;
+
+            color:var(--muted);
+
+            font-size:10px;
+
+            text-align:center;
+        }
+
+
+        .error{
+
+            padding:14px;
+
+            border:
+                1px solid
+                #efd3d6;
+
+            border-radius:11px;
+
+            background:
+                var(--danger-bg);
+
+            color:var(--danger);
+
+            font-size:9px;
+
+            line-height:1.7;
+        }
+
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        .toast-container{
+
+            position:fixed;
+
+            right:18px;
+
+            bottom:18px;
+
+            z-index:100;
+
+            display:grid;
+
+            gap:8px;
+
+            max-width:
+                min(
+                    360px,
+                    calc(100vw - 36px)
+                );
+        }
+
+
+        .toast{
+
+            padding:
+                11px
+                13px;
+
+            border-radius:11px;
+
+            background:var(--green);
+
+            color:#fff;
+
+            box-shadow:
+                0 13px 35px
+                rgba(0,0,0,.16);
+
+            font-size:9px;
+
+            line-height:1.5;
+        }
+
+
+        .toast.error-toast{
+
+            background:var(--bordo);
+        }
+
+
+        /* =========================================================
            RESPONSIVE
-        ========================== */
+        ========================================================= */
 
-        @media (max-width: 900px) {
+        @media(max-width:900px){
 
-            .app {
-                grid-template-columns: 1fr;
+            .app{
+
+                grid-template-columns:1fr;
             }
 
-            .sidebar {
-                position: relative;
-                height: auto;
-                padding: 12px;
+
+            .sidebar{
+
+                position:relative;
+
+                height:auto;
+
+                padding:12px;
             }
 
-            .brand {
-                padding-bottom: 12px;
+
+            .brand{
+
+                padding:
+                    5px
+                    8px
+                    12px;
             }
 
-            .nav {
-                grid-template-columns: repeat(2,minmax(0,1fr));
+
+            .nav{
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(0,1fr)
+                    );
             }
+
 
             .sidebar-spacer,
-            .staff-mini {
-                display: none;
+            .staff-mini{
+
+                display:none;
             }
 
-            .profile-grid {
-                grid-template-columns: 1fr;
-            }
-        }
 
-        @media (max-width: 650px) {
+            .logout-btn{
 
-            .main {
-                padding: 16px 12px;
+                margin-top:9px;
             }
 
-            .topbar {
-                flex-direction: column;
-            }
 
-            .identity {
-                text-align: left;
-            }
+            .profile-grid{
 
-            .detail-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns:1fr;
             }
         }
 
-        @media (max-width: 470px) {
 
-            .nav {
-                grid-template-columns: 1fr 1fr;
+        @media(max-width:650px){
+
+            .main{
+
+                padding:
+                    18px
+                    12px;
             }
 
-            .profile-hero {
-                align-items: flex-start;
-                flex-direction: column;
+
+            .topbar{
+
+                flex-direction:column;
+
+                margin-bottom:19px;
             }
 
-            .avatar {
-                width: 60px;
-                height: 60px;
-                font-size: 20px;
+
+            .identity{
+
+                min-width:0;
+
+                text-align:left;
+            }
+
+
+            .header-actions{
+
+                width:100%;
+            }
+
+
+            .header-btn{
+
+                flex:1;
+            }
+
+
+            .detail-grid{
+
+                grid-template-columns:1fr;
+            }
+
+
+            .profile-hero{
+
+                padding:22px;
             }
         }
+
+
+        @media(max-width:470px){
+
+            .nav{
+
+                grid-template-columns:
+                    1fr
+                    1fr;
+            }
+
+
+            .profile-hero{
+
+                align-items:flex-start;
+
+                flex-direction:column;
+            }
+
+
+            .avatar{
+
+                width:60px;
+                height:60px;
+
+                font-size:20px;
+            }
+
+
+            .event-top{
+
+                flex-direction:column;
+            }
+
+
+            .event-status{
+
+                align-self:flex-start;
+            }
+        }
+
+
+        /* =========================================================
+           PRINT
+        ========================================================= */
+
+        @media print{
+
+            body{
+                background:#fff;
+            }
+
+
+            .sidebar,
+            .header-actions,
+            .page-footer,
+            .toast-container{
+
+                display:none !important;
+            }
+
+
+            .app{
+
+                display:block;
+            }
+
+
+            .main{
+
+                padding:0;
+            }
+
+
+            .card{
+
+                box-shadow:none;
+
+                break-inside:avoid;
+            }
+
+
+            .topbar{
+
+                margin-bottom:18px;
+            }
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
+
 <div class="app">
 
-    <!-- SIDEBAR -->
+
+    <!-- =========================================================
+         SIDEBAR
+    ========================================================= -->
 
     <aside class="sidebar">
+
 
         <div class="brand">
 
@@ -635,7 +1565,9 @@
                 KT
             </div>
 
+
             <div>
+
                 <div class="brand-name">
                     K-TICKETS
                 </div>
@@ -643,31 +1575,51 @@
                 <div class="brand-role">
                     Gate Staff
                 </div>
+
             </div>
 
         </div>
 
+
         <nav class="nav">
+
 
             <a
                 href="./scan.html"
                 class="nav-link"
             >
-                <span class="nav-icon">⌁</span>
-                <span>Scan Tickets</span>
+
+                <span class="nav-icon">
+                    ⌁
+                </span>
+
+                <span>
+                    Scan Tickets
+                </span>
+
             </a>
+
 
             <a
                 href="./profile.html"
                 class="nav-link active"
             >
-                <span class="nav-icon">◉</span>
-                <span>My Profile</span>
+
+                <span class="nav-icon">
+                    ◉
+                </span>
+
+                <span>
+                    My Profile
+                </span>
+
             </a>
 
         </nav>
 
+
         <div class="sidebar-spacer"></div>
+
 
         <div class="staff-mini">
 
@@ -678,11 +1630,16 @@
                 Loading...
             </div>
 
-            <div class="staff-mini-role">
-                Authorized Gate Staff
+
+            <div
+                class="staff-mini-role"
+                id="sidebarRole"
+            >
+                Gate Staff
             </div>
 
         </div>
+
 
         <button
             type="button"
@@ -695,13 +1652,22 @@
     </aside>
 
 
-    <!-- MAIN -->
+    <!-- =========================================================
+         MAIN
+    ========================================================= -->
 
     <main class="main">
 
+
         <div class="main-inner">
 
+
+            <!-- =================================================
+                 HEADER
+            ================================================= -->
+
             <header class="topbar">
+
 
                 <div>
 
@@ -709,44 +1675,76 @@
                         Gate Operations
                     </div>
 
+
                     <h1>
                         My Profile
                     </h1>
+
 
                     <div
                         class="welcome"
                         id="welcomeText"
                     >
-                        Loading your account...
+                        Loading your Gate Staff account...
                     </div>
 
                 </div>
 
-                <div class="identity">
 
-                    <div
-                        class="identity-name"
-                        id="identityName"
+                <div class="header-actions">
+
+
+                    <div class="identity">
+
+                        <div
+                            class="identity-name"
+                            id="identityName"
+                        >
+                            —
+                        </div>
+
+
+                        <div
+                            class="identity-role"
+                            id="identityRole"
+                        >
+                            Gate Staff
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="header-btn"
+                        id="refreshBtn"
                     >
-                        —
-                    </div>
-
-                    <div class="identity-role">
-                        Gate Staff
-                    </div>
+                        ↻ Refresh
+                    </button>
 
                 </div>
 
             </header>
 
 
+            <!-- =================================================
+                 PROFILE GRID
+            ================================================= -->
+
             <section class="profile-grid">
 
-                <!-- LEFT -->
+
+                <!-- =============================================
+                     LEFT COLUMN
+                ============================================== -->
 
                 <div class="card">
 
+
+                    <!-- PROFILE HERO -->
+
                     <div class="profile-hero">
+
 
                         <div
                             class="avatar"
@@ -755,7 +1753,9 @@
                             KT
                         </div>
 
+
                         <div>
+
 
                             <div
                                 class="hero-name"
@@ -764,11 +1764,19 @@
                                 Loading...
                             </div>
 
-                            <div class="hero-role">
-                                Authorized Gate Staff
+
+                            <div
+                                class="hero-role"
+                                id="heroRole"
+                            >
+                                Gate Staff
                             </div>
 
-                            <div class="active-badge">
+
+                            <div
+                                class="active-badge"
+                                id="activeBadge"
+                            >
 
                                 <span class="active-dot"></span>
 
@@ -778,27 +1786,35 @@
 
                             </div>
 
+
                         </div>
 
                     </div>
 
 
+                    <!-- ACCOUNT DETAILS -->
+
                     <div class="details">
+
 
                         <div class="card-title">
                             Account Information
                         </div>
 
+
                         <div
                             class="card-subtitle"
                             style="margin-bottom:20px;"
                         >
-                            Your K-Tickets Gate Staff identity.
+                            Your authenticated K-Tickets Gate Staff
+                            identity and access state.
                         </div>
+
 
                         <div class="detail-grid">
 
-                            <div>
+
+                            <div class="detail">
 
                                 <div class="label">
                                     Full Name
@@ -813,7 +1829,8 @@
 
                             </div>
 
-                            <div>
+
+                            <div class="detail">
 
                                 <div class="label">
                                     Account Role
@@ -823,12 +1840,13 @@
                                     class="value"
                                     id="role"
                                 >
-                                    Gate Staff
+                                    —
                                 </div>
 
                             </div>
 
-                            <div>
+
+                            <div class="detail">
 
                                 <div class="label">
                                     Email
@@ -843,7 +1861,8 @@
 
                             </div>
 
-                            <div>
+
+                            <div class="detail">
 
                                 <div class="label">
                                     Phone
@@ -858,10 +1877,11 @@
 
                             </div>
 
-                            <div>
+
+                            <div class="detail">
 
                                 <div class="label">
-                                    Staff ID
+                                    Staff Assignment
                                 </div>
 
                                 <div
@@ -873,10 +1893,27 @@
 
                             </div>
 
-                            <div>
+
+                            <div class="detail">
 
                                 <div class="label">
-                                    Joined
+                                    Active Assignments
+                                </div>
+
+                                <div
+                                    class="value"
+                                    id="assignmentCount"
+                                >
+                                    —
+                                </div>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <div class="label">
+                                    First Assignment
                                 </div>
 
                                 <div
@@ -888,176 +1925,340 @@
 
                             </div>
 
+
+                            <div class="detail">
+
+                                <div class="label">
+                                    Assigned Events
+                                </div>
+
+                                <div
+                                    class="value"
+                                    id="eventCount"
+                                >
+                                    —
+                                </div>
+
+                            </div>
+
                         </div>
 
+
                         <div class="divider"></div>
+
+
+                        <!-- ASSIGNED EVENTS -->
 
                         <div class="card-title">
                             Assigned Events
                         </div>
 
+
                         <div
                             class="card-subtitle"
                             style="margin-bottom:15px;"
                         >
-                            These are the events this account is authorized
-                            to scan.
+                            Only events mapped to this Gate Staff
+                            account are shown.
                         </div>
+
+
+                        <div
+                            class="assignment-summary"
+                        >
+
+                            <div
+                                class="assignment-count"
+                                id="assignmentSummary"
+                            >
+                                Loading...
+                            </div>
+
+
+                            <div class="assignment-note">
+                                Live database assignments
+                            </div>
+
+                        </div>
+
 
                         <div
                             class="event-list"
                             id="eventList"
                         >
+
                             <div class="loading">
-                                Loading assignments...
+                                Loading event assignments...
                             </div>
+
                         </div>
+
 
                     </div>
 
                 </div>
 
 
-                <!-- RIGHT -->
+                <!-- =============================================
+                     RIGHT COLUMN — SECURITY
+                ============================================== -->
 
-                <div class="card">
+                <div style="display:grid;gap:18px;">
 
-                    <div class="card-head">
 
-                        <div class="card-title">
-                            Gate Access
+                    <!-- GATE ACCESS -->
+
+                    <div class="card">
+
+
+                        <div class="card-head">
+
+                            <div class="card-title">
+                                Gate Access
+                            </div>
+
+
+                            <div class="card-subtitle">
+                                What this account is allowed to do.
+                            </div>
+
                         </div>
 
-                        <div class="card-subtitle">
-                            What this account can access.
+
+                        <div class="security">
+
+
+                            <div class="security-box">
+
+
+                                <div class="security-title">
+                                    Scanner Access
+                                </div>
+
+
+                                <div class="security-text">
+                                    Your account is limited to the
+                                    gate functions granted to an
+                                    active Gate Staff profile.
+                                    Final authorization is enforced
+                                    by Supabase.
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="security-rules">
+
+
+                                <div class="security-rule allowed">
+
+                                    <span class="rule-dot"></span>
+
+                                    <span>
+                                        Scan tickets assigned to your
+                                        authorized events.
+                                    </span>
+
+                                </div>
+
+
+                                <div class="security-rule allowed">
+
+                                    <span class="rule-dot"></span>
+
+                                    <span>
+                                        Check valid tickets into the
+                                        correct event.
+                                    </span>
+
+                                </div>
+
+
+                                <div class="security-rule allowed">
+
+                                    <span class="rule-dot"></span>
+
+                                    <span>
+                                        View your own Gate Staff
+                                        profile and assignments.
+                                    </span>
+
+                                </div>
+
+
+                                <div class="security-rule restricted">
+
+                                    <span class="rule-dot"></span>
+
+                                    <span>
+                                        No access to merchant finances.
+                                    </span>
+
+                                </div>
+
+
+                                <div class="security-rule restricted">
+
+                                    <span class="rule-dot"></span>
+
+                                    <span>
+                                        No access to event management.
+                                    </span>
+
+                                </div>
+
+
+                                <div class="security-rule restricted">
+
+                                    <span class="rule-dot"></span>
+
+                                    <span>
+                                        No access to customer accounts.
+                                    </span>
+
+                                </div>
+
+
+                                <div class="security-rule restricted">
+
+                                    <span class="rule-dot"></span>
+
+                                    <span>
+                                        No role changes or staff
+                                        administration.
+                                    </span>
+
+                                </div>
+
+
+                            </div>
+
+
+                            <a
+                                href="./scan.html"
+                                class="action"
+                            >
+                                Open Ticket Scanner
+                            </a>
+
+
                         </div>
 
                     </div>
 
-                    <div class="security">
 
-                        <div class="security-box">
+                    <!-- ASSIGNMENT RECORDS -->
 
-                            <div class="security-title">
-                                Scanner Access
+                    <div class="card">
+
+
+                        <div class="card-head">
+
+                            <div class="card-title">
+                                Staff Assignments
                             </div>
 
-                            <div class="security-text">
-                                Your account is limited to ticket
-                                verification and event check-in for
-                                assigned events.
-                            </div>
 
-                        </div>
-
-                        <div class="security-rules">
-
-                            <div class="security-rule">
-                                <span class="rule-dot"></span>
-                                <span>
-                                    Scan assigned event tickets.
-                                </span>
-                            </div>
-
-                            <div class="security-rule">
-                                <span class="rule-dot"></span>
-                                <span>
-                                    Check valid tickets into the event.
-                                </span>
-                            </div>
-
-                            <div class="security-rule">
-                                <span class="rule-dot"></span>
-                                <span>
-                                    View only your Gate Staff profile.
-                                </span>
-                            </div>
-
-                            <div class="security-rule">
-                                <span class="rule-dot"></span>
-                                <span>
-                                    No access to merchant finances.
-                                </span>
-                            </div>
-
-                            <div class="security-rule">
-                                <span class="rule-dot"></span>
-                                <span>
-                                    No access to event management.
-                                </span>
-                            </div>
-
-                            <div class="security-rule">
-                                <span class="rule-dot"></span>
-                                <span>
-                                    No access to customer accounts.
-                                </span>
+                            <div class="card-subtitle">
+                                Active Gate Staff assignment records
+                                for this authenticated account.
                             </div>
 
                         </div>
 
-                        <a
-                            href="./scan.html"
-                            class="action"
-                            style="
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                            "
-                        >
-                            Open Ticket Scanner
-                        </a>
 
-                    </div>
+                        <div class="security">
 
-                </div>
+                            <div
+                                class="assignment-records"
+                                id="assignmentRecords"
+                            >
 
+                                <div class="loading">
+                                    Loading assignments...
+                                </div>
 
-                <!-- SECURITY -->
+                            </div>
 
-                <div class="card">
-
-                    <div class="card-head">
-
-                        <div class="card-title">
-                            Account Security
-                        </div>
-
-                        <div class="card-subtitle">
-                            Keep your Gate Staff account private.
                         </div>
 
                     </div>
 
-                    <div class="security">
 
-                        <div class="security-box">
+                    <!-- ACCOUNT SECURITY -->
 
-                            <div class="security-title">
-                                Important
+                    <div class="card">
+
+
+                        <div class="card-head">
+
+                            <div class="card-title">
+                                Account Security
                             </div>
 
-                            <div class="security-text">
-                                Never share your login credentials,
-                                session, or scanner access with another
-                                person.
+
+                            <div class="card-subtitle">
+                                Protect the credentials used for gate
+                                operations.
                             </div>
 
                         </div>
 
-                        <button
-                            type="button"
-                            class="action"
-                            id="logoutSecurityBtn"
-                        >
-                            Sign Out of This Device
-                        </button>
+
+                        <div class="security">
+
+
+                            <div class="security-box">
+
+
+                                <div class="security-title">
+                                    Important
+                                </div>
+
+
+                                <div class="security-text">
+                                    Never share your K-Tickets login,
+                                    browser session, scanner access,
+                                    or authentication information
+                                    with another person.
+                                </div>
+
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="action"
+                                id="logoutSecurityBtn"
+                            >
+                                Sign Out of This Device
+                            </button>
+
+                        </div>
 
                     </div>
 
                 </div>
 
             </section>
+
+
+            <div
+                class="page-footer"
+                style="
+                    margin-top:22px;
+                    text-align:center;
+                    color:var(--muted);
+                    font-size:8px;
+                    line-height:1.6;
+                "
+            >
+                Gate Staff access is controlled by authenticated
+                Supabase records and server-side authorization.
+            </div>
+
 
         </div>
 
@@ -1066,94 +2267,251 @@
 </div>
 
 
+<div
+    class="toast-container"
+    id="toastContainer"
+></div>
+
+
 <script>
-/* ============================================================
-   K-TICKETS — GATE STAFF PROFILE
-   ============================================================
 
-   SECURITY
+/*
+    =================================================================
+    K-TICKETS — GATE STAFF PROFILE
+    =================================================================
 
-   This page is intentionally read-only.
+    THIS PAGE IS READ-ONLY.
 
-   Gate Staff cannot:
+    It does not:
 
-   - create users
-   - change roles
-   - manage events
-   - change ticket prices
-   - view merchant finances
-   - manage withdrawals
-   - manage promotions
-   - manage customers
-   - modify another staff member
+        • edit profiles
+        • change roles
+        • create users
+        • create staff
+        • change event assignments
+        • manage events
+        • manage ticket prices
+        • manage merchant finances
+        • manage withdrawals
+        • manage promotions
+        • manage customers
 
-   Role enforcement MUST also exist in Supabase RLS.
-============================================================ */
+    ACCESS REQUIREMENTS
+
+        1. authenticated Supabase user
+        2. profiles.role = gate_staff
+        3. profiles.is_active = true
+        4. at least one active merchant_staff assignment
+
+    ASSIGNMENT STRUCTURE
+
+        merchant_staff
+            ↓
+        merchant_staff_events
+            ↓
+        events
+
+    The mapping table uses:
+
+        merchant_staff_id
+
+    NOT:
+
+        staff_id
+
+    Final scanner / admission authorization is enforced by:
+
+        check_in_ticket(
+            p_qr_token,
+            p_event_id,
+            p_device_info
+        )
+
+    =================================================================
+*/
 
 
-/* ============================================================
-   CONFIG
-============================================================ */
+/* ================================================================
+   SUPABASE
+================================================================ */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
-
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
-
-let supabaseClient = null;
-
-let currentUser = null;
-let currentProfile = null;
-let currentStaff = null;
-let assignedEvents = [];
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
 
-/* ============================================================
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
+
+let supabaseClient =
+    null;
+
+
+/* ================================================================
+   STATE
+================================================================ */
+
+let currentUser =
+    null;
+
+
+let currentProfile =
+    null;
+
+
+let staffAssignments =
+    [];
+
+
+let assignedEvents =
+    [];
+
+
+let authSubscription =
+    null;
+
+
+/* ================================================================
    DOM
-============================================================ */
+================================================================ */
 
 const sidebarName =
-    document.getElementById("sidebarName");
+    document.getElementById(
+        "sidebarName"
+    );
+
+
+const sidebarRole =
+    document.getElementById(
+        "sidebarRole"
+    );
+
 
 const identityName =
-    document.getElementById("identityName");
+    document.getElementById(
+        "identityName"
+    );
+
+
+const identityRole =
+    document.getElementById(
+        "identityRole"
+    );
+
 
 const welcomeText =
-    document.getElementById("welcomeText");
+    document.getElementById(
+        "welcomeText"
+    );
+
 
 const heroName =
-    document.getElementById("heroName");
+    document.getElementById(
+        "heroName"
+    );
+
+
+const heroRole =
+    document.getElementById(
+        "heroRole"
+    );
+
 
 const fullName =
-    document.getElementById("fullName");
+    document.getElementById(
+        "fullName"
+    );
+
 
 const role =
-    document.getElementById("role");
+    document.getElementById(
+        "role"
+    );
+
 
 const email =
-    document.getElementById("email");
+    document.getElementById(
+        "email"
+    );
+
 
 const phone =
-    document.getElementById("phone");
+    document.getElementById(
+        "phone"
+    );
+
 
 const staffId =
-    document.getElementById("staffId");
+    document.getElementById(
+        "staffId"
+    );
+
+
+const assignmentCount =
+    document.getElementById(
+        "assignmentCount"
+    );
+
 
 const joinedAt =
-    document.getElementById("joinedAt");
+    document.getElementById(
+        "joinedAt"
+    );
+
+
+const eventCount =
+    document.getElementById(
+        "eventCount"
+    );
+
 
 const accountStatus =
-    document.getElementById("accountStatus");
+    document.getElementById(
+        "accountStatus"
+    );
+
+
+const activeBadge =
+    document.getElementById(
+        "activeBadge"
+    );
+
 
 const avatar =
-    document.getElementById("avatar");
+    document.getElementById(
+        "avatar"
+    );
+
 
 const eventList =
-    document.getElementById("eventList");
+    document.getElementById(
+        "eventList"
+    );
+
+
+const assignmentSummary =
+    document.getElementById(
+        "assignmentSummary"
+    );
+
+
+const assignmentRecords =
+    document.getElementById(
+        "assignmentRecords"
+    );
+
+
+const refreshBtn =
+    document.getElementById(
+        "refreshBtn"
+    );
+
 
 const logoutBtn =
-    document.getElementById("logoutBtn");
+    document.getElementById(
+        "logoutBtn"
+    );
+
 
 const logoutSecurityBtn =
     document.getElementById(
@@ -1161,159 +2519,370 @@ const logoutSecurityBtn =
     );
 
 
-/* ============================================================
+const toastContainer =
+    document.getElementById(
+        "toastContainer"
+    );
+
+
+/* ================================================================
    HELPERS
-============================================================ */
+================================================================ */
 
-function firstValue(
-    object,
-    keys,
-    fallback = null
-) {
+function escapeHtml(
+    value
+){
 
-    if (!object) {
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+function safeText(
+    value,
+    fallback = "Not provided"
+){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+
         return fallback;
     }
 
-    for (const key of keys) {
 
-        if (
-            object[key] !== undefined &&
-            object[key] !== null &&
-            object[key] !== ""
-        ) {
-            return object[key];
-        }
-    }
+    const text =
+        String(
+            value
+        ).trim();
 
-    return fallback;
+
+    return text ||
+        fallback;
 }
 
 
-function escapeHtml(value) {
+function formatDateTime(
+    value
+){
 
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+    if(!value){
 
-
-function formatDateTime(value) {
-
-    if (!value) {
-        return "—";
+        return "Not available";
     }
+
 
     const date =
-        new Date(value);
+        new Date(
+            value
+        );
 
-    if (Number.isNaN(date.getTime())) {
-        return String(value);
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+
+        return "Not available";
     }
 
-    return new Intl.DateTimeFormat(
-        undefined,
-        {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit"
-        }
-    ).format(date);
+
+    try{
+
+        return new Intl.DateTimeFormat(
+            undefined,
+            {
+                year:"numeric",
+                month:"short",
+                day:"numeric",
+                hour:"numeric",
+                minute:"2-digit"
+            }
+        ).format(
+            date
+        );
+
+    }catch(error){
+
+        return date.toLocaleString();
+    }
 }
 
 
-function greeting() {
+function greeting(){
 
     const hour =
-        new Date().getHours();
+        new Date()
+            .getHours();
 
-    if (hour < 12) {
+
+    if(
+        hour < 12
+    ){
+
         return "Good morning";
     }
 
-    if (hour < 18) {
+
+    if(
+        hour < 18
+    ){
+
         return "Good afternoon";
     }
+
 
     return "Good evening";
 }
 
 
-function initials(name) {
+function initials(
+    name
+){
 
     const value =
-        String(name || "KT")
+        String(
+            name ||
+            "KT"
+        )
             .trim();
 
-    if (!value) {
+
+    if(!value){
+
         return "KT";
     }
 
-    const parts =
-        value.split(/\s+/);
 
-    if (parts.length === 1) {
+    const parts =
+        value
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    if(
+        parts.length === 1
+    ){
+
         return parts[0]
-            .slice(0,2)
+            .slice(
+                0,
+                2
+            )
             .toUpperCase();
     }
 
+
     return (
         parts[0][0] +
-        parts[parts.length - 1][0]
+        parts[
+            parts.length - 1
+        ][0]
     ).toUpperCase();
 }
 
 
-/* ============================================================
-   SUPABASE
-============================================================ */
+function formatStatus(
+    value
+){
 
-function initializeSupabase() {
+    const text =
+        String(
+            value ||
+            "Not specified"
+        )
+            .trim()
+            .replaceAll(
+                "_",
+                " "
+            );
 
-    if (
+
+    return text
+        .replace(
+            /\b\w/g,
+            character =>
+                character.toUpperCase()
+        );
+}
+
+
+function statusClass(
+    value
+){
+
+    const status =
+        String(
+            value ||
+            ""
+        )
+            .toLowerCase();
+
+
+    if(
+        [
+            "cancelled",
+            "canceled",
+            "closed",
+            "suspended",
+            "removed"
+        ].includes(
+            status
+        )
+    ){
+
+        return "danger";
+    }
+
+
+    if(
+        [
+            "draft",
+            "pending",
+            "paused"
+        ].includes(
+            status
+        )
+    ){
+
+        return "warning";
+    }
+
+
+    return "";
+}
+
+
+function toast(
+    message,
+    isError = false
+){
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+
+    element.className =
+        `toast${
+            isError
+                ? " error-toast"
+                : ""
+        }`;
+
+
+    element.textContent =
+        message;
+
+
+    toastContainer.appendChild(
+        element
+    );
+
+
+    setTimeout(
+        () => {
+
+            element.remove();
+
+        },
+        3500
+    );
+}
+
+
+/* ================================================================
+   NAVIGATION
+================================================================ */
+
+function redirectLogin(
+    reason = ""
+){
+
+    const suffix =
+        reason
+            ? `?error=${encodeURIComponent(reason)}`
+            : "";
+
+
+    window.location.replace(
+        `../login.html${suffix}`
+    );
+}
+
+
+/* ================================================================
+   SUPABASE INITIALIZATION
+================================================================ */
+
+function initializeSupabase(){
+
+    if(
         !SUPABASE_URL ||
-        !SUPABASE_ANON_KEY
-    ) {
+        !SUPABASE_PUBLISHABLE_KEY
+    ){
+
         throw new Error(
             "K-Tickets Supabase configuration is missing."
         );
     }
 
-    if (
+
+    if(
         !window.supabase ||
         !window.supabase.createClient
-    ) {
+    ){
+
         throw new Error(
             "Supabase library failed to load."
         );
     }
 
+
     supabaseClient =
         window.supabase.createClient(
             SUPABASE_URL,
-            SUPABASE_ANON_KEY,
+            SUPABASE_PUBLISHABLE_KEY,
             {
-                auth: {
-                    persistSession: true,
-                    autoRefreshToken: true,
-                    detectSessionInUrl: true
+                auth:{
+                    persistSession:true,
+                    autoRefreshToken:true,
+                    detectSessionInUrl:true
                 }
             }
         );
 }
 
 
-/* ============================================================
-   AUTH
-============================================================ */
+/* ================================================================
+   AUTHENTICATION
+================================================================ */
 
-async function requireGateStaff() {
+async function requireGateStaff(){
 
     const {
         data,
@@ -1323,78 +2892,119 @@ async function requireGateStaff() {
             .auth
             .getSession();
 
-    if (error) {
+
+    if(error){
+
         throw error;
     }
+
 
     const session =
         data?.session;
 
-    if (!session?.user) {
 
-        redirectToLogin();
+    if(!session?.user){
+
+        redirectLogin(
+            "login_required"
+        );
 
         return null;
     }
 
+
     currentUser =
         session.user;
 
-    const profileResponse =
+
+    const {
+        data:profile,
+        error:profileError
+    } =
         await supabaseClient
             .from("profiles")
-            .select(
-                "id,full_name,phone,role"
-            )
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                avatar_url,
+                is_active,
+                created_at,
+                updated_at
+            `)
             .eq(
                 "id",
                 currentUser.id
             )
             .maybeSingle();
 
-    if (profileResponse.error) {
-        throw profileResponse.error;
+
+    if(profileError){
+
+        throw profileError;
     }
 
-    currentProfile =
-        profileResponse.data;
 
-    if (
-        !currentProfile ||
-        currentProfile.role !== "gate_staff"
-    ) {
+    if(!profile){
 
-        await supabaseClient.auth.signOut();
+        throw new Error(
+            "No K-Tickets profile exists for this account."
+        );
+    }
 
-        window.location.href =
-            "../auth/login.html?error=unauthorized";
+
+    if(
+        String(
+            profile.role ||
+            ""
+        ).toLowerCase() !==
+        "gate_staff"
+    ){
+
+        await supabaseClient
+            .auth
+            .signOut();
+
+
+        redirectLogin(
+            "unauthorized"
+        );
 
         return null;
     }
+
+
+    if(
+        profile.is_active === false
+    ){
+
+        await supabaseClient
+            .auth
+            .signOut();
+
+
+        redirectLogin(
+            "inactive_account"
+        );
+
+        return null;
+    }
+
+
+    currentProfile =
+        profile;
+
 
     return currentUser;
 }
 
 
-function redirectToLogin() {
+/* ================================================================
+   LOAD MERCHANT STAFF ASSIGNMENTS
+================================================================ */
 
-    const destination =
-        window.location.pathname +
-        window.location.search;
-
-    window.location.href =
-        "../auth/login.html?redirect=" +
-        encodeURIComponent(
-            destination
-        );
-}
-
-
-/* ============================================================
-   LOAD STAFF
-============================================================ */
-
-async function loadStaff() {
+async function loadStaffAssignments(){
 
     const {
         data,
@@ -1402,69 +3012,143 @@ async function loadStaff() {
     } =
         await supabaseClient
             .from("merchant_staff")
-            .select("*")
+            .select(`
+                id,
+                merchant_id,
+                user_id,
+                status,
+                created_at,
+                updated_at
+            `)
             .eq(
                 "user_id",
                 currentUser.id
             )
-            .maybeSingle();
+            .eq(
+                "status",
+                "active"
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:true
+                }
+            );
 
-    if (error) {
+
+    if(error){
+
         throw error;
     }
 
-    currentStaff =
-        data;
 
-    if (!currentStaff) {
+    staffAssignments =
+        Array.isArray(data)
+            ? data
+            : [];
+
+
+    if(!staffAssignments.length){
 
         throw new Error(
-            "No Gate Staff assignment was found for this account."
+            "No active Gate Staff assignment was found for this account."
         );
     }
 }
 
 
-/* ============================================================
-   LOAD ASSIGNED EVENTS
-============================================================ */
+/* ================================================================
+   LOAD ASSIGNED EVENT MAPPINGS
+================================================================ */
 
-async function loadAssignedEvents() {
+async function loadAssignedEventMappings(){
 
-    const mappingResponse =
-        await supabaseClient
-            .from("merchant_staff_events")
-            .select(
-                "event_id"
-            )
-            .eq(
-                "staff_id",
-                currentStaff.id
-            );
+    assignedEvents =
+        [];
 
-    if (mappingResponse.error) {
-        throw mappingResponse.error;
-    }
 
-    const eventIds =
+    const staffIds =
         [
             ...new Set(
-                (mappingResponse.data || [])
-                    .map(row => row.event_id)
+                staffAssignments
+                    .map(
+                        row =>
+                            row.id
+                    )
                     .filter(Boolean)
             )
         ];
 
-    if (!eventIds.length) {
 
-        assignedEvents = [];
+    if(!staffIds.length){
 
         renderEvents();
 
         return;
     }
 
-    const eventsResponse =
+
+    /*
+        IMPORTANT
+
+        The schema uses:
+
+            merchant_staff_events.merchant_staff_id
+
+        not:
+
+            merchant_staff_events.staff_id
+    */
+
+    const {
+        data:mappings,
+        error:mappingError
+    } =
+        await supabaseClient
+            .from("merchant_staff_events")
+            .select(`
+                id,
+                merchant_staff_id,
+                event_id,
+                created_at
+            `)
+            .in(
+                "merchant_staff_id",
+                staffIds
+            );
+
+
+    if(mappingError){
+
+        throw mappingError;
+    }
+
+
+    const eventIds =
+        [
+            ...new Set(
+                (mappings || [])
+                    .map(
+                        row =>
+                            row.event_id
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+
+    if(!eventIds.length){
+
+        renderEvents();
+
+        return;
+    }
+
+
+    const {
+        data:events,
+        error:eventError
+    } =
         await supabaseClient
             .from("events")
             .select(`
@@ -1484,263 +3168,784 @@ async function loadAssignedEvents() {
             .order(
                 "start_at",
                 {
-                    ascending: true,
-                    nullsFirst: false
+                    ascending:true,
+                    nullsFirst:false
                 }
             );
 
-    if (eventsResponse.error) {
-        throw eventsResponse.error;
+
+    if(eventError){
+
+        throw eventError;
     }
 
+
     assignedEvents =
-        eventsResponse.data || [];
+        Array.isArray(events)
+            ? events
+            : [];
+
 
     renderEvents();
 }
 
 
-/* ============================================================
+/* ================================================================
    RENDER PROFILE
-============================================================ */
+================================================================ */
 
-function renderProfile() {
+function renderProfile(){
 
     const name =
-        currentProfile?.full_name ||
-        currentUser?.email ||
-        "Gate Staff";
-
-    const phoneValue =
-        currentProfile?.phone ||
-        "Not provided";
-
-    const status =
-        String(
-            firstValue(
-                currentStaff,
-                ["status"],
-                "active"
+        safeText(
+            currentProfile?.full_name,
+            safeText(
+                currentUser?.email,
+                "Gate Staff"
             )
-        ).toLowerCase();
+        );
+
+
+    const firstName =
+        name
+            .split(/\s+/)
+            .filter(Boolean)[0] ||
+        name;
+
+
+    const assignments =
+        staffAssignments;
+
+
+    const assignmentNumber =
+        assignments.length;
+
+
+    const firstAssignment =
+        assignments[0] ||
+        null;
+
+
+    /* ==========================================================
+       SIDEBAR
+    ========================================================== */
 
     sidebarName.textContent =
         name;
 
+
+    sidebarRole.textContent =
+        "Authorized Gate Staff";
+
+
+    /* ==========================================================
+       HEADER
+    ========================================================== */
+
     identityName.textContent =
         name;
 
+
+    identityRole.textContent =
+        "Gate Staff";
+
+
     welcomeText.textContent =
-        greeting() +
-        ", " +
-        name.split(" ")[0] +
-        ". Your gate access is shown below.";
+        `${greeting()}, ${firstName}. Your gate access and assigned events are shown below.`;
+
+
+    /* ==========================================================
+       HERO
+    ========================================================== */
 
     heroName.textContent =
         name;
 
+
+    heroRole.textContent =
+        "Authorized Gate Staff";
+
+
+    avatar.textContent =
+        initials(
+            name
+        );
+
+
+    /* ==========================================================
+       ACCOUNT
+    ========================================================== */
+
     fullName.textContent =
         name;
+
 
     role.textContent =
         "Gate Staff";
 
+
     email.textContent =
-        currentUser?.email ||
-        "Email unavailable";
+        safeText(
+            currentUser?.email,
+            "Email unavailable"
+        );
+
 
     phone.textContent =
-        phoneValue;
+        safeText(
+            currentProfile?.phone
+        );
+
+
+    assignmentCount.textContent =
+        `${assignmentNumber} active ${
+            assignmentNumber === 1
+                ? "assignment"
+                : "assignments"
+        }`;
+
+
+    eventCount.textContent =
+        `${assignedEvents.length} ${
+            assignedEvents.length === 1
+                ? "event"
+                : "events"
+        }`;
+
 
     staffId.textContent =
-        currentStaff?.id ||
-        "—";
+        firstAssignment?.id ||
+        "Not available";
+
 
     joinedAt.textContent =
         formatDateTime(
-            firstValue(
-                currentStaff,
-                ["created_at"]
-            )
+            firstAssignment?.created_at
         );
 
-    accountStatus.textContent =
-        status
-            .replace(/_/g, " ")
-            .replace(
-                /\b\w/g,
-                c => c.toUpperCase()
-            );
 
-    avatar.textContent =
-        initials(name);
+    /* ==========================================================
+       ACCOUNT STATUS
+    ========================================================== */
+
+    accountStatus.textContent =
+        "Active";
+
+
+    activeBadge.classList.remove(
+        "suspended"
+    );
+
+
+    assignmentSummary.textContent =
+        assignedEvents.length
+            ? `${assignedEvents.length} assigned ${
+                assignedEvents.length === 1
+                    ? "event"
+                    : "events"
+              }`
+            : "No assigned events";
 }
 
 
-/* ============================================================
-   RENDER EVENTS
-============================================================ */
+/* ================================================================
+   RENDER ASSIGNMENTS
+================================================================ */
 
-function renderEvents() {
+function renderAssignmentRecords(){
 
-    if (!assignedEvents.length) {
+    if(
+        !staffAssignments.length
+    ){
 
-        eventList.innerHTML = `
+        assignmentRecords.innerHTML = `
             <div class="empty">
-                No events are currently assigned to this Gate Staff
-                account.
+                No active staff assignment records are available.
             </div>
         `;
 
         return;
     }
 
-    eventList.innerHTML =
-        assignedEvents
-            .map(event => {
 
-                const status =
-                    String(
-                        event.status ||
-                        "scheduled"
-                    )
-                        .replace(/_/g," ")
-                        .replace(
-                            /\b\w/g,
-                            c => c.toUpperCase()
+    assignmentRecords.innerHTML =
+        staffAssignments
+            .map(
+                assignment => {
+
+                    const status =
+                        formatStatus(
+                            assignment.status
                         );
 
-                return `
-                    <div class="event">
 
-                        <div class="event-title">
-                            ${escapeHtml(
-                                event.title ||
-                                "Untitled Event"
-                            )}
+                    const merchantId =
+                        safeText(
+                            assignment.merchant_id,
+                            "Not available"
+                        );
+
+
+                    return `
+
+                        <div class="assignment-record">
+
+                            <div class="assignment-record-label">
+                                Staff Assignment ID
+                            </div>
+
+                            <div class="assignment-record-value">
+                                ${escapeHtml(
+                                    safeText(
+                                        assignment.id,
+                                        "Not available"
+                                    )
+                                )}
+                            </div>
+
+
+                            <div
+                                class="assignment-record-label"
+                                style="margin-top:8px;"
+                            >
+                                Merchant Assignment
+                            </div>
+
+                            <div class="assignment-record-value">
+                                ${escapeHtml(
+                                    merchantId
+                                )}
+                            </div>
+
+
+                            <div
+                                class="assignment-record-label"
+                                style="margin-top:8px;"
+                            >
+                                Status
+                            </div>
+
+                            <div
+                                class="assignment-record-value"
+                                style="
+                                    font-family:inherit;
+                                    font-size:9px;
+                                "
+                            >
+                                ${escapeHtml(
+                                    status
+                                )}
+                            </div>
+
                         </div>
 
-                        <div class="event-meta">
-                            ${escapeHtml(
-                                [
-                                    event.venue,
-                                    event.city
-                                ]
-                                .filter(Boolean)
-                                .join(" · ")
-                            )}
-
-                            <br>
-
-                            ${escapeHtml(
-                                formatDateTime(
-                                    event.start_at
-                                )
-                            )}
-                        </div>
-
-                        <div class="event-status">
-                            ${escapeHtml(status)}
-                        </div>
-
-                    </div>
-                `;
-            })
+                    `;
+                }
+            )
             .join("");
 }
 
 
-/* ============================================================
-   LOGOUT
-============================================================ */
+/* ================================================================
+   RENDER EVENTS
+================================================================ */
 
-async function logout() {
+function renderEvents(){
 
-    await supabaseClient
-        .auth
-        .signOut();
+    eventCount.textContent =
+        `${assignedEvents.length} ${
+            assignedEvents.length === 1
+                ? "event"
+                : "events"
+        }`;
 
-    window.location.href =
-        "../auth/login.html";
-}
+
+    assignmentSummary.textContent =
+        assignedEvents.length
+            ? `${assignedEvents.length} assigned ${
+                assignedEvents.length === 1
+                    ? "event"
+                    : "events"
+              }`
+            : "No assigned events";
 
 
-/* ============================================================
-   AUTH LISTENER
-============================================================ */
+    if(
+        !assignedEvents.length
+    ){
 
-function registerAuthListener() {
+        eventList.innerHTML = `
 
-    supabaseClient
-        .auth
-        .onAuthStateChange(
-            (event, session) => {
+            <div class="empty">
 
-                if (
-                    event === "SIGNED_OUT" ||
-                    !session?.user
-                ) {
+                No events are currently assigned to this
+                Gate Staff account.
 
-                    window.location.href =
-                        "../auth/login.html";
+                <br><br>
+
+                Event access appears here only after a valid
+                merchant staff event assignment exists.
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    eventList.innerHTML =
+        assignedEvents
+            .map(
+                event => {
+
+                    const rawStatus =
+                        String(
+                            event.status ||
+                            ""
+                        )
+                            .trim()
+                            .toLowerCase();
+
+
+                    const status =
+                        formatStatus(
+                            event.status
+                        );
+
+
+                    const className =
+                        statusClass(
+                            event.status
+                        );
+
+
+                    const location =
+                        [
+                            event.venue,
+                            event.city
+                        ]
+                            .filter(Boolean)
+                            .join(
+                                " · "
+                            );
+
+
+                    return `
+
+                        <div class="event">
+
+                            <div class="event-top">
+
+
+                                <div class="event-title">
+
+                                    ${escapeHtml(
+                                        safeText(
+                                            event.title,
+                                            "Untitled Event"
+                                        )
+                                    )}
+
+                                </div>
+
+
+                                <span
+                                    class="
+                                        event-status
+                                        ${
+                                            className
+                                        }
+                                    "
+                                >
+                                    ${escapeHtml(
+                                        status
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <div class="event-meta">
+
+                                ${
+                                    escapeHtml(
+                                        location ||
+                                        "Venue not provided"
+                                    )
+                                }
+
+                                <br>
+
+                                ${
+                                    escapeHtml(
+                                        formatDateTime(
+                                            event.start_at
+                                        )
+                                    )
+                                }
+
+                                ${
+                                    event.end_at
+                                        ? `
+                                            <br>
+                                            Ends:
+                                            ${escapeHtml(
+                                                formatDateTime(
+                                                    event.end_at
+                                                )
+                                            )}
+                                          `
+                                        : ""
+                                }
+
+                            </div>
+
+
+                            <div class="event-id">
+
+                                Event ID:
+                                ${escapeHtml(
+                                    safeText(
+                                        event.id,
+                                        "Not available"
+                                    )
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    `;
                 }
-            }
-        );
+            )
+            .join("");
 }
 
 
-/* ============================================================
-   START
-============================================================ */
+/* ================================================================
+   REFRESH DATA
+================================================================ */
 
-async function startPage() {
+async function refreshPage(){
 
-    try {
+    refreshBtn.disabled =
+        true;
 
-        initializeSupabase();
 
-        const user =
-            await requireGateStaff();
+    refreshBtn.textContent =
+        "Refreshing...";
 
-        if (!user) {
+
+    try{
+
+        await requireGateStaff();
+
+
+        if(!currentUser){
+
             return;
         }
 
-        await loadStaff();
+
+        await loadStaffAssignments();
+
+
+        await loadAssignedEventMappings();
+
 
         renderProfile();
 
-        await loadAssignedEvents();
 
-        registerAuthListener();
+        renderAssignmentRecords();
 
-    } catch (error) {
+
+        toast(
+            "Gate Staff profile refreshed."
+        );
+
+
+    }catch(error){
 
         console.error(
-            "Gate profile initialization failed:",
+            "Gate Staff refresh failed:",
             error
         );
 
-        eventList.innerHTML = `
-            <div class="error">
-                ${escapeHtml(
-                    error?.message ||
-                    "Unable to load your Gate Staff profile."
-                )}
-            </div>
-        `;
+
+        /*
+            If authorization disappeared, do not leave the
+            previously loaded gate identity visible indefinitely.
+        */
+
+        const message =
+            error?.message ||
+            "Unable to refresh your Gate Staff profile.";
+
+
+        if(
+            /unauthor/i.test(
+                message
+            ) ||
+            /active gate staff/i.test(
+                message
+            ) ||
+            /no active.*assignment/i.test(
+                message
+            )
+        ){
+
+            eventList.innerHTML = `
+
+                <div class="error">
+
+                    ${escapeHtml(
+                        message
+                    )}
+
+                </div>
+
+            `;
+
+
+            toast(
+                message,
+                true
+            );
+
+        }else{
+
+            toast(
+                message,
+                true
+            );
+        }
+
+    }finally{
+
+        refreshBtn.disabled =
+            false;
+
+
+        refreshBtn.textContent =
+            "↻ Refresh";
     }
 }
 
 
-/* ============================================================
+/* ================================================================
+   LOGOUT
+================================================================ */
+
+async function logout(){
+
+    try{
+
+        if(supabaseClient){
+
+            await supabaseClient
+                .auth
+                .signOut();
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Sign out error:",
+            error
+        );
+    }
+
+
+    redirectLogin(
+        "signed_out"
+    );
+}
+
+
+/* ================================================================
+   AUTH STATE MONITOR
+================================================================ */
+
+function registerAuthListener(){
+
+    if(!supabaseClient){
+
+        return;
+    }
+
+
+    const response =
+        supabaseClient
+            .auth
+            .onAuthStateChange(
+                async (
+                    event,
+                    session
+                ) => {
+
+                    if(
+                        event ===
+                            "SIGNED_OUT" ||
+                        !session?.user
+                    ){
+
+                        redirectLogin(
+                            "session_expired"
+                        );
+
+
+                        return;
+                    }
+
+
+                    /*
+                        Only refresh profile data for auth events
+                        that can materially affect this page.
+                    */
+
+                    if(
+                        event ===
+                            "USER_UPDATED"
+                    ){
+
+                        try{
+
+                            await refreshPage();
+
+                        }catch(_){
+
+                            /* UI already handles errors */
+                        }
+                    }
+                }
+            );
+
+
+    authSubscription =
+        response?.data?.subscription ||
+        null;
+}
+
+
+/* ================================================================
+   PAGE INITIALIZATION
+================================================================ */
+
+async function startPage(){
+
+    try{
+
+        initializeSupabase();
+
+
+        const user =
+            await requireGateStaff();
+
+
+        if(!user){
+
+            return;
+        }
+
+
+        await loadStaffAssignments();
+
+
+        await loadAssignedEventMappings();
+
+
+        renderProfile();
+
+
+        renderAssignmentRecords();
+
+
+        registerAuthListener();
+
+
+    }catch(error){
+
+        console.error(
+            "Gate Staff profile initialization failed:",
+            error
+        );
+
+
+        const message =
+            error?.message ||
+            "Unable to load your Gate Staff profile.";
+
+
+        welcomeText.textContent =
+            "Gate Staff profile unavailable.";
+
+
+        eventList.innerHTML = `
+
+            <div class="error">
+
+                ${escapeHtml(
+                    message
+                )}
+
+                <br><br>
+
+                Your account must be authenticated,
+                active, and assigned as Gate Staff before
+                this page can be used.
+
+            </div>
+
+        `;
+
+
+        assignmentRecords.innerHTML = `
+
+            <div class="error">
+
+                ${escapeHtml(
+                    message
+                )}
+
+            </div>
+
+        `;
+
+
+        /*
+            Do not expose a privileged-looking profile when
+            authorization failed.
+        */
+
+        if(
+            !currentUser
+        ){
+
+            setTimeout(
+                () => {
+
+                    redirectLogin(
+                        "login_required"
+                    );
+
+                },
+                900
+            );
+        }
+    }
+}
+
+
+/* ================================================================
    EVENTS
-============================================================ */
+================================================================ */
 
 logoutBtn.addEventListener(
     "click",
     logout
 );
+
 
 logoutSecurityBtn.addEventListener(
     "click",
@@ -1748,13 +3953,80 @@ logoutSecurityBtn.addEventListener(
 );
 
 
-/* ============================================================
+refreshBtn.addEventListener(
+    "click",
+    refreshPage
+);
+
+
+/*
+    Re-check the active assignment when the Gate Staff
+    returns to the tab.
+
+    This helps surface a suspension/removal without
+    requiring a manual page reload.
+*/
+
+document.addEventListener(
+    "visibilitychange",
+    async () => {
+
+        if(
+            document.visibilityState ===
+            "visible" &&
+            currentUser
+        ){
+
+            try{
+
+                await refreshPage();
+
+            }catch(_){
+
+                /* refreshPage already handles the error */
+            }
+        }
+    }
+);
+
+
+/* ================================================================
+   CLEANUP
+================================================================ */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        try{
+
+            if(
+                authSubscription &&
+                supabaseClient
+            ){
+
+                supabaseClient
+                    .removeChannel(
+                        authSubscription
+                    );
+            }
+
+        }catch(_){
+
+            /* browser cleanup */
+        }
+    }
+);
+
+
+/* ================================================================
    START
-============================================================ */
+================================================================ */
 
 startPage();
 
 </script>
+
 
 </body>
 </html>
