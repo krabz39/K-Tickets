@@ -43,9 +43,7 @@ body{
     font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
-button,
-input,
-select{
+button,input,select,textarea{
     font:inherit;
 }
 
@@ -58,7 +56,9 @@ a{
     text-decoration:none;
 }
 
-/* SECURITY */
+/* ============================================================
+   SECURITY
+============================================================ */
 
 #securityScreen{
     position:fixed;
@@ -128,7 +128,9 @@ a{
     display:none;
 }
 
-/* SIDEBAR */
+/* ============================================================
+   SIDEBAR
+============================================================ */
 
 .sidebar{
     position:fixed;
@@ -237,7 +239,9 @@ a{
     background:#6ec39f;
 }
 
-/* MAIN */
+/* ============================================================
+   MAIN
+============================================================ */
 
 .main{
     min-height:100vh;
@@ -321,7 +325,9 @@ a{
     font-size:10px;
 }
 
-/* CONTENT */
+/* ============================================================
+   CONTENT
+============================================================ */
 
 .content{
     max-width:1800px;
@@ -382,7 +388,21 @@ a{
     cursor:not-allowed;
 }
 
-/* STATS */
+.btn.primary{
+    background:var(--green);
+    color:#fff;
+    border-color:var(--green);
+}
+
+.btn.danger{
+    background:var(--danger);
+    color:#fff;
+    border-color:var(--danger);
+}
+
+/* ============================================================
+   STATS
+============================================================ */
 
 .stats{
     display:grid;
@@ -413,7 +433,13 @@ a{
     font-weight:900;
 }
 
-/* CARD / TOOLBAR */
+.stat.pending .stat-value{
+    color:var(--warning);
+}
+
+/* ============================================================
+   CARD / TOOLBAR
+============================================================ */
 
 .card{
     overflow:hidden;
@@ -449,7 +475,8 @@ a{
 }
 
 .search input:focus,
-select:focus{
+select:focus,
+textarea:focus{
     border-color:var(--green);
     box-shadow:0 0 0 3px rgba(15,61,58,.07);
 }
@@ -463,7 +490,7 @@ select:focus{
 }
 
 select{
-    min-width:145px;
+    min-width:155px;
     padding:11px 12px;
     border:1px solid var(--border);
     border-radius:11px;
@@ -472,7 +499,9 @@ select{
     font-size:12px;
 }
 
-/* TABLE */
+/* ============================================================
+   TABLE
+============================================================ */
 
 .table-wrap{
     width:100%;
@@ -481,7 +510,7 @@ select{
 
 table{
     width:100%;
-    min-width:950px;
+    min-width:980px;
     border-collapse:collapse;
 }
 
@@ -537,19 +566,9 @@ tr:last-child td{
     overflow-wrap:anywhere;
 }
 
-.role-badge{
-    display:inline-flex;
-    padding:5px 8px;
-    border-radius:999px;
-    background:rgba(15,61,58,.07);
-    color:var(--green);
-    font-size:9px;
-    font-weight:900;
-    letter-spacing:.05em;
-    text-transform:uppercase;
-}
-
-.status{
+.role-badge,
+.status,
+.application-status{
     display:inline-flex;
     align-items:center;
     gap:5px;
@@ -557,11 +576,17 @@ tr:last-child td{
     border-radius:999px;
     font-size:9px;
     font-weight:900;
-    letter-spacing:.03em;
+    letter-spacing:.04em;
     text-transform:uppercase;
 }
 
-.status::before{
+.role-badge{
+    background:rgba(15,61,58,.07);
+    color:var(--green);
+}
+
+.status::before,
+.application-status::before{
     content:"";
     width:5px;
     height:5px;
@@ -569,12 +594,14 @@ tr:last-child td{
     background:currentColor;
 }
 
-.status.active{
+.status.active,
+.application-status.approved{
     color:var(--success);
     background:rgba(38,112,92,.09);
 }
 
-.status.disabled{
+.status.disabled,
+.application-status.rejected{
     color:var(--danger);
     background:rgba(167,40,50,.08);
 }
@@ -584,9 +611,15 @@ tr:last-child td{
     background:#ededeb;
 }
 
+.application-status.pending{
+    color:var(--warning);
+    background:rgba(161,106,24,.10);
+}
+
 .actions{
     display:flex;
     gap:6px;
+    flex-wrap:wrap;
 }
 
 .action{
@@ -603,7 +636,260 @@ tr:last-child td{
     color:var(--green);
 }
 
-/* MOBILE */
+.action.approve{
+    color:var(--success);
+}
+
+.action.reject{
+    color:var(--danger);
+}
+
+/* ============================================================
+   APPLICATIONS
+============================================================ */
+
+.applications-card{
+    margin-bottom:20px;
+}
+
+.section-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    padding:17px 18px;
+    border-bottom:1px solid var(--border);
+}
+
+.section-header h2{
+    font-size:15px;
+}
+
+.section-header p{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.application-count{
+    min-width:30px;
+    height:30px;
+    display:grid;
+    place-items:center;
+    border-radius:9px;
+    background:rgba(161,106,24,.10);
+    color:var(--warning);
+    font-size:11px;
+    font-weight:900;
+}
+
+.application-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:12px;
+    padding:15px;
+}
+
+.application-card{
+    padding:16px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:#fff;
+}
+
+.application-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.application-business{
+    font-size:14px;
+    font-weight:900;
+}
+
+.application-applicant{
+    margin-top:5px;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.application-details{
+    margin-top:14px;
+    display:grid;
+    gap:8px;
+}
+
+.application-detail{
+    font-size:11px;
+    line-height:1.55;
+}
+
+.application-detail span{
+    display:block;
+    margin-bottom:2px;
+    color:var(--muted);
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+}
+
+.application-description{
+    max-height:75px;
+    overflow:auto;
+}
+
+.application-actions{
+    display:flex;
+    gap:7px;
+    margin-top:15px;
+}
+
+.application-actions button{
+    flex:1;
+}
+
+.empty{
+    padding:50px 20px;
+    color:var(--muted);
+    text-align:center;
+    font-size:12px;
+}
+
+.empty strong{
+    display:block;
+    margin-bottom:5px;
+    color:var(--text);
+    font-size:14px;
+}
+
+.error-box{
+    margin:15px;
+    padding:13px;
+    border:1px solid #f1d0d0;
+    border-radius:11px;
+    background:#fff3f3;
+    color:var(--danger);
+    font-size:12px;
+    line-height:1.5;
+}
+
+.loading{
+    padding:35px;
+    color:var(--muted);
+    text-align:center;
+    font-size:12px;
+}
+
+/* ============================================================
+   MODAL
+============================================================ */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(15,61,58,.58);
+    backdrop-filter:blur(7px);
+}
+
+.modal.open{
+    display:flex;
+}
+
+.modal-box{
+    width:min(560px,100%);
+    max-height:90vh;
+    overflow:auto;
+    border-radius:18px;
+    background:#fff;
+    box-shadow:0 30px 80px rgba(0,0,0,.22);
+}
+
+.modal-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:20px;
+    padding:20px;
+    border-bottom:1px solid var(--border);
+}
+
+.modal-head h2{
+    font-size:18px;
+}
+
+.modal-head p{
+    margin-top:5px;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.close-modal{
+    width:34px;
+    height:34px;
+    border:1px solid var(--border);
+    border-radius:9px;
+    background:#fff;
+}
+
+.modal-body{
+    padding:20px;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:13px;
+}
+
+.detail-box{
+    padding:13px;
+    border:1px solid var(--border);
+    border-radius:11px;
+    background:#faf9f7;
+}
+
+.detail-box.full{
+    grid-column:1/-1;
+}
+
+.detail-label{
+    margin-bottom:5px;
+    color:var(--muted);
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+}
+
+.detail-value{
+    font-size:12px;
+    line-height:1.55;
+    overflow-wrap:anywhere;
+}
+
+.modal-footer{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    padding:16px 20px;
+    border-top:1px solid var(--border);
+}
+
+.modal-footer .btn{
+    min-width:100px;
+}
+
+/* ============================================================
+   MOBILE
+============================================================ */
 
 .mobile-merchants{
     display:none;
@@ -651,39 +937,13 @@ tr:last-child td{
     margin-top:13px;
 }
 
-/* STATES */
-
-.empty{
-    padding:50px 20px;
-    color:var(--muted);
-    text-align:center;
-    font-size:12px;
+.mobile-applications{
+    display:none;
 }
 
-.empty strong{
-    display:block;
-    margin-bottom:5px;
-    color:var(--text);
-    font-size:14px;
-}
-
-.error-box{
-    margin:15px;
-    padding:13px;
-    border:1px solid #f1d0d0;
-    border-radius:11px;
-    background:#fff3f3;
-    color:var(--danger);
-    font-size:12px;
-    line-height:1.5;
-}
-
-.loading{
-    padding:35px;
-    color:var(--muted);
-    text-align:center;
-    font-size:12px;
-}
+/* ============================================================
+   MOBILE MENU
+============================================================ */
 
 .mobile-menu{
     display:none;
@@ -694,7 +954,9 @@ tr:last-child td{
     background:#fff;
 }
 
-/* RESPONSIVE */
+/* ============================================================
+   RESPONSIVE
+============================================================ */
 
 @media(max-width:1100px){
     .stats{
@@ -750,6 +1012,14 @@ tr:last-child td{
     .mobile-merchants{
         display:block;
     }
+
+    .mobile-applications{
+        display:block;
+    }
+
+    .application-grid{
+        grid-template-columns:1fr;
+    }
 }
 
 @media(max-width:560px){
@@ -786,13 +1056,23 @@ tr:last-child td{
     .heading-actions .btn{
         flex:1;
     }
+
+    .detail-grid{
+        grid-template-columns:1fr;
+    }
+
+    .detail-box.full{
+        grid-column:auto;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<!-- SECURITY SCREEN -->
+<!-- ============================================================
+     SECURITY SCREEN
+============================================================ -->
 
 <div id="securityScreen">
     <div class="security-box">
@@ -807,7 +1087,9 @@ tr:last-child td{
 
 <div id="app">
 
-<!-- SIDEBAR -->
+<!-- ============================================================
+     SIDEBAR
+============================================================ -->
 
 <aside class="sidebar" id="sidebar">
 
@@ -850,7 +1132,7 @@ tr:last-child td{
 
         <div class="nav-section">Payments</div>
 
-        <a href="./payments.html">
+        <a href="./mpesa.html">
             <span class="nav-icon">◈</span>
             Payments
         </a>
@@ -893,254 +1175,433 @@ tr:last-child td{
 
 </aside>
 
-<!-- MAIN -->
+<!-- ============================================================
+     MAIN
+============================================================ -->
 
 <main class="main">
 
-    <header class="topbar">
+<header class="topbar">
 
-        <div style="display:flex;align-items:center;gap:10px;">
+    <div style="display:flex;align-items:center;gap:10px;">
 
-            <button
-                class="mobile-menu"
-                id="mobileMenu"
-                type="button"
-                aria-label="Open navigation"
-            >
-                ☰
-            </button>
+        <button
+            class="mobile-menu"
+            id="mobileMenu"
+            type="button"
+            aria-label="Open navigation"
+        >
+            ☰
+        </button>
 
-            <div class="breadcrumb">
-                Admin / <strong>Merchants</strong>
-            </div>
-
+        <div class="breadcrumb">
+            Admin / <strong>Merchants</strong>
         </div>
 
-        <div class="top-actions">
+    </div>
 
-            <button
-                class="icon-button"
-                type="button"
-                title="Notifications"
-                onclick="window.location.href='./settings.html#notifications'"
+    <div class="top-actions">
+
+        <button
+            class="icon-button"
+            type="button"
+            title="Notifications"
+            onclick="window.location.href='./notifications.html'"
+        >
+            ♢
+            <span
+                class="notification-dot"
+                id="notificationDot"
+                hidden
+            ></span>
+        </button>
+
+        <div class="admin-user">
+
+            <div
+                class="avatar"
+                id="adminAvatar"
             >
-                ♢
-                <span
-                    class="notification-dot"
-                    id="notificationDot"
-                    hidden
-                ></span>
-            </button>
-
-            <div class="admin-user">
-
-                <div
-                    class="avatar"
-                    id="adminAvatar"
-                >
-                    A
-                </div>
-
-                <div>
-                    <div
-                        class="user-name"
-                        id="adminName"
-                    >
-                        Administrator
-                    </div>
-
-                    <div class="user-role">
-                        Platform Admin
-                    </div>
-                </div>
-
+                A
             </div>
-
-        </div>
-
-    </header>
-
-    <section class="content">
-
-        <div class="page-heading">
 
             <div>
-                <div class="eyebrow">
-                    Account Control
+                <div
+                    class="user-name"
+                    id="adminName"
+                >
+                    Administrator
                 </div>
 
-                <h1>Merchants</h1>
-
-                <p>
-                    Review merchant accounts and platform access.
-                </p>
-            </div>
-
-            <div class="heading-actions">
-
-                <button
-                    class="btn"
-                    id="refreshBtn"
-                    type="button"
-                >
-                    ↻ Refresh
-                </button>
-
+                <div class="user-role">
+                    Platform Admin
+                </div>
             </div>
 
         </div>
 
-        <!-- STATS -->
+    </div>
 
-        <section class="stats">
+</header>
 
-            <div class="stat">
-                <div class="stat-label">
-                    Total Merchants
-                </div>
+<section class="content">
 
-                <div
-                    class="stat-value"
-                    id="totalMerchants"
-                >
-                    —
-                </div>
+    <div class="page-heading">
+
+        <div>
+            <div class="eyebrow">
+                Account Control
             </div>
 
-            <div class="stat">
-                <div class="stat-label">
-                    Active
-                </div>
+            <h1>Merchants</h1>
 
-                <div
-                    class="stat-value"
-                    id="activeMerchants"
-                >
-                    —
-                </div>
-            </div>
+            <p>
+                Review merchant applications and manage approved merchant accounts.
+            </p>
+        </div>
 
-            <div class="stat">
-                <div class="stat-label">
-                    Inactive
-                </div>
+        <div class="heading-actions">
 
-                <div
-                    class="stat-value"
-                    id="disabledMerchants"
-                >
-                    —
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">
-                    Pending
-                </div>
-
-                <div
-                    class="stat-value"
-                    id="pendingMerchants"
-                >
-                    0
-                </div>
-            </div>
-
-        </section>
-
-        <!-- MERCHANT TABLE -->
-
-        <section class="card">
-
-            <div class="toolbar">
-
-                <div class="search">
-
-                    <span class="search-icon">
-                        ⌕
-                    </span>
-
-                    <input
-                        id="searchInput"
-                        type="search"
-                        autocomplete="off"
-                        placeholder="Search merchant name, phone or account ID..."
-                    >
-
-                </div>
-
-                <select id="statusFilter">
-                    <option value="">
-                        All statuses
-                    </option>
-
-                    <option value="active">
-                        Active
-                    </option>
-
-                    <option value="inactive">
-                        Inactive
-                    </option>
-                </select>
-
-            </div>
-
-            <div
-                id="errorBox"
-                class="error-box"
-                hidden
-            ></div>
-
-            <!-- DESKTOP -->
-
-            <div class="table-wrap">
-
-                <table>
-
-                    <thead>
-                        <tr>
-                            <th>Merchant</th>
-                            <th>Contact</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Events</th>
-                            <th>Account ID</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="merchantTable">
-
-                        <tr>
-                            <td colspan="7">
-                                <div class="loading">
-                                    Loading merchants…
-                                </div>
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-            <!-- MOBILE -->
-
-            <div
-                class="mobile-merchants"
-                id="mobileMerchants"
+            <button
+                class="btn"
+                id="refreshBtn"
+                type="button"
             >
-                <div class="loading">
-                    Loading merchants…
-                </div>
+                ↻ Refresh
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================================
+         STATS
+    ========================================================= -->
+
+    <section class="stats">
+
+        <div class="stat">
+            <div class="stat-label">
+                Total Merchants
             </div>
 
-        </section>
+            <div
+                class="stat-value"
+                id="totalMerchants"
+            >
+                —
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">
+                Active
+            </div>
+
+            <div
+                class="stat-value"
+                id="activeMerchants"
+            >
+                —
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">
+                Inactive
+            </div>
+
+            <div
+                class="stat-value"
+                id="disabledMerchants"
+            >
+                —
+            </div>
+        </div>
+
+        <div class="stat pending">
+            <div class="stat-label">
+                Pending Applications
+            </div>
+
+            <div
+                class="stat-value"
+                id="pendingMerchants"
+            >
+                —
+            </div>
+        </div>
 
     </section>
 
+    <!-- ========================================================
+         MERCHANT APPLICATIONS
+    ========================================================= -->
+
+    <section class="card applications-card">
+
+        <div class="section-header">
+
+            <div>
+                <h2>Merchant Applications</h2>
+
+                <p>
+                    New merchants remain customer accounts until approved.
+                </p>
+            </div>
+
+            <div
+                class="application-count"
+                id="applicationCount"
+            >
+                —
+            </div>
+
+        </div>
+
+        <div
+            id="applicationsLoading"
+            class="loading"
+        >
+            Loading applications…
+        </div>
+
+        <div
+            id="applicationsEmpty"
+            class="empty"
+            hidden
+        >
+            <strong>No pending merchant applications</strong>
+            New merchant applications will appear here when submitted.
+        </div>
+
+        <div
+            id="applicationGrid"
+            class="application-grid"
+            hidden
+        ></div>
+
+        <div
+            id="mobileApplicationGrid"
+            class="mobile-applications"
+            hidden
+        ></div>
+
+    </section>
+
+    <!-- ========================================================
+         MERCHANT ACCOUNTS
+    ========================================================= -->
+
+    <section class="card">
+
+        <div class="toolbar">
+
+            <div class="search">
+
+                <span class="search-icon">
+                    ⌕
+                </span>
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    autocomplete="off"
+                    placeholder="Search merchant name, phone or account ID..."
+                >
+
+            </div>
+
+            <select id="statusFilter">
+
+                <option value="">
+                    All statuses
+                </option>
+
+                <option value="active">
+                    Active
+                </option>
+
+                <option value="inactive">
+                    Inactive
+                </option>
+
+            </select>
+
+        </div>
+
+        <div
+            id="errorBox"
+            class="error-box"
+            hidden
+        ></div>
+
+        <!-- DESKTOP -->
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Merchant</th>
+                        <th>Contact</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Events</th>
+                        <th>Account ID</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="merchantTable">
+
+                    <tr>
+
+                        <td colspan="7">
+
+                            <div class="loading">
+                                Loading merchants…
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- MOBILE -->
+
+        <div
+            class="mobile-merchants"
+            id="mobileMerchants"
+        >
+            <div class="loading">
+                Loading merchants…
+            </div>
+        </div>
+
+    </section>
+
+</section>
+
 </main>
+
+</div>
+
+<!-- ============================================================
+     APPLICATION REVIEW MODAL
+============================================================ -->
+
+<div
+    class="modal"
+    id="applicationModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="applicationModalTitle"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-head">
+
+            <div>
+                <h2 id="applicationModalTitle">
+                    Merchant Application
+                </h2>
+
+                <p id="applicationModalSubtitle">
+                    Review applicant information.
+                </p>
+            </div>
+
+            <button
+                class="close-modal"
+                type="button"
+                id="closeModalBtn"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div
+                class="detail-grid"
+                id="applicationDetails"
+            ></div>
+
+            <div style="margin-top:16px;">
+
+                <label
+                    for="adminNotes"
+                    class="detail-label"
+                >
+                    Administrator notes
+                </label>
+
+                <textarea
+                    id="adminNotes"
+                    rows="4"
+                    maxlength="2000"
+                    placeholder="Optional internal review notes..."
+                    style="
+                        width:100%;
+                        margin-top:7px;
+                        padding:12px;
+                        border:1px solid var(--border);
+                        border-radius:11px;
+                        outline:none;
+                        resize:vertical;
+                        background:#fff;
+                        font-size:12px;
+                        line-height:1.55;
+                    "
+                ></textarea>
+
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button
+                class="btn"
+                type="button"
+                id="cancelModalBtn"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="btn danger"
+                type="button"
+                id="rejectApplicationBtn"
+            >
+                Reject
+            </button>
+
+            <button
+                class="btn primary"
+                type="button"
+                id="approveApplicationBtn"
+            >
+                Approve Merchant
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -1152,28 +1613,22 @@ tr:last-child td{
 K-TICKETS ADMIN MERCHANTS
 ============================================================
 
-No hardcoded production records.
+REAL DATA ONLY.
 
-Real data sources:
+Sources:
 - public.profiles
 - public.events
+- public.merchant_applications
 
 Security:
-- publishable Supabase key only
+- Supabase publishable key only
 - authenticated session required
-- public.profiles.role must be admin
-- public.profiles.is_active must be true
-- merchant account state comes from profiles.is_active
-- no auth.users/password/token data is exposed
+- current profile must be admin
+- current profile must be active
+- merchant approval/rejection happens through SECURITY DEFINER RPC
 - no service-role key
-- no payment credentials
-
-Merchant status mutation is intentionally not performed here.
-It should be implemented through a SECURITY DEFINER RPC that:
-1. verifies the current authenticated admin
-2. verifies the merchant
-3. updates is_active atomically
-4. creates an audit log
+- no password/auth.users data exposed
+- no fake production records
 ============================================================
 */
 
@@ -1184,11 +1639,15 @@ const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 let supabaseClient = null;
+
 let currentUser = null;
 let currentProfile = null;
 
 let allMerchants = [];
+let merchantApplications = [];
 let merchantEventCounts = new Map();
+
+let selectedApplication = null;
 
 /* ============================================================
    ELEMENTS
@@ -1215,6 +1674,21 @@ const searchInput =
 const statusFilter =
     document.getElementById("statusFilter");
 
+const applicationGrid =
+    document.getElementById("applicationGrid");
+
+const mobileApplicationGrid =
+    document.getElementById("mobileApplicationGrid");
+
+const applicationsLoading =
+    document.getElementById("applicationsLoading");
+
+const applicationsEmpty =
+    document.getElementById("applicationsEmpty");
+
+const applicationModal =
+    document.getElementById("applicationModal");
+
 /* ============================================================
    SUPABASE
 ============================================================ */
@@ -1230,7 +1704,9 @@ function initializeSupabase(){
         );
     }
 
-    if(!window.supabase?.createClient){
+    if(
+        !window.supabase?.createClient
+    ){
         throw new Error(
             "Supabase client library could not be loaded."
         );
@@ -1251,7 +1727,7 @@ function initializeSupabase(){
 }
 
 /* ============================================================
-   ADMIN SECURITY GATE
+   SECURITY GATE
 ============================================================ */
 
 async function secureAdminGate(){
@@ -1261,21 +1737,22 @@ async function secureAdminGate(){
         initializeSupabase();
 
         const {
-            data:{
-                session
-            },
+            data:{session},
             error:sessionError
         } =
             await supabaseClient.auth.getSession();
 
         if(sessionError){
+
             throw new Error(
                 `Session verification failed: ${sessionError.message}`
             );
         }
 
         if(!session?.user){
+
             redirectLogin("no_session");
+
             return false;
         }
 
@@ -1302,12 +1779,14 @@ async function secureAdminGate(){
                 .maybeSingle();
 
         if(profileError){
+
             throw new Error(
                 `Profile query failed: ${profileError.message}`
             );
         }
 
         if(!profile){
+
             throw new Error(
                 "No K-Tickets profile exists for this account."
             );
@@ -1375,8 +1854,7 @@ function applyIdentity(){
             .split(/\s+/)
             .slice(0,2)
             .map(
-                part =>
-                    part.charAt(0)
+                part => part.charAt(0)
             )
             .join("")
             .toUpperCase() || "A";
@@ -1387,77 +1865,146 @@ function applyIdentity(){
 }
 
 /* ============================================================
-   LOAD MERCHANTS
+   LOAD ALL DATA
 ============================================================ */
 
-async function loadMerchants(){
+async function loadAll(){
 
     showLoading();
+
     hideError();
 
     try{
 
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from("profiles")
-                .select(`
-                    id,
-                    full_name,
-                    phone,
-                    role,
-                    is_active,
-                    created_at,
-                    updated_at
-                `)
-                .eq(
-                    "role",
-                    "merchant"
-                )
-                .order(
-                    "full_name",
-                    {
-                        ascending:true,
-                        nullsFirst:false
-                    }
-                );
-
-        if(error){
-            throw new Error(
-                `Merchant records could not be loaded: ${error.message}`
-            );
-        }
-
-        allMerchants =
-            Array.isArray(data)
-                ? data
-                : [];
+        await Promise.all([
+            loadMerchants(),
+            loadApplications()
+        ]);
 
         await loadEventCounts();
 
         updateStats();
+
         renderMerchants();
+
+        renderApplications();
+
+        updateNotificationDot();
 
     }catch(error){
 
         console.error(
-            "Merchant query failed:",
+            "Merchant administration load failed:",
             error
         );
 
-        allMerchants = [];
-        merchantEventCounts = new Map();
-
-        updateStats();
-        renderMerchants();
-
         showError(
             error?.message ||
-            "Merchant records could not be loaded."
+            "Merchant administration data could not be loaded."
         );
     }
+}
+
+/* ============================================================
+   MERCHANTS
+============================================================ */
+
+async function loadMerchants(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                is_active,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "role",
+                "merchant"
+            )
+            .order(
+                "full_name",
+                {
+                    ascending:true,
+                    nullsFirst:false
+                }
+            );
+
+    if(error){
+
+        throw new Error(
+            `Merchant records could not be loaded: ${error.message}`
+        );
+    }
+
+    allMerchants =
+        Array.isArray(data)
+            ? data
+            : [];
+}
+
+/* ============================================================
+   APPLICATIONS
+============================================================ */
+
+async function loadApplications(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("merchant_applications")
+            .select(`
+                id,
+                applicant_id,
+                business_name,
+                business_phone,
+                business_description,
+                status,
+                reviewed_by,
+                reviewed_at,
+                admin_notes,
+                created_at,
+                updated_at,
+                profiles:applicant_id(
+                    id,
+                    full_name,
+                    phone,
+                    role,
+                    is_active
+                )
+            `)
+            .eq(
+                "status",
+                "pending"
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:true
+                }
+            );
+
+    if(error){
+
+        throw new Error(
+            `Merchant applications could not be loaded: ${error.message}`
+        );
+    }
+
+    merchantApplications =
+        Array.isArray(data)
+            ? data
+            : [];
 }
 
 /* ============================================================
@@ -1586,7 +2133,7 @@ function getFilteredMerchants(){
 }
 
 /* ============================================================
-   RENDER
+   RENDER MERCHANTS
 ============================================================ */
 
 function renderMerchants(){
@@ -1595,12 +2142,9 @@ function renderMerchants(){
         getFilteredMerchants();
 
     renderDesktop(merchants);
+
     renderMobile(merchants);
 }
-
-/* ============================================================
-   DESKTOP TABLE
-============================================================ */
 
 function renderDesktop(merchants){
 
@@ -1610,9 +2154,7 @@ function renderDesktop(merchants){
             <tr>
                 <td colspan="7">
                     <div class="empty">
-                        <strong>
-                            No merchant accounts found
-                        </strong>
+                        <strong>No merchant accounts found</strong>
                         There are no merchant records matching
                         the current filters.
                     </div>
@@ -1657,6 +2199,7 @@ function renderDesktop(merchants){
                                     </div>
 
                                     <div>
+
                                         <div class="merchant-name">
                                             ${escapeHTML(
                                                 merchantName
@@ -1664,8 +2207,13 @@ function renderDesktop(merchants){
                                         </div>
 
                                         <div class="merchant-meta">
-                                            Merchant account
+                                            ${escapeHTML(
+                                                formatDate(
+                                                    merchant.created_at
+                                                )
+                                            )}
                                         </div>
+
                                     </div>
 
                                 </div>
@@ -1673,16 +2221,14 @@ function renderDesktop(merchants){
 
                             <td>
                                 ${escapeHTML(
-                                    merchant.phone ||
-                                    "—"
+                                    merchant.phone || "—"
                                 )}
                             </td>
 
                             <td>
                                 <span class="role-badge">
                                     ${escapeHTML(
-                                        merchant.role ||
-                                        "merchant"
+                                        merchant.role || "merchant"
                                     )}
                                 </span>
                             </td>
@@ -1729,19 +2275,13 @@ function renderDesktop(merchants){
             .join("");
 }
 
-/* ============================================================
-   MOBILE
-============================================================ */
-
 function renderMobile(merchants){
 
     if(!merchants.length){
 
         mobileMerchants.innerHTML = `
             <div class="empty">
-                <strong>
-                    No merchant accounts found
-                </strong>
+                <strong>No merchant accounts found</strong>
                 There are no merchant records matching
                 the current filters.
             </div>
@@ -1793,8 +2333,7 @@ function renderMobile(merchants){
 
                                         Phone:
                                         ${escapeHTML(
-                                            merchant.phone ||
-                                            "—"
+                                            merchant.phone || "—"
                                         )}
 
                                         <br>
@@ -1835,6 +2374,154 @@ function renderMobile(merchants){
 }
 
 /* ============================================================
+   APPLICATIONS RENDER
+============================================================ */
+
+function renderApplications(){
+
+    const count =
+        merchantApplications.length;
+
+    document
+        .getElementById("applicationCount")
+        .textContent =
+            count.toLocaleString();
+
+    applicationsLoading.hidden = true;
+
+    if(!count){
+
+        applicationsEmpty.hidden = false;
+        applicationGrid.hidden = true;
+        mobileApplicationGrid.hidden = true;
+
+        applicationGrid.innerHTML = "";
+        mobileApplicationGrid.innerHTML = "";
+
+        return;
+    }
+
+    applicationsEmpty.hidden = true;
+    applicationGrid.hidden = false;
+    mobileApplicationGrid.hidden = false;
+
+    const desktopHTML =
+        merchantApplications
+            .map(
+                application =>
+                    applicationCardHTML(
+                        application
+                    )
+            )
+            .join("");
+
+    applicationGrid.innerHTML =
+        desktopHTML;
+
+    mobileApplicationGrid.innerHTML =
+        desktopHTML;
+}
+
+function applicationCardHTML(application){
+
+    const applicant =
+        application.profiles || {};
+
+    const applicantName =
+        applicant.full_name ||
+        "Unnamed applicant";
+
+    const status =
+        normalizeApplicationStatus(
+            application.status
+        );
+
+    return `
+        <article class="application-card">
+
+            <div class="application-top">
+
+                <div>
+
+                    <div class="application-business">
+                        ${escapeHTML(
+                            application.business_name ||
+                            "Unnamed business"
+                        )}
+                    </div>
+
+                    <div class="application-applicant">
+                        Applicant:
+                        ${escapeHTML(
+                            applicantName
+                        )}
+                    </div>
+
+                </div>
+
+                <span class="application-status ${escapeHTML(status.className)}">
+                    ${escapeHTML(status.label)}
+                </span>
+
+            </div>
+
+            <div class="application-details">
+
+                <div class="application-detail">
+                    <span>Business phone</span>
+                    ${escapeHTML(
+                        application.business_phone ||
+                        "—"
+                    )}
+                </div>
+
+                <div class="application-detail">
+                    <span>Applicant phone</span>
+                    ${escapeHTML(
+                        applicant.phone ||
+                        "—"
+                    )}
+                </div>
+
+                <div class="application-detail">
+                    <span>Submitted</span>
+                    ${escapeHTML(
+                        formatDate(
+                            application.created_at
+                        )
+                    )}
+                </div>
+
+                <div class="application-detail application-description">
+                    <span>Description</span>
+                    ${escapeHTML(
+                        application.business_description ||
+                        "No business description supplied."
+                    )}
+                </div>
+
+            </div>
+
+            <div class="application-actions">
+
+                <button
+                    class="btn"
+                    type="button"
+                    data-application-action="review"
+                    data-id="${escapeHTML(
+                        application.id
+                    )}"
+                >
+                    Review
+                </button>
+
+            </div>
+
+        </article>
+    `;
+}
+
+/* ============================================================
    STATS
 ============================================================ */
 
@@ -1855,6 +2542,9 @@ function updateStats(){
                 merchant.is_active === false
         ).length;
 
+    const pending =
+        merchantApplications.length;
+
     document.getElementById(
         "totalMerchants"
     ).textContent =
@@ -1870,43 +2560,252 @@ function updateStats(){
     ).textContent =
         inactive.toLocaleString();
 
-    /*
-        The current profiles schema does not contain a merchant
-        onboarding/pending status. Therefore this remains zero
-        rather than inventing pending accounts.
-    */
     document.getElementById(
         "pendingMerchants"
     ).textContent =
-        "0";
+        pending.toLocaleString();
 }
 
 /* ============================================================
-   STATUS
+   APPLICATION MODAL
 ============================================================ */
 
-function normalizeStatus(isActive){
+function openApplicationModal(application){
 
-    if(isActive === true){
+    selectedApplication =
+        application;
 
-        return {
-            label:"Active",
-            className:"active"
-        };
+    const applicant =
+        application.profiles || {};
+
+    document.getElementById(
+        "applicationModalSubtitle"
+    ).textContent =
+        `Application submitted ${formatDate(
+            application.created_at
+        )}`;
+
+    document.getElementById(
+        "adminNotes"
+    ).value =
+        "";
+
+    document.getElementById(
+        "applicationDetails"
+    ).innerHTML = `
+
+        <div class="detail-box">
+            <div class="detail-label">
+                Business
+            </div>
+            <div class="detail-value">
+                ${escapeHTML(
+                    application.business_name ||
+                    "—"
+                )}
+            </div>
+        </div>
+
+        <div class="detail-box">
+            <div class="detail-label">
+                Applicant
+            </div>
+            <div class="detail-value">
+                ${escapeHTML(
+                    applicant.full_name ||
+                    "—"
+                )}
+            </div>
+        </div>
+
+        <div class="detail-box">
+            <div class="detail-label">
+                Business phone
+            </div>
+            <div class="detail-value">
+                ${escapeHTML(
+                    application.business_phone ||
+                    "—"
+                )}
+            </div>
+        </div>
+
+        <div class="detail-box">
+            <div class="detail-label">
+                Applicant phone
+            </div>
+            <div class="detail-value">
+                ${escapeHTML(
+                    applicant.phone ||
+                    "—"
+                )}
+            </div>
+        </div>
+
+        <div class="detail-box">
+            <div class="detail-label">
+                Applicant account
+            </div>
+            <div class="detail-value">
+                ${escapeHTML(
+                    application.applicant_id
+                )}
+            </div>
+        </div>
+
+        <div class="detail-box">
+            <div class="detail-label">
+                Submitted
+            </div>
+            <div class="detail-value">
+                ${escapeHTML(
+                    formatDate(
+                        application.created_at
+                    )
+                )}
+            </div>
+        </div>
+
+        <div class="detail-box full">
+            <div class="detail-label">
+                Business description
+            </div>
+            <div class="detail-value">
+                ${escapeHTML(
+                    application.business_description ||
+                    "No description supplied."
+                )}
+            </div>
+        </div>
+
+    `;
+
+    applicationModal.classList.add(
+        "open"
+    );
+
+    document.body.style.overflow =
+        "hidden";
+}
+
+function closeApplicationModal(){
+
+    selectedApplication =
+        null;
+
+    applicationModal.classList.remove(
+        "open"
+    );
+
+    document.body.style.overflow =
+        "";
+}
+
+/* ============================================================
+   REVIEW
+============================================================ */
+
+async function reviewApplication(
+    approve
+){
+
+    if(!selectedApplication){
+        return;
     }
 
-    if(isActive === false){
+    const application =
+        selectedApplication;
 
-        return {
-            label:"Inactive",
-            className:"disabled"
-        };
+    const notes =
+        document
+            .getElementById("adminNotes")
+            .value
+            .trim();
+
+    const approveButton =
+        document.getElementById(
+            "approveApplicationBtn"
+        );
+
+    const rejectButton =
+        document.getElementById(
+            "rejectApplicationBtn"
+        );
+
+    approveButton.disabled = true;
+    rejectButton.disabled = true;
+
+    approveButton.textContent =
+        approve
+            ? "Approving…"
+            : "Approve Merchant";
+
+    rejectButton.textContent =
+        approve
+            ? "Reject"
+            : "Rejecting…";
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.rpc(
+                "admin_review_merchant_application",
+                {
+                    p_application_id:
+                        application.id,
+
+                    p_approve:
+                        approve,
+
+                    p_admin_notes:
+                        notes || null
+                }
+            );
+
+        if(error){
+
+            throw new Error(
+                error.message
+            );
+        }
+
+        if(!data?.success){
+
+            throw new Error(
+                "The merchant application review did not complete."
+            );
+        }
+
+        closeApplicationModal();
+
+        await loadAll();
+
+    }catch(error){
+
+        console.error(
+            "Merchant application review failed:",
+            error
+        );
+
+        showError(
+            error?.message ||
+            "The merchant application could not be reviewed."
+        );
+
+    }finally{
+
+        approveButton.disabled = false;
+        rejectButton.disabled = false;
+
+        approveButton.textContent =
+            "Approve Merchant";
+
+        rejectButton.textContent =
+            "Reject";
     }
-
-    return {
-        label:"Unknown",
-        className:"unknown"
-    };
 }
 
 /* ============================================================
@@ -1940,7 +2839,47 @@ async function handleAction(
 }
 
 /* ============================================================
-   EVENT HANDLERS
+   APPLICATION EVENTS
+============================================================ */
+
+function handleApplicationClick(event){
+
+    const button =
+        event.target.closest(
+            "button[data-application-action]"
+        );
+
+    if(!button){
+        return;
+    }
+
+    const action =
+        button.dataset.applicationAction;
+
+    const id =
+        button.dataset.id;
+
+    if(action !== "review"){
+        return;
+    }
+
+    const application =
+        merchantApplications.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
+
+    if(application){
+
+        openApplicationModal(
+            application
+        );
+    }
+}
+
+/* ============================================================
+   MERCHANT EVENTS
 ============================================================ */
 
 merchantTable.addEventListener(
@@ -1983,6 +2922,16 @@ mobileMerchants.addEventListener(
     }
 );
 
+applicationGrid.addEventListener(
+    "click",
+    handleApplicationClick
+);
+
+mobileApplicationGrid.addEventListener(
+    "click",
+    handleApplicationClick
+);
+
 /* ============================================================
    FILTERS
 ============================================================ */
@@ -1995,6 +2944,58 @@ searchInput.addEventListener(
 statusFilter.addEventListener(
     "change",
     renderMerchants
+);
+
+/* ============================================================
+   MODAL EVENTS
+============================================================ */
+
+document
+    .getElementById("closeModalBtn")
+    .addEventListener(
+        "click",
+        closeApplicationModal
+    );
+
+document
+    .getElementById("cancelModalBtn")
+    .addEventListener(
+        "click",
+        closeApplicationModal
+    );
+
+document
+    .getElementById("approveApplicationBtn")
+    .addEventListener(
+        "click",
+        () => reviewApplication(true)
+    );
+
+document
+    .getElementById("rejectApplicationBtn")
+    .addEventListener(
+        "click",
+        () => reviewApplication(false)
+    );
+
+applicationModal.addEventListener(
+    "click",
+    event => {
+
+        if(event.target === applicationModal){
+            closeApplicationModal();
+        }
+    }
+);
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Escape"){
+            closeApplicationModal();
+        }
+    }
 );
 
 /* ============================================================
@@ -2013,16 +3014,18 @@ document
                 );
 
             button.disabled = true;
+
             button.textContent =
                 "↻ Loading…";
 
             try{
 
-                await loadMerchants();
+                await loadAll();
 
             }finally{
 
                 button.disabled = false;
+
                 button.textContent =
                     "↻ Refresh";
             }
@@ -2046,19 +3049,25 @@ document
     );
 
 document
-    .querySelectorAll(".sidebar .nav a")
-    .forEach(link => {
+    .querySelectorAll(
+        ".sidebar .nav a"
+    )
+    .forEach(
+        link => {
 
-        link.addEventListener(
-            "click",
-            () => {
+            link.addEventListener(
+                "click",
+                () => {
 
-                document
-                    .getElementById("sidebar")
-                    .classList.remove("open");
-            }
-        );
-    });
+                    document
+                        .getElementById("sidebar")
+                        .classList.remove(
+                            "open"
+                        );
+                }
+            );
+        }
+    );
 
 /* ============================================================
    AUTH MONITOR
@@ -2084,8 +3093,108 @@ function monitorAuth(){
 }
 
 /* ============================================================
+   NOTIFICATION DOT
+============================================================ */
+
+async function updateNotificationDot(){
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select("id")
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .eq(
+                    "is_read",
+                    false
+                )
+                .limit(1);
+
+        if(error){
+            return;
+        }
+
+        document.getElementById(
+            "notificationDot"
+        ).hidden =
+            !(data && data.length);
+
+    }catch(error){
+
+        console.warn(
+            "Notification state unavailable:",
+            error
+        );
+    }
+}
+
+/* ============================================================
    HELPERS
 ============================================================ */
+
+function normalizeStatus(
+    isActive
+){
+
+    if(isActive === true){
+
+        return {
+            label:"Active",
+            className:"active"
+        };
+    }
+
+    if(isActive === false){
+
+        return {
+            label:"Inactive",
+            className:"disabled"
+        };
+    }
+
+    return {
+        label:"Unknown",
+        className:"unknown"
+    };
+}
+
+function normalizeApplicationStatus(
+    status
+){
+
+    const value =
+        String(
+            status || "pending"
+        ).toLowerCase();
+
+    if(value === "approved"){
+
+        return {
+            label:"Approved",
+            className:"approved"
+        };
+    }
+
+    if(value === "rejected"){
+
+        return {
+            label:"Rejected",
+            className:"rejected"
+        };
+    }
+
+    return {
+        label:"Pending",
+        className:"pending"
+    };
+}
 
 function getInitials(name){
 
@@ -2105,14 +3214,58 @@ function getInitials(name){
         .toUpperCase() || "M";
 }
 
+function formatDate(value){
+
+    if(!value){
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if(Number.isNaN(
+        date.getTime()
+    )){
+        return "—";
+    }
+
+    return date.toLocaleString(
+        undefined,
+        {
+            year:"numeric",
+            month:"short",
+            day:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+}
+
 function escapeHTML(value){
 
-    return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 }
 
 function showLoading(){
@@ -2132,11 +3285,24 @@ function showLoading(){
             Loading merchants…
         </div>
     `;
+
+    applicationsLoading.hidden =
+        false;
+
+    applicationsEmpty.hidden =
+        true;
+
+    applicationGrid.hidden =
+        true;
+
+    mobileApplicationGrid.hidden =
+        true;
 }
 
 function showError(message){
 
     errorBox.hidden = false;
+
     errorBox.textContent =
         message;
 }
@@ -2144,6 +3310,7 @@ function showError(message){
 function hideError(){
 
     errorBox.hidden = true;
+
     errorBox.textContent =
         "";
 }
@@ -2153,6 +3320,7 @@ async function safeSignOut(){
     try{
 
         if(supabaseClient){
+
             await supabaseClient.auth.signOut();
         }
 
@@ -2165,15 +3333,21 @@ async function safeSignOut(){
     }
 }
 
-function redirectLogin(reason = "unauthorized"){
+function redirectLogin(
+    reason = "unauthorized"
+){
 
     window.location.replace(
         "/login.html?error=" +
-        encodeURIComponent(reason)
+        encodeURIComponent(
+            reason
+        )
     );
 }
 
-function showSecurityFailure(message){
+function showSecurityFailure(
+    message
+){
 
     securityScreen.innerHTML = `
 
@@ -2221,7 +3395,7 @@ function showSecurityFailure(message){
 
     monitorAuth();
 
-    await loadMerchants();
+    await loadAll();
 
 })();
 </script>
