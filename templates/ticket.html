@@ -1,75 +1,38 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
-
-    <meta
-        name="robots"
-        content="noindex,nofollow,noarchive,nosnippet"
-    >
-
-    <meta
-        name="referrer"
-        content="same-origin"
-    >
-
-    <title>K-Tickets — My Ticket</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>K-Tickets Invoice {{invoice_number}}</title>
 
     <style>
         :root {
-            --bordo: #6C151E;
-            --green: #0F3D3A;
-            --cream: #F5DABF;
-
-            --paper: #FFFFFF;
-            --soft: #FBF6F1;
-            --soft-green: #EDF5F2;
-
-            --ink: #24302F;
-            --muted: #707977;
-            --line: #E7DDD5;
-
-            --success: #167052;
-            --warning: #A86413;
-            --danger: #9B2B36;
-
-            --shadow:
-                0 18px 55px rgba(15, 61, 58, 0.12);
-
-            --radius: 20px;
+            --bordo: #6c151e;
+            --green: #0f3d3a;
+            --cream: #f5dabf;
+            --paper: #ffffff;
+            --ink: #26302e;
+            --muted: #707876;
+            --line: #e6ddd5;
+            --soft: #fbf6f1;
+            --success: #eaf3ef;
+            --danger: #f8e9ea;
+            --warning: #fbf2df;
         }
 
         * {
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
+        html,
+        body {
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                radial-gradient(
-                    circle at top right,
-                    rgba(108, 21, 30, 0.08),
-                    transparent 32%
-                ),
-                linear-gradient(
-                    135deg,
-                    #f5dabf 0%,
-                    #f9eee5 42%,
-                    #ffffff 100%
-                );
+            background: #eee7e0;
             color: var(--ink);
             font-family:
                 Inter,
@@ -79,635 +42,565 @@
                 Arial,
                 Helvetica,
                 sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
-        button,
-        a {
-            font: inherit;
+        .page-wrap {
+            padding: 32px 16px;
         }
 
-        button {
-            cursor: pointer;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        .page {
-            min-height: 100vh;
-            padding: 22px;
-        }
-
-        .shell {
-            width: min(1050px, 100%);
+        .invoice {
+            width: 100%;
+            max-width: 900px;
             margin: 0 auto;
+            background: var(--paper);
+            box-shadow: 0 18px 50px rgba(38, 48, 46, 0.12);
         }
 
         /* =========================
-           TOP BAR
+           TOP BRAND AREA
         ========================== */
 
         .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            margin-bottom: 22px;
+            background: var(--green);
+            padding: 34px 42px;
+            color: #ffffff;
+        }
+
+        .topbar-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .brand-cell {
+            width: 55%;
+            vertical-align: top;
+        }
+
+        .invoice-cell {
+            width: 45%;
+            text-align: right;
+            vertical-align: top;
         }
 
         .brand {
-            display: inline-flex;
-            align-items: center;
-            gap: 11px;
-            color: var(--green);
+            color: #ffffff;
+            font-size: 30px;
             font-weight: 900;
             letter-spacing: 1px;
         }
 
-        .brand-mark {
-            width: 40px;
-            height: 40px;
-            display: grid;
-            place-items: center;
-            border-radius: 12px;
-            background: var(--bordo);
-            color: #fff;
-            font-size: 15px;
-            font-weight: 900;
+        .brand-subtitle {
+            margin-top: 5px;
+            color: var(--cream);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
         }
 
-        .brand-text {
-            font-size: 19px;
-        }
-
-        .top-actions {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-        }
-
-        .top-btn {
-            border: 1px solid rgba(15, 61, 58, 0.14);
-            border-radius: 10px;
-            padding: 10px 13px;
-            background: rgba(255,255,255,.75);
-            color: var(--green);
-            font-size: 12px;
+        .invoice-title {
+            color: #ffffff;
+            font-size: 30px;
             font-weight: 800;
+            letter-spacing: 1px;
         }
 
-        .top-btn:hover {
-            border-color: var(--green);
+        .invoice-number {
+            margin-top: 6px;
+            color: #d7e4e0;
+            font-size: 12px;
         }
 
         /* =========================
-           STATES
+           BODY
         ========================== */
 
-        .state {
-            display: none;
-            padding: 55px 25px;
-            text-align: center;
-            background: rgba(255,255,255,.92);
-            border: 1px solid rgba(255,255,255,.7);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+        .body {
+            padding: 42px;
         }
 
-        .state.active {
-            display: block;
+        .status-row {
+            margin-bottom: 32px;
         }
 
-        .state-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 16px;
-            display: grid;
-            place-items: center;
-            border-radius: 50%;
-            background: var(--soft-green);
+        .status {
+            display: inline-block;
+            padding: 7px 13px;
+            border-radius: 30px;
+            background: var(--success);
             color: var(--green);
-            font-size: 25px;
-            font-weight: 900;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
         }
 
-        .state h2 {
-            margin: 0 0 8px;
-            color: var(--green);
-            font-size: 23px;
+        .status.pending {
+            background: var(--warning);
+            color: #76510d;
         }
 
-        .state p {
-            max-width: 560px;
-            margin: 0 auto;
+        .status.failed,
+        .status.cancelled,
+        .status.refunded {
+            background: var(--danger);
+            color: var(--bordo);
+        }
+
+        .issued-date {
+            float: right;
             color: var(--muted);
-            font-size: 14px;
+            font-size: 12px;
+            padding-top: 6px;
+        }
+
+        /* =========================
+           CUSTOMER / ORDER DETAILS
+        ========================== */
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 36px;
+        }
+
+        .details-cell {
+            width: 50%;
+            vertical-align: top;
+            padding-right: 25px;
+        }
+
+        .details-cell:last-child {
+            padding-right: 0;
+            padding-left: 25px;
+        }
+
+        .section-label {
+            margin-bottom: 8px;
+            color: var(--bordo);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+        }
+
+        .person-name {
+            color: var(--green);
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .details-text {
+            margin-top: 5px;
+            color: #626a68;
+            font-size: 13px;
             line-height: 1.7;
         }
 
-        .retry-btn {
-            margin-top: 20px;
-            border: 0;
-            border-radius: 10px;
-            padding: 12px 17px;
-            background: var(--green);
-            color: #fff;
-            font-size: 12px;
-            font-weight: 800;
+        .order-number {
+            color: var(--ink);
+            font-weight: 700;
         }
 
         /* =========================
-           TICKET
+           EVENT CARD
         ========================== */
 
-        #ticketView {
-            display: none;
-        }
-
-        #ticketView.active {
-            display: block;
-        }
-
-        .ticket {
+        .event-card {
+            margin-bottom: 30px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
             overflow: hidden;
-            background: var(--paper);
-            border: 1px solid rgba(15,61,58,.09);
-            border-radius: 24px;
-            box-shadow: var(--shadow);
         }
 
-        .ticket-head {
-            position: relative;
-            overflow: hidden;
-            padding: 34px;
-            background: var(--green);
-            color: #fff;
+        .event-header {
+            padding: 17px 20px;
+            background: var(--soft);
+            border-bottom: 1px solid var(--line);
         }
 
-        .ticket-head::after {
-            content: "";
-            position: absolute;
-            width: 260px;
-            height: 260px;
-            right: -90px;
-            top: -120px;
-            border-radius: 50%;
-            border: 45px solid rgba(245,218,191,.08);
-        }
-
-        .ticket-head-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .ticket-kicker {
-            color: var(--cream);
+        .event-label {
+            color: var(--bordo);
             font-size: 10px;
             font-weight: 900;
-            letter-spacing: 1.6px;
+            letter-spacing: 1.3px;
             text-transform: uppercase;
         }
 
         .event-title {
-            max-width: 750px;
-            margin: 9px 0 0;
-            color: #fff;
-            font-size: clamp(27px, 4vw, 42px);
-            line-height: 1.12;
-            letter-spacing: -.7px;
+            margin-top: 4px;
+            color: var(--green);
+            font-size: 20px;
+            font-weight: 800;
         }
 
         .event-description {
-            max-width: 720px;
-            margin-top: 12px;
-            color: #dce8e5;
-            font-size: 14px;
-            line-height: 1.7;
+            margin-top: 7px;
+            color: #626a68;
+            font-size: 12px;
+            line-height: 1.6;
         }
 
-        .head-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            margin-top: 20px;
-            padding: 8px 12px;
-            border-radius: 30px;
-            background: rgba(255,255,255,.12);
-            color: #fff;
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: .7px;
-            text-transform: uppercase;
-        }
-
-        .head-status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #8FE1C2;
+        .event-meta {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 12px;
         }
 
         /* =========================
-           MAIN
+           ITEMS
         ========================== */
 
-        .ticket-main {
-            display: grid;
-            grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
-            gap: 0;
+        .items-wrapper {
+            width: 100%;
+            overflow-x: auto;
         }
 
-        .details {
-            padding: 34px;
+        .items {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .section-label {
-            margin-bottom: 17px;
-            color: var(--bordo);
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0,1fr));
-            gap: 22px 20px;
-        }
-
-        .info-label {
-            color: var(--muted);
+        .items thead th {
+            padding: 13px 14px;
+            background: var(--green);
+            color: #ffffff;
             font-size: 10px;
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
+            text-align: left;
             text-transform: uppercase;
         }
 
-        .info-value {
-            margin-top: 5px;
+        .items thead th:last-child {
+            text-align: right;
+        }
+
+        .items tbody td {
+            padding: 16px 14px;
+            border-bottom: 1px solid var(--line);
+            color: #4f5956;
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        .items tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .item-name {
             color: var(--ink);
-            font-size: 14px;
-            font-weight: 800;
-            line-height: 1.5;
-            word-break: break-word;
+            font-weight: 700;
         }
 
-        .info-value.muted {
+        .item-description {
+            margin-top: 3px;
             color: var(--muted);
-            font-weight: 600;
+            font-size: 11px;
         }
 
-        .divider {
-            height: 1px;
-            margin: 30px 0;
-            background: var(--line);
-        }
-
-        /* =========================
-           QR PANEL
-        ========================== */
-
-        .qr-panel {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 34px 28px;
-            background: var(--soft);
-            border-left: 1px solid var(--line);
+        .number {
             text-align: center;
         }
 
-        .qr-label {
-            color: var(--green);
-            font-size: 15px;
-            font-weight: 900;
-        }
-
-        .qr-help {
-            max-width: 250px;
-            margin: 6px auto 17px;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.6;
-        }
-
-        .qr-wrap {
-            width: 225px;
-            height: 225px;
-            display: grid;
-            place-items: center;
-            padding: 13px;
-            background: #fff;
-            border: 1px solid var(--line);
-            border-radius: 17px;
-            box-shadow: 0 10px 25px rgba(15,61,58,.08);
-        }
-
-        #qrImage {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .qr-placeholder {
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .ticket-code {
-            margin-top: 15px;
-            color: var(--bordo);
-            font-size: 18px;
-            font-weight: 900;
-            letter-spacing: 1.8px;
-            word-break: break-all;
-        }
-
-        .ticket-code-label {
-            margin-top: 4px;
-            color: var(--muted);
-            font-size: 9px;
-            font-weight: 800;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
+        .money {
+            text-align: right;
+            white-space: nowrap;
         }
 
         /* =========================
-           HOLDER / REFERENCES
+           TOTALS
         ========================== */
 
-        .holder-card {
-            padding: 18px;
-            border-radius: 13px;
+        .totals-wrapper {
+            width: 100%;
+            margin-top: 26px;
+        }
+
+        .totals-table {
+            width: 370px;
+            max-width: 100%;
+            margin-left: auto;
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            padding: 9px 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .totals-table td:last-child {
+            color: var(--ink);
+            font-weight: 700;
+            text-align: right;
+            padding-left: 20px;
+            white-space: nowrap;
+        }
+
+        .discount-value {
+            color: var(--green) !important;
+        }
+
+        .total-row td {
+            padding-top: 16px;
+            border-top: 2px solid var(--green);
+            color: var(--bordo) !important;
+            font-size: 18px !important;
+            font-weight: 900 !important;
+        }
+
+        .amount-paid-row td:last-child {
+            color: var(--green);
+        }
+
+        /* =========================
+           PAYMENT
+        ========================== */
+
+        .payment-box {
+            margin-top: 36px;
+            padding: 20px;
+            border-radius: 12px;
             background: var(--soft);
             border: 1px solid var(--line);
         }
 
-        .holder-name {
+        .payment-title {
             color: var(--green);
-            font-size: 16px;
-            font-weight: 900;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 12px;
         }
 
-        .holder-email {
-            margin-top: 4px;
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .payment-table td {
+            padding: 6px 0;
             color: var(--muted);
             font-size: 12px;
         }
 
-        .reference-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0,1fr));
-            gap: 14px;
-        }
-
-        .reference {
-            padding: 14px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            background: #fff;
-        }
-
-        .reference-label {
-            color: var(--muted);
-            font-size: 9px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .reference-value {
-            margin-top: 5px;
+        .payment-table td:last-child {
             color: var(--ink);
+            font-weight: 700;
+            text-align: right;
+            padding-left: 20px;
+        }
+
+        .payment-status-paid {
+            color: var(--green) !important;
+        }
+
+        .payment-status-pending {
+            color: #76510d !important;
+        }
+
+        .payment-status-failed,
+        .payment-status-cancelled,
+        .payment-status-refunded {
+            color: var(--bordo) !important;
+        }
+
+        /* =========================
+           NOTES
+        ========================== */
+
+        .notes {
+            margin-top: 30px;
+            padding: 18px 20px;
+            border-left: 4px solid var(--bordo);
+            background: #fff9f4;
+        }
+
+        .notes-title {
+            color: var(--bordo);
             font-size: 12px;
             font-weight: 800;
-            word-break: break-word;
+            margin-bottom: 6px;
         }
 
-        /* =========================
-           STATUS
-        ========================== */
-
-        .status-banner {
-            margin-top: 25px;
-            padding: 16px 18px;
-            border-radius: 13px;
-            background: var(--soft-green);
-            border: 1px solid #d8e9e3;
-            color: var(--green);
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .status-banner strong {
-            font-weight: 900;
-        }
-
-        .status-banner.cancelled,
-        .status-banner.expired {
-            background: #fff0f1;
-            border-color: #f1d2d5;
-            color: var(--danger);
-        }
-
-        .status-banner.pending {
-            background: #fff7e9;
-            border-color: #f0dfbd;
-            color: var(--warning);
-        }
-
-        /* =========================
-           BOTTOM ACTIONS
-        ========================== */
-
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 25px;
-        }
-
-        .btn {
-            min-height: 43px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid transparent;
-            border-radius: 10px;
-            padding: 11px 16px;
+        .notes-text {
+            color: #626a68;
             font-size: 12px;
-            font-weight: 900;
-            transition: .2s ease;
-        }
-
-        .btn-primary {
-            background: var(--bordo);
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: #581119;
-        }
-
-        .btn-secondary {
-            background: #fff;
-            border-color: var(--line);
-            color: var(--green);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--green);
+            line-height: 1.7;
+            white-space: pre-line;
         }
 
         /* =========================
            FOOTER
         ========================== */
 
-        .page-footer {
-            padding: 25px 5px 8px;
-            color: #6d7774;
-            font-size: 11px;
-            line-height: 1.7;
-            text-align: center;
+        .footer {
+            padding: 26px 42px;
+            background: var(--green);
+            color: #dce8e5;
         }
 
-        .page-footer strong {
-            color: var(--green);
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .footer-left {
+            width: 60%;
+            vertical-align: top;
+        }
+
+        .footer-right {
+            width: 40%;
+            text-align: right;
+            vertical-align: top;
+        }
+
+        .footer-brand {
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+        .footer-text {
+            margin-top: 5px;
+            color: #cbdad6;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .footer-right .footer-text {
+            color: var(--cream);
         }
 
         /* =========================
            PRINT
         ========================== */
 
-        @media print {
+        .print-actions {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 18px;
+            text-align: right;
+        }
 
+        .print-button {
+            border: 0;
+            border-radius: 8px;
+            padding: 11px 17px;
+            background: var(--green);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .print-button:hover {
+            background: var(--bordo);
+        }
+
+        @media print {
             @page {
                 size: A4;
-                margin: 10mm;
+                margin: 12mm;
             }
 
             body {
-                background: #fff;
+                background: #ffffff;
             }
 
-            .page {
+            .page-wrap {
                 padding: 0;
             }
 
-            .topbar,
-            .actions,
-            .page-footer,
-            .no-print {
-                display: none !important;
+            .invoice {
+                max-width: none;
+                box-shadow: none;
             }
 
-            .shell {
+            .print-actions {
+                display: none;
+            }
+
+            .topbar,
+            .footer,
+            .items thead th {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .status,
+            .event-header,
+            .payment-box,
+            .notes {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+
+        @media only screen and (max-width: 650px) {
+            .page-wrap {
+                padding: 10px 6px;
+            }
+
+            .topbar,
+            .body,
+            .footer {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .brand-cell,
+            .invoice-cell {
+                display: block;
+                width: 100%;
+                text-align: left;
+            }
+
+            .invoice-cell {
+                padding-top: 20px;
+            }
+
+            .invoice-title {
+                font-size: 25px;
+            }
+
+            .issued-date {
+                float: none;
+                display: block;
+                margin-top: 10px;
+            }
+
+            .details-cell,
+            .details-cell:last-child {
+                display: block;
+                width: 100%;
+                padding: 0 0 22px;
+            }
+
+            .details-cell:last-child {
+                padding-bottom: 0;
+            }
+
+            .items {
+                min-width: 600px;
+            }
+
+            .totals-table {
                 width: 100%;
             }
 
-            .ticket {
-                box-shadow: none;
-                border: 1px solid #ddd;
-                border-radius: 0;
+            .footer-left,
+            .footer-right {
+                display: block;
+                width: 100%;
+                text-align: left;
             }
 
-            .ticket-head,
-            .qr-panel,
-            .status-banner,
-            .holder-card {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .ticket-main {
-                grid-template-columns: minmax(0, 1.3fr) minmax(250px, .7fr);
-            }
-        }
-
-        /* =========================
-           RESPONSIVE
-        ========================== */
-
-        @media (max-width: 780px) {
-
-            .page {
-                padding: 12px;
-            }
-
-            .ticket-main {
-                grid-template-columns: 1fr;
-            }
-
-            .qr-panel {
-                border-left: 0;
-                border-top: 1px solid var(--line);
-            }
-        }
-
-        @media (max-width: 560px) {
-
-            .topbar {
-                align-items: flex-start;
-            }
-
-            .top-actions {
-                flex-wrap: wrap;
-                justify-content: flex-end;
-            }
-
-            .top-btn {
-                padding: 9px 10px;
-            }
-
-            .ticket-head,
-            .details {
-                padding: 25px 20px;
-            }
-
-            .qr-panel {
-                padding: 28px 20px;
-            }
-
-            .info-grid,
-            .reference-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .qr-wrap {
-                width: min(225px, 78vw);
-                height: min(225px, 78vw);
-            }
-        }
-
-        @media (max-width: 400px) {
-
-            .brand-text {
-                font-size: 16px;
-            }
-
-            .brand-mark {
-                width: 36px;
-                height: 36px;
-            }
-
-            .topbar {
-                gap: 10px;
-            }
-
-            .top-actions {
-                gap: 5px;
-            }
-
-            .top-btn {
-                font-size: 10px;
-            }
-
-            .event-title {
-                font-size: 25px;
+            .footer-right {
+                padding-top: 16px;
             }
         }
     </style>
@@ -715,1833 +608,478 @@
 
 <body>
 
-<div class="page">
+    <!--
+        ============================================================
+        K-TICKETS INVOICE TEMPLATE
+        ============================================================
 
-    <div class="shell">
+        This is a server-rendered document template.
 
-        <!-- =========================
-             TOP NAV
-        ========================== -->
+        The backend should replace all {{...}} placeholders before
+        sending the invoice or rendering it for PDF/printing.
 
-        <header class="topbar no-print">
+        CORE INVOICE VARIABLES
 
-            <a
-                href="../customer/my-tickets.html"
-                class="brand"
-            >
-                <span class="brand-mark">KT</span>
-                <span class="brand-text">K-TICKETS</span>
-            </a>
+        Invoice:
+        {{invoice_number}}
+        {{invoice_status}}
+        {{issued_date}}
 
-            <div class="top-actions">
+        Customer:
+        {{customer_name}}
+        {{customer_email}}
+        {{customer_phone}}
 
-                <a
-                    href="../customer/my-tickets.html"
-                    class="top-btn"
-                >
-                    My Tickets
-                </a>
+        Merchant:
+        {{merchant_name}}
+        {{merchant_email}}
+        {{merchant_phone}}
 
-                <button
-                    type="button"
-                    class="top-btn"
-                    id="printTopBtn"
-                >
-                    Print
-                </button>
+        Event:
+        {{event_title}}
+        {{event_description}}
+        {{event_date}}
+        {{event_time}}
+        {{venue}}
+        {{city}}
 
-            </div>
+        Order:
+        {{order_number}}
+        {{order_id}}
 
-        </header>
+        Payment:
+        {{payment_method}}
+        {{payment_reference}}
+        {{payment_status}}
+        {{payment_date}}
 
-        <!-- =========================
-             LOADING
-        ========================== -->
+        Money:
+        {{currency}}
+        {{subtotal}}
+        {{discount}}
+        {{service_fee}}
+        {{total}}
+        {{amount_paid}}
+        {{balance_due}}
 
-        <section
-            class="state active"
-            id="loadingState"
-        >
+        Support:
+        {{support_email}}
+        {{support_phone}}
+        {{current_year}}
 
-            <div class="state-icon">
-                …
-            </div>
+        Item row variables:
+        {{ticket_type}}
+        {{ticket_description}}
+        {{quantity}}
+        {{unit_price}}
+        {{line_total}}
 
-            <h2>
-                Loading your ticket
-            </h2>
+        IMPORTANT:
+        The backend must generate one item row for every order item.
 
-            <p>
-                We're securely retrieving your ticket information.
-            </p>
+        The template does not calculate trusted financial values.
+        Values such as subtotal, service fee, discount and total
+        should come from the finalized order/payment data.
 
-        </section>
+        ============================================================
+    -->
 
-        <!-- =========================
-             ERROR
-        ========================== -->
+    <div class="page-wrap">
 
-        <section
-            class="state"
-            id="errorState"
-        >
-
-            <div class="state-icon">
-                !
-            </div>
-
-            <h2 id="errorTitle">
-                Ticket unavailable
-            </h2>
-
-            <p id="errorMessage">
-                We couldn't load this ticket.
-            </p>
-
+        <div class="print-actions">
             <button
                 type="button"
-                class="retry-btn"
-                id="retryBtn"
+                class="print-button"
+                onclick="window.print()"
             >
-                Try Again
+                Print / Save as PDF
             </button>
+        </div>
 
-        </section>
+        <main class="invoice">
 
-        <!-- =========================
-             TICKET
-        ========================== -->
+            <!-- HEADER -->
 
-        <main
-            class="ticket"
-            id="ticketView"
-        >
+            <header class="topbar">
 
-            <!-- TICKET HEADER -->
+                <table role="presentation" class="topbar-table">
+                    <tr>
 
-            <section class="ticket-head">
+                        <td class="brand-cell">
 
-                <div class="ticket-head-content">
+                            <div class="brand">
+                                K-TICKETS
+                            </div>
 
-                    <div class="ticket-kicker">
-                        K-Tickets Digital Ticket
-                    </div>
+                            <div class="brand-subtitle">
+                                Your ticket. Your moment.
+                            </div>
 
-                    <h1
-                        class="event-title"
-                        id="eventTitle"
-                    >
-                        Event
-                    </h1>
+                        </td>
 
-                    <div
-                        class="event-description"
-                        id="eventDescription"
-                    ></div>
+                        <td class="invoice-cell">
 
-                    <div
-                        class="head-status"
-                        id="headStatus"
-                    >
-                        <span class="head-status-dot"></span>
-                        <span id="headStatusText">
-                            Valid Ticket
-                        </span>
-                    </div>
+                            <div class="invoice-title">
+                                INVOICE
+                            </div>
+
+                            <div class="invoice-number">
+                                {{invoice_number}}
+                            </div>
+
+                        </td>
+
+                    </tr>
+                </table>
+
+            </header>
+
+            <!-- BODY -->
+
+            <section class="body">
+
+                <!-- STATUS -->
+
+                <div class="status-row">
+
+                    <span class="status">
+                        {{invoice_status}}
+                    </span>
+
+                    <span class="issued-date">
+                        Issued: {{issued_date}}
+                    </span>
+
+                    <div style="clear: both;"></div>
 
                 </div>
 
-            </section>
+                <!-- CUSTOMER / ORDER -->
 
-            <!-- TICKET MAIN -->
+                <table role="presentation" class="details-table">
+                    <tr>
 
-            <section class="ticket-main">
+                        <td class="details-cell">
 
-                <!-- DETAILS -->
-
-                <div class="details">
-
-                    <div class="section-label">
-                        Event Details
-                    </div>
-
-                    <div class="info-grid">
-
-                        <div>
-                            <div class="info-label">
-                                Date
+                            <div class="section-label">
+                                Customer
                             </div>
 
-                            <div
-                                class="info-value"
-                                id="eventDate"
-                            >
-                                —
+                            <div class="person-name">
+                                {{customer_name}}
                             </div>
+
+                            <div class="details-text">
+                                {{customer_email}}<br>
+                                {{customer_phone}}
+                            </div>
+
+                        </td>
+
+                        <td class="details-cell">
+
+                            <div class="section-label">
+                                Order
+                            </div>
+
+                            <div class="person-name order-number">
+                                {{order_number}}
+                            </div>
+
+                            <div class="details-text">
+                                Order ID: {{order_id}}<br>
+                                Merchant: {{merchant_name}}<br>
+                                {{merchant_email}}<br>
+                                {{merchant_phone}}
+                            </div>
+
+                        </td>
+
+                    </tr>
+                </table>
+
+                <!-- EVENT -->
+
+                <section class="event-card">
+
+                    <div class="event-header">
+
+                        <div class="event-label">
+                            Event
                         </div>
 
-                        <div>
-                            <div class="info-label">
-                                Time
-                            </div>
-
-                            <div
-                                class="info-value"
-                                id="eventTime"
-                            >
-                                —
-                            </div>
+                        <div class="event-title">
+                            {{event_title}}
                         </div>
 
-                        <div>
-                            <div class="info-label">
-                                Venue
-                            </div>
-
-                            <div
-                                class="info-value"
-                                id="eventVenue"
-                            >
-                                —
-                            </div>
+                        <div class="event-meta">
+                            {{event_date}}
+                            &nbsp;•&nbsp;
+                            {{event_time}}
+                            &nbsp;•&nbsp;
+                            {{venue}}, {{city}}
                         </div>
 
-                        <div>
-                            <div class="info-label">
-                                City
-                            </div>
-
-                            <div
-                                class="info-value"
-                                id="eventCity"
-                            >
-                                —
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="info-label">
-                                Ticket Type
-                            </div>
-
-                            <div
-                                class="info-value"
-                                id="ticketType"
-                            >
-                                —
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="info-label">
-                                Quantity
-                            </div>
-
-                            <div
-                                class="info-value"
-                                id="ticketQuantity"
-                            >
-                                1
-                            </div>
+                        <div class="event-description">
+                            {{event_description}}
                         </div>
 
                     </div>
 
-                    <div class="divider"></div>
+                    <!-- ITEMS -->
 
-                    <!-- HOLDER -->
+                    <div class="items-wrapper">
 
-                    <div class="section-label">
-                        Ticket Holder
-                    </div>
+                        <table class="items">
 
-                    <div class="holder-card">
+                            <thead>
+                                <tr>
 
-                        <div
-                            class="holder-name"
-                            id="holderName"
-                        >
-                            —
-                        </div>
+                                    <th style="width: 42%;">
+                                        Description
+                                    </th>
 
-                        <div
-                            class="holder-email"
-                            id="holderEmail"
-                        >
-                            —
-                        </div>
+                                    <th style="width: 12%; text-align: center;">
+                                        Qty
+                                    </th>
 
-                    </div>
+                                    <th style="width: 20%; text-align: right;">
+                                        Unit Price
+                                    </th>
 
-                    <div class="divider"></div>
+                                    <th style="width: 26%; text-align: right;">
+                                        Amount
+                                    </th>
 
-                    <!-- REFERENCES -->
+                                </tr>
+                            </thead>
 
-                    <div class="section-label">
-                        Ticket References
-                    </div>
+                            <tbody>
 
-                    <div class="reference-grid">
+                                <!--
+                                    REPEAT THIS ROW FOR EACH ORDER ITEM.
+                                -->
 
-                        <div class="reference">
+                                <tr>
 
-                            <div class="reference-label">
-                                Ticket Code
-                            </div>
+                                    <td>
 
-                            <div
-                                class="reference-value"
-                                id="ticketCode"
-                            >
-                                —
-                            </div>
+                                        <div class="item-name">
+                                            {{ticket_type}}
+                                        </div>
 
-                        </div>
+                                        <div class="item-description">
+                                            {{ticket_description}}
+                                        </div>
 
-                        <div class="reference">
+                                    </td>
 
-                            <div class="reference-label">
-                                Ticket ID
-                            </div>
+                                    <td class="number">
+                                        {{quantity}}
+                                    </td>
 
-                            <div
-                                class="reference-value"
-                                id="ticketId"
-                            >
-                                —
-                            </div>
+                                    <td class="money">
+                                        {{currency}} {{unit_price}}
+                                    </td>
 
-                        </div>
+                                    <td class="money">
+                                        {{currency}} {{line_total}}
+                                    </td>
 
-                        <div class="reference">
+                                </tr>
 
-                            <div class="reference-label">
-                                Order ID
-                            </div>
+                            </tbody>
 
-                            <div
-                                class="reference-value"
-                                id="orderId"
-                            >
-                                —
-                            </div>
-
-                        </div>
-
-                        <div class="reference">
-
-                            <div class="reference-label">
-                                Issued
-                            </div>
-
-                            <div
-                                class="reference-value"
-                                id="issuedAt"
-                            >
-                                —
-                            </div>
-
-                        </div>
+                        </table>
 
                     </div>
 
-                    <!-- STATUS -->
+                </section>
 
-                    <div
-                        class="status-banner"
-                        id="statusBanner"
-                    >
-                        <strong>Ticket status:</strong>
-                        <span id="statusText">
-                            —
-                        </span>
-                    </div>
+                <!-- TOTALS -->
 
-                    <!-- ACTIONS -->
+                <div class="totals-wrapper">
 
-                    <div class="actions no-print">
+                    <table class="totals-table">
 
-                        <button
-                            type="button"
-                            class="btn btn-primary"
-                            id="printBtn"
-                        >
-                            Print / Save PDF
-                        </button>
+                        <tr>
+                            <td>
+                                Subtotal
+                            </td>
 
-                        <button
-                            type="button"
-                            class="btn btn-secondary"
-                            id="downloadQrBtn"
-                        >
-                            Download QR
-                        </button>
+                            <td>
+                                {{currency}} {{subtotal}}
+                            </td>
+                        </tr>
 
-                        <a
-                            href="../customer/my-tickets.html"
-                            class="btn btn-secondary"
-                        >
-                            Back to My Tickets
-                        </a>
+                        <tr>
+                            <td>
+                                Discount
+                            </td>
 
-                    </div>
+                            <td class="discount-value">
+                                - {{currency}} {{discount}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Service Fee
+                            </td>
+
+                            <td>
+                                {{currency}} {{service_fee}}
+                            </td>
+                        </tr>
+
+                        <tr class="total-row">
+                            <td>
+                                Total
+                            </td>
+
+                            <td>
+                                {{currency}} {{total}}
+                            </td>
+                        </tr>
+
+                        <tr class="amount-paid-row">
+                            <td>
+                                Amount Paid
+                            </td>
+
+                            <td>
+                                {{currency}} {{amount_paid}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Balance Due
+                            </td>
+
+                            <td>
+                                {{currency}} {{balance_due}}
+                            </td>
+                        </tr>
+
+                    </table>
 
                 </div>
 
-                <!-- QR PANEL -->
+                <!-- PAYMENT -->
 
-                <aside class="qr-panel">
+                <section class="payment-box">
 
-                    <div class="qr-label">
-                        Entry QR
+                    <div class="payment-title">
+                        Payment Information
                     </div>
 
-                    <div class="qr-help">
-                        Present this QR code at the event entrance.
+                    <table class="payment-table">
+
+                        <tr>
+                            <td>
+                                Payment Method
+                            </td>
+
+                            <td>
+                                {{payment_method}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Payment Reference
+                            </td>
+
+                            <td>
+                                {{payment_reference}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Payment Date
+                            </td>
+
+                            <td>
+                                {{payment_date}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Payment Status
+                            </td>
+
+                            <td>
+                                {{payment_status}}
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </section>
+
+                <!-- NOTES -->
+
+                <section class="notes">
+
+                    <div class="notes-title">
+                        Notes
                     </div>
 
-                    <div class="qr-wrap">
-
-                        <img
-                            id="qrImage"
-                            src=""
-                            alt="Ticket QR code"
-                            style="display:none;"
-                        >
-
-                        <div
-                            class="qr-placeholder"
-                            id="qrPlaceholder"
-                        >
-                            QR code unavailable
-                        </div>
-
+                    <div class="notes-text">
+                        {{notes}}
                     </div>
 
-                    <div
-                        class="ticket-code"
-                        id="qrTicketCode"
-                    >
-                        —
-                    </div>
-
-                    <div class="ticket-code-label">
-                        Ticket Code
-                    </div>
-
-                </aside>
+                </section>
 
             </section>
+
+            <!-- FOOTER -->
+
+            <footer class="footer">
+
+                <table role="presentation" class="footer-table">
+                    <tr>
+
+                        <td class="footer-left">
+
+                            <div class="footer-brand">
+                                K-TICKETS
+                            </div>
+
+                            <div class="footer-text">
+                                Ticketing made simple.
+                                <br>
+                                {{support_email}}
+                                <br>
+                                {{support_phone}}
+                            </div>
+
+                        </td>
+
+                        <td class="footer-right">
+
+                            <div class="footer-text">
+                                Thank you for choosing K-Tickets.
+                            </div>
+
+                            <div class="footer-text">
+                                © {{current_year}} K-Tickets.
+                                All rights reserved.
+                            </div>
+
+                        </td>
+
+                    </tr>
+                </table>
+
+            </footer>
 
         </main>
 
-        <!-- =========================
-             FOOTER
-        ========================== -->
-
-        <footer class="page-footer">
-
-            <strong>K-TICKETS</strong>
-            · Ticketing made simple.
-
-            <br>
-
-            Keep your ticket and QR code private.
-
-            <br>
-
-            Support:
-            <span id="supportEmail">
-                —
-            </span>
-
-        </footer>
-
     </div>
-
-</div>
-
-
-<script>
-/* ============================================================
-   K-TICKETS CUSTOMER TICKET PAGE
-   ============================================================
-
-   SECURITY MODEL
-
-   - Supabase ANON key only.
-   - Customer must be authenticated.
-   - Ticket ownership is checked through user_id.
-   - Never use the Supabase service-role key here.
-   - Never trust a ticket ID from the URL as proof of ownership.
-   - RLS must independently enforce ticket ownership.
-   - QR content should be generated server-side.
-   - Check-in must be performed through a protected RPC/Edge
-     Function, not directly from this page.
-
-   Expected URL:
-
-   /customer/ticket.html?id=TICKET_ID
-
-   This page also accepts:
-
-   /customer/ticket.html?ticket_id=TICKET_ID
-============================================================ */
-
-
-/* ============================================================
-   SUPABASE CONFIG
-============================================================ */
-
-const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
-
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
-
-let supabaseClient = null;
-
-
-/* ============================================================
-   DOM
-============================================================ */
-
-const loadingState =
-    document.getElementById("loadingState");
-
-const errorState =
-    document.getElementById("errorState");
-
-const ticketView =
-    document.getElementById("ticketView");
-
-const errorTitle =
-    document.getElementById("errorTitle");
-
-const errorMessage =
-    document.getElementById("errorMessage");
-
-const retryBtn =
-    document.getElementById("retryBtn");
-
-const printBtn =
-    document.getElementById("printBtn");
-
-const printTopBtn =
-    document.getElementById("printTopBtn");
-
-const downloadQrBtn =
-    document.getElementById("downloadQrBtn");
-
-const qrImage =
-    document.getElementById("qrImage");
-
-const qrPlaceholder =
-    document.getElementById("qrPlaceholder");
-
-const statusBanner =
-    document.getElementById("statusBanner");
-
-
-/* ============================================================
-   HELPERS
-============================================================ */
-
-function showLoading() {
-
-    loadingState.classList.add("active");
-    errorState.classList.remove("active");
-    ticketView.classList.remove("active");
-}
-
-
-function showError(
-    title,
-    message
-) {
-
-    loadingState.classList.remove("active");
-    ticketView.classList.remove("active");
-
-    errorTitle.textContent =
-        title || "Ticket unavailable";
-
-    errorMessage.textContent =
-        message || "We couldn't load this ticket.";
-
-    errorState.classList.add("active");
-}
-
-
-function showTicket() {
-
-    loadingState.classList.remove("active");
-    errorState.classList.remove("active");
-    ticketView.classList.add("active");
-}
-
-
-function escapeText(value) {
-
-    if (
-        value === null ||
-        value === undefined ||
-        value === ""
-    ) {
-        return "—";
-    }
-
-    return String(value);
-}
-
-
-function firstValue(
-    object,
-    keys,
-    fallback = null
-) {
-
-    if (!object) {
-        return fallback;
-    }
-
-    for (const key of keys) {
-
-        const value =
-            object[key];
-
-        if (
-            value !== undefined &&
-            value !== null &&
-            value !== ""
-        ) {
-            return value;
-        }
-    }
-
-    return fallback;
-}
-
-
-function formatDate(value) {
-
-    if (!value) {
-        return "—";
-    }
-
-    const date =
-        new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-        return String(value);
-    }
-
-    return new Intl.DateTimeFormat(
-        undefined,
-        {
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        }
-    ).format(date);
-}
-
-
-function formatTime(value) {
-
-    if (!value) {
-        return "—";
-    }
-
-    const date =
-        new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-        return String(value);
-    }
-
-    return new Intl.DateTimeFormat(
-        undefined,
-        {
-            hour: "numeric",
-            minute: "2-digit"
-        }
-    ).format(date);
-}
-
-
-function formatDateTime(value) {
-
-    if (!value) {
-        return "—";
-    }
-
-    const date =
-        new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-        return String(value);
-    }
-
-    return new Intl.DateTimeFormat(
-        undefined,
-        {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit"
-        }
-    ).format(date);
-}
-
-
-function normalizeStatus(value) {
-
-    return String(
-        value || "issued"
-    )
-        .trim()
-        .toLowerCase()
-        .replace(/[\s-]+/g, "_");
-}
-
-
-function isTicketValid(status) {
-
-    return [
-        "issued",
-        "active",
-        "valid",
-        "confirmed"
-    ].includes(
-        normalizeStatus(status)
-    );
-}
-
-
-/* ============================================================
-   URL
-============================================================ */
-
-function getTicketIdFromUrl() {
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    return (
-        params.get("id") ||
-        params.get("ticket_id") ||
-        ""
-    ).trim();
-}
-
-
-/* ============================================================
-   SUPABASE INIT
-============================================================ */
-
-function initializeSupabase() {
-
-    if (
-        !SUPABASE_URL ||
-        !SUPABASE_ANON_KEY
-    ) {
-        throw new Error(
-            "K-Tickets Supabase configuration is missing."
-        );
-    }
-
-    if (
-        !window.supabase ||
-        !window.supabase.createClient
-    ) {
-        throw new Error(
-            "Supabase library failed to load."
-        );
-    }
-
-    supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY,
-            {
-                auth: {
-                    persistSession: true,
-                    autoRefreshToken: true,
-                    detectSessionInUrl: true
-                }
-            }
-        );
-}
-
-
-/* ============================================================
-   AUTH
-============================================================ */
-
-async function requireCustomer() {
-
-    const {
-        data: sessionData,
-        error: sessionError
-    } =
-        await supabaseClient
-            .auth
-            .getSession();
-
-    if (sessionError) {
-        throw sessionError;
-    }
-
-    const session =
-        sessionData?.session;
-
-    if (!session?.user) {
-
-        window.location.href =
-            "../auth/login.html?redirect=" +
-            encodeURIComponent(
-                window.location.pathname +
-                window.location.search
-            );
-
-        return null;
-    }
-
-    return session.user;
-}
-
-
-/* ============================================================
-   LOAD CUSTOMER PROFILE
-============================================================ */
-
-async function loadCustomerProfile(
-    userId
-) {
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("profiles")
-            .select(
-                "id,full_name,phone,role"
-            )
-            .eq("id", userId)
-            .maybeSingle();
-
-    if (error) {
-        console.warn(
-            "Profile lookup failed:",
-            error
-        );
-
-        return null;
-    }
-
-    return data;
-}
-
-
-/* ============================================================
-   LOAD TICKET
-============================================================ */
-
-async function loadTicket(
-    ticketId,
-    userId
-) {
-
-    /*
-        Important:
-
-        The .eq("user_id", userId) condition is intentional.
-
-        Supabase RLS must ALSO enforce this server-side.
-    */
-
-    const primary =
-        await supabaseClient
-            .from("tickets")
-            .select(`
-                *,
-                events(
-                    id,
-                    title,
-                    description,
-                    venue,
-                    city,
-                    start_at,
-                    end_at,
-                    status
-                ),
-                ticket_types(
-                    id,
-                    name
-                )
-            `)
-            .eq("id", ticketId)
-            .eq("user_id", userId)
-            .maybeSingle();
-
-    if (!primary.error) {
-
-        return primary.data;
-    }
-
-    /*
-        Flexible fallback for environments where
-        foreign-key relationships are not configured.
-    */
-
-    const fallback =
-        await supabaseClient
-            .from("tickets")
-            .select("*")
-            .eq("id", ticketId)
-            .eq("user_id", userId)
-            .maybeSingle();
-
-    if (fallback.error) {
-        throw fallback.error;
-    }
-
-    return fallback.data;
-}
-
-
-/* ============================================================
-   LOAD EVENT IF NEEDED
-============================================================ */
-
-async function loadEvent(
-    eventId
-) {
-
-    if (!eventId) {
-        return null;
-    }
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("events")
-            .select(`
-                id,
-                title,
-                description,
-                venue,
-                city,
-                start_at,
-                end_at,
-                status
-            `)
-            .eq("id", eventId)
-            .maybeSingle();
-
-    if (error) {
-
-        console.warn(
-            "Event lookup failed:",
-            error
-        );
-
-        return null;
-    }
-
-    return data;
-}
-
-
-/* ============================================================
-   LOAD TICKET TYPE IF NEEDED
-============================================================ */
-
-async function loadTicketType(
-    ticketTypeId
-) {
-
-    if (!ticketTypeId) {
-        return null;
-    }
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("ticket_types")
-            .select(`
-                id,
-                name
-            `)
-            .eq("id", ticketTypeId)
-            .maybeSingle();
-
-    if (error) {
-
-        console.warn(
-            "Ticket type lookup failed:",
-            error
-        );
-
-        return null;
-    }
-
-    return data;
-}
-
-
-/* ============================================================
-   MAP TICKET
-============================================================ */
-
-async function normalizeTicket(
-    rawTicket
-) {
-
-    if (!rawTicket) {
-        return null;
-    }
-
-    let event =
-        rawTicket.events || null;
-
-    let ticketType =
-        rawTicket.ticket_types || null;
-
-    const eventId =
-        firstValue(
-            rawTicket,
-            ["event_id"]
-        );
-
-    const ticketTypeId =
-        firstValue(
-            rawTicket,
-            ["ticket_type_id"]
-        );
-
-    if (!event && eventId) {
-        event =
-            await loadEvent(eventId);
-    }
-
-    if (!ticketType && ticketTypeId) {
-        ticketType =
-            await loadTicketType(ticketTypeId);
-    }
-
-    return {
-        raw: rawTicket,
-
-        id:
-            firstValue(
-                rawTicket,
-                ["id","ticket_id"]
-            ),
-
-        code:
-            firstValue(
-                rawTicket,
-                [
-                    "ticket_code",
-                    "code",
-                    "ticket_number",
-                    "ticket_no"
-                ]
-            ),
-
-        status:
-            firstValue(
-                rawTicket,
-                [
-                    "status",
-                    "ticket_status",
-                    "state"
-                ],
-                "issued"
-            ),
-
-        userId:
-            firstValue(
-                rawTicket,
-                [
-                    "user_id",
-                    "customer_id"
-                ]
-            ),
-
-        eventId,
-
-        ticketTypeId,
-
-        quantity:
-            firstValue(
-                rawTicket,
-                [
-                    "quantity",
-                    "qty"
-                ],
-                1
-            ),
-
-        issuedAt:
-            firstValue(
-                rawTicket,
-                [
-                    "issued_at",
-                    "created_at"
-                ]
-            ),
-
-        checkedInAt:
-            firstValue(
-                rawTicket,
-                [
-                    "checked_in_at",
-                    "check_in_at"
-                ]
-            ),
-
-        orderId:
-            firstValue(
-                rawTicket,
-                [
-                    "order_id",
-                    "order"
-                ]
-            ),
-
-        qrCodeUrl:
-            firstValue(
-                rawTicket,
-                [
-                    "qr_code_url",
-                    "qr_url",
-                    "qr_image_url"
-                ]
-            ),
-
-        event,
-
-        ticketType
-    };
-}
-
-
-/* ============================================================
-   RENDER
-============================================================ */
-
-function renderTicket(
-    ticket,
-    profile
-) {
-
-    const event =
-        ticket.event || {};
-
-    const ticketType =
-        ticket.ticketType || {};
-
-    const status =
-        normalizeStatus(
-            ticket.status
-        );
-
-    const customerName =
-        firstValue(
-            profile,
-            ["full_name"]
-        ) ||
-        firstValue(
-            ticket.raw,
-            [
-                "customer_name",
-                "holder_name"
-            ],
-            "Ticket Holder"
-        );
-
-    const customerEmail =
-        firstValue(
-            ticket.raw,
-            [
-                "customer_email",
-                "email"
-            ],
-            ""
-        );
-
-    const eventTitle =
-        firstValue(
-            event,
-            ["title"]
-        ) ||
-        firstValue(
-            ticket.raw,
-            ["event_title"],
-            "K-Tickets Event"
-        );
-
-    const description =
-        firstValue(
-            event,
-            ["description"]
-        ) ||
-        firstValue(
-            ticket.raw,
-            ["event_description"],
-            ""
-        );
-
-    const startAt =
-        firstValue(
-            event,
-            ["start_at"]
-        ) ||
-        firstValue(
-            ticket.raw,
-            [
-                "event_start_at",
-                "start_at"
-            ]
-        );
-
-    const venue =
-        firstValue(
-            event,
-            ["venue"]
-        ) ||
-        firstValue(
-            ticket.raw,
-            ["venue"],
-            "—"
-        );
-
-    const city =
-        firstValue(
-            event,
-            ["city"]
-        ) ||
-        firstValue(
-            ticket.raw,
-            ["city"],
-            "—"
-        );
-
-    const ticketTypeName =
-        firstValue(
-            ticketType,
-            ["name"]
-        ) ||
-        firstValue(
-            ticket.raw,
-            [
-                "ticket_type_name",
-                "type_name"
-            ],
-            "General Admission"
-        );
-
-    const quantity =
-        firstValue(
-            ticket.raw,
-            ["quantity","qty"],
-            1
-        );
-
-    /* EVENT */
-
-    document.getElementById(
-        "eventTitle"
-    ).textContent =
-        escapeText(eventTitle);
-
-    document.getElementById(
-        "eventDescription"
-    ).textContent =
-        escapeText(description);
-
-    document.getElementById(
-        "eventDate"
-    ).textContent =
-        formatDate(startAt);
-
-    document.getElementById(
-        "eventTime"
-    ).textContent =
-        formatTime(startAt);
-
-    document.getElementById(
-        "eventVenue"
-    ).textContent =
-        escapeText(venue);
-
-    document.getElementById(
-        "eventCity"
-    ).textContent =
-        escapeText(city);
-
-    /* TICKET */
-
-    document.getElementById(
-        "ticketType"
-    ).textContent =
-        escapeText(ticketTypeName);
-
-    document.getElementById(
-        "ticketQuantity"
-    ).textContent =
-        escapeText(quantity);
-
-    /* HOLDER */
-
-    document.getElementById(
-        "holderName"
-    ).textContent =
-        escapeText(customerName);
-
-    document.getElementById(
-        "holderEmail"
-    ).textContent =
-        customerEmail
-            ? escapeText(customerEmail)
-            : "Email available in your K-Tickets account";
-
-    /* REFERENCES */
-
-    document.getElementById(
-        "ticketCode"
-    ).textContent =
-        escapeText(ticket.code);
-
-    document.getElementById(
-        "qrTicketCode"
-    ).textContent =
-        escapeText(ticket.code);
-
-    document.getElementById(
-        "ticketId"
-    ).textContent =
-        escapeText(ticket.id);
-
-    document.getElementById(
-        "orderId"
-    ).textContent =
-        escapeText(ticket.orderId);
-
-    document.getElementById(
-        "issuedAt"
-    ).textContent =
-        formatDateTime(ticket.issuedAt);
-
-    /* STATUS */
-
-    const statusLabel =
-        status
-            .replace(/_/g, " ")
-            .replace(
-                /\b\w/g,
-                char => char.toUpperCase()
-            );
-
-    document.getElementById(
-        "headStatusText"
-    ).textContent =
-        statusLabel;
-
-    document.getElementById(
-        "statusText"
-    ).textContent =
-        statusLabel;
-
-    statusBanner.classList.remove(
-        "cancelled",
-        "expired",
-        "pending"
-    );
-
-    if (
-        status === "cancelled" ||
-        status === "void" ||
-        status === "refunded"
-    ) {
-
-        statusBanner.classList.add(
-            "cancelled"
-        );
-
-        document.getElementById(
-            "statusText"
-        ).textContent =
-            "This ticket is no longer valid.";
-
-    } else if (
-        status === "expired"
-    ) {
-
-        statusBanner.classList.add(
-            "expired"
-        );
-
-        document.getElementById(
-            "statusText"
-        ).textContent =
-            "This ticket has expired.";
-
-    } else if (
-        status === "pending"
-    ) {
-
-        statusBanner.classList.add(
-            "pending"
-        );
-
-        document.getElementById(
-            "statusText"
-        ).textContent =
-            "This ticket is awaiting confirmation.";
-
-    } else if (
-        ticket.checkedInAt
-    ) {
-
-        document.getElementById(
-            "statusText"
-        ).textContent =
-            "Checked in on " +
-            formatDateTime(
-                ticket.checkedInAt
-            );
-
-    } else if (
-        isTicketValid(status)
-    ) {
-
-        document.getElementById(
-            "statusText"
-        ).textContent =
-            "This ticket is valid and ready for entry.";
-
-    }
-
-    /* QR */
-
-    setQrCode(
-        ticket.qrCodeUrl
-    );
-
-    /* DOCUMENT */
-
-    document.title =
-        "K-Tickets — " +
-        eventTitle;
-
-    /* DOWNLOAD */
-
-    downloadQrBtn.dataset.qrUrl =
-        ticket.qrCodeUrl || "";
-
-    downloadQrBtn.dataset.code =
-        ticket.code || "";
-}
-
-
-/* ============================================================
-   QR
-============================================================ */
-
-function setQrCode(
-    url
-) {
-
-    if (!url) {
-
-        qrImage.style.display =
-            "none";
-
-        qrImage.removeAttribute(
-            "src"
-        );
-
-        qrPlaceholder.style.display =
-            "block";
-
-        qrPlaceholder.textContent =
-            "QR code unavailable.";
-
-        return;
-    }
-
-    qrImage.onload =
-        function() {
-
-            qrImage.style.display =
-                "block";
-
-            qrPlaceholder.style.display =
-                "none";
-        };
-
-    qrImage.onerror =
-        function() {
-
-            qrImage.style.display =
-                "none";
-
-            qrPlaceholder.style.display =
-                "block";
-
-            qrPlaceholder.textContent =
-                "QR image could not be loaded.";
-        };
-
-    qrImage.src =
-        url;
-}
-
-
-/* ============================================================
-   DOWNLOAD QR
-============================================================ */
-
-async function downloadQr() {
-
-    const url =
-        downloadQrBtn.dataset.qrUrl;
-
-    const code =
-        downloadQrBtn.dataset.code ||
-        "ticket";
-
-    if (!url) {
-
-        alert(
-            "A QR image is not available for this ticket."
-        );
-
-        return;
-    }
-
-    try {
-
-        const response =
-            await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(
-                "QR download failed."
-            );
-        }
-
-        const blob =
-            await response.blob();
-
-        const objectUrl =
-            URL.createObjectURL(blob);
-
-        const link =
-            document.createElement("a");
-
-        link.href =
-            objectUrl;
-
-        link.download =
-            "k-tickets-" +
-            code +
-            ".png";
-
-        document.body.appendChild(link);
-
-        link.click();
-
-        link.remove();
-
-        URL.revokeObjectURL(
-            objectUrl
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "QR download failed:",
-            error
-        );
-
-        /*
-            Fallback:
-
-            Opening the QR image is preferable to
-            pretending a download succeeded.
-        */
-
-        window.open(
-            url,
-            "_blank",
-            "noopener,noreferrer"
-        );
-    }
-}
-
-
-/* ============================================================
-   SUPPORT SETTINGS
-============================================================ */
-
-async function loadSupportEmail() {
-
-    /*
-        Optional.
-
-        This attempts to read a public support setting if the
-        project's site_settings table is available.
-
-        Failure is intentionally silent because the ticket
-        should never depend on this lookup.
-    */
-
-    try {
-
-        const {
-            data
-        } =
-            await supabaseClient
-                .from("site_settings")
-                .select("*")
-                .limit(100);
-
-        if (!data || !data.length) {
-            return;
-        }
-
-        let email = "";
-
-        for (const row of data) {
-
-            const key =
-                String(
-                    row.key ||
-                    row.setting_key ||
-                    ""
-                ).toLowerCase();
-
-            if (
-                key === "support_email"
-            ) {
-
-                email =
-                    row.value ||
-                    row.setting_value ||
-                    "";
-
-                break;
-            }
-        }
-
-        if (email) {
-
-            document.getElementById(
-                "supportEmail"
-            ).textContent =
-                email;
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "Support email unavailable:",
-            error
-        );
-    }
-}
-
-
-/* ============================================================
-   LOAD PAGE
-============================================================ */
-
-async function loadPage() {
-
-    showLoading();
-
-    try {
-
-        const ticketId =
-            getTicketIdFromUrl();
-
-        if (!ticketId) {
-
-            showError(
-                "Ticket not specified",
-                "Open this page from your My Tickets area so we can identify the ticket."
-            );
-
-            return;
-        }
-
-        initializeSupabase();
-
-        const user =
-            await requireCustomer();
-
-        if (!user) {
-            return;
-        }
-
-        const ticket =
-            await loadTicket(
-                ticketId,
-                user.id
-            );
-
-        if (!ticket) {
-
-            showError(
-                "Ticket not found",
-                "This ticket does not exist, is unavailable, or does not belong to the signed-in account."
-            );
-
-            return;
-        }
-
-        const profile =
-            await loadCustomerProfile(
-                user.id
-            );
-
-        const normalized =
-            await normalizeTicket(
-                ticket
-            );
-
-        /*
-            Additional ownership check in the browser.
-
-            RLS remains the actual security boundary.
-        */
-
-        if (
-            normalized.userId &&
-            normalized.userId !== user.id
-        ) {
-
-            showError(
-                "Ticket unavailable",
-                "This ticket cannot be accessed from the current account."
-            );
-
-            return;
-        }
-
-        renderTicket(
-            normalized,
-            profile
-        );
-
-        await loadSupportEmail();
-
-        showTicket();
-
-    } catch (error) {
-
-        console.error(
-            "Ticket page error:",
-            error
-        );
-
-        showError(
-            "Unable to load ticket",
-            error?.message ||
-            "Something went wrong while loading your ticket."
-        );
-    }
-}
-
-
-/* ============================================================
-   EVENTS
-============================================================ */
-
-printBtn.addEventListener(
-    "click",
-    () => window.print()
-);
-
-printTopBtn.addEventListener(
-    "click",
-    () => window.print()
-);
-
-downloadQrBtn.addEventListener(
-    "click",
-    downloadQr
-);
-
-retryBtn.addEventListener(
-    "click",
-    loadPage
-);
-
-
-/* ============================================================
-   AUTH STATE
-============================================================ */
-
-function registerAuthListener() {
-
-    if (!supabaseClient) {
-        return;
-    }
-
-    supabaseClient
-        .auth
-        .onAuthStateChange(
-            (event, session) => {
-
-                if (
-                    event === "SIGNED_OUT" ||
-                    !session?.user
-                ) {
-
-                    window.location.href =
-                        "../auth/login.html";
-                }
-            }
-        );
-}
-
-
-/* ============================================================
-   START
-============================================================ */
-
-loadPage()
-    .then(() => {
-        registerAuthListener();
-    })
-    .catch(error => {
-
-        console.error(
-            "Initialization error:",
-            error
-        );
-
-        showError(
-            "Unable to load ticket",
-            "Please try again."
-        );
-    });
-
-</script>
 
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,6 +25,7 @@
         img {
             border: 0;
             max-width: 100%;
+            display: block;
         }
 
         a {
@@ -98,6 +98,7 @@
         /* DIGITAL TICKET */
 
         .ticket {
+            width: 100%;
             border: 1px solid #e7d9cd;
             border-radius: 18px;
             overflow: hidden;
@@ -192,6 +193,7 @@
             width: 190px;
             height: 190px;
             margin: 18px auto 12px;
+            border: 8px solid #ffffff;
         }
 
         .ticket-code {
@@ -199,6 +201,7 @@
             font-size: 18px;
             font-weight: 800;
             letter-spacing: 1.7px;
+            word-break: break-all;
         }
 
         .code-label {
@@ -250,9 +253,10 @@
             color: #27312f;
         }
 
-        /* ORDER REFERENCE */
+        /* REFERENCES */
 
         .reference {
+            width: 100%;
             margin-top: 24px;
             border: 1px solid #ead9ca;
             border-radius: 14px;
@@ -276,6 +280,8 @@
             padding: 13px 18px;
             color: #858b89;
             font-size: 11px;
+            line-height: 1.4;
+            vertical-align: top;
         }
 
         .reference-value {
@@ -284,7 +290,40 @@
             font-size: 12px;
             font-weight: 700;
             text-align: right;
+            line-height: 1.4;
             word-break: break-word;
+            vertical-align: top;
+        }
+
+        .ticket-code-reference .reference-value {
+            color: #6c151e;
+            letter-spacing: .5px;
+        }
+
+        .qr-token-reference {
+            background: #fffaf6;
+        }
+
+        .qr-token-reference .reference-value {
+            color: #5d6663;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* ACCOUNT */
+
+        .account-note {
+            margin-top: 24px;
+            padding: 19px 20px;
+            border-radius: 14px;
+            background: #edf5f2;
+            border-left: 4px solid #0f3d3a;
+            color: #53615e;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .account-note strong {
+            color: #0f3d3a;
         }
 
         /* SECURITY */
@@ -440,6 +479,7 @@
                                         <tr>
 
                                             <td class="info-cell">
+
                                                 <div class="info-label">
                                                     Date
                                                 </div>
@@ -447,9 +487,11 @@
                                                 <div class="info-value">
                                                     {{event_date}}
                                                 </div>
+
                                             </td>
 
                                             <td class="info-cell">
+
                                                 <div class="info-label">
                                                     Time
                                                 </div>
@@ -457,6 +499,7 @@
                                                 <div class="info-value">
                                                     {{event_time}}
                                                 </div>
+
                                             </td>
 
                                         </tr>
@@ -464,6 +507,7 @@
                                         <tr>
 
                                             <td class="info-cell">
+
                                                 <div class="info-label">
                                                     Venue
                                                 </div>
@@ -471,9 +515,11 @@
                                                 <div class="info-value">
                                                     {{venue}}
                                                 </div>
+
                                             </td>
 
                                             <td class="info-cell">
+
                                                 <div class="info-label">
                                                     City
                                                 </div>
@@ -481,6 +527,7 @@
                                                 <div class="info-value">
                                                     {{city}}
                                                 </div>
+
                                             </td>
 
                                         </tr>
@@ -488,6 +535,7 @@
                                         <tr>
 
                                             <td class="info-cell">
+
                                                 <div class="info-label">
                                                     Ticket Holder
                                                 </div>
@@ -495,9 +543,11 @@
                                                 <div class="info-value">
                                                     {{customer_name}}
                                                 </div>
+
                                             </td>
 
                                             <td class="info-cell">
+
                                                 <div class="info-label">
                                                     Quantity
                                                 </div>
@@ -505,6 +555,7 @@
                                                 <div class="info-value">
                                                     {{quantity}}
                                                 </div>
+
                                             </td>
 
                                         </tr>
@@ -529,7 +580,11 @@
                                             {{qr_code_url}}
                                             must be replaced server-side with
                                             the generated QR image URL.
+
+                                            The QR must represent the ticket's
+                                            actual unique validation value.
                                         -->
+
                                         <img
                                             src="{{qr_code_url}}"
                                             alt="K-Tickets entry QR code"
@@ -578,9 +633,15 @@
                                 <br><br>
 
                                 <strong>3.</strong>
-                                Each ticket has its own unique ticket code
-                                and may only be checked in according to
-                                the event's entry rules.
+                                Each issued ticket has its own unique ticket
+                                code and QR validation value.
+
+                                <br><br>
+
+                                <strong>4.</strong>
+                                Do not use the same ticket for multiple entries.
+                                Once a valid ticket is checked in, the ticket
+                                is marked as used.
 
                             </div>
 
@@ -595,6 +656,18 @@
                                 </td>
                             </tr>
 
+                            <tr class="reference-row ticket-code-reference">
+
+                                <td class="reference-label">
+                                    Ticket Code
+                                </td>
+
+                                <td class="reference-value">
+                                    {{ticket_code}}
+                                </td>
+
+                            </tr>
+
                             <tr class="reference-row">
 
                                 <td class="reference-label">
@@ -603,6 +676,18 @@
 
                                 <td class="reference-value">
                                     {{ticket_id}}
+                                </td>
+
+                            </tr>
+
+                            <tr class="reference-row">
+
+                                <td class="reference-label">
+                                    Order Number
+                                </td>
+
+                                <td class="reference-value">
+                                    {{order_number}}
                                 </td>
 
                             </tr>
@@ -645,14 +730,32 @@
 
                         </table>
 
+                        <!-- ACCOUNT -->
+                        <div class="account-note">
+
+                            <strong>Keep your ticket accessible</strong><br>
+
+                            Your issued ticket should also remain available
+                            through your K-Tickets account. If you lose this
+                            email, sign in to your account and open your
+                            ticket from your tickets area.
+
+                        </div>
+
                         <!-- SECURITY -->
                         <div class="security">
 
                             <strong>Keep your ticket private.</strong><br>
 
                             Do not publicly share your QR code or ticket code.
-                            K-Tickets uses ticket validation and check-in controls
-                            to help prevent unauthorized entry.
+                            Anyone with access to a valid ticket's QR code may
+                            attempt to present it at entry.
+
+                            <br><br>
+
+                            K-Tickets uses ticket validation and secure
+                            check-in controls to help prevent unauthorized
+                            entry and duplicate check-ins.
 
                             <br><br>
 

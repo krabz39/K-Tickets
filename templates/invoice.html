@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +17,8 @@
             --line: #e6ddd5;
             --soft: #fbf6f1;
             --success: #eaf3ef;
+            --danger: #f8e9ea;
+            --warning: #fbf2df;
         }
 
         * {
@@ -136,6 +137,18 @@
             text-transform: uppercase;
         }
 
+        .status.pending {
+            background: var(--warning);
+            color: #76510d;
+        }
+
+        .status.failed,
+        .status.cancelled,
+        .status.refunded {
+            background: var(--danger);
+            color: var(--bordo);
+        }
+
         .issued-date {
             float: right;
             color: var(--muted);
@@ -144,7 +157,7 @@
         }
 
         /* =========================
-           BILLING INFORMATION
+           CUSTOMER / ORDER DETAILS
         ========================== */
 
         .details-table {
@@ -186,6 +199,11 @@
             line-height: 1.7;
         }
 
+        .order-number {
+            color: var(--ink);
+            font-weight: 700;
+        }
+
         /* =========================
            EVENT CARD
         ========================== */
@@ -218,8 +236,15 @@
             font-weight: 800;
         }
 
+        .event-description {
+            margin-top: 7px;
+            color: #626a68;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
         .event-meta {
-            margin-top: 5px;
+            margin-top: 8px;
             color: var(--muted);
             font-size: 12px;
         }
@@ -227,6 +252,11 @@
         /* =========================
            ITEMS
         ========================== */
+
+        .items-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
 
         .items {
             width: 100%;
@@ -310,12 +340,20 @@
             white-space: nowrap;
         }
 
+        .discount-value {
+            color: var(--green) !important;
+        }
+
         .total-row td {
             padding-top: 16px;
             border-top: 2px solid var(--green);
             color: var(--bordo) !important;
             font-size: 18px !important;
             font-weight: 900 !important;
+        }
+
+        .amount-paid-row td:last-child {
+            color: var(--green);
         }
 
         /* =========================
@@ -343,7 +381,7 @@
         }
 
         .payment-table td {
-            padding: 5px 0;
+            padding: 6px 0;
             color: var(--muted);
             font-size: 12px;
         }
@@ -352,10 +390,21 @@
             color: var(--ink);
             font-weight: 700;
             text-align: right;
+            padding-left: 20px;
         }
 
-        .paid {
+        .payment-status-paid {
             color: var(--green) !important;
+        }
+
+        .payment-status-pending {
+            color: #76510d !important;
+        }
+
+        .payment-status-failed,
+        .payment-status-cancelled,
+        .payment-status-refunded {
+            color: var(--bordo) !important;
         }
 
         /* =========================
@@ -380,6 +429,7 @@
             color: #626a68;
             font-size: 12px;
             line-height: 1.7;
+            white-space: pre-line;
         }
 
         /* =========================
@@ -452,7 +502,6 @@
         }
 
         @media print {
-
             @page {
                 size: A4;
                 margin: 12mm;
@@ -475,16 +524,8 @@
                 display: none;
             }
 
-            .topbar {
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
-            }
-
-            .footer {
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
-            }
-
+            .topbar,
+            .footer,
             .items thead th {
                 print-color-adjust: exact;
                 -webkit-print-color-adjust: exact;
@@ -500,7 +541,6 @@
         }
 
         @media only screen and (max-width: 650px) {
-
             .page-wrap {
                 padding: 10px 6px;
             }
@@ -548,11 +588,6 @@
                 min-width: 600px;
             }
 
-            .items-wrapper {
-                width: 100%;
-                overflow-x: auto;
-            }
-
             .totals-table {
                 width: 100%;
             }
@@ -574,58 +609,83 @@
 <body>
 
     <!--
+        ============================================================
         K-TICKETS INVOICE TEMPLATE
+        ============================================================
 
-        This file is intended to be populated server-side.
+        This is a server-rendered document template.
 
-        Expected placeholders include:
+        The backend should replace all {{...}} placeholders before
+        sending the invoice or rendering it for PDF/printing.
+
+        CORE INVOICE VARIABLES
+
+        Invoice:
         {{invoice_number}}
         {{invoice_status}}
         {{issued_date}}
+
+        Customer:
         {{customer_name}}
         {{customer_email}}
         {{customer_phone}}
-        {{customer_address}}
+
+        Merchant:
         {{merchant_name}}
         {{merchant_email}}
         {{merchant_phone}}
-        {{merchant_address}}
+
+        Event:
         {{event_title}}
         {{event_description}}
         {{event_date}}
         {{event_time}}
         {{venue}}
         {{city}}
+
+        Order:
+        {{order_number}}
         {{order_id}}
+
+        Payment:
         {{payment_method}}
         {{payment_reference}}
         {{payment_status}}
+        {{payment_date}}
+
+        Money:
         {{currency}}
         {{subtotal}}
-        {{service_fee}}
         {{discount}}
-        {{tax}}
-        {{other_fees}}
+        {{service_fee}}
         {{total}}
         {{amount_paid}}
         {{balance_due}}
-        {{notes}}
+
+        Support:
         {{support_email}}
         {{support_phone}}
         {{current_year}}
 
-        Item rows should be generated by the backend.
-        Example item variables:
+        Item row variables:
         {{ticket_type}}
         {{ticket_description}}
         {{quantity}}
         {{unit_price}}
         {{line_total}}
+
+        IMPORTANT:
+        The backend must generate one item row for every order item.
+
+        The template does not calculate trusted financial values.
+        Values such as subtotal, service fee, discount and total
+        should come from the finalized order/payment data.
+
+        ============================================================
     -->
 
     <div class="page-wrap">
 
-        <!-- PRINT / SAVE AS PDF -->
         <div class="print-actions">
             <button
                 type="button"
@@ -638,14 +698,11 @@
 
         <main class="invoice">
 
-            <!-- =========================
-                 HEADER
-            ========================== -->
+            <!-- HEADER -->
 
             <header class="topbar">
 
                 <table role="presentation" class="topbar-table">
-
                     <tr>
 
                         <td class="brand-cell">
@@ -673,14 +730,11 @@
                         </td>
 
                     </tr>
-
                 </table>
 
             </header>
 
-            <!-- =========================
-                 BODY
-            ========================== -->
+            <!-- BODY -->
 
             <section class="body">
 
@@ -700,18 +754,15 @@
 
                 </div>
 
-                <!-- BILLING -->
+                <!-- CUSTOMER / ORDER -->
 
                 <table role="presentation" class="details-table">
-
                     <tr>
-
-                        <!-- BILL TO -->
 
                         <td class="details-cell">
 
                             <div class="section-label">
-                                Bill To
+                                Customer
                             </div>
 
                             <div class="person-name">
@@ -720,34 +771,31 @@
 
                             <div class="details-text">
                                 {{customer_email}}<br>
-                                {{customer_phone}}<br>
-                                {{customer_address}}
+                                {{customer_phone}}
                             </div>
 
                         </td>
 
-                        <!-- MERCHANT -->
-
                         <td class="details-cell">
 
                             <div class="section-label">
-                                Merchant
+                                Order
                             </div>
 
-                            <div class="person-name">
-                                {{merchant_name}}
+                            <div class="person-name order-number">
+                                {{order_number}}
                             </div>
 
                             <div class="details-text">
+                                Order ID: {{order_id}}<br>
+                                Merchant: {{merchant_name}}<br>
                                 {{merchant_email}}<br>
-                                {{merchant_phone}}<br>
-                                {{merchant_address}}
+                                {{merchant_phone}}
                             </div>
 
                         </td>
 
                     </tr>
-
                 </table>
 
                 <!-- EVENT -->
@@ -772,6 +820,10 @@
                             {{venue}}, {{city}}
                         </div>
 
+                        <div class="event-description">
+                            {{event_description}}
+                        </div>
+
                     </div>
 
                     <!-- ITEMS -->
@@ -781,7 +833,6 @@
                         <table class="items">
 
                             <thead>
-
                                 <tr>
 
                                     <th style="width: 42%;">
@@ -801,14 +852,12 @@
                                     </th>
 
                                 </tr>
-
                             </thead>
 
                             <tbody>
 
                                 <!--
-                                    The backend should repeat this row for
-                                    every ticket type / line item.
+                                    REPEAT THIS ROW FOR EACH ORDER ITEM.
                                 -->
 
                                 <tr>
@@ -868,7 +917,7 @@
                                 Discount
                             </td>
 
-                            <td>
+                            <td class="discount-value">
                                 - {{currency}} {{discount}}
                             </td>
                         </tr>
@@ -883,28 +932,7 @@
                             </td>
                         </tr>
 
-                        <tr>
-                            <td>
-                                Tax
-                            </td>
-
-                            <td>
-                                {{currency}} {{tax}}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                Other Fees
-                            </td>
-
-                            <td>
-                                {{currency}} {{other_fees}}
-                            </td>
-                        </tr>
-
                         <tr class="total-row">
-
                             <td>
                                 Total
                             </td>
@@ -912,10 +940,9 @@
                             <td>
                                 {{currency}} {{total}}
                             </td>
-
                         </tr>
 
-                        <tr>
+                        <tr class="amount-paid-row">
                             <td>
                                 Amount Paid
                             </td>
@@ -950,19 +977,6 @@
                     <table class="payment-table">
 
                         <tr>
-
-                            <td>
-                                Order ID
-                            </td>
-
-                            <td>
-                                {{order_id}}
-                            </td>
-
-                        </tr>
-
-                        <tr>
-
                             <td>
                                 Payment Method
                             </td>
@@ -970,11 +984,9 @@
                             <td>
                                 {{payment_method}}
                             </td>
-
                         </tr>
 
                         <tr>
-
                             <td>
                                 Payment Reference
                             </td>
@@ -982,19 +994,26 @@
                             <td>
                                 {{payment_reference}}
                             </td>
-
                         </tr>
 
                         <tr>
+                            <td>
+                                Payment Date
+                            </td>
 
+                            <td>
+                                {{payment_date}}
+                            </td>
+                        </tr>
+
+                        <tr>
                             <td>
                                 Payment Status
                             </td>
 
-                            <td class="paid">
+                            <td>
                                 {{payment_status}}
                             </td>
-
                         </tr>
 
                     </table>
@@ -1017,14 +1036,11 @@
 
             </section>
 
-            <!-- =========================
-                 FOOTER
-            ========================== -->
+            <!-- FOOTER -->
 
             <footer class="footer">
 
                 <table role="presentation" class="footer-table">
-
                     <tr>
 
                         <td class="footer-left">
@@ -1057,7 +1073,6 @@
                         </td>
 
                     </tr>
-
                 </table>
 
             </footer>

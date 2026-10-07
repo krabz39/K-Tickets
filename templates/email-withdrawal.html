@@ -1,10 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="x-apple-disable-message-reformatting">
+    <meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+
     <title>K-Tickets Withdrawal Update</title>
 
     <style>
@@ -19,6 +20,12 @@
         table {
             border-spacing: 0;
             border-collapse: collapse;
+        }
+
+        img {
+            border: 0;
+            max-width: 100%;
+            display: block;
         }
 
         a {
@@ -87,6 +94,8 @@
             margin: 0 0 28px;
         }
 
+        /* STATUS */
+
         .status-box {
             background: #fbf2ea;
             border: 1px solid #ead9ca;
@@ -110,7 +119,10 @@
             margin-top: 6px;
         }
 
+        /* SUMMARY */
+
         .summary {
+            width: 100%;
             border: 1px solid #ead9ca;
             border-radius: 14px;
             overflow: hidden;
@@ -137,6 +149,8 @@
             color: #858b89;
             font-size: 12px;
             padding: 15px 18px;
+            line-height: 1.4;
+            vertical-align: top;
         }
 
         .value {
@@ -145,6 +159,9 @@
             font-weight: 700;
             text-align: right;
             padding: 15px 18px;
+            line-height: 1.4;
+            word-break: break-word;
+            vertical-align: top;
         }
 
         .amount {
@@ -157,6 +174,17 @@
             font-size: 16px;
             font-weight: 800;
         }
+
+        .reference {
+            background: #fffaf6;
+        }
+
+        .reference .value {
+            color: #6c151e;
+            letter-spacing: .35px;
+        }
+
+        /* STATUS MESSAGE */
 
         .notice {
             margin-top: 24px;
@@ -171,6 +199,73 @@
         .notice strong {
             color: #0f3d3a;
         }
+
+        .admin-note {
+            border-left-color: #6c151e;
+            background: #fbf2ea;
+        }
+
+        .admin-note strong {
+            color: #6c151e;
+        }
+
+        /* PROCESS */
+
+        .process {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid #ead9ca;
+            border-radius: 14px;
+            background: #fffdfb;
+        }
+
+        .process-title {
+            color: #0f3d3a;
+            font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .process-step {
+            color: #606866;
+            font-size: 13px;
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+
+        .process-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 23px;
+            height: 23px;
+            margin-right: 6px;
+            border-radius: 50%;
+            background: #6c151e;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 23px;
+            text-align: center;
+        }
+
+        /* SECURITY */
+
+        .security {
+            margin-top: 24px;
+            color: #747c7a;
+            font-size: 11px;
+            line-height: 1.65;
+            text-align: center;
+        }
+
+        .security strong {
+            color: #6c151e;
+        }
+
+        /* FOOTER */
 
         .footer {
             background: #0f3d3a;
@@ -191,7 +286,10 @@
             margin-top: 8px;
         }
 
+        /* MOBILE */
+
         @media only screen and (max-width: 600px) {
+
             .wrapper {
                 padding: 12px 6px;
             }
@@ -210,6 +308,19 @@
             .value {
                 padding: 13px 12px;
             }
+
+            .label {
+                width: 42%;
+            }
+
+            .amount .label,
+            .amount .value {
+                font-size: 14px;
+            }
+
+            .status {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
@@ -220,7 +331,7 @@
     <tr>
         <td align="center">
 
-            <table role="presentation" class="container">
+            <table role="presentation" width="100%" class="container">
 
                 <!-- HEADER -->
                 <tr>
@@ -298,7 +409,7 @@
 
                             <tr class="row">
                                 <td class="label">
-                                    Payment Channel
+                                    Withdrawal Channel
                                 </td>
 
                                 <td class="value">
@@ -306,43 +417,33 @@
                                 </td>
                             </tr>
 
-                            <tr class="row">
+                            <tr class="row reference">
                                 <td class="label">
                                     Account / Destination
                                 </td>
 
                                 <td class="value">
-                                    {{destination_reference}}
-                                </td>
-                            </tr>
-
-                            <tr class="row">
-                                <td class="label">
-                                    Gross Amount
-                                </td>
-
-                                <td class="value">
-                                    {{currency}} {{gross_amount}}
-                                </td>
-                            </tr>
-
-                            <tr class="row">
-                                <td class="label">
-                                    Withdrawal Fee
-                                </td>
-
-                                <td class="value">
-                                    {{currency}} {{withdrawal_fee}}
+                                    {{account_reference}}
                                 </td>
                             </tr>
 
                             <tr class="row amount">
                                 <td class="label">
-                                    Amount to Receive
+                                    Amount
                                 </td>
 
                                 <td class="value">
-                                    {{currency}} {{net_amount}}
+                                    {{currency}} {{amount}}
+                                </td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">
+                                    Currency
+                                </td>
+
+                                <td class="value">
+                                    {{currency}}
                                 </td>
                             </tr>
 
@@ -356,34 +457,97 @@
                                 </td>
                             </tr>
 
-                            <tr class="row">
-                                <td class="label">
-                                    Reference
-                                </td>
-
-                                <td class="value">
-                                    {{withdrawal_reference}}
-                                </td>
-                            </tr>
-
                         </table>
 
-                        <!-- ADMIN NOTE -->
-                        <div class="notice">
+                        <!-- PROCESS -->
+                        <div class="process">
 
-                            <strong>Update:</strong><br>
+                            <div class="process-title">
+                                Withdrawal process
+                            </div>
 
-                            {{withdrawal_message}}
+                            <div class="process-step">
+                                <span class="step-number">1</span>
+                                Your withdrawal request is submitted and recorded
+                                by K-Tickets.
+                            </div>
+
+                            <div class="process-step">
+                                <span class="step-number">2</span>
+                                The request is reviewed and processed by an
+                                authorized K-Tickets administrator.
+                            </div>
+
+                            <div class="process-step">
+                                <span class="step-number">3</span>
+                                Once processed, the withdrawal is sent through
+                                the selected payout channel.
+                            </div>
+
+                            <div class="process-step">
+                                <span class="step-number">4</span>
+                                The withdrawal status is updated once processing
+                                is completed or the request is otherwise resolved.
+                            </div>
 
                         </div>
 
+                        <!-- ADMIN MESSAGE -->
+                        <div class="notice admin-note">
+
+                            <strong>Withdrawal update:</strong><br>
+
+                            {{admin_notes}}
+
+                        </div>
+
+                        <!-- STATUS GUIDANCE -->
                         <div class="notice">
+
+                            <strong>What this means:</strong><br>
+
+                            Your withdrawal status shown above is the current
+                            recorded status of this request.
+
+                            <br><br>
+
+                            A request marked <strong>pending</strong> is awaiting
+                            review. A request marked <strong>approved</strong>
+                            has been authorized but may not yet have been paid.
+                            A request marked <strong>processing</strong> is being
+                            handled through the selected payout channel.
+                            A request marked <strong>paid</strong> has been
+                            recorded as completed.
+
+                        </div>
+
+                        <!-- SUPPORT -->
+                        <div class="notice">
+
+                            <strong>Need help?</strong><br>
+
+                            If you have questions about your withdrawal, contact
+                            K-Tickets merchant support and include your withdrawal
+                            ID so the request can be located quickly.
+
+                            <br><br>
+
+                            {{support_email}}
+
+                        </div>
+
+                        <!-- SECURITY -->
+                        <div class="security">
 
                             <strong>Security reminder:</strong><br>
 
                             K-Tickets will never ask you to provide your account
-                            password, authentication code, or other private
-                            credentials by email.
+                            password, authentication code, PIN, OTP, or other
+                            private credentials by email.
+
+                            <br><br>
+
+                            Keep your account and payout information secure.
 
                         </div>
 

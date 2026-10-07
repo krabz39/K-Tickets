@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="x-apple-disable-message-reformatting">
     <meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+
     <title>K-Tickets Payment Receipt</title>
 
     <style>
@@ -25,6 +25,7 @@
         img {
             border: 0;
             max-width: 100%;
+            display: block;
         }
 
         a {
@@ -128,6 +129,7 @@
         }
 
         .receipt-card {
+            width: 100%;
             border: 1px solid #ead9ca;
             border-radius: 15px;
             overflow: hidden;
@@ -155,6 +157,7 @@
             color: #858b89;
             font-size: 12px;
             line-height: 1.4;
+            vertical-align: top;
         }
 
         .value {
@@ -165,6 +168,7 @@
             line-height: 1.4;
             text-align: right;
             word-break: break-word;
+            vertical-align: top;
         }
 
         .reference {
@@ -188,6 +192,7 @@
         }
 
         .breakdown {
+            width: 100%;
             margin-top: 24px;
             border: 1px solid #ead9ca;
             border-radius: 15px;
@@ -210,6 +215,7 @@
             padding: 13px 18px;
             color: #59615f;
             font-size: 13px;
+            line-height: 1.5;
         }
 
         .item-total {
@@ -217,7 +223,28 @@
             color: #27312f;
             font-size: 13px;
             font-weight: 700;
+            line-height: 1.5;
             text-align: right;
+            word-break: break-word;
+        }
+
+        .discount-row {
+            background: #f4f8f6;
+        }
+
+        .discount-row .item-total {
+            color: #0f3d3a;
+        }
+
+        .total-row {
+            background: #fbf2ea;
+        }
+
+        .total-row .item-name,
+        .total-row .item-total {
+            color: #6c151e;
+            font-size: 16px;
+            font-weight: 800;
         }
 
         .notes {
@@ -232,6 +259,15 @@
 
         .notes strong {
             color: #6c151e;
+        }
+
+        .ticket-note {
+            border-left-color: #0f3d3a;
+            background: #edf5f2;
+        }
+
+        .ticket-note strong {
+            color: #0f3d3a;
         }
 
         .security {
@@ -290,6 +326,11 @@
             .amount-row .value {
                 font-size: 15px;
             }
+
+            .item-name,
+            .item-total {
+                padding: 12px 11px;
+            }
         }
     </style>
 </head>
@@ -330,12 +371,12 @@
                         </h1>
 
                         <p class="intro">
-                            Thank you for your payment. This email confirms that
-                            K-Tickets has successfully recorded the payment for
-                            your order.
+                            Thank you for your payment. This receipt confirms that
+                            K-Tickets has successfully recorded and processed the
+                            payment associated with your order.
                         </p>
 
-                        <!-- PAID STATUS -->
+                        <!-- PAYMENT STATUS -->
                         <div class="paid-box">
 
                             <div class="paid-icon">
@@ -343,7 +384,7 @@
                             </div>
 
                             <div class="paid-title">
-                                Payment Successful
+                                {{payment_status}}
                             </div>
 
                             <div class="paid-text">
@@ -368,6 +409,16 @@
 
                                 <td class="value">
                                     {{receipt_number}}
+                                </td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">
+                                    Order Number
+                                </td>
+
+                                <td class="value">
+                                    {{order_number}}
                                 </td>
                             </tr>
 
@@ -492,6 +543,16 @@
                                 </td>
                             </tr>
 
+                            <tr class="item-row discount-row">
+                                <td class="item-name">
+                                    Discount
+                                </td>
+
+                                <td class="item-total">
+                                    {{currency}} {{discount}}
+                                </td>
+                            </tr>
+
                             <tr class="item-row">
                                 <td class="item-name">
                                     Service Fee
@@ -512,9 +573,9 @@
                                 </td>
                             </tr>
 
-                            <tr class="item-row">
+                            <tr class="item-row total-row">
                                 <td class="item-name">
-                                    Total
+                                    Total Paid
                                 </td>
 
                                 <td class="item-total">
@@ -524,7 +585,7 @@
 
                         </table>
 
-                        <!-- EVENT -->
+                        <!-- EVENT INFORMATION -->
                         <div class="notes">
 
                             <strong>Event information</strong><br>
@@ -535,23 +596,34 @@
 
                         </div>
 
-                        <!-- NOTE -->
+                        <!-- TICKET INFORMATION -->
+                        <div class="notes ticket-note">
+
+                            <strong>Your ticket</strong><br>
+
+                            This receipt confirms the payment only.
+                            Your ticket and QR code are issued separately and
+                            remain available through your K-Tickets account when
+                            the order has been successfully completed.
+
+                        </div>
+
+                        <!-- RECEIPT RETENTION -->
                         <div class="notes">
 
                             <strong>Keep this receipt</strong><br>
 
-                            Your receipt number and payment reference can be used
-                            when contacting K-Tickets support about this payment.
-                            Your ticket and QR code are provided separately when
-                            applicable.
+                            Your receipt number, order number and payment reference
+                            can be used when contacting K-Tickets support about
+                            this payment.
 
                         </div>
 
                         <!-- SECURITY -->
                         <div class="security">
 
-                            This receipt was generated by K-Tickets from the
-                            recorded payment information for this order.
+                            This receipt was generated by K-Tickets using the
+                            recorded payment information associated with this order.
 
                             <br><br>
 

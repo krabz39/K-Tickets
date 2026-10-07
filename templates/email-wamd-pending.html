@@ -1,10 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="x-apple-disable-message-reformatting">
+    <meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+
     <title>K-Tickets WAMD Payment Pending</title>
 
     <style>
@@ -24,9 +25,11 @@
         img {
             border: 0;
             max-width: 100%;
+            display: block;
         }
 
         a {
+            color: inherit;
             text-decoration: none;
         }
 
@@ -91,6 +94,8 @@
             line-height: 1.7;
         }
 
+        /* PENDING STATUS */
+
         .pending-box {
             background: #fff8ee;
             border: 1px solid #ead9ca;
@@ -112,6 +117,8 @@
             font-size: 13px;
             line-height: 1.7;
         }
+
+        /* SUMMARY */
 
         .summary {
             width: 100%;
@@ -141,6 +148,8 @@
             padding: 15px 18px;
             color: #858b89;
             font-size: 12px;
+            line-height: 1.4;
+            vertical-align: top;
         }
 
         .value {
@@ -150,6 +159,13 @@
             font-weight: 700;
             text-align: right;
             word-break: break-word;
+            line-height: 1.4;
+            vertical-align: top;
+        }
+
+        .reference-value {
+            color: #6c151e;
+            letter-spacing: .35px;
         }
 
         .status {
@@ -174,6 +190,8 @@
             font-size: 15px;
             font-weight: 800;
         }
+
+        /* STEPS */
 
         .steps {
             margin-top: 24px;
@@ -215,6 +233,8 @@
             font-weight: 800;
         }
 
+        /* IMPORTANT */
+
         .warning {
             margin-top: 24px;
             padding: 18px 20px;
@@ -229,6 +249,8 @@
             color: #6c151e;
         }
 
+        /* SUPPORT */
+
         .support {
             margin-top: 24px;
             padding: 18px 20px;
@@ -242,6 +264,41 @@
         .support strong {
             color: #0f3d3a;
         }
+
+        .support-email {
+            color: #0f3d3a;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        /* ACCOUNT */
+
+        .account-note {
+            margin-top: 24px;
+            padding: 18px 20px;
+            border-radius: 14px;
+            background: #f8f4ef;
+            border: 1px solid #ead9ca;
+            color: #5b6361;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .account-note strong {
+            color: #6c151e;
+        }
+
+        /* SECURITY */
+
+        .security {
+            margin-top: 22px;
+            color: #777f7d;
+            font-size: 11px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        /* FOOTER */
 
         .footer {
             background: #0f3d3a;
@@ -261,6 +318,8 @@
             font-size: 12px;
             line-height: 1.6;
         }
+
+        /* MOBILE */
 
         @media only screen and (max-width: 600px) {
 
@@ -286,6 +345,11 @@
             .label {
                 width: 42%;
             }
+
+            .amount .label,
+            .amount .value {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -296,7 +360,7 @@
     <tr>
         <td align="center">
 
-            <table role="presentation" class="container">
+            <table role="presentation" width="100%" class="container">
 
                 <!-- HEADER -->
                 <tr>
@@ -327,7 +391,7 @@
 
                         <p class="intro">
                             Hi {{customer_name}}, we have received your WAMD
-                            payment information for your K-Tickets order.
+                            payment submission for your K-Tickets order.
                             Your payment is currently awaiting manual verification.
                         </p>
 
@@ -340,8 +404,8 @@
 
                             <div class="pending-text">
                                 Your payment has not yet been marked as confirmed.
-                                Our team will verify the transaction details and
-                                update your order once verification is complete.
+                                K-Tickets will review the submitted transaction
+                                details before the payment is approved.
                             </div>
 
                         </div>
@@ -352,6 +416,16 @@
                             <tr>
                                 <td colspan="2" class="summary-head">
                                     Payment Details
+                                </td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">
+                                    Order Number
+                                </td>
+
+                                <td class="value">
+                                    {{order_number}}
                                 </td>
                             </tr>
 
@@ -407,11 +481,31 @@
 
                             <tr class="row">
                                 <td class="label">
-                                    Transaction ID
+                                    Transaction Code
+                                </td>
+
+                                <td class="value reference-value">
+                                    {{transaction_code}}
+                                </td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">
+                                    Sender Name
                                 </td>
 
                                 <td class="value">
-                                    {{transaction_id}}
+                                    {{sender_name}}
+                                </td>
+                            </tr>
+
+                            <tr class="row">
+                                <td class="label">
+                                    Sender Phone
+                                </td>
+
+                                <td class="value">
+                                    {{sender_phone}}
                                 </td>
                             </tr>
 
@@ -432,18 +526,18 @@
 
                                 <td class="value">
                                     <span class="status">
-                                        Pending Verification
+                                        {{payment_status}}
                                     </span>
                                 </td>
                             </tr>
 
                             <tr class="row amount">
                                 <td class="label">
-                                    Amount
+                                    Amount Submitted
                                 </td>
 
                                 <td class="value">
-                                    {{currency}} {{total}}
+                                    {{currency}} {{amount}}
                                 </td>
                             </tr>
 
@@ -458,24 +552,26 @@
 
                             <div class="step">
                                 <span class="step-number">1</span>
-                                K-Tickets reviews the WAMD transaction details.
+                                K-Tickets reviews the submitted WAMD
+                                transaction details.
                             </div>
 
                             <div class="step">
                                 <span class="step-number">2</span>
-                                Your payment is marked verified or rejected.
+                                The payment is either verified or rejected
+                                by the authorized K-Tickets team.
                             </div>
 
                             <div class="step">
                                 <span class="step-number">3</span>
-                                If verified, your ticket is issued and becomes
-                                available in your K-Tickets account.
+                                If verified, the order payment is finalized
+                                and the ticket issuance process begins.
                             </div>
 
                             <div class="step">
                                 <span class="step-number">4</span>
-                                You receive a confirmation email with your ticket
-                                and QR code.
+                                Once the ticket is issued, you receive your
+                                ticket and QR code separately.
                             </div>
 
                         </div>
@@ -485,9 +581,25 @@
 
                             <strong>Important:</strong><br>
 
-                            Please do not make another payment or submit the same
-                            transaction again while this payment is being verified.
-                            Duplicate submissions may delay verification.
+                            Please do not make another payment or submit the
+                            same transaction again while this payment is being
+                            reviewed.
+
+                            <br><br>
+
+                            Duplicate submissions can create payment
+                            reconciliation problems and may delay verification.
+
+                        </div>
+
+                        <!-- ACCOUNT -->
+                        <div class="account-note">
+
+                            <strong>Your order remains pending.</strong><br>
+
+                            Until the WAMD payment is verified, your order should
+                            not be treated as a completed paid order and no valid
+                            entry ticket should be considered issued.
 
                         </div>
 
@@ -497,12 +609,29 @@
                             <strong>Need help?</strong><br>
 
                             If you believe your payment has already been completed
-                            but the status remains pending, contact K-Tickets support
-                            and include your order ID and transaction ID.
+                            but the status remains pending, contact K-Tickets
+                            support and include your order number or order ID
+                            together with the WAMD transaction code.
 
                             <br><br>
 
-                            {{support_email}}
+                            <span class="support-email">
+                                {{support_email}}
+                            </span>
+
+                        </div>
+
+                        <!-- SECURITY -->
+                        <div class="security">
+
+                            This email confirms receipt of your WAMD payment
+                            submission only. It does not confirm successful payment
+                            until the transaction has been verified by K-Tickets.
+
+                            <br><br>
+
+                            K-Tickets will never ask you to provide your password,
+                            PIN, OTP, or other authentication credentials by email.
 
                         </div>
 
