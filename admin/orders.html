@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +21,10 @@
     content="noindex, nofollow, noarchive, nosnippet"
   >
 
-  <meta name="referrer" content="same-origin">
+  <meta
+    name="referrer"
+    content="same-origin"
+  >
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -107,7 +111,7 @@
     }
 
     .security-box {
-      width: min(430px, calc(100% - 40px));
+      width: min(460px, calc(100% - 40px));
       text-align: center;
       padding: 35px 25px;
     }
@@ -587,7 +591,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1050px;
+      min-width: 1100px;
     }
 
     th {
@@ -627,6 +631,7 @@
       font-size: 10px;
       color: var(--green);
       font-weight: 800;
+      overflow-wrap: anywhere;
     }
 
     .event-cell {
@@ -652,7 +657,11 @@
       margin-top: 3px;
       color: var(--muted);
       font-size: 9px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        monospace;
     }
 
     .amount {
@@ -687,25 +696,18 @@
       background: currentColor;
     }
 
-    .status-paid,
-    .status-completed,
-    .status-confirmed,
-    .status-success {
+    .status-paid {
       color: var(--success);
       background: rgba(23,107,77,.08);
     }
 
-    .status-pending,
-    .status-processing,
-    .status-awaiting {
+    .status-pending {
       color: var(--warning);
       background: rgba(155,106,22,.09);
     }
 
     .status-failed,
-    .status-cancelled,
-    .status-refunded,
-    .status-rejected {
+    .status-refunded {
       color: var(--danger);
       background: rgba(167,44,54,.08);
     }
@@ -763,6 +765,7 @@
       color: var(--green);
       font-weight: 800;
       font-size: 10px;
+      overflow-wrap: anywhere;
     }
 
     .order-card-event {
@@ -886,7 +889,7 @@
       right: 0;
       top: 0;
       height: 100%;
-      width: min(500px, 100%);
+      width: min(520px, 100%);
       background: white;
       box-shadow: -15px 0 50px rgba(0,0,0,.14);
       display: flex;
@@ -949,6 +952,7 @@
         monospace;
       font-size: 10px;
       font-weight: 850;
+      overflow-wrap: anywhere;
     }
 
     .detail-event {
@@ -995,7 +999,7 @@
       color: var(--muted);
     }
 
-    .detail-row strong {
+    .detail-row > strong {
       text-align: right;
       max-width: 65%;
       overflow-wrap: anywhere;
@@ -1070,6 +1074,7 @@
     ========================================================= */
 
     @media (max-width: 1150px) {
+
       :root {
         --sidebar-width: 225px;
       }
@@ -1092,8 +1097,10 @@
     }
 
     @media (max-width: 900px) {
+
       .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
       }
 
       .toolbar {
@@ -1107,6 +1114,7 @@
     }
 
     @media (max-width: 850px) {
+
       .sidebar {
         transform: translateX(-100%);
       }
@@ -1128,6 +1136,7 @@
     }
 
     @media (max-width: 680px) {
+
       .topbar {
         height: 70px;
         padding: 0 14px;
@@ -1158,7 +1167,8 @@
       }
 
       .stats-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+          1fr 1fr;
         gap: 10px;
       }
 
@@ -1202,6 +1212,7 @@
     }
 
     @media (max-width: 390px) {
+
       .stats-grid {
         grid-template-columns: 1fr;
       }
@@ -1242,6 +1253,7 @@
 
   </div>
 
+
   <!-- =======================================================
        APP
   ======================================================== -->
@@ -1274,11 +1286,13 @@
 
       </div>
 
+
       <nav class="nav">
 
         <div class="nav-section">
           Overview
         </div>
+
 
         <a
           class="nav-link"
@@ -1288,9 +1302,11 @@
           <span>Dashboard</span>
         </a>
 
+
         <div class="nav-section">
           Management
         </div>
+
 
         <a
           class="nav-link"
@@ -1300,6 +1316,7 @@
           <span>Events</span>
         </a>
 
+
         <a
           class="nav-link"
           href="./merchants.html"
@@ -1307,6 +1324,7 @@
           <span class="nav-icon">♙</span>
           <span>Merchants</span>
         </a>
+
 
         <a
           class="nav-link"
@@ -1316,6 +1334,7 @@
           <span>Customers</span>
         </a>
 
+
         <a
           class="nav-link active"
           href="./orders.html"
@@ -1324,9 +1343,11 @@
           <span>Orders</span>
         </a>
 
+
         <div class="nav-section">
           Finance
         </div>
+
 
         <a
           class="nav-link"
@@ -1336,6 +1357,16 @@
           <span>Payments</span>
         </a>
 
+
+        <a
+          class="nav-link"
+          href="./mpesa.html"
+        >
+          <span class="nav-icon">M</span>
+          <span>M-Pesa</span>
+        </a>
+
+
         <a
           class="nav-link"
           href="./wamd.html"
@@ -1343,6 +1374,7 @@
           <span class="nav-icon">⇄</span>
           <span>WAMD</span>
         </a>
+
 
         <a
           class="nav-link"
@@ -1352,6 +1384,7 @@
           <span>Withdrawals</span>
         </a>
 
+
         <a
           class="nav-link"
           href="./fees.html"
@@ -1360,9 +1393,11 @@
           <span>Fees</span>
         </a>
 
+
         <div class="nav-section">
           System
         </div>
+
 
         <a
           class="nav-link"
@@ -1371,6 +1406,25 @@
           <span class="nav-icon">▥</span>
           <span>Reports</span>
         </a>
+
+
+        <a
+          class="nav-link"
+          href="./notifications.html"
+        >
+          <span class="nav-icon">♢</span>
+          <span>Notifications</span>
+        </a>
+
+
+        <a
+          class="nav-link"
+          href="./audit-logs.html"
+        >
+          <span class="nav-icon">◉</span>
+          <span>Audit Logs</span>
+        </a>
+
 
         <a
           class="nav-link"
@@ -1381,6 +1435,7 @@
         </a>
 
       </nav>
+
 
       <div class="sidebar-footer">
 
@@ -1398,6 +1453,7 @@
 
     </aside>
 
+
     <!-- =====================================================
          MAIN
     ====================================================== -->
@@ -1412,9 +1468,11 @@
             class="mobile-menu"
             id="mobileMenu"
             aria-label="Open navigation"
+            type="button"
           >
             ☰
           </button>
+
 
           <div class="page-heading">
 
@@ -1430,12 +1488,14 @@
 
         </div>
 
+
         <div class="topbar-right">
 
           <button
             class="notification"
             id="notificationButton"
             aria-label="Notifications"
+            type="button"
           >
             ♢
 
@@ -1446,6 +1506,7 @@
 
           </button>
 
+
           <div class="admin-profile">
 
             <div
@@ -1454,6 +1515,7 @@
             >
               A
             </div>
+
 
             <div class="admin-profile-text">
 
@@ -1473,6 +1535,7 @@
 
       </header>
 
+
       <section class="content">
 
         <div class="welcome-row">
@@ -1487,6 +1550,7 @@
           </p>
 
         </div>
+
 
         <!-- =================================================
              STATS
@@ -1517,6 +1581,7 @@
 
           </article>
 
+
           <article class="stat-card">
 
             <div class="stat-top">
@@ -1540,6 +1605,7 @@
 
           </article>
 
+
           <article class="stat-card">
 
             <div class="stat-top">
@@ -1562,6 +1628,7 @@
             </div>
 
           </article>
+
 
           <article class="stat-card">
 
@@ -1588,6 +1655,7 @@
 
         </div>
 
+
         <!-- =================================================
              ORDERS PANEL
         ================================================== -->
@@ -1607,10 +1675,11 @@
                 id="searchInput"
                 type="search"
                 autocomplete="off"
-                placeholder="Search order ID, event or customer..."
+                placeholder="Search order number, ID, event or customer..."
               >
 
             </div>
+
 
             <select
               class="select"
@@ -1639,6 +1708,7 @@
 
             </select>
 
+
             <select
               class="select"
               id="periodFilter"
@@ -1666,6 +1736,7 @@
 
             </select>
 
+
             <button
               class="btn btn-secondary"
               id="refreshButton"
@@ -1675,6 +1746,7 @@
             </button>
 
           </div>
+
 
           <!-- DESKTOP TABLE -->
 
@@ -1690,6 +1762,7 @@
               Loading order records...
 
             </div>
+
 
             <table
               id="ordersTable"
@@ -1740,11 +1813,13 @@
 
               </thead>
 
+
               <tbody
                 id="ordersTableBody"
               ></tbody>
 
             </table>
+
 
             <div
               class="state"
@@ -1766,6 +1841,7 @@
               </p>
 
             </div>
+
 
             <div
               class="state error-state"
@@ -1789,6 +1865,7 @@
 
           </div>
 
+
           <!-- MOBILE LIST -->
 
           <div
@@ -1803,6 +1880,7 @@
     </main>
 
   </div>
+
 
   <!-- =======================================================
        ORDER DETAIL DRAWER
@@ -1829,15 +1907,18 @@
           Order Details
         </div>
 
+
         <button
           class="drawer-close"
           id="drawerClose"
           aria-label="Close order details"
+          type="button"
         >
           ×
         </button>
 
       </div>
+
 
       <div
         class="drawer-body"
@@ -1848,6 +1929,7 @@
 
   </div>
 
+
   <!-- TOAST -->
 
   <div
@@ -1855,28 +1937,18 @@
     id="toastContainer"
   ></div>
 
+
   <script>
     /* =========================================================
-       K-TICKETS ADMIN ORDERS
-       ---------------------------------------------------------
-       SECURITY PRINCIPLES
-       ---------------------------------------------------------
-       1. Browser contains only Supabase public/anon key.
-       2. Service-role key is NEVER exposed.
-       3. Authorization is checked through Supabase Auth
-          + profiles role + RLS.
-       4. Customer authentication credentials are never read.
-       5. Order mutation controls are deliberately absent.
-       6. Financial changes must eventually use secure RPCs
-          or Edge Functions with audit logging.
-       7. Database/RLS remains the actual security boundary.
-    ========================================================= */
+       K-TICKETS ADMIN — ORDERS
+       ========================================================= */
 
     const SUPABASE_URL =
-      window.KTICKETS_SUPABASE_URL || "";
+      "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-    const SUPABASE_ANON_KEY =
-      window.KTICKETS_SUPABASE_ANON_KEY || "";
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
 
     let supabaseClient = null;
 
@@ -1888,6 +1960,7 @@
     let events = new Map();
 
     let filteredOrders = [];
+
 
     /* =========================================================
        DOM
@@ -1971,11 +2044,13 @@
     const drawerBody =
       document.getElementById("drawerBody");
 
+
     /* =========================================================
        HELPERS
     ========================================================= */
 
     function escapeHtml(value) {
+
       return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -1984,16 +2059,17 @@
         .replace(/'/g, "&#039;");
     }
 
+
     function getInitials(name) {
 
       const parts =
-        String(name || "Customer")
+        String(name || "Administrator")
           .trim()
           .split(/\s+/)
           .filter(Boolean);
 
       if (!parts.length) {
-        return "C";
+        return "A";
       }
 
       if (parts.length === 1) {
@@ -2008,16 +2084,25 @@
       ).toUpperCase();
     }
 
+
     function formatNumber(value) {
 
       return Number(value || 0)
         .toLocaleString();
     }
 
-    function formatMoney(value, currency = "") {
+
+    function formatMoney(
+      value,
+      currency = ""
+    ) {
 
       const number =
         Number(value || 0);
+
+      if (!Number.isFinite(number)) {
+        return "—";
+      }
 
       const formatted =
         number.toLocaleString(
@@ -2035,6 +2120,7 @@
         </span>
       `;
     }
+
 
     function formatDate(value) {
 
@@ -2062,6 +2148,7 @@
         }
       );
     }
+
 
     function formatDateTime(value) {
 
@@ -2092,6 +2179,7 @@
       );
     }
 
+
     function normalizeStatus(status) {
 
       return String(
@@ -2100,6 +2188,7 @@
         .trim()
         .toLowerCase();
     }
+
 
     function statusGroup(status) {
 
@@ -2153,6 +2242,7 @@
       return "other";
     }
 
+
     function statusClass(status) {
 
       const group =
@@ -2176,6 +2266,7 @@
 
       return "status-other";
     }
+
 
     function prettyStatus(status) {
 
@@ -2201,6 +2292,7 @@
         .join(" ");
     }
 
+
     function maskUserId(id) {
 
       if (!id) {
@@ -2221,6 +2313,7 @@
       );
     }
 
+
     function showToast(
       message,
       type = "normal"
@@ -2231,10 +2324,12 @@
           "toastContainer"
         );
 
+      if (!container) {
+        return;
+      }
+
       const toast =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
       toast.className =
         "toast" +
@@ -2257,7 +2352,10 @@
       );
     }
 
-    function redirectLogin(reason = "") {
+
+    function redirectLogin(
+      reason = ""
+    ) {
 
       const suffix =
         reason
@@ -2266,10 +2364,11 @@
           : "";
 
       window.location.replace(
-        "../auth/login.html" +
+        "/login.html" +
         suffix
       );
     }
+
 
     async function safeSignOut() {
 
@@ -2280,30 +2379,40 @@
         }
 
       } catch (_) {
-        /* intentionally ignored */
+        /* ignored */
       }
     }
 
+
     /* =========================================================
-       SECURITY
+       SUPABASE
     ========================================================= */
 
-    async function verifyAdminSession() {
+    function initializeSupabase() {
 
       if (
         !SUPABASE_URL ||
-        !SUPABASE_ANON_KEY
+        !SUPABASE_PUBLISHABLE_KEY
       ) {
-
         throw new Error(
           "Supabase configuration is missing."
+        );
+      }
+
+      if (
+        !window.supabase ||
+        typeof window.supabase.createClient !==
+          "function"
+      ) {
+        throw new Error(
+          "Supabase client library could not be loaded."
         );
       }
 
       supabaseClient =
         window.supabase.createClient(
           SUPABASE_URL,
-          SUPABASE_ANON_KEY,
+          SUPABASE_PUBLISHABLE_KEY,
           {
             auth: {
               persistSession: true,
@@ -2312,11 +2421,19 @@
             }
           }
         );
+    }
+
+
+    /* =========================================================
+       ADMIN SECURITY
+    ========================================================= */
+
+    async function verifyAdminSession() {
+
+      initializeSupabase();
 
       const {
-        data: {
-          session
-        },
+        data,
         error
       } =
         await supabaseClient
@@ -2327,10 +2444,10 @@
         throw error;
       }
 
-      if (
-        !session ||
-        !session.user
-      ) {
+      const session =
+        data?.session;
+
+      if (!session?.user) {
 
         redirectLogin(
           "login_required"
@@ -2342,11 +2459,6 @@
       currentUser =
         session.user;
 
-      /*
-       * The browser asks the database for the role.
-       * RLS MUST prevent non-admin users from reading
-       * privileged administrator profile information.
-       */
 
       const {
         data: profile,
@@ -2358,7 +2470,8 @@
             id,
             full_name,
             phone,
-            role
+            role,
+            is_active
           `)
           .eq(
             "id",
@@ -2366,15 +2479,32 @@
           )
           .maybeSingle();
 
+
       if (profileError) {
-        throw profileError;
+
+        throw new Error(
+          `Admin profile query failed: ${profileError.message}`
+        );
       }
 
+
+      if (!profile) {
+
+        await safeSignOut();
+
+        redirectLogin(
+          "profile_missing"
+        );
+
+        return false;
+      }
+
+
       if (
-        !profile ||
         String(
           profile.role || ""
-        ).toLowerCase() !== "admin"
+        ).toLowerCase() !== "admin" ||
+        profile.is_active !== true
       ) {
 
         await safeSignOut();
@@ -2386,11 +2516,13 @@
         return false;
       }
 
+
       currentAdminProfile =
         profile;
 
       return true;
     }
+
 
     /* =========================================================
        ADMIN IDENTITY
@@ -2409,20 +2541,14 @@
         getInitials(name);
     }
 
+
     /* =========================================================
-       LOAD ORDERS
+       ORDERS
     ========================================================= */
 
     async function loadOrders() {
 
       setLoading(true);
-
-      /*
-       * Only order fields required for this CMS are selected.
-       *
-       * Do NOT add payment credentials, tokens, card details,
-       * passwords or other secrets to this query.
-       */
 
       const {
         data,
@@ -2432,44 +2558,46 @@
           .from("orders")
           .select(`
             id,
+            order_number,
             user_id,
             event_id,
             status,
             subtotal,
+            service_fee_percentage,
             service_fee,
+            discount,
             total,
             currency,
+            promotion_id,
+            paid_at,
             created_at,
-            updated_at,
-            events(
-              id,
-              merchant_id,
-              title,
-              venue,
-              city,
-              start_at,
-              end_at
-            )
+            updated_at
           `)
           .order(
             "created_at",
             {
               ascending: false
             }
-          );
+          )
+          .limit(5000);
+
 
       if (error) {
         throw error;
       }
+
 
       orders =
         Array.isArray(data)
           ? data
           : [];
 
-      buildEventMap();
 
-      await loadCustomersForOrders();
+      await Promise.all([
+        loadEventsForOrders(),
+        loadCustomersForOrders()
+      ]);
+
 
       calculateStats();
 
@@ -2478,9 +2606,79 @@
       setLoading(false);
     }
 
-    /* =========================================================
-       LOAD CUSTOMER NAMES
-    ========================================================= */
+
+    async function loadEventsForOrders() {
+
+      events =
+        new Map();
+
+      const eventIds =
+        [
+          ...new Set(
+            orders
+              .map(
+                order =>
+                  order.event_id
+              )
+              .filter(Boolean)
+          )
+        ];
+
+
+      if (!eventIds.length) {
+        return;
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("events")
+          .select(`
+            id,
+            merchant_id,
+            title,
+            description,
+            venue,
+            city,
+            start_at,
+            end_at,
+            status,
+            created_at,
+            updated_at
+          `)
+          .in(
+            "id",
+            eventIds
+          );
+
+
+      if (error) {
+
+        console.warn(
+          "Event details unavailable:",
+          error.message
+        );
+
+        return;
+      }
+
+
+      (data || [])
+        .forEach(
+          event => {
+
+            events.set(
+              event.id,
+              event
+            );
+
+          }
+        );
+    }
+
 
     async function loadCustomersForOrders() {
 
@@ -2499,14 +2697,11 @@
           )
         ];
 
+
       if (!userIds.length) {
         return;
       }
 
-      /*
-       * Minimal customer fields.
-       * No auth.users email/password/session data.
-       */
 
       const {
         data,
@@ -2516,99 +2711,73 @@
           .from("profiles")
           .select(`
             id,
-            full_name
+            full_name,
+            phone,
+            role,
+            is_active
           `)
           .in(
             "id",
             userIds
           );
 
+
       if (error) {
 
         console.warn(
-          "Customer names unavailable:",
+          "Customer profiles unavailable:",
           error.message
         );
 
         return;
       }
 
+
       (data || [])
-        .forEach(profile => {
+        .forEach(
+          profile => {
 
-          customers.set(
-            profile.id,
-            profile
-          );
+            customers.set(
+              profile.id,
+              profile
+            );
 
-        });
+          }
+        );
     }
 
-    /* =========================================================
-       EVENT MAP
-    ========================================================= */
-
-    function buildEventMap() {
-
-      events =
-        new Map();
-
-      orders.forEach(order => {
-
-        const event =
-          Array.isArray(order.events)
-            ? order.events[0]
-            : order.events;
-
-        if (
-          event &&
-          event.id
-        ) {
-
-          events.set(
-            event.id,
-            event
-          );
-
-        }
-
-      });
-    }
-
-    /* =========================================================
-       GET CUSTOMER
-    ========================================================= */
 
     function getCustomer(order) {
 
       return (
         customers.get(
           order.user_id
-        ) || null
-      );
-    }
-
-    /* =========================================================
-       GET EVENT
-    ========================================================= */
-
-    function getEvent(order) {
-
-      if (
-        Array.isArray(order.events)
-      ) {
-        return (
-          order.events[0] ||
-          null
-        );
-      }
-
-      return (
-        order.events ||
-        events.get(order.event_id) ||
+        ) ||
         null
       );
     }
+
+
+    function getEvent(order) {
+
+      return (
+        events.get(
+          order.event_id
+        ) ||
+        null
+      );
+    }
+
+
+    function getOrderReference(order) {
+
+      return (
+        order.order_number ||
+        order.id ||
+        "—"
+      );
+    }
+
 
     /* =========================================================
        STATISTICS
@@ -2624,6 +2793,7 @@
             ) === "paid"
         );
 
+
       const pending =
         orders.filter(
           order =>
@@ -2632,23 +2802,6 @@
             ) === "pending"
         );
 
-      /*
-       * Gross value is calculated from database order totals.
-       * No hardcoded currency or exchange rate.
-       */
-
-      const gross =
-        completed.reduce(
-          (
-            sum,
-            order
-          ) =>
-            sum +
-            Number(
-              order.total || 0
-            ),
-          0
-        );
 
       totalOrders.textContent =
         formatNumber(
@@ -2665,12 +2818,6 @@
           pending.length
         );
 
-      /*
-       * Orders may theoretically contain multiple currencies.
-       * To avoid producing a misleading aggregate, show a
-       * simple value only when all completed orders use the
-       * same currency.
-       */
 
       const currencies =
         [
@@ -2678,16 +2825,30 @@
             completed
               .map(
                 order =>
-                  order.currency ||
-                  ""
+                  order.currency || ""
               )
               .filter(Boolean)
           )
         ];
 
+
       if (
         currencies.length === 1
       ) {
+
+        const gross =
+          completed.reduce(
+            (
+              sum,
+              order
+            ) =>
+              sum +
+              Number(
+                order.total || 0
+              ),
+            0
+          );
+
 
         grossValue.innerHTML =
           formatMoney(
@@ -2709,8 +2870,70 @@
       }
     }
 
+
     /* =========================================================
-       FILTERING
+       FILTER PERIOD
+    ========================================================= */
+
+    function getPeriodStart(
+      value
+    ) {
+
+      const now =
+        new Date();
+
+
+      if (
+        value === "all"
+      ) {
+        return null;
+      }
+
+
+      if (
+        value === "today"
+      ) {
+
+        const start =
+          new Date(now);
+
+        start.setHours(
+          0,
+          0,
+          0,
+          0
+        );
+
+        return start;
+      }
+
+
+      const days =
+        Number(value);
+
+
+      if (
+        !Number.isFinite(days)
+      ) {
+        return null;
+      }
+
+
+      return new Date(
+        now.getTime() -
+        (
+          days *
+          24 *
+          60 *
+          60 *
+          1000
+        )
+      );
+    }
+
+
+    /* =========================================================
+       FILTERS
     ========================================================= */
 
     function applyFilters() {
@@ -2722,122 +2945,128 @@
           .trim()
           .toLowerCase();
 
+
       const selectedStatus =
-        statusFilter.value;
+        statusFilter.value ||
+        "all";
+
 
       const selectedPeriod =
-        periodFilter.value;
+        periodFilter.value ||
+        "all";
 
-      const now =
-        Date.now();
 
-      let minimumDate =
-        null;
+      const periodStart =
+        getPeriodStart(
+          selectedPeriod
+        );
 
-      if (
-        selectedPeriod !== "all"
-      ) {
-
-        const days =
-          Number(
-            selectedPeriod
-          );
-
-        if (
-          Number.isFinite(days)
-        ) {
-
-          minimumDate =
-            now -
-            (
-              days *
-              24 *
-              60 *
-              60 *
-              1000
-            );
-        }
-      }
 
       filteredOrders =
-        orders.filter(order => {
+        orders.filter(
+          order => {
 
-          const customer =
-            getCustomer(order);
+            const customer =
+              getCustomer(order);
 
-          const event =
-            getEvent(order);
+            const event =
+              getEvent(order);
 
-          const customerName =
-            String(
-              customer?.full_name ||
-              ""
-            ).toLowerCase();
 
-          const eventTitle =
-            String(
-              event?.title ||
-              ""
-            ).toLowerCase();
+            const customerName =
+              String(
+                customer?.full_name ||
+                ""
+              )
+                .toLowerCase();
 
-          const orderId =
-            String(
-              order.id ||
-              ""
-            ).toLowerCase();
 
-          const matchesSearch =
-            !search ||
-            orderId.includes(search) ||
-            customerName.includes(search) ||
-            eventTitle.includes(search);
+            const eventTitle =
+              String(
+                event?.title ||
+                ""
+              )
+                .toLowerCase();
 
-          let matchesStatus =
-            true;
 
-          if (
-            selectedStatus !== "all"
-          ) {
+            const orderId =
+              String(
+                order.id ||
+                ""
+              )
+                .toLowerCase();
 
-            const group =
-              statusGroup(
-                order.status
-              );
 
-            matchesStatus =
-              group ===
-              selectedStatus;
+            const orderNumber =
+              String(
+                order.order_number ||
+                ""
+              )
+                .toLowerCase();
+
+
+            const matchesSearch =
+              !search ||
+              orderId.includes(search) ||
+              orderNumber.includes(search) ||
+              customerName.includes(search) ||
+              eventTitle.includes(search);
+
+
+            let matchesStatus =
+              true;
+
+
+            if (
+              selectedStatus !== "all"
+            ) {
+
+              matchesStatus =
+                statusGroup(
+                  order.status
+                ) ===
+                selectedStatus;
+            }
+
+
+            let matchesPeriod =
+              true;
+
+
+            if (
+              periodStart
+            ) {
+
+              const created =
+                new Date(
+                  order.created_at
+                );
+
+
+              matchesPeriod =
+                !Number.isNaN(
+                  created.getTime()
+                ) &&
+                created >=
+                  periodStart;
+            }
+
+
+            return (
+              matchesSearch &&
+              matchesStatus &&
+              matchesPeriod
+            );
           }
+        );
 
-          let matchesPeriod =
-            true;
-
-          if (
-            minimumDate !== null
-          ) {
-
-            const created =
-              new Date(
-                order.created_at
-              ).getTime();
-
-            matchesPeriod =
-              Number.isFinite(created) &&
-              created >= minimumDate;
-          }
-
-          return (
-            matchesSearch &&
-            matchesStatus &&
-            matchesPeriod
-          );
-        });
 
       renderOrders();
     }
 
+
     /* =========================================================
-       RENDER ORDERS
+       RENDER
     ========================================================= */
 
     function renderOrders() {
@@ -2847,6 +3076,7 @@
 
       mobileList.innerHTML =
         "";
+
 
       if (
         !filteredOrders.length
@@ -2866,18 +3096,22 @@
         return;
       }
 
+
       emptyState.style.display =
         "none";
+
 
       ordersTable.style.display =
         window.innerWidth > 680
           ? "table"
           : "none";
 
+
       mobileList.style.display =
         window.innerWidth <= 680
           ? "block"
           : "none";
+
 
       filteredOrders.forEach(
         order => {
@@ -2894,9 +3128,6 @@
       );
     }
 
-    /* =========================================================
-       DESKTOP ORDER
-    ========================================================= */
 
     function renderDesktopOrder(
       order
@@ -2908,20 +3139,25 @@
       const event =
         getEvent(order);
 
+
       const customerName =
         customer?.full_name ||
         "Customer";
+
 
       const eventTitle =
         event?.title ||
         "Event";
 
+
       const currency =
         order.currency ||
         "";
 
+
       const row =
         document.createElement("tr");
+
 
       row.innerHTML = `
 
@@ -2929,11 +3165,25 @@
 
           <div class="order-id">
             ${escapeHtml(
-              order.id
+              getOrderReference(order)
             )}
           </div>
 
+          ${
+            order.order_number &&
+            order.order_number !== order.id
+              ? `
+                <div class="event-meta">
+                  ${escapeHtml(
+                    order.id
+                  )}
+                </div>
+              `
+              : ""
+          }
+
         </td>
+
 
         <td>
 
@@ -2946,18 +3196,21 @@
             </div>
 
             <div class="event-meta">
-              ${
-                escapeHtml(
-                  event?.venue ||
-                  event?.city ||
-                  "—"
-                )
-              }
+              ${escapeHtml(
+                [
+                  event?.venue,
+                  event?.city
+                ]
+                .filter(Boolean)
+                .join(" • ") ||
+                "Venue not provided"
+              )}
             </div>
 
           </div>
 
         </td>
+
 
         <td>
 
@@ -2977,6 +3230,7 @@
 
         </td>
 
+
         <td>
 
           <span
@@ -2993,6 +3247,7 @@
 
         </td>
 
+
         <td>
 
           <span class="amount">
@@ -3004,6 +3259,7 @@
 
         </td>
 
+
         <td>
 
           <span class="amount">
@@ -3013,7 +3269,28 @@
             )}
           </span>
 
+          ${
+            order.service_fee_percentage !== null &&
+            order.service_fee_percentage !== undefined
+              ? `
+                <div class="event-meta">
+                  ${escapeHtml(
+                    Number(
+                      order.service_fee_percentage
+                    ).toLocaleString(
+                      undefined,
+                      {
+                        maximumFractionDigits: 2
+                      }
+                    )
+                  )}%
+                </div>
+              `
+              : ""
+          }
+
         </td>
+
 
         <td>
 
@@ -3026,6 +3303,7 @@
 
         </td>
 
+
         <td>
           ${escapeHtml(
             formatDate(
@@ -3033,6 +3311,7 @@
             )
           )}
         </td>
+
 
         <td>
 
@@ -3045,7 +3324,9 @@
           </button>
 
         </td>
+
       `;
+
 
       row
         .querySelector(
@@ -3059,14 +3340,12 @@
             )
         );
 
+
       ordersTableBody.appendChild(
         row
       );
     }
 
-    /* =========================================================
-       MOBILE ORDER
-    ========================================================= */
 
     function renderMobileOrder(
       order
@@ -3078,25 +3357,31 @@
       const event =
         getEvent(order);
 
+
       const customerName =
         customer?.full_name ||
         "Customer";
+
 
       const eventTitle =
         event?.title ||
         "Event";
 
+
       const currency =
         order.currency ||
         "";
+
 
       const card =
         document.createElement(
           "article"
         );
 
+
       card.className =
         "order-card";
+
 
       card.innerHTML = `
 
@@ -3106,7 +3391,7 @@
 
             <div class="order-card-id">
               ${escapeHtml(
-                order.id
+                getOrderReference(order)
               )}
             </div>
 
@@ -3124,6 +3409,7 @@
 
           </div>
 
+
           <span
             class="status ${statusClass(
               order.status
@@ -3137,6 +3423,7 @@
           </span>
 
         </div>
+
 
         <div class="order-card-grid">
 
@@ -3155,6 +3442,7 @@
 
           </div>
 
+
           <div class="mini-meta">
 
             <span>
@@ -3170,6 +3458,7 @@
 
           </div>
 
+
           <div class="mini-meta">
 
             <span>
@@ -3183,6 +3472,7 @@
             </strong>
 
           </div>
+
 
           <div class="mini-meta">
 
@@ -3202,6 +3492,7 @@
 
         </div>
 
+
         <button
           class="btn btn-secondary"
           type="button"
@@ -3212,7 +3503,9 @@
         >
           View Order
         </button>
+
       `;
+
 
       card
         .querySelector(
@@ -3226,13 +3519,15 @@
             )
         );
 
+
       mobileList.appendChild(
         card
       );
     }
 
+
     /* =========================================================
-       ORDER DRAWER
+       DRAWER
     ========================================================= */
 
     function openOrder(
@@ -3246,6 +3541,7 @@
             String(orderId)
         );
 
+
       if (!order) {
 
         showToast(
@@ -3256,30 +3552,37 @@
         return;
       }
 
+
       const customer =
         getCustomer(order);
 
       const event =
         getEvent(order);
 
+
       const customerName =
         customer?.full_name ||
         "Customer";
+
 
       const eventTitle =
         event?.title ||
         "Event";
 
+
       const currency =
         order.currency ||
         "";
+
 
       drawerBody.innerHTML = `
 
         <div class="detail-hero">
 
           <div class="detail-order-id">
-            ORDER
+            ${escapeHtml(
+              getOrderReference(order)
+            )}
           </div>
 
           <div class="detail-event">
@@ -3290,19 +3593,41 @@
 
           <div class="detail-event-meta">
             ${escapeHtml(
-              event?.venue ||
-              event?.city ||
+              [
+                event?.venue,
+                event?.city
+              ]
+              .filter(Boolean)
+              .join(" • ") ||
               "Venue not available"
             )}
           </div>
 
         </div>
 
+
         <div class="detail-section">
 
           <div class="detail-section-title">
             Order
           </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Order Number
+            </span>
+
+            <strong>
+              ${escapeHtml(
+                order.order_number ||
+                "—"
+              )}
+            </strong>
+
+          </div>
+
 
           <div class="detail-row">
 
@@ -3317,6 +3642,7 @@
             </strong>
 
           </div>
+
 
           <div class="detail-row">
 
@@ -3342,6 +3668,7 @@
 
           </div>
 
+
           <div class="detail-row">
 
             <span>
@@ -3357,6 +3684,7 @@
             </strong>
 
           </div>
+
 
           <div class="detail-row">
 
@@ -3374,13 +3702,32 @@
 
           </div>
 
+
+          <div class="detail-row">
+
+            <span>
+              Paid At
+            </span>
+
+            <strong>
+              ${escapeHtml(
+                formatDateTime(
+                  order.paid_at
+                )
+              )}
+            </strong>
+
+          </div>
+
         </div>
+
 
         <div class="detail-section">
 
           <div class="detail-section-title">
             Customer
           </div>
+
 
           <div class="detail-row">
 
@@ -3395,6 +3742,7 @@
             </strong>
 
           </div>
+
 
           <div class="detail-row">
 
@@ -3412,20 +3760,46 @@
 
           </div>
 
+
+          ${
+            customer?.phone
+              ? `
+                <div class="detail-row">
+
+                  <span>
+                    Phone
+                  </span>
+
+                  <strong>
+                    ${escapeHtml(
+                      customer.phone
+                    )}
+                  </strong>
+
+                </div>
+              `
+              : ""
+          }
+
+
           <div class="security-note">
+
             Customer authentication credentials,
             passwords and private authentication
             metadata are never exposed through this
             administrator order view.
+
           </div>
 
         </div>
+
 
         <div class="detail-section">
 
           <div class="detail-section-title">
             Event
           </div>
+
 
           <div class="detail-row">
 
@@ -3440,6 +3814,7 @@
             </strong>
 
           </div>
+
 
           <div class="detail-row">
 
@@ -3456,6 +3831,7 @@
 
           </div>
 
+
           <div class="detail-row">
 
             <span>
@@ -3470,6 +3846,7 @@
             </strong>
 
           </div>
+
 
           <div class="detail-row">
 
@@ -3487,13 +3864,49 @@
 
           </div>
 
+
+          <div class="detail-row">
+
+            <span>
+              Event End
+            </span>
+
+            <strong>
+              ${escapeHtml(
+                formatDateTime(
+                  event?.end_at
+                )
+              )}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Event Status
+            </span>
+
+            <strong>
+              ${escapeHtml(
+                prettyStatus(
+                  event?.status
+                )
+              )}
+            </strong>
+
+          </div>
+
         </div>
+
 
         <div class="detail-section">
 
           <div class="detail-section-title">
             Financial Breakdown
           </div>
+
 
           <div class="detail-row">
 
@@ -3510,6 +3923,50 @@
 
           </div>
 
+
+          <div class="detail-row">
+
+            <span>
+              Discount
+            </span>
+
+            <strong>
+              ${formatMoney(
+                order.discount,
+                currency
+              )}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Service Fee Rate
+            </span>
+
+            <strong>
+              ${
+                order.service_fee_percentage !== null &&
+                order.service_fee_percentage !== undefined
+                  ? escapeHtml(
+                      Number(
+                        order.service_fee_percentage
+                      ).toLocaleString(
+                        undefined,
+                        {
+                          maximumFractionDigits: 2
+                        }
+                      ) + "%"
+                    )
+                  : "—"
+              }
+            </strong>
+
+          </div>
+
+
           <div class="detail-row">
 
             <span>
@@ -3524,6 +3981,7 @@
             </strong>
 
           </div>
+
 
           <div class="detail-row total-row">
 
@@ -3542,22 +4000,55 @@
 
         </div>
 
+
+        <div class="detail-section">
+
+          <div class="detail-section-title">
+            Promotion
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Promotion Reference
+            </span>
+
+            <strong>
+              ${escapeHtml(
+                order.promotion_id ||
+                "None"
+              )}
+            </strong>
+
+          </div>
+
+        </div>
+
+
         <div class="detail-section">
 
           <div class="detail-section-title">
             Administrative Actions
           </div>
 
+
           <div class="security-note">
+
             Order status, refunds, financial adjustments
             and payment reversals are intentionally
-            read-only here. Those operations should use
-            protected server-side RPCs or Edge Functions
-            with authorization, validation and audit logs.
+            read-only here.
+
+            Those operations must use protected
+            server-side RPCs or Edge Functions with
+            authorization, validation and audit logging.
+
           </div>
 
         </div>
+
       `;
+
 
       drawerBackdrop.classList.add(
         "open"
@@ -3566,6 +4057,7 @@
       document.body.style.overflow =
         "hidden";
     }
+
 
     function closeOrder() {
 
@@ -3577,8 +4069,9 @@
         "";
     }
 
+
     /* =========================================================
-       LOAD STATE
+       STATES
     ========================================================= */
 
     function setLoading(
@@ -3590,6 +4083,7 @@
           ? "block"
           : "none";
 
+
       if (loading) {
 
         ordersTable.style.display =
@@ -3600,9 +4094,9 @@
 
         errorState.style.display =
           "none";
-
       }
     }
+
 
     function showLoadError(
       message
@@ -3624,6 +4118,7 @@
         "Order records could not be loaded.";
     }
 
+
     /* =========================================================
        REFRESH
     ========================================================= */
@@ -3636,6 +4131,7 @@
       refreshButton.textContent =
         "↻ Loading...";
 
+
       try {
 
         await loadOrders();
@@ -3646,7 +4142,10 @@
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "Orders refresh failed:",
+          error
+        );
 
         showLoadError(
           error?.message ||
@@ -3663,8 +4162,9 @@
       }
     }
 
+
     /* =========================================================
-       NOTIFICATIONS
+       NOTIFICATION BADGE
     ========================================================= */
 
     async function loadNotifications() {
@@ -3679,35 +4179,45 @@
             .from("notifications")
             .select(`
               id,
-              read
+              is_read
             `)
             .eq(
               "user_id",
               currentUser.id
             )
             .eq(
-              "read",
+              "is_read",
               false
             )
             .limit(20);
 
+
         if (error) {
+
+          console.warn(
+            "Notification badge unavailable:",
+            error.message
+          );
+
           return;
         }
 
-        if (
+
+        notificationBadge.style.display =
           Array.isArray(data) &&
           data.length
-        ) {
+            ? "block"
+            : "none";
 
-          notificationBadge.style.display =
-            "block";
-        }
+      } catch (error) {
 
-      } catch (_) {
-        /* optional feature */
+        console.warn(
+          "Notification badge error:",
+          error
+        );
       }
     }
+
 
     /* =========================================================
        EVENTS
@@ -3718,20 +4228,24 @@
       applyFilters
     );
 
+
     statusFilter.addEventListener(
       "change",
       applyFilters
     );
+
 
     periodFilter.addEventListener(
       "change",
       applyFilters
     );
 
+
     refreshButton.addEventListener(
       "click",
       refreshOrders
     );
+
 
     mobileMenu.addEventListener(
       "click",
@@ -3744,21 +4258,23 @@
       }
     );
 
+
     notificationButton.addEventListener(
       "click",
       () => {
 
-        showToast(
-          "Notifications are loaded from the platform notification system."
-        );
+        window.location.href =
+          "./notifications.html";
 
       }
     );
+
 
     drawerClose.addEventListener(
       "click",
       closeOrder
     );
+
 
     drawerBackdrop.addEventListener(
       "click",
@@ -3770,18 +4286,19 @@
         ) {
 
           closeOrder();
-
         }
 
       }
     );
+
 
     document.addEventListener(
       "keydown",
       event => {
 
         if (
-          event.key === "Escape"
+          event.key ===
+          "Escape"
         ) {
 
           closeOrder();
@@ -3789,11 +4306,11 @@
           sidebar.classList.remove(
             "open"
           );
-
         }
 
       }
     );
+
 
     window.addEventListener(
       "resize",
@@ -3804,11 +4321,11 @@
         ) {
 
           renderOrders();
-
         }
 
       }
     );
+
 
     /* =========================================================
        AUTH STATE MONITOR
@@ -3820,9 +4337,10 @@
         return;
       }
 
+
       supabaseClient.auth
         .onAuthStateChange(
-          async (
+          (
             event,
             session
           ) => {
@@ -3836,12 +4354,12 @@
               redirectLogin(
                 "session_expired"
               );
-
             }
 
           }
         );
     }
+
 
     /* =========================================================
        INITIALIZE
@@ -3854,35 +4372,40 @@
         const authorized =
           await verifyAdminSession();
 
+
         if (!authorized) {
           return;
         }
 
+
         renderAdminIdentity();
 
-        /*
-         * Only reveal CMS after authorization.
-         */
 
         securityGate.classList.add(
           "hidden"
         );
 
+
         app.style.display =
           "flex";
 
+
         subscribeToAuthChanges();
+
 
         await loadOrders();
 
+
         await loadNotifications();
+
 
       } catch (error) {
 
         console.error(
-          "Admin orders initialization failed:",
+          "Admin Orders initialization failed:",
           error
         );
+
 
         securityGate.innerHTML = `
 
@@ -3892,14 +4415,31 @@
               KT
             </div>
 
+
             <h2>
               Access verification failed
             </h2>
 
+
             <p>
               The administrator session could not
-              be securely verified. Please sign in again.
+              be securely verified.
             </p>
+
+
+            <p
+              style="
+                margin-top:8px;
+                font-size:11px;
+                color:rgba(255,255,255,.55);
+              "
+            >
+              ${escapeHtml(
+                error?.message ||
+                "Unknown verification error."
+              )}
+            </p>
+
 
             <button
               class="btn"
@@ -3918,10 +4458,12 @@
 
         `;
 
+
         const button =
           document.getElementById(
             "securityLoginButton"
           );
+
 
         if (button) {
 
@@ -3937,11 +4479,10 @@
 
             }
           );
-
         }
-
       }
     }
+
 
     initialize();
 
