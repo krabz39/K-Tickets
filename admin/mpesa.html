@@ -1,3565 +1,2785 @@
+<script>
+"use strict";
+
+/*
+============================================================
+K-TICKETS ADMIN — M-PESA
+============================================================
+
+REAL DATABASE SCHEMA
+
+payments
+------------------------------------------------------------
+id
+order_id
+user_id
+event_id
+method
+provider
+status
+amount
+currency
+reference
+transaction_id
+receipt_number
+provider_transaction_id
+raw_response
+failure_reason
+paid_at
+created_at
+updated_at
+
+mpesa_transactions
+------------------------------------------------------------
+id
+payment_id
+phone_number
+amount
+merchant_request_id
+checkout_request_id
+mpesa_receipt_number
+result_code
+result_description
+status
+callback_payload
+callback_received_at
+created_at
+updated_at
+
+IMPORTANT SECURITY RULES
+------------------------------------------------------------
+1. Browser contains only Supabase publishable key.
+2. No service-role key.
+3. No database password.
+4. No Daraja consumer secret.
+5. No Daraja access token.
+6. No callback secret.
+7. No payment confirmation from browser.
+8. No refund/reversal from browser.
+9. Admin authorization is verified through profiles.
+10. RLS remains the actual database security boundary.
+============================================================
+*/
+
+
+/* ============================================================
+   CONFIGURATION
+============================================================ */
+
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
+
+/* ============================================================
+   STATE
+============================================================ */
+
+let supabaseClient = null;
+
+let currentUser = null;
+let currentProfile = null;
+
+let allPayments = [];
+let filteredPayments = [];
+
+let currentPage = 1;
+
+const PAGE_SIZE = 30;
+
+
+/* ============================================================
+   DOM HELPER
+============================================================ */
+
+const $ = id =>
+    document.getElementById(id);
+
+
+/* ============================================================
+   HTML SAFETY
+============================================================ */
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
+function escapeHtml(value){
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  />
+    return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
 
-  <meta
-    name="robots"
-    content="noindex,nofollow,noarchive,nosnippet"
-  />
 
-  <meta
-    name="referrer"
-    content="same-origin"
-  />
+function safeText(value){
 
-  <title>K-Tickets Admin — M-Pesa</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root {
-      --bordo: #6C151E;
-      --green: #0F3D3A;
-      --cream: #F5DABF;
-
-      --bg: #f6f5f2;
-      --surface: #ffffff;
-      --surface-soft: #fbfaf8;
-      --border: #e6e1dc;
-      --text: #18201f;
-      --muted: #747a78;
-
-      --success: #237a57;
-      --warning: #9a6818;
-      --danger: #a72a32;
-      --info: #2d6578;
-
-      --sidebar: 270px;
-      --radius: 18px;
-      --shadow: 0 12px 35px rgba(15, 61, 58, .08);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-      overflow-x: hidden;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .security-gate {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      display: grid;
-      place-items: center;
-      background: #f6f5f2;
-      padding: 24px;
-    }
-
-    .security-card {
-      width: min(420px, 100%);
-      padding: 34px 28px;
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      background: #fff;
-      box-shadow: var(--shadow);
-      text-align: center;
-    }
-
-    .security-mark {
-      width: 58px;
-      height: 58px;
-      margin: 0 auto 18px;
-      display: grid;
-      place-items: center;
-      border-radius: 18px;
-      background: var(--green);
-      color: var(--cream);
-      font-size: 22px;
-      font-weight: 900;
-    }
-
-    .security-card h2 {
-      margin-bottom: 8px;
-      font-size: 21px;
-    }
-
-    .security-card p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.65;
-    }
-
-    .spinner {
-      width: 25px;
-      height: 25px;
-      margin: 20px auto 0;
-      border: 3px solid #e5e2dc;
-      border-top-color: var(--bordo);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .app {
-      display: none;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      position: fixed;
-      z-index: 1000;
-      inset: 0 auto 0 0;
-      width: var(--sidebar);
-      display: flex;
-      flex-direction: column;
-      background: var(--green);
-      color: #fff;
-      overflow-y: auto;
-    }
-
-    .brand {
-      padding: 27px 23px 22px;
-      border-bottom: 1px solid rgba(255,255,255,.09);
-    }
-
-    .brand-main {
-      font-size: 17px;
-      font-weight: 900;
-      letter-spacing: .09em;
-    }
-
-    .brand-sub {
-      margin-top: 6px;
-      color: rgba(255,255,255,.62);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-    }
-
-    .nav {
-      padding: 17px 12px;
-      flex: 1;
-    }
-
-    .nav-label {
-      padding: 13px 12px 8px;
-      color: rgba(255,255,255,.38);
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-    }
-
-    .nav a {
-      min-height: 43px;
-      margin: 3px 0;
-      padding: 10px 12px;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      border-radius: 11px;
-      color: rgba(255,255,255,.72);
-      font-size: 13px;
-      font-weight: 650;
-      transition: .18s ease;
-    }
-
-    .nav a:hover {
-      background: rgba(255,255,255,.07);
-      color: #fff;
-    }
-
-    .nav a.active {
-      background: rgba(245,218,191,.13);
-      color: var(--cream);
-    }
-
-    .nav-icon {
-      width: 23px;
-      text-align: center;
-      font-size: 15px;
-      opacity: .9;
-    }
-
-    .sidebar-bottom {
-      padding: 15px 14px;
-      border-top: 1px solid rgba(255,255,255,.09);
-    }
-
-    .admin-mini {
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-      padding: 9px;
-      border-radius: 13px;
-      background: rgba(255,255,255,.06);
-    }
-
-    .avatar {
-      width: 35px;
-      height: 35px;
-      flex: 0 0 35px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--cream);
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .admin-mini-text {
-      min-width: 0;
-    }
-
-    .admin-mini-name {
-      overflow: hidden;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 750;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .admin-mini-role {
-      margin-top: 2px;
-      color: rgba(255,255,255,.52);
-      font-size: 10px;
-    }
-
-    .signout {
-      width: 100%;
-      min-height: 40px;
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 10px;
-      background: transparent;
-      color: rgba(255,255,255,.72);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .signout:hover {
-      background: rgba(255,255,255,.07);
-      color: #fff;
-    }
-
-    .main {
-      min-width: 0;
-      margin-left: var(--sidebar);
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 900;
-      min-height: 74px;
-      padding: 0 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(246,245,242,.94);
-      backdrop-filter: blur(15px);
-    }
-
-    .mobile-menu {
-      display: none;
-      width: 42px;
-      height: 42px;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: #fff;
-      color: var(--green);
-      font-size: 20px;
-    }
-
-    .page-heading {
-      min-width: 0;
-    }
-
-    .page-heading h1 {
-      font-size: clamp(20px, 2vw, 27px);
-      letter-spacing: -.035em;
-    }
-
-    .page-heading p {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .icon-btn {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: #fff;
-      color: var(--green);
-    }
-
-    .notification-dot {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 7px;
-      height: 7px;
-      border: 1px solid #fff;
-      border-radius: 50%;
-      background: var(--bordo);
-    }
-
-    .content {
-      width: min(1700px, 100%);
-      margin: 0 auto;
-      padding: 30px;
-    }
-
-    .security-banner {
-      margin-bottom: 20px;
-      padding: 13px 16px;
-      display: flex;
-      align-items: flex-start;
-      gap: 11px;
-      border: 1px solid #dfe8e5;
-      border-radius: 13px;
-      background: #f1f7f5;
-      color: var(--green);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .security-banner strong {
-      display: block;
-      margin-bottom: 2px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .stat {
-      min-width: 0;
-      padding: 20px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      box-shadow: 0 5px 20px rgba(15,61,58,.035);
-    }
-
-    .stat-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 750;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-    }
-
-    .stat-icon {
-      width: 35px;
-      height: 35px;
-      display: grid;
-      place-items: center;
-      border-radius: 10px;
-      background: #f3ece8;
-      color: var(--bordo);
-      font-size: 14px;
-      font-weight: 900;
-    }
-
-    .stat-value {
-      margin-top: 13px;
-      font-size: clamp(24px, 3vw, 31px);
-      font-weight: 850;
-      letter-spacing: -.045em;
-    }
-
-    .stat-note {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .panel {
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      box-shadow: 0 5px 20px rgba(15,61,58,.035);
-    }
-
-    .panel-head {
-      padding: 19px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .panel-title h2 {
-      font-size: 15px;
-      letter-spacing: -.02em;
-    }
-
-    .panel-title p {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .head-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      min-height: 38px;
-      padding: 0 13px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--green);
-      font-size: 11px;
-      font-weight: 750;
-      transition: .18s ease;
-    }
-
-    .btn:hover {
-      border-color: #cfc8c0;
-      transform: translateY(-1px);
-    }
-
-    .btn.primary {
-      border-color: var(--green);
-      background: var(--green);
-      color: #fff;
-    }
-
-    .btn.primary:hover {
-      background: #0b302e;
-    }
-
-    .btn.danger {
-      border-color: #efd4d5;
-      color: var(--danger);
-      background: #fff8f8;
-    }
-
-    .filters {
-      padding: 15px 20px;
-      display: grid;
-      grid-template-columns: minmax(210px, 1.8fr) minmax(140px, .8fr) minmax(140px, .8fr) minmax(140px, .8fr) auto;
-      gap: 9px;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface-soft);
-    }
-
-    .field {
-      min-width: 0;
-    }
-
-    .field label {
-      display: block;
-      margin: 0 0 6px;
-      color: var(--muted);
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .input,
-    .select {
-      width: 100%;
-      min-height: 40px;
-      padding: 0 11px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      outline: none;
-      background: #fff;
-      color: var(--text);
-      font-size: 12px;
-    }
-
-    .input:focus,
-    .select:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(15,61,58,.08);
-    }
-
-    .filter-clear {
-      align-self: end;
-      min-height: 40px;
-    }
-
-    .table-wrap {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      min-width: 980px;
-      border-collapse: collapse;
-    }
-
-    th {
-      padding: 12px 18px;
-      border-bottom: 1px solid var(--border);
-      background: #fcfbfa;
-      color: var(--muted);
-      font-size: 9px;
-      font-weight: 850;
-      letter-spacing: .08em;
-      text-align: left;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 14px 18px;
-      border-bottom: 1px solid #eeeae5;
-      color: var(--text);
-      font-size: 11px;
-      vertical-align: middle;
-    }
-
-    tbody tr:hover {
-      background: #fcfbfa;
-    }
-
-    .primary-cell {
-      font-weight: 750;
-    }
-
-    .secondary-cell {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .mono {
-      font-family:
-        ui-monospace,
-        SFMono-Regular,
-        Menlo,
-        Monaco,
-        Consolas,
-        monospace;
-      font-size: 10px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      min-height: 25px;
-      padding: 0 8px;
-      border-radius: 999px;
-      font-size: 9px;
-      font-weight: 850;
-      letter-spacing: .025em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .badge.success {
-      background: #e8f4ee;
-      color: var(--success);
-    }
-
-    .badge.warning {
-      background: #fbf1dc;
-      color: var(--warning);
-    }
-
-    .badge.danger {
-      background: #f9e7e8;
-      color: var(--danger);
-    }
-
-    .badge.info {
-      background: #e8f1f4;
-      color: var(--info);
-    }
-
-    .badge.neutral {
-      background: #efeeeb;
-      color: #666b69;
-    }
-
-    .row-actions {
-      display: flex;
-      gap: 6px;
-      justify-content: flex-end;
-    }
-
-    .small-btn {
-      min-height: 32px;
-      padding: 0 9px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: #fff;
-      color: var(--green);
-      font-size: 10px;
-      font-weight: 750;
-    }
-
-    .small-btn:hover {
-      border-color: #cfc8c0;
-      background: #faf8f5;
-    }
-
-    .empty {
-      padding: 65px 20px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .empty-icon {
-      width: 45px;
-      height: 45px;
-      margin: 0 auto 13px;
-      display: grid;
-      place-items: center;
-      border-radius: 14px;
-      background: #f1efec;
-      color: var(--green);
-      font-weight: 900;
-    }
-
-    .empty h3 {
-      margin-bottom: 5px;
-      color: var(--text);
-      font-size: 14px;
-    }
-
-    .empty p {
-      max-width: 500px;
-      margin: auto;
-      font-size: 11px;
-      line-height: 1.65;
-    }
-
-    .mobile-list {
-      display: none;
-    }
-
-    .mobile-card {
-      padding: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .mobile-card:last-child {
-      border-bottom: 0;
-    }
-
-    .mobile-card-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .mobile-title {
-      min-width: 0;
-    }
-
-    .mobile-title strong {
-      display: block;
-      overflow: hidden;
-      font-size: 12px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .mobile-title span {
-      display: block;
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .mobile-grid {
-      margin-top: 13px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 11px;
-    }
-
-    .mobile-item small {
-      display: block;
-      margin-bottom: 3px;
-      color: var(--muted);
-      font-size: 9px;
-      font-weight: 750;
-      text-transform: uppercase;
-    }
-
-    .mobile-item div {
-      overflow: hidden;
-      font-size: 11px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .mobile-actions {
-      margin-top: 13px;
-      display: flex;
-      gap: 7px;
-    }
-
-    .mobile-actions .small-btn {
-      flex: 1;
-    }
-
-    .pagination {
-      min-height: 56px;
-      padding: 10px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      border-top: 1px solid var(--border);
-    }
-
-    .pagination-info {
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .pagination-actions {
-      display: flex;
-      gap: 6px;
-    }
-
-    .drawer-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 3000;
-      display: none;
-      background: rgba(7,18,17,.42);
-      backdrop-filter: blur(3px);
-    }
-
-    .drawer-backdrop.open {
-      display: block;
-    }
-
-    .drawer {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: min(500px, 100%);
-      height: 100%;
-      padding: 25px;
-      overflow-y: auto;
-      background: #fff;
-      box-shadow: -20px 0 55px rgba(0,0,0,.15);
-    }
-
-    .drawer-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 15px;
-      padding-bottom: 19px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .drawer-head h2 {
-      font-size: 19px;
-      letter-spacing: -.03em;
-    }
-
-    .drawer-head p {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .close-btn {
-      width: 36px;
-      height: 36px;
-      flex: 0 0 36px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--green);
-      font-size: 17px;
-    }
-
-    .drawer-section {
-      padding: 20px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .drawer-section:last-child {
-      border-bottom: 0;
-    }
-
-    .drawer-section h3 {
-      margin-bottom: 13px;
-      font-size: 11px;
-      font-weight: 850;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .detail-item label {
-      display: block;
-      margin-bottom: 4px;
-      color: var(--muted);
-      font-size: 9px;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .detail-item div {
-      color: var(--text);
-      font-size: 11px;
-      line-height: 1.5;
-      word-break: break-word;
-    }
-
-    .notice {
-      padding: 13px 14px;
-      border: 1px solid #eadfd7;
-      border-radius: 11px;
-      background: #fcf8f4;
-      color: #6c554a;
-      font-size: 10px;
-      line-height: 1.65;
-    }
-
-    .loading-row {
-      padding: 38px 20px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .toast {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 5000;
-      max-width: min(400px, calc(100vw - 44px));
-      padding: 13px 16px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 14px 40px rgba(0,0,0,.14);
-      color: var(--text);
-      font-size: 11px;
-      line-height: 1.5;
-      opacity: 0;
-      transform: translateY(10px);
-      pointer-events: none;
-      transition: .22s ease;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .toast.success {
-      border-color: #cfe4d9;
-    }
-
-    .toast.error {
-      border-color: #ecd0d2;
-    }
-
-    @media (max-width: 1180px) {
-      :root {
-        --sidebar: 230px;
-      }
-
-      .filters {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .filter-clear {
-        align-self: stretch;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .sidebar {
-        transform: translateX(-100%);
-        transition: transform .22s ease;
-        box-shadow: 20px 0 45px rgba(0,0,0,.12);
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-      }
-
-      .main {
-        margin-left: 0;
-      }
-
-      .mobile-menu {
-        display: block;
-      }
-
-      .topbar {
-        padding: 0 18px;
-      }
-
-      .content {
-        padding: 22px 18px;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .table-wrap {
-        display: none;
-      }
-
-      .mobile-list {
-        display: block;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .topbar {
-        min-height: 68px;
-      }
-
-      .page-heading p {
-        display: none;
-      }
-
-      .top-actions .icon-btn {
-        display: none;
-      }
-
-      .content {
-        padding: 17px 12px 28px;
-      }
-
-      .security-banner {
-        padding: 12px;
-      }
-
-      .stats {
-        grid-template-columns: 1fr 1fr;
-        gap: 9px;
-      }
-
-      .stat {
-        padding: 15px;
-        border-radius: 14px;
-      }
-
-      .stat-value {
-        margin-top: 9px;
-        font-size: 23px;
-      }
-
-      .stat-note {
-        font-size: 9px;
-      }
-
-      .panel-head {
-        padding: 16px;
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .head-actions {
-        width: 100%;
-      }
-
-      .head-actions .btn {
-        flex: 1;
-      }
-
-      .filters {
-        grid-template-columns: 1fr;
-        padding: 14px 16px;
-      }
-
-      .mobile-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .pagination {
-        padding: 10px 14px;
-      }
-
-      .drawer {
-        padding: 20px 16px;
-      }
-
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .toast {
-        right: 12px;
-        bottom: 12px;
-        max-width: calc(100vw - 24px);
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <!-- SECURITY GATE -->
-  <div class="security-gate" id="securityGate">
-    <div class="security-card">
-      <div class="security-mark">K</div>
-      <h2>Securing Admin Area</h2>
-      <p>
-        Verifying your authenticated session and administrator permissions.
-      </p>
-      <div class="spinner"></div>
-    </div>
-  </div>
-
-  <!-- APPLICATION -->
-  <div class="app" id="app">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-
-      <div class="brand">
-        <div class="brand-main">K-TICKETS</div>
-        <div class="brand-sub">Administration CMS</div>
-      </div>
-
-      <nav class="nav">
-
-        <div class="nav-label">Overview</div>
-
-        <a href="./dashboard.html">
-          <span class="nav-icon">⌂</span>
-          Dashboard
-        </a>
-
-        <div class="nav-label">Platform</div>
-
-        <a href="./events.html">
-          <span class="nav-icon">◫</span>
-          Events
-        </a>
-
-        <a href="./merchants.html">
-          <span class="nav-icon">♙</span>
-          Merchants
-        </a>
-
-        <a href="./customers.html">
-          <span class="nav-icon">♧</span>
-          Customers
-        </a>
-
-        <a href="./orders.html">
-          <span class="nav-icon">▤</span>
-          Orders
-        </a>
-
-        <div class="nav-label">Payments</div>
-
-        <a href="./payments.html">
-          <span class="nav-icon">◉</span>
-          Payments
-        </a>
-
-        <a href="./mpesa.html" class="active">
-          <span class="nav-icon">M</span>
-          M-Pesa
-        </a>
-
-        <a href="./wamd.html">
-          <span class="nav-icon">W</span>
-          WAMD
-        </a>
-
-        <a href="./withdrawals.html">
-          <span class="nav-icon">↗</span>
-          Withdrawals
-        </a>
-
-        <div class="nav-label">Controls</div>
-
-        <a href="./fees.html">
-          <span class="nav-icon">%</span>
-          Fees
-        </a>
-
-        <a href="./reports.html">
-          <span class="nav-icon">▥</span>
-          Reports
-        </a>
-
-        <a href="./settings.html">
-          <span class="nav-icon">⚙</span>
-          Settings
-        </a>
-
-        <a href="./audit-logs.html">
-          <span class="nav-icon">≡</span>
-          Audit Logs
-        </a>
-
-      </nav>
-
-      <div class="sidebar-bottom">
-        <div class="admin-mini">
-          <div class="avatar" id="sidebarAvatar">A</div>
-
-          <div class="admin-mini-text">
-            <div class="admin-mini-name" id="sidebarAdminName">
-              Administrator
-            </div>
-
-            <div class="admin-mini-role">
-              Platform Administrator
-            </div>
-          </div>
-        </div>
-
-        <button class="signout" id="signOutBtn">
-          Sign out
-        </button>
-      </div>
-
-    </aside>
-
-    <!-- MAIN -->
-    <main class="main">
-
-      <header class="topbar">
-
-        <div style="display:flex;align-items:center;gap:12px;min-width:0;">
-
-          <button
-            class="mobile-menu"
-            id="mobileMenu"
-            aria-label="Open navigation"
-          >
-            ☰
-          </button>
-
-          <div class="page-heading">
-            <h1>M-Pesa</h1>
-            <p>
-              Monitor M-Pesa ticket payments and payment confirmations.
-            </p>
-          </div>
-
-        </div>
-
-        <div class="top-actions">
-
-          <button
-            class="icon-btn"
-            id="refreshBtn"
-            title="Refresh"
-            aria-label="Refresh"
-          >
-            ↻
-          </button>
-
-          <button
-            class="icon-btn"
-            id="notificationBtn"
-            title="Notifications"
-            aria-label="Notifications"
-          >
-            ♧
-            <span class="notification-dot" id="notificationDot" hidden></span>
-          </button>
-
-        </div>
-
-      </header>
-
-      <section class="content">
-
-        <div class="security-banner">
-          <div>◆</div>
-
-          <div>
-            <strong>M-Pesa monitoring is read-only from this browser.</strong>
-
-            Daraja credentials, callback secrets, access tokens and
-            service-role keys must never be placed in this HTML file.
-            Any privileged payment action must be implemented through a
-            protected Supabase Edge Function or RPC.
-          </div>
-        </div>
-
-        <!-- STATS -->
-        <section class="stats">
-
-          <article class="stat">
-            <div class="stat-top">
-              <div class="stat-label">Transactions</div>
-              <div class="stat-icon">M</div>
-            </div>
-
-            <div class="stat-value" id="statTransactions">—</div>
-            <div class="stat-note">Records loaded from M-Pesa payments</div>
-          </article>
-
-          <article class="stat">
-            <div class="stat-top">
-              <div class="stat-label">Successful</div>
-              <div class="stat-icon">✓</div>
-            </div>
-
-            <div class="stat-value" id="statSuccessful">—</div>
-            <div class="stat-note">Confirmed or completed payments</div>
-          </article>
-
-          <article class="stat">
-            <div class="stat-top">
-              <div class="stat-label">Pending</div>
-              <div class="stat-icon">◷</div>
-            </div>
-
-            <div class="stat-value" id="statPending">—</div>
-            <div class="stat-note">Awaiting confirmation</div>
-          </article>
-
-          <article class="stat">
-            <div class="stat-top">
-              <div class="stat-label">Failed</div>
-              <div class="stat-icon">!</div>
-            </div>
-
-            <div class="stat-value" id="statFailed">—</div>
-            <div class="stat-note">Failed, cancelled or rejected</div>
-          </article>
-
-        </section>
-
-        <!-- PAYMENTS -->
-        <section class="panel">
-
-          <div class="panel-head">
-
-            <div class="panel-title">
-              <h2>M-Pesa Transactions</h2>
-              <p>
-                Payment records visible to the authenticated administrator.
-              </p>
-            </div>
-
-            <div class="head-actions">
-
-              <button class="btn" id="refreshDataBtn">
-                ↻ Refresh
-              </button>
-
-              <button class="btn primary" id="exportBtn">
-                ↓ Export CSV
-              </button>
-
-            </div>
-
-          </div>
-
-          <!-- FILTERS -->
-          <div class="filters">
-
-            <div class="field">
-              <label for="searchInput">Search</label>
-
-              <input
-                id="searchInput"
-                class="input"
-                type="search"
-                autocomplete="off"
-                placeholder="Reference, transaction ID, order ID..."
-              />
-            </div>
-
-            <div class="field">
-              <label for="statusFilter">Status</label>
-
-              <select id="statusFilter" class="select">
-                <option value="">All statuses</option>
-                <option value="success">Successful</option>
-                <option value="pending">Pending</option>
-                <option value="failed">Failed</option>
-                <option value="cancelled">Cancelled</option>
-                <option value="refunded">Refunded</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="periodFilter">Period</label>
-
-              <select id="periodFilter" class="select">
-                <option value="">All time</option>
-                <option value="today">Today</option>
-                <option value="7">Last 7 days</option>
-                <option value="30">Last 30 days</option>
-                <option value="90">Last 90 days</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="currencyFilter">Currency</label>
-
-              <select id="currencyFilter" class="select">
-                <option value="">All currencies</option>
-                <option value="KES">KES</option>
-                <option value="KWD">KWD</option>
-              </select>
-            </div>
-
-            <button
-              class="btn filter-clear"
-              id="clearFiltersBtn"
-            >
-              Clear
-            </button>
-
-          </div>
-
-          <!-- DESKTOP TABLE -->
-          <div class="table-wrap">
-
-            <table>
-
-              <thead>
-                <tr>
-                  <th>Transaction</th>
-                  <th>Order</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Reference</th>
-                  <th>Date</th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              <tbody id="tableBody">
-
-                <tr>
-                  <td colspan="7">
-                    <div class="loading-row">
-                      Loading M-Pesa transactions...
-                    </div>
-                  </td>
-                </tr>
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-          <!-- MOBILE LIST -->
-          <div
-            class="mobile-list"
-            id="mobileList"
-          ></div>
-
-          <div
-            class="pagination"
-            id="pagination"
-            hidden
-          >
-            <div
-              class="pagination-info"
-              id="paginationInfo"
-            >
-              —
-            </div>
-
-            <div class="pagination-actions">
-
-              <button
-                class="small-btn"
-                id="prevPageBtn"
-              >
-                Previous
-              </button>
-
-              <button
-                class="small-btn"
-                id="nextPageBtn"
-              >
-                Next
-              </button>
-
-            </div>
-          </div>
-
-        </section>
-
-      </section>
-
-    </main>
-
-  </div>
-
-  <!-- DRAWER -->
-  <div
-    class="drawer-backdrop"
-    id="drawerBackdrop"
-    aria-hidden="true"
-  >
-
-    <aside
-      class="drawer"
-      role="dialog"
-      aria-modal="true"
-      aria-label="M-Pesa payment details"
-    >
-
-      <div class="drawer-head">
-
-        <div>
-          <h2>Payment Details</h2>
-          <p id="drawerSubtitle">
-            M-Pesa transaction
-          </p>
-        </div>
-
-        <button
-          class="close-btn"
-          id="closeDrawerBtn"
-          aria-label="Close"
-        >
-          ×
-        </button>
-
-      </div>
-
-      <div id="drawerContent">
-
-        <div class="drawer-section">
-
-          <div class="detail-grid">
-
-            <div class="detail-item">
-              <label>Payment ID</label>
-              <div class="mono" id="dPaymentId">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Status</label>
-              <div id="dStatus">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Amount</label>
-              <div id="dAmount">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Currency</label>
-              <div id="dCurrency">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Payment Method</label>
-              <div id="dMethod">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Provider</label>
-              <div id="dProvider">—</div>
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="drawer-section">
-
-          <h3>M-Pesa Information</h3>
-
-          <div class="detail-grid">
-
-            <div class="detail-item">
-              <label>Transaction ID</label>
-              <div class="mono" id="dTransactionId">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Receipt Number</label>
-              <div class="mono" id="dReceipt">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Phone</label>
-              <div class="mono" id="dPhone">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Reference</label>
-              <div class="mono" id="dReference">—</div>
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="drawer-section">
-
-          <h3>Order / Customer</h3>
-
-          <div class="detail-grid">
-
-            <div class="detail-item">
-              <label>Order ID</label>
-              <div class="mono" id="dOrderId">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>User ID</label>
-              <div class="mono" id="dUserId">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Event ID</label>
-              <div class="mono" id="dEventId">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Event</label>
-              <div id="dEvent">—</div>
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="drawer-section">
-
-          <h3>Timeline</h3>
-
-          <div class="detail-grid">
-
-            <div class="detail-item">
-              <label>Created</label>
-              <div id="dCreated">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Paid</label>
-              <div id="dPaid">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Updated</label>
-              <div id="dUpdated">—</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Payment Date</label>
-              <div id="dPaymentDate">—</div>
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="drawer-section">
-
-          <div class="notice">
-            This page intentionally provides no browser-side M-Pesa
-            confirmation, reversal, refund, credential, token or callback
-            controls. Any privileged operation must validate the current
-            administrator server-side through Supabase RLS, an approved RPC,
-            or an Edge Function.
-          </div>
-
-        </div>
-
-      </div>
-
-    </aside>
-
-  </div>
-
-  <!-- TOAST -->
-  <div
-    class="toast"
-    id="toast"
-    role="status"
-    aria-live="polite"
-  ></div>
-
-  <script>
-    /*
-      ============================================================
-      K-TICKETS ADMIN — M-PESA
-      ============================================================
-
-      SECURITY MODEL
-      ------------------------------------------------------------
-      1. Only the Supabase ANON/PUBLIC key belongs in this page.
-      2. NEVER put the Supabase service-role key here.
-      3. NEVER put Daraja consumer secret here.
-      4. NEVER put Daraja access tokens here.
-      5. NEVER put callback secrets here.
-      6. Browser-side UI is NOT the security boundary.
-      7. Supabase Auth + RLS + RPC/Edge Functions must enforce access.
-      8. M-Pesa confirmation/reversal/refund actions must be server-side.
-      9. This page is intentionally monitoring/read-only.
-      10. Replace the flexible payment query with the exact production
-          schema once the final payments table is locked.
-    */
-
-    const SUPABASE_URL =
-      window.KTICKETS_SUPABASE_URL || "";
-
-    const SUPABASE_ANON_KEY =
-      window.KTICKETS_SUPABASE_ANON_KEY || "";
-
-    let supabaseClient = null;
-    let currentUser = null;
-    let currentProfile = null;
-
-    let allPayments = [];
-    let filteredPayments = [];
-    let currentPage = 1;
-
-    const PAGE_SIZE = 30;
-
-    /*
-      ------------------------------------------------------------
-      DOM HELPERS
-      ------------------------------------------------------------
-    */
-
-    const $ = (id) => document.getElementById(id);
-
-    function escapeHtml(value) {
-      if (value === null || value === undefined) return "";
-
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function safeText(value) {
-      return value === null ||
+    if(
+        value === null ||
         value === undefined ||
         value === ""
-        ? "—"
-        : String(value);
+    ){
+        return "—";
     }
 
-    function firstValue(obj, keys, fallback = null) {
-      for (const key of keys) {
-        if (
-          obj &&
-          obj[key] !== undefined &&
-          obj[key] !== null &&
-          obj[key] !== ""
-        ) {
-          return obj[key];
+    return String(value);
+}
+
+
+/* ============================================================
+   TOAST
+============================================================ */
+
+function showToast(
+    message,
+    type = ""
+){
+
+    const toast =
+        $("toast");
+
+    if(!toast){
+        return;
+    }
+
+    toast.textContent =
+        message;
+
+    toast.className =
+        "toast show " + type;
+
+    clearTimeout(
+        window.__kticketsToast
+    );
+
+    window.__kticketsToast =
+        setTimeout(
+            () => {
+                toast.className =
+                    "toast";
+            },
+            3500
+        );
+}
+
+
+/* ============================================================
+   LOGIN REDIRECT
+============================================================ */
+
+function redirectLogin(
+    reason = ""
+){
+
+    const suffix =
+        reason
+            ? "?error=" +
+              encodeURIComponent(reason)
+            : "";
+
+    window.location.replace(
+        "/login.html" + suffix
+    );
+}
+
+
+/* ============================================================
+   SIGN OUT
+============================================================ */
+
+async function safeSignOut(){
+
+    try{
+
+        if(supabaseClient){
+
+            await supabaseClient
+                .auth
+                .signOut();
         }
-      }
 
-      return fallback;
+    }catch(error){
+
+        console.warn(
+            "Sign out warning:",
+            error
+        );
     }
 
-    function showToast(message, type = "") {
-      const toast = $("toast");
+    redirectLogin(
+        "signed_out"
+    );
+}
 
-      toast.textContent = message;
-      toast.className = "toast show " + type;
 
-      clearTimeout(window.__toastTimer);
+/* ============================================================
+   DATE FORMATTERS
+============================================================ */
 
-      window.__toastTimer = setTimeout(() => {
-        toast.className = "toast";
-      }, 3500);
+function formatDate(value){
+
+    if(!value){
+        return "—";
     }
 
-    function redirectLogin(reason = "") {
-      const suffix = reason
-        ? "?error=" + encodeURIComponent(reason)
-        : "";
+    const date =
+        new Date(value);
 
-      window.location.replace(
-        "../auth/login.html" + suffix
-      );
-    }
-
-    async function safeSignOut() {
-      try {
-        if (supabaseClient) {
-          await supabaseClient.auth.signOut();
-        }
-      } catch (_) {}
-
-      redirectLogin("signed_out");
-    }
-
-    /*
-      ------------------------------------------------------------
-      FORMATTERS
-      ------------------------------------------------------------
-    */
-
-    function formatDate(value) {
-      if (!value) return "—";
-
-      const date = new Date(value);
-
-      if (Number.isNaN(date.getTime())) {
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
         return safeText(value);
-      }
+    }
 
-      return new Intl.DateTimeFormat(
+    return new Intl.DateTimeFormat(
         undefined,
         {
-          dateStyle: "medium",
-          timeStyle: "short"
+            dateStyle:"medium",
+            timeStyle:"short"
         }
-      ).format(date);
+    ).format(date);
+}
+
+
+function formatDateShort(value){
+
+    if(!value){
+        return "—";
     }
 
-    function formatDateShort(value) {
-      if (!value) return "—";
+    const date =
+        new Date(value);
 
-      const date = new Date(value);
-
-      if (Number.isNaN(date.getTime())) {
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
         return safeText(value);
-      }
+    }
 
-      return new Intl.DateTimeFormat(
+    return new Intl.DateTimeFormat(
         undefined,
         {
-          dateStyle: "medium"
+            dateStyle:"medium"
         }
-      ).format(date);
-    }
+    ).format(date);
+}
 
-    function formatAmount(amount, currency) {
-      if (
+
+/* ============================================================
+   AMOUNT FORMATTER
+============================================================ */
+
+function formatAmount(
+    amount,
+    currency
+){
+
+    if(
         amount === null ||
         amount === undefined ||
         amount === ""
-      ) {
+    ){
         return "—";
-      }
+    }
 
-      const numeric = Number(amount);
+    const numeric =
+        Number(amount);
 
-      if (!Number.isFinite(numeric)) {
-        return escapeHtml(amount);
-      }
+    if(
+        !Number.isFinite(numeric)
+    ){
+        return escapeHtml(
+            amount
+        );
+    }
 
-      return (
-        escapeHtml(currency || "") +
-        " " +
+    const prefix =
+        currency
+            ? escapeHtml(
+                String(currency)
+                    .toUpperCase()
+              ) + " "
+            : "";
+
+    return (
+        prefix +
         numeric.toLocaleString(
-          undefined,
-          {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          }
+            undefined,
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
         )
-      );
-    }
+    );
+}
 
-    function normalizeStatus(payment) {
-      const raw = String(
-        firstValue(
-          payment,
-          [
-            "status",
-            "payment_status",
-            "transaction_status",
-            "state"
-          ],
-          "unknown"
+
+/* ============================================================
+   STATUS NORMALIZATION
+============================================================ */
+
+function normalizeStatus(
+    payment
+){
+
+    const raw =
+        String(
+            payment?.status ||
+            ""
         )
-      ).toLowerCase().trim();
+        .toLowerCase()
+        .trim();
 
-      if (
-        [
-          "paid",
-          "success",
-          "successful",
-          "completed",
-          "confirmed",
-          "succeeded"
-        ].includes(raw)
-      ) {
+
+    /*
+        Our real payments table uses:
+        pending
+        processing
+        paid
+        failed
+        cancelled
+        refunded
+    */
+
+    if(raw === "paid"){
         return "success";
-      }
+    }
 
-      if (
-        [
-          "pending",
-          "processing",
-          "initiated",
-          "awaiting",
-          "awaiting_confirmation"
-        ].includes(raw)
-      ) {
+    if(
+        raw === "pending" ||
+        raw === "processing"
+    ){
         return "pending";
-      }
+    }
 
-      if (
-        [
-          "failed",
-          "failure",
-          "rejected",
-          "declined",
-          "error"
-        ].includes(raw)
-      ) {
+    if(raw === "failed"){
         return "failed";
-      }
+    }
 
-      if (
-        [
-          "cancelled",
-          "canceled"
-        ].includes(raw)
-      ) {
+    if(raw === "cancelled"){
         return "cancelled";
-      }
+    }
 
-      if (raw === "refunded") {
+    if(raw === "refunded"){
         return "refunded";
-      }
-
-      return raw || "unknown";
     }
 
-    function statusLabel(status) {
-      const labels = {
-        success: "Successful",
-        pending: "Pending",
-        failed: "Failed",
-        cancelled: "Cancelled",
-        refunded: "Refunded",
-        unknown: "Unknown"
-      };
+    return raw || "unknown";
+}
 
-      return labels[status] || status;
+
+function statusLabel(
+    status
+){
+
+    const labels = {
+
+        success:
+            "Successful",
+
+        pending:
+            "Pending",
+
+        failed:
+            "Failed",
+
+        cancelled:
+            "Cancelled",
+
+        refunded:
+            "Refunded",
+
+        unknown:
+            "Unknown"
+    };
+
+    return (
+        labels[status] ||
+        status
+    );
+}
+
+
+function statusClass(
+    status
+){
+
+    if(
+        status === "success"
+    ){
+        return "success";
     }
 
-    function statusClass(status) {
-      if (status === "success") return "success";
-      if (status === "pending") return "warning";
-      if (
+    if(
+        status === "pending"
+    ){
+        return "warning";
+    }
+
+    if(
         status === "failed" ||
         status === "cancelled" ||
         status === "refunded"
-      ) {
+    ){
         return "danger";
-      }
-
-      return "neutral";
     }
 
-    function statusBadge(status) {
-      return `
-        <span class="badge ${statusClass(status)}">
-          ${escapeHtml(statusLabel(status))}
+    return "neutral";
+}
+
+
+function statusBadge(
+    status
+){
+
+    return `
+        <span class="badge ${escapeHtml(
+            statusClass(status)
+        )}">
+            ${escapeHtml(
+                statusLabel(status)
+            )}
         </span>
-      `;
-    }
+    `;
+}
 
-    function normalizePayment(row) {
-      const payment = {
-        raw: row,
 
-        id: firstValue(
-          row,
-          ["id", "payment_id"],
-          ""
-        ),
+/* ============================================================
+   INITIALIZE SUPABASE
+============================================================ */
 
-        orderId: firstValue(
-          row,
-          [
-            "order_id",
-            "orderId"
-          ],
-          ""
-        ),
+function initializeSupabase(){
 
-        userId: firstValue(
-          row,
-          [
-            "user_id",
-            "customer_id"
-          ],
-          ""
-        ),
-
-        eventId: firstValue(
-          row,
-          [
-            "event_id"
-          ],
-          ""
-        ),
-
-        amount: firstValue(
-          row,
-          [
-            "amount",
-            "paid_amount",
-            "payment_amount",
-            "total"
-          ],
-          null
-        ),
-
-        currency: String(
-          firstValue(
-            row,
-            ["currency"],
-            ""
-          ) || ""
-        ).toUpperCase(),
-
-        status: normalizeStatus(row),
-
-        method: firstValue(
-          row,
-          [
-            "payment_method",
-            "method",
-            "channel"
-          ],
-          "M-Pesa"
-        ),
-
-        provider: firstValue(
-          row,
-          [
-            "provider",
-            "gateway",
-            "payment_provider"
-          ],
-          "M-Pesa"
-        ),
-
-        transactionId: firstValue(
-          row,
-          [
-            "transaction_id",
-            "mpesa_transaction_id",
-            "checkout_request_id"
-          ],
-          ""
-        ),
-
-        reference: firstValue(
-          row,
-          [
-            "reference",
-            "merchant_request_id",
-            "external_reference"
-          ],
-          ""
-        ),
-
-        receipt: firstValue(
-          row,
-          [
-            "receipt_number",
-            "mpesa_receipt",
-            "mpesa_receipt_number",
-            "receipt"
-          ],
-          ""
-        ),
-
-        phone: firstValue(
-          row,
-          [
-            "phone",
-            "phone_number",
-            "customer_phone",
-            "msisdn"
-          ],
-          ""
-        ),
-
-        createdAt: firstValue(
-          row,
-          [
-            "created_at",
-            "created"
-          ],
-          null
-        ),
-
-        paidAt: firstValue(
-          row,
-          [
-            "paid_at",
-            "completed_at",
-            "confirmed_at"
-          ],
-          null
-        ),
-
-        updatedAt: firstValue(
-          row,
-          [
-            "updated_at"
-          ],
-          null
-        ),
-
-        paymentDate: firstValue(
-          row,
-          [
-            "payment_date",
-            "transaction_date"
-          ],
-          null
-        ),
-
-        eventTitle: "",
-        customerName: ""
-      };
-
-      /*
-        Support common Supabase relationship shapes
-        without requiring them.
-      */
-
-      const eventRelation =
-        row.events ||
-        row.event ||
-        null;
-
-      if (eventRelation) {
-        const event = Array.isArray(eventRelation)
-          ? eventRelation[0]
-          : eventRelation;
-
-        if (event) {
-          payment.eventTitle =
-            firstValue(
-              event,
-              ["title", "name"],
-              ""
-            );
-
-          if (!payment.eventId) {
-            payment.eventId =
-              firstValue(
-                event,
-                ["id"],
-                ""
-              );
-          }
-        }
-      }
-
-      const profileRelation =
-        row.profiles ||
-        row.profile ||
-        null;
-
-      if (profileRelation) {
-        const profile = Array.isArray(profileRelation)
-          ? profileRelation[0]
-          : profileRelation;
-
-        if (profile) {
-          payment.customerName =
-            firstValue(
-              profile,
-              [
-                "full_name",
-                "name"
-              ],
-              ""
-            );
-        }
-      }
-
-      return payment;
-    }
-
-    /*
-      ------------------------------------------------------------
-      AUTHENTICATION
-      ------------------------------------------------------------
-    */
-
-    async function initializeSupabase() {
-
-      if (
+    if(
         !SUPABASE_URL ||
-        !SUPABASE_ANON_KEY
-      ) {
+        !SUPABASE_PUBLISHABLE_KEY
+    ){
         throw new Error(
-          "Supabase configuration is missing."
+            "Supabase configuration is missing."
         );
-      }
+    }
 
-      if (
+    if(
         !window.supabase ||
         !window.supabase.createClient
-      ) {
+    ){
         throw new Error(
-          "Supabase client failed to load."
-        );
-      }
-
-      supabaseClient =
-        window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_ANON_KEY,
-          {
-            auth: {
-              persistSession: true,
-              autoRefreshToken: true,
-              detectSessionInUrl: true
-            }
-          }
+            "Supabase client failed to load."
         );
     }
 
-    async function verifyAdmin() {
+    supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY,
+            {
+                auth:{
+                    persistSession:true,
+                    autoRefreshToken:true,
+                    detectSessionInUrl:true
+                }
+            }
+        );
+}
 
-      const {
+
+/* ============================================================
+   ADMIN SECURITY GATE
+============================================================ */
+
+async function verifyAdmin(){
+
+    const {
         data,
         error
-      } = await supabaseClient.auth.getSession();
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
 
-      if (error) {
-        throw error;
-      }
-
-      const session = data?.session;
-
-      if (!session?.user) {
-        redirectLogin("login_required");
-        return false;
-      }
-
-      currentUser = session.user;
-
-      const {
-        data: profile,
-        error: profileError
-      } = await supabaseClient
-        .from("profiles")
-        .select(`
-          id,
-          full_name,
-          phone,
-          role
-        `)
-        .eq("id", currentUser.id)
-        .maybeSingle();
-
-      if (profileError) {
-        throw profileError;
-      }
-
-      if (
-        !profile ||
-        profile.role !== "admin"
-      ) {
-        await safeSignOut();
-        return false;
-      }
-
-      currentProfile = profile;
-
-      updateAdminIdentity();
-
-      return true;
+    if(error){
+        throw new Error(
+            `Session verification failed: ${error.message}`
+        );
     }
 
-    function updateAdminIdentity() {
+    const session =
+        data?.session;
 
-      const name =
+    if(!session?.user){
+
+        redirectLogin(
+            "login_required"
+        );
+
+        return false;
+    }
+
+    currentUser =
+        session.user;
+
+
+    const {
+        data:profile,
+        error:profileError
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                is_active
+            `)
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+
+    if(profileError){
+
+        throw new Error(
+            `Profile verification failed: ${profileError.message}`
+        );
+    }
+
+
+    if(!profile){
+
+        throw new Error(
+            "No K-Tickets profile exists for this account."
+        );
+    }
+
+
+    if(
+        profile.role !== "admin" ||
+        profile.is_active !== true
+    ){
+
+        await safeSignOut();
+
+        return false;
+    }
+
+
+    currentProfile =
+        profile;
+
+    updateAdminIdentity();
+
+    return true;
+}
+
+
+/* ============================================================
+   ADMIN IDENTITY
+============================================================ */
+
+function updateAdminIdentity(){
+
+    const name =
         currentProfile?.full_name ||
-        currentUser?.email ||
+        currentUser?.user_metadata?.full_name ||
         "Administrator";
 
-      $("sidebarAdminName").textContent =
-        name;
 
-      $("sidebarAvatar").textContent =
-        getInitials(name);
+    const nameElement =
+        $("sidebarAdminName");
+
+    if(nameElement){
+        nameElement.textContent =
+            name;
     }
 
-    function getInitials(name) {
 
-      const value =
-        String(name || "A").trim();
+    const avatar =
+        $("sidebarAvatar");
 
-      if (!value) return "A";
+    if(avatar){
+        avatar.textContent =
+            getInitials(name);
+    }
+}
 
-      const parts =
-        value.split(/\s+/).filter(Boolean);
 
-      if (parts.length === 1) {
+function getInitials(
+    name
+){
+
+    const value =
+        String(
+            name || "A"
+        )
+        .trim();
+
+
+    if(!value){
+        return "A";
+    }
+
+
+    const parts =
+        value
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    if(parts.length === 1){
+
         return parts[0]
-          .slice(0, 2)
-          .toUpperCase();
-      }
+            .slice(0,2)
+            .toUpperCase();
+    }
 
-      return (
+
+    return (
         parts[0][0] +
         parts[parts.length - 1][0]
-      ).toUpperCase();
+    ).toUpperCase();
+}
+
+
+/* ============================================================
+   LOAD EVENT NAMES
+============================================================ */
+
+async function loadEventMap(
+    eventIds
+){
+
+    const map =
+        new Map();
+
+
+    const ids =
+        [
+            ...new Set(
+                eventIds
+                    .filter(Boolean)
+                    .map(
+                        id => String(id)
+                    )
+            )
+        ];
+
+
+    if(!ids.length){
+        return map;
     }
 
-    /*
-      ------------------------------------------------------------
-      M-PESA DATA
-      ------------------------------------------------------------
 
-      The final production query should use the exact payments
-      schema. This development-tolerant version requests the
-      common fields used by K-Tickets.
-
-      If your final table uses different columns, update this
-      select list once the database schema is locked.
-
-      RLS must ensure only authorized admins can read these rows.
-    */
-
-    async function loadPayments() {
-
-      setLoadingState();
-
-      let query = supabaseClient
-        .from("payments")
-        .select(`
-          id,
-          order_id,
-          user_id,
-          event_id,
-          method,
-          payment_method,
-          channel,
-          provider,
-          gateway,
-          status,
-          payment_status,
-          transaction_status,
-          amount,
-          paid_amount,
-          payment_amount,
-          currency,
-          reference,
-          transaction_id,
-          receipt_number,
-          mpesa_receipt,
-          checkout_request_id,
-          merchant_request_id,
-          phone,
-          phone_number,
-          msisdn,
-          created_at,
-          paid_at,
-          confirmed_at,
-          completed_at,
-          payment_date,
-          updated_at,
-          events(
-            id,
-            title
-          )
-        `)
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
-        )
-        .limit(5000);
-
-      /*
-        We intentionally do not filter by payment_method here.
-
-        Some deployments identify M-Pesa using:
-        - method
-        - payment_method
-        - channel
-        - provider
-        - gateway
-
-        Normalization below handles those variants.
-      */
-
-      const {
+    const {
         data,
         error
-      } = await query;
+    } =
+        await supabaseClient
+            .from("events")
+            .select(`
+                id,
+                title
+            `)
+            .in(
+                "id",
+                ids
+            );
 
-      if (error) {
+
+    if(error){
+
+        console.warn(
+            "Event lookup unavailable:",
+            error
+        );
+
+        return map;
+    }
+
+
+    (data || [])
+        .forEach(
+            event => {
+
+                map.set(
+                    String(event.id),
+                    event.title ||
+                    ""
+                );
+            }
+        );
+
+
+    return map;
+}
+
+
+/* ============================================================
+   LOAD M-PESA RECORDS
+============================================================ */
+
+async function loadPayments(){
+
+    setLoadingState();
+
+    /*
+        First load the exact payments schema.
+
+        We intentionally do NOT request columns that are
+        not present in Migration 04.
+    */
+
+    const {
+        data:paymentRows,
+        error:paymentError
+    } =
+        await supabaseClient
+            .from("payments")
+            .select(`
+                id,
+                order_id,
+                user_id,
+                event_id,
+                method,
+                provider,
+                status,
+                amount,
+                currency,
+                reference,
+                transaction_id,
+                receipt_number,
+                provider_transaction_id,
+                raw_response,
+                failure_reason,
+                paid_at,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "method",
+                "mpesa"
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
+            .limit(5000);
+
+
+    if(paymentError){
 
         console.error(
-          "M-Pesa query failed:",
-          error
+            "Payments query failed:",
+            paymentError
         );
 
         allPayments = [];
 
         renderEmptyState(
-          "Unable to load M-Pesa payments",
-          "The payments table may not match the current frontend schema, or Supabase RLS may be blocking this administrator. Check the browser console and database policies."
+            "Unable to load M-Pesa payments",
+            "The authenticated administrator could not read the payments table."
         );
 
         updateStats();
 
-        throw error;
-      }
-
-      const rows = Array.isArray(data)
-        ? data
-        : [];
-
-      allPayments =
-        rows
-          .map(normalizePayment)
-          .filter(isMpesaPayment);
-
-      updateStats();
-      applyFilters();
+        throw paymentError;
     }
 
-    function isMpesaPayment(payment) {
 
-      const values = [
-        payment.method,
-        payment.provider,
-        payment.raw?.channel,
-        payment.raw?.payment_method,
-        payment.raw?.gateway
-      ]
-        .filter(Boolean)
-        .map(
-          value =>
-            String(value).toLowerCase()
+    const payments =
+        Array.isArray(paymentRows)
+            ? paymentRows
+            : [];
+
+
+    /*
+        Load actual M-Pesa transaction records.
+
+        This table contains the Daraja/STK-specific information.
+    */
+
+    let mpesaRows = [];
+
+
+    const {
+        data:mpesaData,
+        error:mpesaError
+    } =
+        await supabaseClient
+            .from("mpesa_transactions")
+            .select(`
+                id,
+                payment_id,
+                phone_number,
+                amount,
+                merchant_request_id,
+                checkout_request_id,
+                mpesa_receipt_number,
+                result_code,
+                result_description,
+                status,
+                callback_received_at,
+                created_at,
+                updated_at
+            `)
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
+            .limit(5000);
+
+
+    if(mpesaError){
+
+        /*
+            Do not fail the entire page if the
+            M-Pesa transaction table is temporarily
+            unavailable. The payment records remain useful.
+        */
+
+        console.warn(
+            "M-Pesa transaction table unavailable:",
+            mpesaError
         );
 
-      /*
-        Empty method/provider should remain visible
-        rather than silently hiding a real payment if
-        the final schema stores M-Pesa by transaction fields.
-      */
+    }else{
 
-      if (values.length === 0) {
-        return true;
-      }
-
-      return values.some(
-        value =>
-          value.includes("mpesa") ||
-          value.includes("m-pesa") ||
-          value.includes("m_pesa") ||
-          value === "stk"
-      );
+        mpesaRows =
+            Array.isArray(mpesaData)
+                ? mpesaData
+                : [];
     }
 
+
+    const eventIds =
+        payments
+            .map(
+                payment =>
+                    payment.event_id
+            )
+            .filter(Boolean);
+
+
+    const eventMap =
+        await loadEventMap(
+            eventIds
+        );
+
+
     /*
-      ------------------------------------------------------------
-      FILTERING
-      ------------------------------------------------------------
+        Build lookup maps for the actual M-Pesa table.
     */
 
-    function applyFilters() {
+    const mpesaByPaymentId =
+        new Map();
 
-      const search =
+    const mpesaByCheckoutRequest =
+        new Map();
+
+    const mpesaByMerchantRequest =
+        new Map();
+
+    const mpesaByReceipt =
+        new Map();
+
+
+    mpesaRows.forEach(
+        transaction => {
+
+            if(transaction.payment_id){
+
+                mpesaByPaymentId.set(
+                    String(
+                        transaction.payment_id
+                    ),
+                    transaction
+                );
+            }
+
+
+            if(
+                transaction.checkout_request_id
+            ){
+
+                mpesaByCheckoutRequest.set(
+                    String(
+                        transaction.checkout_request_id
+                    ),
+                    transaction
+                );
+            }
+
+
+            if(
+                transaction.merchant_request_id
+            ){
+
+                mpesaByMerchantRequest.set(
+                    String(
+                        transaction.merchant_request_id
+                    ),
+                    transaction
+                );
+            }
+
+
+            if(
+                transaction.mpesa_receipt_number
+            ){
+
+                mpesaByReceipt.set(
+                    String(
+                        transaction.mpesa_receipt_number
+                    ),
+                    transaction
+                );
+            }
+        }
+    );
+
+
+    /*
+        Merge the payment record with its
+        M-Pesa transaction record.
+    */
+
+    allPayments =
+        payments.map(
+            payment => {
+
+                let mpesa =
+                    mpesaByPaymentId.get(
+                        String(payment.id)
+                    );
+
+
+                if(!mpesa){
+
+                    mpesa =
+                        mpesaByCheckoutRequest.get(
+                            String(
+                                payment.transaction_id ||
+                                ""
+                            )
+                        );
+                }
+
+
+                if(!mpesa){
+
+                    mpesa =
+                        mpesaByMerchantRequest.get(
+                            String(
+                                payment.reference ||
+                                ""
+                            )
+                        );
+                }
+
+
+                if(!mpesa){
+
+                    mpesa =
+                        mpesaByReceipt.get(
+                            String(
+                                payment.receipt_number ||
+                                ""
+                            )
+                        );
+                }
+
+
+                return normalizePayment(
+                    payment,
+                    mpesa,
+                    eventMap
+                );
+            }
+        );
+
+
+    updateStats();
+
+    applyFilters();
+}
+
+
+/* ============================================================
+   NORMALIZE PAYMENT
+============================================================ */
+
+function normalizePayment(
+    payment,
+    mpesa,
+    eventMap
+){
+
+    const transactionId =
+        payment.transaction_id ||
+        mpesa?.checkout_request_id ||
+        "";
+
+
+    const reference =
+        payment.reference ||
+        mpesa?.merchant_request_id ||
+        "";
+
+
+    const receipt =
+        payment.receipt_number ||
+        mpesa?.mpesa_receipt_number ||
+        "";
+
+
+    const phone =
+        mpesa?.phone_number ||
+        "";
+
+
+    const status =
+        normalizeStatus(
+            payment
+        );
+
+
+    return {
+
+        rawPayment:
+            payment,
+
+        rawMpesa:
+            mpesa || null,
+
+        id:
+            payment.id,
+
+        orderId:
+            payment.order_id,
+
+        userId:
+            payment.user_id,
+
+        eventId:
+            payment.event_id,
+
+        eventTitle:
+            eventMap.get(
+                String(
+                    payment.event_id || ""
+                )
+            ) || "",
+
+        amount:
+            payment.amount,
+
+        currency:
+            String(
+                payment.currency ||
+                ""
+            ).toUpperCase(),
+
+        method:
+            payment.method,
+
+        provider:
+            payment.provider,
+
+        status,
+
+        transactionId,
+
+        reference,
+
+        receipt,
+
+        phone,
+
+        merchantRequestId:
+            mpesa?.merchant_request_id ||
+            "",
+
+        checkoutRequestId:
+            mpesa?.checkout_request_id ||
+            "",
+
+        resultCode:
+            mpesa?.result_code ??
+            null,
+
+        resultDescription:
+            mpesa?.result_description ||
+            "",
+
+        mpesaStatus:
+            mpesa?.status ||
+            "",
+
+        providerTransactionId:
+            payment.provider_transaction_id ||
+            "",
+
+        failureReason:
+            payment.failure_reason ||
+            "",
+
+        createdAt:
+            payment.created_at,
+
+        paidAt:
+            payment.paid_at,
+
+        updatedAt:
+            payment.updated_at,
+
+        callbackReceivedAt:
+            mpesa?.callback_received_at ||
+            null
+    };
+}
+
+
+/* ============================================================
+   FILTERS
+============================================================ */
+
+function applyFilters(){
+
+    const search =
         $("searchInput")
-          .value
-          .trim()
-          .toLowerCase();
+            ?.value
+            ?.trim()
+            .toLowerCase() ||
+        "";
 
-      const status =
-        $("statusFilter").value;
 
-      const period =
-        $("periodFilter").value;
+    const status =
+        $("statusFilter")
+            ?.value ||
+        "";
 
-      const currency =
-        $("currencyFilter").value
-          .toUpperCase();
 
-      const now = new Date();
+    const period =
+        $("periodFilter")
+            ?.value ||
+        "";
 
-      filteredPayments =
-        allPayments.filter(payment => {
 
-          if (search) {
+    const currency =
+        (
+            $("currencyFilter")
+                ?.value ||
+            ""
+        )
+        .toUpperCase();
 
-            const haystack = [
-              payment.id,
-              payment.orderId,
-              payment.userId,
-              payment.eventId,
-              payment.transactionId,
-              payment.reference,
-              payment.receipt,
-              payment.phone,
-              payment.customerName,
-              payment.eventTitle
-            ]
-              .filter(Boolean)
-              .join(" ")
-              .toLowerCase();
 
-            if (!haystack.includes(search)) {
-              return false;
+    const now =
+        new Date();
+
+
+    filteredPayments =
+        allPayments.filter(
+            payment => {
+
+                /*
+                    SEARCH
+                */
+
+                if(search){
+
+                    const haystack = [
+
+                        payment.id,
+
+                        payment.orderId,
+
+                        payment.userId,
+
+                        payment.eventId,
+
+                        payment.transactionId,
+
+                        payment.reference,
+
+                        payment.receipt,
+
+                        payment.phone,
+
+                        payment.eventTitle,
+
+                        payment.merchantRequestId,
+
+                        payment.checkoutRequestId,
+
+                        payment.providerTransactionId
+
+                    ]
+                        .filter(Boolean)
+                        .join(" ")
+                        .toLowerCase();
+
+
+                    if(
+                        !haystack.includes(
+                            search
+                        )
+                    ){
+                        return false;
+                    }
+                }
+
+
+                /*
+                    STATUS
+                */
+
+                if(
+                    status &&
+                    payment.status !== status
+                ){
+                    return false;
+                }
+
+
+                /*
+                    CURRENCY
+                */
+
+                if(
+                    currency &&
+                    payment.currency !== currency
+                ){
+                    return false;
+                }
+
+
+                /*
+                    PERIOD
+                */
+
+                if(period){
+
+                    const sourceDate =
+                        payment.createdAt ||
+                        payment.paidAt;
+
+
+                    if(!sourceDate){
+                        return false;
+                    }
+
+
+                    const date =
+                        new Date(
+                            sourceDate
+                        );
+
+
+                    if(
+                        Number.isNaN(
+                            date.getTime()
+                        )
+                    ){
+                        return false;
+                    }
+
+
+                    if(
+                        period === "today"
+                    ){
+
+                        const start =
+                            new Date(now);
+
+                        start.setHours(
+                            0,
+                            0,
+                            0,
+                            0
+                        );
+
+
+                        if(date < start){
+                            return false;
+                        }
+
+                    }else{
+
+                        const days =
+                            Number(period);
+
+
+                        if(
+                            !Number.isFinite(
+                                days
+                            )
+                        ){
+                            return true;
+                        }
+
+
+                        const cutoff =
+                            new Date(now);
+
+
+                        cutoff.setDate(
+                            cutoff.getDate() -
+                            days
+                        );
+
+
+                        if(
+                            date < cutoff
+                        ){
+                            return false;
+                        }
+                    }
+                }
+
+
+                return true;
             }
-          }
+        );
 
-          if (
-            status &&
-            payment.status !== status
-          ) {
-            return false;
-          }
 
-          if (
-            currency &&
-            payment.currency !== currency
-          ) {
-            return false;
-          }
+    currentPage = 1;
 
-          if (period) {
+    renderPayments();
 
-            const sourceDate =
-              payment.createdAt ||
-              payment.paymentDate ||
-              payment.paidAt;
+    renderPagination();
+}
 
-            if (!sourceDate) {
-              return false;
-            }
 
-            const date =
-              new Date(sourceDate);
+/* ============================================================
+   STATISTICS
+============================================================ */
 
-            if (Number.isNaN(date.getTime())) {
-              return false;
-            }
+function updateStats(){
 
-            if (period === "today") {
+    const total =
+        allPayments.length;
 
-              const start = new Date(now);
 
-              start.setHours(
-                0,
-                0,
-                0,
-                0
-              );
+    const successful =
+        allPayments.filter(
+            payment =>
+                payment.status ===
+                "success"
+        ).length;
 
-              if (date < start) {
-                return false;
-              }
-            }
 
-            else {
+    const pending =
+        allPayments.filter(
+            payment =>
+                payment.status ===
+                "pending"
+        ).length;
 
-              const days =
-                Number(period);
 
-              const cutoff =
-                new Date(now);
+    const failed =
+        allPayments.filter(
+            payment =>
+                payment.status === "failed" ||
+                payment.status === "cancelled"
+        ).length;
 
-              cutoff.setDate(
-                cutoff.getDate() - days
-              );
 
-              if (date < cutoff) {
-                return false;
-              }
-            }
-          }
-
-          return true;
-        });
-
-      currentPage = 1;
-
-      renderPayments();
-      renderPagination();
+    if($("statTransactions")){
+        $("statTransactions")
+            .textContent =
+            total.toLocaleString();
     }
 
-    /*
-      ------------------------------------------------------------
-      STATS
-      ------------------------------------------------------------
-    */
 
-    function updateStats() {
-
-      const successful =
-        allPayments.filter(
-          p => p.status === "success"
-        ).length;
-
-      const pending =
-        allPayments.filter(
-          p => p.status === "pending"
-        ).length;
-
-      const failed =
-        allPayments.filter(
-          p =>
-            p.status === "failed" ||
-            p.status === "cancelled"
-        ).length;
-
-      $("statTransactions").textContent =
-        allPayments.length.toLocaleString();
-
-      $("statSuccessful").textContent =
-        successful.toLocaleString();
-
-      $("statPending").textContent =
-        pending.toLocaleString();
-
-      $("statFailed").textContent =
-        failed.toLocaleString();
+    if($("statSuccessful")){
+        $("statSuccessful")
+            .textContent =
+            successful.toLocaleString();
     }
 
-    /*
-      ------------------------------------------------------------
-      RENDER TABLE
-      ------------------------------------------------------------
-    */
 
-    function getCurrentPageRows() {
+    if($("statPending")){
+        $("statPending")
+            .textContent =
+            pending.toLocaleString();
+    }
 
-      const start =
-        (currentPage - 1) *
-        PAGE_SIZE;
 
-      return filteredPayments.slice(
+    if($("statFailed")){
+        $("statFailed")
+            .textContent =
+            failed.toLocaleString();
+    }
+}
+
+
+/* ============================================================
+   PAGINATION
+============================================================ */
+
+function getCurrentPageRows(){
+
+    const start =
+        (
+            currentPage - 1
+        ) * PAGE_SIZE;
+
+
+    return filteredPayments.slice(
         start,
         start + PAGE_SIZE
-      );
-    }
+    );
+}
 
-    function renderPayments() {
 
-      const rows =
-        getCurrentPageRows();
+function renderPagination(){
 
-      const tbody =
-        $("tableBody");
-
-      if (!filteredPayments.length) {
-
-        renderEmptyState(
-          "No M-Pesa transactions found",
-          allPayments.length
-            ? "No transactions match the selected filters."
-            : "No M-Pesa payment records are currently available from Supabase."
-        );
-
-        $("mobileList").innerHTML = "";
-
-        return;
-      }
-
-      tbody.innerHTML =
-        rows.map(
-          payment => `
-            <tr>
-
-              <td>
-                <div class="primary-cell mono">
-                  ${escapeHtml(
-                    payment.transactionId ||
-                    payment.id ||
-                    "—"
-                  )}
-                </div>
-
-                <div class="secondary-cell">
-                  ${escapeHtml(
-                    payment.customerName ||
-                    payment.phone ||
-                    "Customer"
-                  )}
-                </div>
-              </td>
-
-              <td>
-                <div class="primary-cell mono">
-                  ${escapeHtml(
-                    payment.orderId || "—"
-                  )}
-                </div>
-
-                <div class="secondary-cell">
-                  ${escapeHtml(
-                    payment.eventTitle || "—"
-                  )}
-                </div>
-              </td>
-
-              <td>
-                <div class="primary-cell">
-                  ${formatAmount(
-                    payment.amount,
-                    payment.currency
-                  )}
-                </div>
-              </td>
-
-              <td>
-                ${statusBadge(
-                  payment.status
-                )}
-              </td>
-
-              <td>
-                <div class="mono">
-                  ${escapeHtml(
-                    payment.reference ||
-                    payment.receipt ||
-                    "—"
-                  )}
-                </div>
-              </td>
-
-              <td>
-                ${escapeHtml(
-                  formatDate(
-                    payment.createdAt ||
-                    payment.paymentDate
-                  )
-                )}
-              </td>
-
-              <td>
-                <div class="row-actions">
-                  <button
-                    class="small-btn"
-                    data-view-id="${escapeHtml(
-                      String(payment.id)
-                    )}"
-                  >
-                    View
-                  </button>
-                </div>
-              </td>
-
-            </tr>
-          `
-        ).join("");
-
-      attachViewButtons();
-
-      renderMobileRows(rows);
-    }
-
-    function renderMobileRows(rows) {
-
-      $("mobileList").innerHTML =
-        rows.map(
-          payment => `
-            <article class="mobile-card">
-
-              <div class="mobile-card-top">
-
-                <div class="mobile-title">
-                  <strong class="mono">
-                    ${escapeHtml(
-                      payment.transactionId ||
-                      payment.id ||
-                      "M-Pesa payment"
-                    )}
-                  </strong>
-
-                  <span>
-                    ${escapeHtml(
-                      payment.customerName ||
-                      payment.phone ||
-                      "Customer"
-                    )}
-                  </span>
-                </div>
-
-                <div>
-                  ${statusBadge(
-                    payment.status
-                  )}
-                </div>
-
-              </div>
-
-              <div class="mobile-grid">
-
-                <div class="mobile-item">
-                  <small>Amount</small>
-                  <div>
-                    ${formatAmount(
-                      payment.amount,
-                      payment.currency
-                    )}
-                  </div>
-                </div>
-
-                <div class="mobile-item">
-                  <small>Order</small>
-                  <div class="mono">
-                    ${escapeHtml(
-                      payment.orderId || "—"
-                    )}
-                  </div>
-                </div>
-
-                <div class="mobile-item">
-                  <small>Reference</small>
-                  <div class="mono">
-                    ${escapeHtml(
-                      payment.reference ||
-                      payment.receipt ||
-                      "—"
-                    )}
-                  </div>
-                </div>
-
-                <div class="mobile-item">
-                  <small>Date</small>
-                  <div>
-                    ${escapeHtml(
-                      formatDateShort(
-                        payment.createdAt ||
-                        payment.paymentDate
-                      )
-                    )}
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="mobile-actions">
-
-                <button
-                  class="small-btn"
-                  data-view-id="${escapeHtml(
-                    String(payment.id)
-                  )}"
-                >
-                  View details
-                </button>
-
-              </div>
-
-            </article>
-          `
-        ).join("");
-
-      attachViewButtons();
-    }
-
-    function attachViewButtons() {
-
-      document
-        .querySelectorAll(
-          "[data-view-id]"
-        )
-        .forEach(button => {
-
-          button.addEventListener(
-            "click",
-            () => {
-
-              const id =
-                button.dataset.viewId;
-
-              const payment =
-                allPayments.find(
-                  p =>
-                    String(p.id) ===
-                    String(id)
-                );
-
-              if (payment) {
-                openDrawer(payment);
-              }
-            }
-          );
-
-        });
-    }
-
-    function renderEmptyState(
-      title,
-      message
-    ) {
-
-      $("tableBody").innerHTML = `
-        <tr>
-          <td colspan="7">
-            <div class="empty">
-              <div class="empty-icon">M</div>
-
-              <h3>
-                ${escapeHtml(title)}
-              </h3>
-
-              <p>
-                ${escapeHtml(message)}
-              </p>
-            </div>
-          </td>
-        </tr>
-      `;
-    }
-
-    /*
-      ------------------------------------------------------------
-      PAGINATION
-      ------------------------------------------------------------
-    */
-
-    function renderPagination() {
-
-      const total =
+    const total =
         filteredPayments.length;
 
-      const pages =
+
+    const pages =
         Math.max(
-          1,
-          Math.ceil(
-            total / PAGE_SIZE
-          )
+            1,
+            Math.ceil(
+                total /
+                PAGE_SIZE
+            )
         );
 
-      if (
+
+    const pagination =
+        $("pagination");
+
+
+    if(
+        !pagination ||
         !total ||
         pages <= 1
-      ) {
-        $("pagination").hidden = true;
+    ){
+
+        if(pagination){
+            pagination.hidden =
+                true;
+        }
+
         return;
-      }
-
-      $("pagination").hidden = false;
-
-      const start =
-        (currentPage - 1) *
-        PAGE_SIZE + 1;
-
-      const end =
-        Math.min(
-          currentPage * PAGE_SIZE,
-          total
-        );
-
-      $("paginationInfo").textContent =
-        `${start}–${end} of ${total}`;
-
-      $("prevPageBtn").disabled =
-        currentPage <= 1;
-
-      $("nextPageBtn").disabled =
-        currentPage >= pages;
     }
 
-    /*
-      ------------------------------------------------------------
-      DRAWER
-      ------------------------------------------------------------
-    */
 
-    function openDrawer(payment) {
+    pagination.hidden =
+        false;
 
-      $("dPaymentId").textContent =
-        safeText(payment.id);
 
-      $("dStatus").innerHTML =
-        statusBadge(payment.status);
+    const start =
+        (
+            currentPage - 1
+        ) * PAGE_SIZE + 1;
 
-      $("dAmount").textContent =
-        formatAmount(
-          payment.amount,
-          payment.currency
+
+    const end =
+        Math.min(
+            currentPage *
+            PAGE_SIZE,
+            total
         );
 
-      $("dCurrency").textContent =
-        safeText(payment.currency);
 
-      $("dMethod").textContent =
-        safeText(payment.method);
+    $("paginationInfo")
+        .textContent =
+        `${start}–${end} of ${total}`;
 
-      $("dProvider").textContent =
-        safeText(payment.provider);
 
-      $("dTransactionId").textContent =
-        safeText(payment.transactionId);
+    $("prevPageBtn")
+        .disabled =
+        currentPage <= 1;
 
-      $("dReceipt").textContent =
-        safeText(payment.receipt);
 
-      $("dPhone").textContent =
-        safeText(payment.phone);
+    $("nextPageBtn")
+        .disabled =
+        currentPage >= pages;
+}
 
-      $("dReference").textContent =
-        safeText(payment.reference);
 
-      $("dOrderId").textContent =
-        safeText(payment.orderId);
+/* ============================================================
+   RENDER
+============================================================ */
 
-      $("dUserId").textContent =
-        safeText(payment.userId);
+function renderPayments(){
 
-      $("dEventId").textContent =
-        safeText(payment.eventId);
+    const rows =
+        getCurrentPageRows();
 
-      $("dEvent").textContent =
-        safeText(payment.eventTitle);
 
-      $("dCreated").textContent =
-        formatDate(payment.createdAt);
+    const tbody =
+        $("tableBody");
 
-      $("dPaid").textContent =
-        formatDate(payment.paidAt);
 
-      $("dUpdated").textContent =
-        formatDate(payment.updatedAt);
+    if(!filteredPayments.length){
 
-      $("dPaymentDate").textContent =
-        formatDate(payment.paymentDate);
+        renderEmptyState(
+            "No M-Pesa transactions found",
+            allPayments.length
+                ? "No transactions match the selected filters."
+                : "No M-Pesa payment records are currently available."
+        );
 
-      $("drawerSubtitle").textContent =
+
+        if($("mobileList")){
+            $("mobileList").innerHTML =
+                "";
+        }
+
+
+        return;
+    }
+
+
+    tbody.innerHTML =
+        rows
+            .map(
+                payment => `
+
+                    <tr>
+
+                        <td>
+
+                            <div class="primary-cell mono">
+                                ${escapeHtml(
+                                    payment.transactionId ||
+                                    payment.id
+                                )}
+                            </div>
+
+                            <div class="secondary-cell">
+                                ${escapeHtml(
+                                    payment.phone ||
+                                    "Phone unavailable"
+                                )}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="primary-cell mono">
+                                ${escapeHtml(
+                                    payment.orderId ||
+                                    "—"
+                                )}
+                            </div>
+
+                            <div class="secondary-cell">
+                                ${escapeHtml(
+                                    payment.eventTitle ||
+                                    "Event unavailable"
+                                )}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="primary-cell">
+                                ${formatAmount(
+                                    payment.amount,
+                                    payment.currency
+                                )}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            ${statusBadge(
+                                payment.status
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="mono">
+                                ${escapeHtml(
+                                    payment.reference ||
+                                    payment.receipt ||
+                                    "—"
+                                )}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHtml(
+                                formatDate(
+                                    payment.createdAt
+                                )
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="row-actions">
+
+                                <button
+                                    type="button"
+                                    class="small-btn"
+                                    data-view-id="${escapeHtml(
+                                        payment.id
+                                    )}"
+                                >
+                                    View
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                `
+            )
+            .join("");
+
+
+    renderMobileRows(
+        rows
+    );
+
+
+    attachViewButtons();
+}
+
+
+function renderMobileRows(
+    rows
+){
+
+    const mobile =
+        $("mobileList");
+
+
+    if(!mobile){
+        return;
+    }
+
+
+    mobile.innerHTML =
+        rows
+            .map(
+                payment => `
+
+                    <article class="mobile-card">
+
+                        <div class="mobile-card-top">
+
+                            <div class="mobile-title">
+
+                                <strong class="mono">
+                                    ${escapeHtml(
+                                        payment.transactionId ||
+                                        payment.id
+                                    )}
+                                </strong>
+
+                                <span>
+                                    ${escapeHtml(
+                                        payment.phone ||
+                                        "M-Pesa customer"
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <div>
+                                ${statusBadge(
+                                    payment.status
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="mobile-grid">
+
+                            <div class="mobile-item">
+
+                                <small>
+                                    Amount
+                                </small>
+
+                                <div>
+                                    ${formatAmount(
+                                        payment.amount,
+                                        payment.currency
+                                    )}
+                                </div>
+
+                            </div>
+
+
+                            <div class="mobile-item">
+
+                                <small>
+                                    Order
+                                </small>
+
+                                <div class="mono">
+                                    ${escapeHtml(
+                                        payment.orderId ||
+                                        "—"
+                                    )}
+                                </div>
+
+                            </div>
+
+
+                            <div class="mobile-item">
+
+                                <small>
+                                    Receipt
+                                </small>
+
+                                <div class="mono">
+                                    ${escapeHtml(
+                                        payment.receipt ||
+                                        "—"
+                                    )}
+                                </div>
+
+                            </div>
+
+
+                            <div class="mobile-item">
+
+                                <small>
+                                    Date
+                                </small>
+
+                                <div>
+                                    ${escapeHtml(
+                                        formatDateShort(
+                                            payment.createdAt
+                                        )
+                                    )}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mobile-actions">
+
+                            <button
+                                type="button"
+                                class="small-btn"
+                                data-view-id="${escapeHtml(
+                                    payment.id
+                                )}"
+                            >
+                                View details
+                            </button>
+
+                        </div>
+
+                    </article>
+                `
+            )
+            .join("");
+}
+
+
+/* ============================================================
+   VIEW BUTTONS
+============================================================ */
+
+function attachViewButtons(){
+
+    document
+        .querySelectorAll(
+            "[data-view-id]"
+        )
+        .forEach(
+            button => {
+
+                button.onclick =
+                    () => {
+
+                        const id =
+                            button.dataset.viewId;
+
+
+                        const payment =
+                            allPayments.find(
+                                item =>
+                                    String(
+                                        item.id
+                                    ) ===
+                                    String(id)
+                            );
+
+
+                        if(payment){
+
+                            openDrawer(
+                                payment
+                            );
+                        }
+                    };
+            }
+        );
+}
+
+
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+
+function renderEmptyState(
+    title,
+    message
+){
+
+    $("tableBody").innerHTML = `
+
+        <tr>
+
+            <td colspan="7">
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        M
+                    </div>
+
+                    <h3>
+                        ${escapeHtml(
+                            title
+                        )}
+                    </h3>
+
+                    <p>
+                        ${escapeHtml(
+                            message
+                        )}
+                    </p>
+
+                </div>
+
+            </td>
+
+        </tr>
+    `;
+}
+
+
+/* ============================================================
+   DRAWER
+============================================================ */
+
+function openDrawer(
+    payment
+){
+
+    $("dPaymentId")
+        .textContent =
+        safeText(
+            payment.id
+        );
+
+
+    $("dStatus")
+        .innerHTML =
+        statusBadge(
+            payment.status
+        );
+
+
+    $("dAmount")
+        .textContent =
+        formatAmount(
+            payment.amount,
+            payment.currency
+        );
+
+
+    $("dCurrency")
+        .textContent =
+        safeText(
+            payment.currency
+        );
+
+
+    $("dMethod")
+        .textContent =
+        safeText(
+            payment.method
+        );
+
+
+    $("dProvider")
+        .textContent =
+        safeText(
+            payment.provider
+        );
+
+
+    $("dTransactionId")
+        .textContent =
+        safeText(
+            payment.transactionId
+        );
+
+
+    $("dReceipt")
+        .textContent =
+        safeText(
+            payment.receipt
+        );
+
+
+    $("dPhone")
+        .textContent =
+        safeText(
+            payment.phone
+        );
+
+
+    $("dReference")
+        .textContent =
+        safeText(
+            payment.reference
+        );
+
+
+    $("dOrderId")
+        .textContent =
+        safeText(
+            payment.orderId
+        );
+
+
+    $("dUserId")
+        .textContent =
+        safeText(
+            payment.userId
+        );
+
+
+    $("dEventId")
+        .textContent =
+        safeText(
+            payment.eventId
+        );
+
+
+    $("dEvent")
+        .textContent =
+        safeText(
+            payment.eventTitle
+        );
+
+
+    $("dCreated")
+        .textContent =
+        formatDate(
+            payment.createdAt
+        );
+
+
+    $("dPaid")
+        .textContent =
+        formatDate(
+            payment.paidAt
+        );
+
+
+    $("dUpdated")
+        .textContent =
+        formatDate(
+            payment.updatedAt
+        );
+
+
+    /*
+        The current HTML calls this "Payment Date".
+        We use callback received time when available
+        because it is the actual M-Pesa callback timestamp.
+    */
+
+    $("dPaymentDate")
+        .textContent =
+        formatDate(
+            payment.callbackReceivedAt ||
+            payment.paidAt
+        );
+
+
+    $("drawerSubtitle")
+        .textContent =
         payment.transactionId ||
         payment.id ||
         "M-Pesa transaction";
 
-      $("drawerBackdrop")
-        .classList.add("open");
 
-      $("drawerBackdrop")
+    $("drawerBackdrop")
+        .classList
+        .add("open");
+
+
+    $("drawerBackdrop")
         .setAttribute(
-          "aria-hidden",
-          "false"
+            "aria-hidden",
+            "false"
         );
 
-      document.body.style.overflow = "hidden";
-    }
 
-    function closeDrawer() {
+    document.body.style.overflow =
+        "hidden";
+}
 
-      $("drawerBackdrop")
-        .classList.remove("open");
 
-      $("drawerBackdrop")
+function closeDrawer(){
+
+    $("drawerBackdrop")
+        .classList
+        .remove("open");
+
+
+    $("drawerBackdrop")
         .setAttribute(
-          "aria-hidden",
-          "true"
+            "aria-hidden",
+            "true"
         );
 
-      document.body.style.overflow = "";
-    }
 
-    /*
-      ------------------------------------------------------------
-      CSV EXPORT
-      ------------------------------------------------------------
-    */
+    document.body.style.overflow =
+        "";
+}
 
-    function csvEscape(value) {
 
-      const text =
+/* ============================================================
+   CSV EXPORT
+============================================================ */
+
+function csvEscape(
+    value
+){
+
+    const text =
         value === null ||
         value === undefined
-          ? ""
-          : String(value);
+            ? ""
+            : String(value);
 
-      return `"${text.replace(
+
+    return `"${text.replace(
         /"/g,
         '""'
-      )}"`;
-    }
+    )}"`;
+}
 
-    function exportCsv() {
 
-      if (!filteredPayments.length) {
+function exportCsv(){
+
+    if(!filteredPayments.length){
+
         showToast(
-          "There are no records to export.",
-          "error"
+            "There are no M-Pesa records to export.",
+            "error"
         );
 
         return;
-      }
+    }
 
-      const headers = [
+
+    const headers = [
+
         "Payment ID",
+
         "Transaction ID",
+
         "Order ID",
+
         "User ID",
+
         "Event ID",
+
         "Event",
-        "Customer",
+
         "Phone",
+
         "Method",
+
         "Provider",
+
         "Status",
+
         "Amount",
+
         "Currency",
+
         "Reference",
+
         "Receipt",
+
+        "Merchant Request ID",
+
+        "Checkout Request ID",
+
+        "Provider Transaction ID",
+
+        "Failure Reason",
+
+        "M-Pesa Status",
+
+        "Result Code",
+
+        "Result Description",
+
         "Created At",
+
         "Paid At",
+
+        "Callback Received At",
+
         "Updated At"
-      ];
+    ];
 
-      const lines = [
-        headers.map(csvEscape).join(",")
-      ];
 
-      filteredPayments.forEach(payment => {
+    const lines = [
 
-        lines.push(
-          [
-            payment.id,
-            payment.transactionId,
-            payment.orderId,
-            payment.userId,
-            payment.eventId,
-            payment.eventTitle,
-            payment.customerName,
-            payment.phone,
-            payment.method,
-            payment.provider,
-            payment.status,
-            payment.amount,
-            payment.currency,
-            payment.reference,
-            payment.receipt,
-            payment.createdAt,
-            payment.paidAt,
-            payment.updatedAt
-          ]
+        headers
             .map(csvEscape)
             .join(",")
-        );
+    ];
 
-      });
 
-      const blob =
+    filteredPayments.forEach(
+        payment => {
+
+            lines.push(
+
+                [
+
+                    payment.id,
+
+                    payment.transactionId,
+
+                    payment.orderId,
+
+                    payment.userId,
+
+                    payment.eventId,
+
+                    payment.eventTitle,
+
+                    payment.phone,
+
+                    payment.method,
+
+                    payment.provider,
+
+                    payment.status,
+
+                    payment.amount,
+
+                    payment.currency,
+
+                    payment.reference,
+
+                    payment.receipt,
+
+                    payment.merchantRequestId,
+
+                    payment.checkoutRequestId,
+
+                    payment.providerTransactionId,
+
+                    payment.failureReason,
+
+                    payment.mpesaStatus,
+
+                    payment.resultCode,
+
+                    payment.resultDescription,
+
+                    payment.createdAt,
+
+                    payment.paidAt,
+
+                    payment.callbackReceivedAt,
+
+                    payment.updatedAt
+
+                ]
+                    .map(csvEscape)
+                    .join(",")
+            );
+        }
+    );
+
+
+    const blob =
         new Blob(
-          [lines.join("\n")],
-          {
-            type:
-              "text/csv;charset=utf-8;"
-          }
+            [
+                lines.join("\n")
+            ],
+            {
+                type:
+                    "text/csv;charset=utf-8;"
+            }
         );
 
-      const url =
-        URL.createObjectURL(blob);
 
-      const link =
-        document.createElement("a");
+    const url =
+        URL.createObjectURL(
+            blob
+        );
 
-      link.href = url;
 
-      link.download =
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
         "k-tickets-mpesa-" +
         new Date()
-          .toISOString()
-          .slice(0, 10) +
+            .toISOString()
+            .slice(0,10) +
         ".csv";
 
-      document.body.appendChild(link);
 
-      link.click();
+    document.body.appendChild(
+        link
+    );
 
-      link.remove();
 
-      URL.revokeObjectURL(url);
+    link.click();
 
-      showToast(
+
+    link.remove();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+
+    showToast(
         "CSV export created.",
         "success"
-      );
+    );
+}
+
+
+/* ============================================================
+   LOADING
+============================================================ */
+
+function setLoadingState(){
+
+    if($("tableBody")){
+
+        $("tableBody").innerHTML = `
+
+            <tr>
+
+                <td colspan="7">
+
+                    <div class="loading-row">
+                        Loading M-Pesa transactions...
+                    </div>
+
+                </td>
+
+            </tr>
+        `;
     }
 
-    /*
-      ------------------------------------------------------------
-      LOADING
-      ------------------------------------------------------------
-    */
 
-    function setLoadingState() {
+    if($("mobileList")){
 
-      $("tableBody").innerHTML = `
-        <tr>
-          <td colspan="7">
+        $("mobileList").innerHTML = `
+
             <div class="loading-row">
-              Loading M-Pesa transactions...
+                Loading M-Pesa transactions...
             </div>
-          </td>
-        </tr>
-      `;
-
-      $("mobileList").innerHTML = `
-        <div class="loading-row">
-          Loading M-Pesa transactions...
-        </div>
-      `;
+        `;
     }
+}
 
-    /*
-      ------------------------------------------------------------
-      NOTIFICATIONS
-      ------------------------------------------------------------
-    */
 
-    async function checkNotifications() {
+/* ============================================================
+   NOTIFICATIONS
+============================================================ */
 
-      try {
+async function checkNotifications(){
+
+    try{
+
+        /*
+            Actual notifications schema:
+            is_read
+        */
 
         const {
-          data,
-          error
-        } = await supabaseClient
-          .from("notifications")
-          .select("id")
-          .eq(
-            "user_id",
-            currentUser.id
-          )
-          .eq(
-            "read",
-            false
-          )
-          .limit(1);
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select("id")
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .eq(
+                    "is_read",
+                    false
+                )
+                .limit(1);
 
-        if (error) {
-          return;
+
+        if(error){
+
+            console.warn(
+                "Notification check unavailable:",
+                error
+            );
+
+            return;
         }
 
-        if (data?.length) {
-          $("notificationDot").hidden = false;
+
+        const dot =
+            $("notificationDot");
+
+
+        if(dot){
+
+            dot.hidden =
+                !(data?.length);
         }
 
-      } catch (_) {}
-    }
+    }catch(error){
 
-    /*
-      ------------------------------------------------------------
-      MOBILE SIDEBAR
-      ------------------------------------------------------------
-    */
-
-    function setupMobileNavigation() {
-
-      $("mobileMenu")
-        .addEventListener(
-          "click",
-          () => {
-            $("sidebar")
-              .classList.toggle("open");
-          }
+        console.warn(
+            "Notification check failed:",
+            error
         );
+    }
+}
 
-      document
-        .querySelectorAll(
-          ".sidebar a"
-        )
-        .forEach(link => {
 
-          link.addEventListener(
+/* ============================================================
+   MOBILE NAVIGATION
+============================================================ */
+
+function setupMobileNavigation(){
+
+    const menu =
+        $("mobileMenu");
+
+
+    if(menu){
+
+        menu.addEventListener(
             "click",
             () => {
-              $("sidebar")
-                .classList
-                .remove("open");
-            }
-          );
 
-        });
+                $("sidebar")
+                    .classList
+                    .toggle("open");
+            }
+        );
     }
 
-    /*
-      ------------------------------------------------------------
-      EVENT LISTENERS
-      ------------------------------------------------------------
-    */
 
-    function setupEvents() {
+    document
+        .querySelectorAll(
+            ".sidebar a"
+        )
+        .forEach(
+            link => {
 
-      $("searchInput")
-        .addEventListener(
-          "input",
-          applyFilters
-        );
+                link.addEventListener(
+                    "click",
+                    () => {
 
-      $("statusFilter")
-        .addEventListener(
-          "change",
-          applyFilters
-        );
-
-      $("periodFilter")
-        .addEventListener(
-          "change",
-          applyFilters
-        );
-
-      $("currencyFilter")
-        .addEventListener(
-          "change",
-          applyFilters
-        );
-
-      $("clearFiltersBtn")
-        .addEventListener(
-          "click",
-          () => {
-
-            $("searchInput").value = "";
-            $("statusFilter").value = "";
-            $("periodFilter").value = "";
-            $("currencyFilter").value = "";
-
-            applyFilters();
-          }
-        );
-
-      $("refreshBtn")
-        .addEventListener(
-          "click",
-          async () => {
-
-            try {
-              await loadPayments();
-
-              showToast(
-                "M-Pesa data refreshed.",
-                "success"
-              );
-
-            } catch (_) {
-
-              showToast(
-                "Unable to refresh M-Pesa data.",
-                "error"
-              );
-
+                        $("sidebar")
+                            .classList
+                            .remove(
+                                "open"
+                            );
+                    }
+                );
             }
-          }
         );
+}
 
-      $("refreshDataBtn")
-        .addEventListener(
-          "click",
-          async () => {
 
-            try {
-              await loadPayments();
+/* ============================================================
+   AUTH LISTENER
+============================================================ */
 
-              showToast(
-                "M-Pesa data refreshed.",
-                "success"
-              );
+function setupAuthListener(){
 
-            } catch (_) {
+    supabaseClient
+        .auth
+        .onAuthStateChange(
+            (
+                event,
+                session
+            ) => {
 
-              showToast(
-                "Unable to refresh M-Pesa data.",
-                "error"
-              );
+                if(
+                    event ===
+                    "SIGNED_OUT" ||
+                    !session
+                ){
 
+                    redirectLogin(
+                        "session_expired"
+                    );
+                }
             }
-          }
+        );
+}
+
+
+/* ============================================================
+   EVENTS
+============================================================ */
+
+function setupEvents(){
+
+    $("searchInput")
+        ?.addEventListener(
+            "input",
+            applyFilters
         );
 
-      $("exportBtn")
-        .addEventListener(
-          "click",
-          exportCsv
+
+    $("statusFilter")
+        ?.addEventListener(
+            "change",
+            applyFilters
         );
 
-      $("prevPageBtn")
-        .addEventListener(
-          "click",
-          () => {
 
-            if (currentPage > 1) {
-              currentPage--;
+    $("periodFilter")
+        ?.addEventListener(
+            "change",
+            applyFilters
+        );
 
-              renderPayments();
-              renderPagination();
+
+    $("currencyFilter")
+        ?.addEventListener(
+            "change",
+            applyFilters
+        );
+
+
+    $("clearFiltersBtn")
+        ?.addEventListener(
+            "click",
+            () => {
+
+                $("searchInput").value =
+                    "";
+
+                $("statusFilter").value =
+                    "";
+
+                $("periodFilter").value =
+                    "";
+
+                $("currencyFilter").value =
+                    "";
+
+                applyFilters();
             }
-
-          }
         );
 
-      $("nextPageBtn")
-        .addEventListener(
-          "click",
-          () => {
 
-            const pages =
-              Math.ceil(
-                filteredPayments.length /
-                PAGE_SIZE
-              );
+    const refresh =
+        async () => {
 
-            if (currentPage < pages) {
-              currentPage++;
+            try{
 
-              renderPayments();
-              renderPagination();
+                await loadPayments();
+
+                showToast(
+                    "M-Pesa data refreshed.",
+                    "success"
+                );
+
+            }catch(error){
+
+                console.error(
+                    error
+                );
+
+                showToast(
+                    "Unable to refresh M-Pesa data.",
+                    "error"
+                );
             }
+        };
 
-          }
+
+    $("refreshBtn")
+        ?.addEventListener(
+            "click",
+            refresh
         );
 
-      $("closeDrawerBtn")
-        .addEventListener(
-          "click",
-          closeDrawer
+
+    $("refreshDataBtn")
+        ?.addEventListener(
+            "click",
+            refresh
         );
 
-      $("drawerBackdrop")
-        .addEventListener(
-          "click",
-          event => {
 
-            if (
-              event.target ===
-              $("drawerBackdrop")
-            ) {
-              closeDrawer();
+    $("exportBtn")
+        ?.addEventListener(
+            "click",
+            exportCsv
+        );
+
+
+    $("prevPageBtn")
+        ?.addEventListener(
+            "click",
+            () => {
+
+                if(
+                    currentPage > 1
+                ){
+
+                    currentPage--;
+
+                    renderPayments();
+
+                    renderPagination();
+                }
             }
-
-          }
         );
 
-      document.addEventListener(
+
+    $("nextPageBtn")
+        ?.addEventListener(
+            "click",
+            () => {
+
+                const pages =
+                    Math.ceil(
+                        filteredPayments.length /
+                        PAGE_SIZE
+                    );
+
+
+                if(
+                    currentPage < pages
+                ){
+
+                    currentPage++;
+
+                    renderPayments();
+
+                    renderPagination();
+                }
+            }
+        );
+
+
+    $("closeDrawerBtn")
+        ?.addEventListener(
+            "click",
+            closeDrawer
+        );
+
+
+    $("drawerBackdrop")
+        ?.addEventListener(
+            "click",
+            event => {
+
+                if(
+                    event.target ===
+                    $("drawerBackdrop")
+                ){
+
+                    closeDrawer();
+                }
+            }
+        );
+
+
+    document.addEventListener(
         "keydown",
         event => {
 
-          if (
-            event.key === "Escape"
-          ) {
-            closeDrawer();
-          }
+            if(
+                event.key ===
+                "Escape"
+            ){
 
+                closeDrawer();
+            }
         }
-      );
+    );
 
-      $("signOutBtn")
-        .addEventListener(
-          "click",
-          safeSignOut
+
+    $("signOutBtn")
+        ?.addEventListener(
+            "click",
+            safeSignOut
         );
 
-      $("notificationBtn")
-        .addEventListener(
-          () => {}
+
+    $("notificationBtn")
+        ?.addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    "./notifications.html";
+            }
         );
 
-      setupMobileNavigation();
-    }
 
-    /*
-      ------------------------------------------------------------
-      AUTH STATE LISTENER
-      ------------------------------------------------------------
-    */
+    setupMobileNavigation();
+}
 
-    function setupAuthListener() {
 
-      supabaseClient.auth.onAuthStateChange(
-        (event, session) => {
+/* ============================================================
+   BOOT
+============================================================ */
 
-          if (
-            event === "SIGNED_OUT" ||
-            !session
-          ) {
-            window.location.replace(
-              "../auth/login.html?error=session_expired"
-            );
-          }
+async function boot(){
 
-        }
-      );
-    }
+    try{
 
-    /*
-      ------------------------------------------------------------
-      BOOT
-      ------------------------------------------------------------
-    */
+        initializeSupabase();
 
-    async function boot() {
-
-      try {
-
-        await initializeSupabase();
 
         const allowed =
-          await verifyAdmin();
+            await verifyAdmin();
 
-        if (!allowed) {
-          return;
+
+        if(!allowed){
+            return;
         }
 
+
         setupAuthListener();
+
         setupEvents();
 
+
         await loadPayments();
+
         await checkNotifications();
 
+
         $("securityGate")
-          .style.display = "none";
+            .style
+            .display =
+            "none";
+
 
         $("app")
-          .style.display = "block";
+            .style
+            .display =
+            "block";
 
-      } catch (error) {
+
+    }catch(error){
 
         console.error(
-          "K-Tickets M-Pesa admin error:",
-          error
+            "K-Tickets M-Pesa admin initialization failed:",
+            error
         );
 
-        /*
-          Do not reveal database errors, credentials,
-          stack traces or internal implementation details
-          to the user.
-        */
 
-        $("securityGate").innerHTML = `
-          <div class="security-card">
+        const gate =
+            $("securityGate");
 
-            <div
-              class="security-mark"
-              style="background:#6C151E;"
-            >
-              !
-            </div>
 
-            <h2>
-              Admin Access Unavailable
-            </h2>
+        if(gate){
 
-            <p>
-              The administrator area could not be securely initialized.
-              Please sign in again or contact the platform administrator.
-            </p>
+            gate.innerHTML = `
 
-            <button
-              class="btn primary"
-              style="margin-top:20px;"
-              onclick="window.location.href='../auth/login.html'"
-            >
-              Return to login
-            </button>
+                <div class="security-card">
 
-          </div>
-        `;
+                    <div
+                        class="security-mark"
+                        style="background:#6C151E;"
+                    >
+                        !
+                    </div>
 
-      }
+                    <h2>
+                        Admin Access Unavailable
+                    </h2>
 
+                    <p>
+                        The administrator area could not
+                        be securely initialized. Please
+                        sign in again or contact the
+                        platform administrator.
+                    </p>
+
+                    <button
+                        class="btn primary"
+                        style="margin-top:20px;"
+                        onclick="window.location.replace('/login.html')"
+                    >
+                        Return to Login
+                    </button>
+
+                </div>
+            `;
+        }
     }
+}
 
-    boot();
-  </script>
 
-</body>
-</html>
+/* ============================================================
+   START
+============================================================ */
+
+boot();
+
+</script>
