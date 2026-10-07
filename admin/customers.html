@@ -1,2682 +1,3134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
-  >
-
-  <title>K-Tickets — Customers</title>
-
-  <!-- Search engine protection -->
-  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
-  <meta name="referrer" content="same-origin">
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root {
-      --bordo: #6C151E;
-      --green: #0F3D3A;
-      --cream: #F5DABF;
-
-      --bg: #f7f7f5;
-      --surface: #ffffff;
-      --surface-2: #faf8f5;
-      --text: #17201f;
-      --muted: #68706e;
-      --border: #e7e2dc;
-
-      --success: #176b4d;
-      --warning: #9b6a16;
-      --danger: #a72c36;
-
-      --shadow: 0 12px 35px rgba(15, 61, 58, 0.08);
-      --radius: 18px;
-      --sidebar-width: 255px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-      overflow-x: hidden;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* =========================================================
-       SECURITY GATE
-    ========================================================= */
-
-    #securityGate {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--green);
-      color: white;
-    }
-
-    #securityGate.hidden {
-      display: none;
-    }
-
-    .security-box {
-      width: min(420px, calc(100% - 40px));
-      text-align: center;
-      padding: 35px 25px;
-    }
-
-    .security-logo {
-      width: 62px;
-      height: 62px;
-      margin: 0 auto 18px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      background: var(--cream);
-      color: var(--bordo);
-      font-weight: 900;
-      letter-spacing: -1px;
-      font-size: 19px;
-    }
-
-    .security-box h2 {
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
-
-    .security-box p {
-      color: rgba(255,255,255,.7);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .security-spinner {
-      width: 28px;
-      height: 28px;
-      border: 3px solid rgba(255,255,255,.2);
-      border-top-color: var(--cream);
-      border-radius: 50%;
-      margin: 22px auto 0;
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* =========================================================
-       APP
-    ========================================================= */
-
-    .app {
-      min-height: 100vh;
-      display: flex;
-    }
-
-    /* =========================================================
-       SIDEBAR
-    ========================================================= */
-
-    .sidebar {
-      width: var(--sidebar-width);
-      min-width: var(--sidebar-width);
-      height: 100vh;
-      position: fixed;
-      left: 0;
-      top: 0;
-      z-index: 1000;
-      background: var(--green);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid rgba(255,255,255,.06);
-      transition: transform .25s ease;
-    }
-
-    .brand {
-      height: 82px;
-      padding: 20px 22px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-
-    .brand-mark {
-      width: 42px;
-      height: 42px;
-      flex: 0 0 42px;
-      border-radius: 13px;
-      background: var(--cream);
-      color: var(--bordo);
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      font-size: 13px;
-      letter-spacing: -.5px;
-    }
-
-    .brand-text strong {
-      display: block;
-      font-size: 15px;
-      letter-spacing: .5px;
-    }
-
-    .brand-text span {
-      display: block;
-      margin-top: 2px;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: rgba(255,255,255,.55);
-    }
-
-    .nav {
-      padding: 18px 12px;
-      overflow-y: auto;
-      flex: 1;
-    }
-
-    .nav-section {
-      padding: 12px 11px 7px;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 1.7px;
-      color: rgba(255,255,255,.4);
-      font-weight: 800;
-    }
-
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-height: 43px;
-      padding: 10px 12px;
-      margin: 2px 0;
-      border-radius: 11px;
-      color: rgba(255,255,255,.72);
-      font-size: 13px;
-      transition: .18s ease;
-    }
-
-    .nav-link:hover {
-      background: rgba(255,255,255,.07);
-      color: white;
-    }
-
-    .nav-link.active {
-      background: rgba(245,218,191,.12);
-      color: var(--cream);
-    }
-
-    .nav-icon {
-      width: 20px;
-      text-align: center;
-      font-size: 15px;
-      opacity: .9;
-    }
-
-    .sidebar-footer {
-      padding: 14px;
-      border-top: 1px solid rgba(255,255,255,.08);
-    }
-
-    .secure-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px;
-      color: rgba(255,255,255,.48);
-      font-size: 10px;
-    }
-
-    .secure-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #6fca9e;
-      box-shadow: 0 0 0 4px rgba(111,202,158,.1);
-    }
-
-    /* =========================================================
-       MAIN
-    ========================================================= */
-
-    .main {
-      width: calc(100% - var(--sidebar-width));
-      margin-left: var(--sidebar-width);
-      min-height: 100vh;
-    }
-
-    .topbar {
-      height: 82px;
-      background: rgba(255,255,255,.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 30px;
-      position: sticky;
-      top: 0;
-      z-index: 900;
-    }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .mobile-menu {
-      display: none;
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--border);
-      background: white;
-      border-radius: 11px;
-      color: var(--green);
-    }
-
-    .page-heading h1 {
-      font-size: 22px;
-      letter-spacing: -.5px;
-    }
-
-    .page-heading p {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .notification {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--border);
-      background: white;
-      border-radius: 11px;
-      color: var(--green);
-      display: grid;
-      place-items: center;
-    }
-
-    .notification-badge {
-      position: absolute;
-      top: 7px;
-      right: 7px;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--bordo);
-      display: none;
-    }
-
-    .admin-profile {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .admin-avatar {
-      width: 39px;
-      height: 39px;
-      border-radius: 50%;
-      background: var(--cream);
-      color: var(--bordo);
-      display: grid;
-      place-items: center;
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .admin-profile-text strong {
-      display: block;
-      font-size: 12px;
-    }
-
-    .admin-profile-text span {
-      display: block;
-      margin-top: 2px;
-      font-size: 10px;
-      color: var(--muted);
-    }
-
-    /* =========================================================
-       CONTENT
-    ========================================================= */
-
-    .content {
-      padding: 28px 30px 45px;
-      max-width: 1700px;
-      margin: 0 auto;
-    }
-
-    .welcome-row {
-      margin-bottom: 24px;
-    }
-
-    .welcome-row h2 {
-      font-size: 26px;
-      letter-spacing: -.8px;
-    }
-
-    .welcome-row p {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    /* =========================================================
-       STAT CARDS
-    ========================================================= */
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-      margin-bottom: 22px;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: var(--shadow);
-      min-width: 0;
-    }
-
-    .stat-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 800;
-    }
-
-    .stat-icon {
-      width: 35px;
-      height: 35px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      background: rgba(15,61,58,.07);
-      color: var(--green);
-      font-size: 14px;
-    }
-
-    .stat-value {
-      margin-top: 12px;
-      font-size: 27px;
-      font-weight: 850;
-      letter-spacing: -.8px;
-    }
-
-    /* =========================================================
-       TOOLBAR
-    ========================================================= */
-
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .toolbar {
-      padding: 18px;
-      display: grid;
-      grid-template-columns: minmax(220px, 1fr) 180px auto;
-      gap: 10px;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface-2);
-    }
-
-    .search-wrap {
-      position: relative;
-    }
-
-    .search-wrap span {
-      position: absolute;
-      left: 13px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .input,
-    .select {
-      width: 100%;
-      height: 43px;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: white;
-      color: var(--text);
-      outline: none;
-      padding: 0 13px;
-      font-size: 12px;
-    }
-
-    .search-input {
-      padding-left: 36px;
-    }
-
-    .input:focus,
-    .select:focus {
-      border-color: rgba(15,61,58,.45);
-      box-shadow: 0 0 0 3px rgba(15,61,58,.07);
-    }
-
-    .btn {
-      min-height: 43px;
-      border: 0;
-      border-radius: 11px;
-      padding: 0 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 800;
-      transition: .18s ease;
-    }
-
-    .btn-primary {
-      background: var(--green);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      background: #0b312f;
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--green);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--surface-2);
-    }
-
-    /* =========================================================
-       TABLE
-    ========================================================= */
-
-    .table-wrap {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 850px;
-    }
-
-    th {
-      padding: 13px 18px;
-      text-align: left;
-      background: #fcfbf9;
-      border-bottom: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 1.1px;
-      font-weight: 850;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 15px 18px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle;
-      font-size: 12px;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: 0;
-    }
-
-    tbody tr:hover {
-      background: #fdfcfb;
-    }
-
-    .customer-cell {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      min-width: 180px;
-    }
-
-    .customer-avatar {
-      width: 37px;
-      height: 37px;
-      min-width: 37px;
-      border-radius: 11px;
-      background: var(--cream);
-      color: var(--bordo);
-      display: grid;
-      place-items: center;
-      font-size: 11px;
-      font-weight: 900;
-    }
-
-    .customer-name {
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    .customer-id {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 9px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    }
-
-    .masked-phone {
-      color: var(--muted);
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 11px;
-    }
-
-    .count-badge {
-      display: inline-flex;
-      min-width: 27px;
-      justify-content: center;
-      padding: 5px 8px;
-      border-radius: 8px;
-      background: rgba(15,61,58,.07);
-      color: var(--green);
-      font-weight: 850;
-      font-size: 10px;
-    }
-
-    .action-btn {
-      width: 33px;
-      height: 33px;
-      border: 1px solid var(--border);
-      background: white;
-      color: var(--green);
-      border-radius: 9px;
-      display: inline-grid;
-      place-items: center;
-    }
-
-    .action-btn:hover {
-      background: var(--surface-2);
-    }
-
-    /* =========================================================
-       MOBILE CARDS
-    ========================================================= */
-
-    .mobile-list {
-      display: none;
-    }
-
-    .customer-card {
-      padding: 17px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .customer-card:last-child {
-      border-bottom: 0;
-    }
-
-    .customer-card-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .customer-card-info {
-      display: flex;
-      gap: 11px;
-      min-width: 0;
-    }
-
-    .customer-card-name {
-      font-weight: 850;
-      font-size: 13px;
-      overflow-wrap: anywhere;
-    }
-
-    .customer-card-id {
-      margin-top: 3px;
-      font-size: 9px;
-      color: var(--muted);
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      overflow-wrap: anywhere;
-    }
-
-    .customer-card-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 9px;
-      margin-top: 15px;
-    }
-
-    .mini-meta {
-      padding: 10px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-    }
-
-    .mini-meta span {
-      display: block;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      color: var(--muted);
-      font-weight: 800;
-    }
-
-    .mini-meta strong {
-      display: block;
-      margin-top: 5px;
-      font-size: 11px;
-    }
-
-    /* =========================================================
-       EMPTY / LOADING / ERROR
-    ========================================================= */
-
-    .state {
-      padding: 55px 20px;
-      text-align: center;
-    }
-
-    .state-icon {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 14px;
-      border-radius: 15px;
-      display: grid;
-      place-items: center;
-      background: rgba(15,61,58,.07);
-      color: var(--green);
-      font-size: 17px;
-    }
-
-    .state h3 {
-      font-size: 15px;
-      margin-bottom: 5px;
-    }
-
-    .state p {
-      max-width: 430px;
-      margin: auto;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .error-state .state-icon {
-      background: rgba(167,44,54,.08);
-      color: var(--danger);
-    }
-
-    .loading-row {
-      padding: 45px 20px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .loader {
-      width: 22px;
-      height: 22px;
-      margin: 0 auto 11px;
-      border: 2px solid var(--border);
-      border-top-color: var(--green);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    /* =========================================================
-       DRAWER
-    ========================================================= */
-
-    .drawer-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 3000;
-      background: rgba(10,28,27,.48);
-      backdrop-filter: blur(3px);
-      display: none;
-    }
-
-    .drawer-backdrop.open {
-      display: block;
-    }
-
-    .drawer {
-      position: absolute;
-      right: 0;
-      top: 0;
-      height: 100%;
-      width: min(470px, 100%);
-      background: white;
-      box-shadow: -15px 0 50px rgba(0,0,0,.14);
-      display: flex;
-      flex-direction: column;
-      animation: slideIn .22s ease;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(100%);
-      }
-      to {
-        transform: translateX(0);
-      }
-    }
-
-    .drawer-header {
-      min-height: 75px;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .drawer-title {
-      font-size: 16px;
-      font-weight: 850;
-    }
-
-    .drawer-close {
-      width: 35px;
-      height: 35px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: white;
-      color: var(--green);
-    }
-
-    .drawer-body {
-      padding: 22px;
-      overflow-y: auto;
-      flex: 1;
-    }
-
-    .detail-hero {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .detail-avatar {
-      width: 54px;
-      height: 54px;
-      border-radius: 15px;
-      background: var(--cream);
-      color: var(--bordo);
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-    }
-
-    .detail-name {
-      font-size: 16px;
-      font-weight: 850;
-      overflow-wrap: anywhere;
-    }
-
-    .detail-role {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .detail-section {
-      padding: 19px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .detail-section:last-child {
-      border-bottom: 0;
-    }
-
-    .detail-section-title {
-      margin-bottom: 12px;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--muted);
-      font-weight: 850;
-    }
-
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 8px 0;
-      font-size: 12px;
-    }
-
-    .detail-row span {
-      color: var(--muted);
-    }
-
-    .detail-row strong {
-      text-align: right;
-      max-width: 65%;
-      overflow-wrap: anywhere;
-    }
-
-    .privacy-note {
-      padding: 12px;
-      background: rgba(108,21,30,.05);
-      border: 1px solid rgba(108,21,30,.1);
-      color: #703038;
-      border-radius: 11px;
-      font-size: 10px;
-      line-height: 1.6;
-    }
-
-    /* =========================================================
-       TOAST
-    ========================================================= */
-
-    .toast-container {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      z-index: 6000;
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      width: min(360px, calc(100% - 30px));
-    }
-
-    .toast {
-      background: var(--green);
-      color: white;
-      padding: 13px 15px;
-      border-radius: 12px;
-      box-shadow: 0 15px 35px rgba(0,0,0,.18);
-      font-size: 11px;
-      line-height: 1.5;
-      animation: toastIn .2s ease;
-    }
-
-    .toast.error {
-      background: var(--bordo);
-    }
-
-    @keyframes toastIn {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* =========================================================
-       RESPONSIVE
-    ========================================================= */
-
-    @media (max-width: 1100px) {
-      :root {
-        --sidebar-width: 225px;
-      }
-
-      .content {
-        padding: 24px 20px 40px;
-      }
-
-      .topbar {
-        padding: 0 20px;
-      }
-
-      .toolbar {
-        grid-template-columns: 1fr 170px auto;
-      }
-    }
-
-    @media (max-width: 850px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-        box-shadow: 15px 0 45px rgba(0,0,0,.18);
-      }
-
-      .main {
-        width: 100%;
-        margin-left: 0;
-      }
-
-      .mobile-menu {
-        display: grid;
-        place-items: center;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 680px) {
-      .topbar {
-        height: 70px;
-        padding: 0 14px;
-      }
-
-      .page-heading h1 {
-        font-size: 18px;
-      }
-
-      .page-heading p {
-        display: none;
-      }
-
-      .topbar-right {
-        gap: 7px;
-      }
-
-      .admin-profile-text {
-        display: none;
-      }
-
-      .content {
-        padding: 20px 13px 35px;
-      }
-
-      .welcome-row h2 {
-        font-size: 22px;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .toolbar {
-        grid-template-columns: 1fr;
-      }
-
-      .table-wrap {
-        display: none;
-      }
-
-      .mobile-list {
-        display: block;
-      }
-
-      .panel {
-        border-radius: 15px;
-      }
-
-      .notification {
-        width: 37px;
-        height: 37px;
-      }
-
-      .admin-avatar {
-        width: 37px;
-        height: 37px;
-      }
-    }
-
-    @media (max-width: 390px) {
-      .customer-card-meta {
-        grid-template-columns: 1fr;
-      }
-
-      .welcome-row {
-        margin-bottom: 18px;
-      }
-
-      .stat-card {
-        padding: 16px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>K-Tickets — Customers</title>
+
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="referrer" content="same-origin">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bordo:#6C151E;
+            --green:#0F3D3A;
+            --cream:#F5DABF;
+
+            --bg:#f7f7f5;
+            --surface:#fff;
+            --surface-2:#faf8f5;
+            --text:#17201f;
+            --muted:#68706e;
+            --border:#e7e2dc;
+
+            --success:#176b4d;
+            --warning:#9b6a16;
+            --danger:#a72c36;
+
+            --shadow:0 12px 35px rgba(15,61,58,.08);
+            --radius:18px;
+            --sidebar-width:255px;
+        }
+
+        * {
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+        }
+
+        html {
+            scroll-behavior:smooth;
+        }
+
+        body {
+            min-height:100vh;
+            background:var(--bg);
+            color:var(--text);
+            font-family:Inter,ui-sans-serif,system-ui,-apple-system,
+                BlinkMacSystemFont,"Segoe UI",sans-serif;
+            overflow-x:hidden;
+        }
+
+        button,input,select {
+            font:inherit;
+        }
+
+        button {
+            cursor:pointer;
+        }
+
+        a {
+            color:inherit;
+            text-decoration:none;
+        }
+
+        /* SECURITY */
+
+        #securityGate {
+            position:fixed;
+            inset:0;
+            z-index:99999;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:var(--green);
+            color:#fff;
+        }
+
+        #securityGate.hidden {
+            display:none;
+        }
+
+        .security-box {
+            width:min(460px,calc(100% - 40px));
+            padding:35px 25px;
+            text-align:center;
+        }
+
+        .security-logo {
+            width:62px;
+            height:62px;
+            margin:0 auto 18px;
+            border-radius:18px;
+            display:grid;
+            place-items:center;
+            background:var(--cream);
+            color:var(--bordo);
+            font-weight:900;
+            font-size:19px;
+        }
+
+        .security-box h2 {
+            font-size:22px;
+            margin-bottom:8px;
+        }
+
+        .security-box p {
+            color:rgba(255,255,255,.7);
+            font-size:14px;
+            line-height:1.6;
+        }
+
+        .security-error {
+            display:none;
+            margin-top:22px;
+            padding:14px;
+            border-radius:12px;
+            background:rgba(108,21,30,.22);
+            border:1px solid rgba(245,218,191,.18);
+            color:#fff;
+            text-align:left;
+            font-size:12px;
+            line-height:1.55;
+        }
+
+        .security-error strong {
+            display:block;
+            margin-bottom:5px;
+        }
+
+        .security-login {
+            display:none;
+            margin-top:14px;
+            width:100%;
+            height:43px;
+            border:0;
+            border-radius:11px;
+            background:var(--cream);
+            color:var(--bordo);
+            font-weight:850;
+        }
+
+        .security-spinner {
+            width:28px;
+            height:28px;
+            border:3px solid rgba(255,255,255,.2);
+            border-top-color:var(--cream);
+            border-radius:50%;
+            margin:22px auto 0;
+            animation:spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform:rotate(360deg); }
+        }
+
+        /* APP */
+
+        .app {
+            min-height:100vh;
+            display:flex;
+        }
+
+        .sidebar {
+            width:var(--sidebar-width);
+            min-width:var(--sidebar-width);
+            height:100vh;
+            position:fixed;
+            left:0;
+            top:0;
+            z-index:1000;
+            background:var(--green);
+            color:#fff;
+            display:flex;
+            flex-direction:column;
+            border-right:1px solid rgba(255,255,255,.06);
+            transition:transform .25s ease;
+        }
+
+        .brand {
+            height:82px;
+            padding:20px 22px;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            border-bottom:1px solid rgba(255,255,255,.08);
+        }
+
+        .brand-mark {
+            width:42px;
+            height:42px;
+            flex:0 0 42px;
+            border-radius:13px;
+            background:var(--cream);
+            color:var(--bordo);
+            display:grid;
+            place-items:center;
+            font-weight:900;
+            font-size:13px;
+        }
+
+        .brand-text strong {
+            display:block;
+            font-size:15px;
+            letter-spacing:.5px;
+        }
+
+        .brand-text span {
+            display:block;
+            margin-top:2px;
+            font-size:10px;
+            text-transform:uppercase;
+            letter-spacing:1.5px;
+            color:rgba(255,255,255,.55);
+        }
+
+        .nav {
+            padding:18px 12px;
+            overflow-y:auto;
+            flex:1;
+        }
+
+        .nav-section {
+            padding:12px 11px 7px;
+            font-size:9px;
+            text-transform:uppercase;
+            letter-spacing:1.7px;
+            color:rgba(255,255,255,.4);
+            font-weight:800;
+        }
+
+        .nav-link {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            min-height:43px;
+            padding:10px 12px;
+            margin:2px 0;
+            border-radius:11px;
+            color:rgba(255,255,255,.72);
+            font-size:13px;
+            transition:.18s ease;
+        }
+
+        .nav-link:hover {
+            background:rgba(255,255,255,.07);
+            color:#fff;
+        }
+
+        .nav-link.active {
+            background:rgba(245,218,191,.12);
+            color:var(--cream);
+        }
+
+        .nav-icon {
+            width:20px;
+            text-align:center;
+            font-size:15px;
+        }
+
+        .sidebar-footer {
+            padding:14px;
+            border-top:1px solid rgba(255,255,255,.08);
+        }
+
+        .secure-label {
+            display:flex;
+            align-items:center;
+            gap:8px;
+            padding:10px;
+            color:rgba(255,255,255,.48);
+            font-size:10px;
+        }
+
+        .secure-dot {
+            width:7px;
+            height:7px;
+            border-radius:50%;
+            background:#6fca9e;
+            box-shadow:0 0 0 4px rgba(111,202,158,.1);
+        }
+
+        /* MAIN */
+
+        .main {
+            width:calc(100% - var(--sidebar-width));
+            margin-left:var(--sidebar-width);
+            min-height:100vh;
+        }
+
+        .topbar {
+            height:82px;
+            background:rgba(255,255,255,.92);
+            backdrop-filter:blur(14px);
+            border-bottom:1px solid var(--border);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 30px;
+            position:sticky;
+            top:0;
+            z-index:900;
+        }
+
+        .topbar-left,
+        .topbar-right {
+            display:flex;
+            align-items:center;
+        }
+
+        .topbar-left {
+            gap:14px;
+        }
+
+        .topbar-right {
+            gap:15px;
+        }
+
+        .mobile-menu {
+            display:none;
+            width:40px;
+            height:40px;
+            border:1px solid var(--border);
+            background:#fff;
+            border-radius:11px;
+            color:var(--green);
+        }
+
+        .page-heading h1 {
+            font-size:22px;
+            letter-spacing:-.5px;
+        }
+
+        .page-heading p {
+            margin-top:3px;
+            color:var(--muted);
+            font-size:12px;
+        }
+
+        .notification {
+            position:relative;
+            width:40px;
+            height:40px;
+            border:1px solid var(--border);
+            background:#fff;
+            border-radius:11px;
+            color:var(--green);
+            display:grid;
+            place-items:center;
+        }
+
+        .notification-badge {
+            position:absolute;
+            top:7px;
+            right:7px;
+            width:7px;
+            height:7px;
+            border-radius:50%;
+            background:var(--bordo);
+            display:none;
+        }
+
+        .admin-profile {
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .admin-avatar {
+            width:39px;
+            height:39px;
+            border-radius:50%;
+            background:var(--cream);
+            color:var(--bordo);
+            display:grid;
+            place-items:center;
+            font-size:12px;
+            font-weight:900;
+        }
+
+        .admin-profile-text strong {
+            display:block;
+            font-size:12px;
+        }
+
+        .admin-profile-text span {
+            display:block;
+            margin-top:2px;
+            font-size:10px;
+            color:var(--muted);
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding:28px 30px 45px;
+            max-width:1700px;
+            margin:0 auto;
+        }
+
+        .welcome-row {
+            margin-bottom:24px;
+        }
+
+        .welcome-row h2 {
+            font-size:26px;
+            letter-spacing:-.8px;
+        }
+
+        .welcome-row p {
+            margin-top:6px;
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        /* STATS */
+
+        .stats-grid {
+            display:grid;
+            grid-template-columns:repeat(3,minmax(0,1fr));
+            gap:16px;
+            margin-bottom:22px;
+        }
+
+        .stat-card {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            padding:20px;
+            box-shadow:var(--shadow);
+        }
+
+        .stat-top {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+        }
+
+        .stat-label {
+            color:var(--muted);
+            font-size:11px;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            font-weight:800;
+        }
+
+        .stat-icon {
+            width:35px;
+            height:35px;
+            border-radius:10px;
+            display:grid;
+            place-items:center;
+            background:rgba(15,61,58,.07);
+            color:var(--green);
+        }
+
+        .stat-value {
+            margin-top:12px;
+            font-size:27px;
+            font-weight:850;
+            letter-spacing:-.8px;
+        }
+
+        /* PANEL */
+
+        .panel {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            box-shadow:var(--shadow);
+            overflow:hidden;
+        }
+
+        .toolbar {
+            padding:18px;
+            display:grid;
+            grid-template-columns:minmax(220px,1fr) 180px auto;
+            gap:10px;
+            border-bottom:1px solid var(--border);
+            background:var(--surface-2);
+        }
+
+        .search-wrap {
+            position:relative;
+        }
+
+        .search-wrap span {
+            position:absolute;
+            left:13px;
+            top:50%;
+            transform:translateY(-50%);
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .input,
+        .select {
+            width:100%;
+            height:43px;
+            border:1px solid var(--border);
+            border-radius:11px;
+            background:#fff;
+            color:var(--text);
+            outline:none;
+            padding:0 13px;
+            font-size:12px;
+        }
+
+        .search-input {
+            padding-left:36px;
+        }
+
+        .input:focus,
+        .select:focus {
+            border-color:rgba(15,61,58,.45);
+            box-shadow:0 0 0 3px rgba(15,61,58,.07);
+        }
+
+        .btn {
+            min-height:43px;
+            border:0;
+            border-radius:11px;
+            padding:0 16px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            font-size:12px;
+            font-weight:800;
+        }
+
+        .btn-primary {
+            background:var(--green);
+            color:#fff;
+        }
+
+        .btn-secondary {
+            background:#fff;
+            color:var(--green);
+            border:1px solid var(--border);
+        }
+
+        .btn:disabled {
+            opacity:.55;
+            cursor:not-allowed;
+        }
+
+        /* TABLE */
+
+        .table-wrap {
+            width:100%;
+            overflow-x:auto;
+        }
+
+        table {
+            width:100%;
+            border-collapse:collapse;
+            min-width:850px;
+        }
+
+        th {
+            padding:13px 18px;
+            text-align:left;
+            background:#fcfbf9;
+            border-bottom:1px solid var(--border);
+            color:var(--muted);
+            font-size:9px;
+            text-transform:uppercase;
+            letter-spacing:1.1px;
+            font-weight:850;
+            white-space:nowrap;
+        }
+
+        td {
+            padding:15px 18px;
+            border-bottom:1px solid var(--border);
+            vertical-align:middle;
+            font-size:12px;
+        }
+
+        tbody tr:hover {
+            background:#fdfcfb;
+        }
+
+        .customer-cell {
+            display:flex;
+            align-items:center;
+            gap:11px;
+            min-width:180px;
+        }
+
+        .customer-avatar {
+            width:37px;
+            height:37px;
+            min-width:37px;
+            border-radius:11px;
+            background:var(--cream);
+            color:var(--bordo);
+            display:grid;
+            place-items:center;
+            font-size:11px;
+            font-weight:900;
+        }
+
+        .customer-name {
+            font-weight:800;
+        }
+
+        .customer-id {
+            margin-top:3px;
+            color:var(--muted);
+            font-size:9px;
+            font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+        }
+
+        .masked-phone {
+            color:var(--muted);
+            font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+            font-size:11px;
+        }
+
+        .count-badge {
+            display:inline-flex;
+            min-width:27px;
+            justify-content:center;
+            padding:5px 8px;
+            border-radius:8px;
+            background:rgba(15,61,58,.07);
+            color:var(--green);
+            font-weight:850;
+            font-size:10px;
+        }
+
+        .action-btn {
+            width:33px;
+            height:33px;
+            border:1px solid var(--border);
+            background:#fff;
+            color:var(--green);
+            border-radius:9px;
+            display:inline-grid;
+            place-items:center;
+        }
+
+        /* MOBILE */
+
+        .mobile-list {
+            display:none;
+        }
+
+        .customer-card {
+            padding:17px;
+            border-bottom:1px solid var(--border);
+        }
+
+        .customer-card:last-child {
+            border-bottom:0;
+        }
+
+        .customer-card-head {
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:10px;
+        }
+
+        .customer-card-info {
+            display:flex;
+            gap:11px;
+            min-width:0;
+        }
+
+        .customer-card-name {
+            font-weight:850;
+            font-size:13px;
+            overflow-wrap:anywhere;
+        }
+
+        .customer-card-id {
+            margin-top:3px;
+            font-size:9px;
+            color:var(--muted);
+            font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+            overflow-wrap:anywhere;
+        }
+
+        .customer-card-meta {
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:9px;
+            margin-top:15px;
+        }
+
+        .mini-meta {
+            padding:10px;
+            background:var(--surface-2);
+            border:1px solid var(--border);
+            border-radius:10px;
+        }
+
+        .mini-meta span {
+            display:block;
+            font-size:9px;
+            text-transform:uppercase;
+            letter-spacing:.8px;
+            color:var(--muted);
+            font-weight:800;
+        }
+
+        .mini-meta strong {
+            display:block;
+            margin-top:5px;
+            font-size:11px;
+        }
+
+        /* STATES */
+
+        .state {
+            padding:55px 20px;
+            text-align:center;
+        }
+
+        .state-icon {
+            width:48px;
+            height:48px;
+            margin:0 auto 14px;
+            border-radius:15px;
+            display:grid;
+            place-items:center;
+            background:rgba(15,61,58,.07);
+            color:var(--green);
+            font-size:17px;
+        }
+
+        .state h3 {
+            font-size:15px;
+            margin-bottom:5px;
+        }
+
+        .state p {
+            max-width:430px;
+            margin:auto;
+            color:var(--muted);
+            font-size:12px;
+            line-height:1.6;
+        }
+
+        .error-state .state-icon {
+            background:rgba(167,44,54,.08);
+            color:var(--danger);
+        }
+
+        .loading-row {
+            padding:45px 20px;
+            text-align:center;
+            color:var(--muted);
+            font-size:12px;
+        }
+
+        .loader {
+            width:22px;
+            height:22px;
+            margin:0 auto 11px;
+            border:2px solid var(--border);
+            border-top-color:var(--green);
+            border-radius:50%;
+            animation:spin .8s linear infinite;
+        }
+
+        /* DRAWER */
+
+        .drawer-backdrop {
+            position:fixed;
+            inset:0;
+            z-index:3000;
+            background:rgba(10,28,27,.48);
+            backdrop-filter:blur(3px);
+            display:none;
+        }
+
+        .drawer-backdrop.open {
+            display:block;
+        }
+
+        .drawer {
+            position:absolute;
+            right:0;
+            top:0;
+            height:100%;
+            width:min(470px,100%);
+            background:#fff;
+            box-shadow:-15px 0 50px rgba(0,0,0,.14);
+            display:flex;
+            flex-direction:column;
+            animation:slideIn .22s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform:translateX(100%); }
+            to { transform:translateX(0); }
+        }
+
+        .drawer-header {
+            min-height:75px;
+            padding:18px 20px;
+            border-bottom:1px solid var(--border);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+        }
+
+        .drawer-title {
+            font-size:16px;
+            font-weight:850;
+        }
+
+        .drawer-close {
+            width:35px;
+            height:35px;
+            border-radius:10px;
+            border:1px solid var(--border);
+            background:#fff;
+            color:var(--green);
+        }
+
+        .drawer-body {
+            padding:22px;
+            overflow-y:auto;
+            flex:1;
+        }
+
+        .detail-hero {
+            display:flex;
+            align-items:center;
+            gap:13px;
+            padding-bottom:20px;
+            border-bottom:1px solid var(--border);
+        }
+
+        .detail-avatar {
+            width:54px;
+            height:54px;
+            border-radius:15px;
+            background:var(--cream);
+            color:var(--bordo);
+            display:grid;
+            place-items:center;
+            font-weight:900;
+        }
+
+        .detail-name {
+            font-size:16px;
+            font-weight:850;
+            overflow-wrap:anywhere;
+        }
+
+        .detail-role {
+            margin-top:4px;
+            color:var(--muted);
+            font-size:11px;
+        }
+
+        .detail-section {
+            padding:19px 0;
+            border-bottom:1px solid var(--border);
+        }
+
+        .detail-section:last-child {
+            border-bottom:0;
+        }
+
+        .detail-section-title {
+            margin-bottom:12px;
+            font-size:10px;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            color:var(--muted);
+            font-weight:850;
+        }
+
+        .detail-row {
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+            padding:8px 0;
+            font-size:12px;
+        }
+
+        .detail-row span {
+            color:var(--muted);
+        }
+
+        .detail-row strong {
+            text-align:right;
+            max-width:65%;
+            overflow-wrap:anywhere;
+        }
+
+        .privacy-note {
+            padding:12px;
+            background:rgba(108,21,30,.05);
+            border:1px solid rgba(108,21,30,.1);
+            color:#703038;
+            border-radius:11px;
+            font-size:10px;
+            line-height:1.6;
+        }
+
+        /* TOAST */
+
+        .toast-container {
+            position:fixed;
+            right:20px;
+            bottom:20px;
+            z-index:6000;
+            display:flex;
+            flex-direction:column;
+            gap:9px;
+            width:min(360px,calc(100% - 30px));
+        }
+
+        .toast {
+            background:var(--green);
+            color:#fff;
+            padding:13px 15px;
+            border-radius:12px;
+            box-shadow:0 15px 35px rgba(0,0,0,.18);
+            font-size:11px;
+            line-height:1.5;
+        }
+
+        .toast.error {
+            background:var(--bordo);
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:1100px) {
+            :root {
+                --sidebar-width:225px;
+            }
+
+            .content {
+                padding:24px 20px 40px;
+            }
+
+            .topbar {
+                padding:0 20px;
+            }
+
+            .toolbar {
+                grid-template-columns:1fr 170px auto;
+            }
+        }
+
+        @media(max-width:850px) {
+            .sidebar {
+                transform:translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform:translateX(0);
+                box-shadow:15px 0 45px rgba(0,0,0,.18);
+            }
+
+            .main {
+                width:100%;
+                margin-left:0;
+            }
+
+            .mobile-menu {
+                display:grid;
+                place-items:center;
+            }
+
+            .stats-grid {
+                grid-template-columns:repeat(3,minmax(0,1fr));
+            }
+        }
+
+        @media(max-width:680px) {
+            .topbar {
+                height:70px;
+                padding:0 14px;
+            }
+
+            .page-heading h1 {
+                font-size:18px;
+            }
+
+            .page-heading p {
+                display:none;
+            }
+
+            .topbar-right {
+                gap:7px;
+            }
+
+            .admin-profile-text {
+                display:none;
+            }
+
+            .content {
+                padding:20px 13px 35px;
+            }
+
+            .welcome-row h2 {
+                font-size:22px;
+            }
+
+            .stats-grid {
+                grid-template-columns:1fr;
+            }
+
+            .toolbar {
+                grid-template-columns:1fr;
+            }
+
+            .table-wrap {
+                display:none;
+            }
+
+            .mobile-list {
+                display:block;
+            }
+
+            .panel {
+                border-radius:15px;
+            }
+
+            .notification {
+                width:37px;
+                height:37px;
+            }
+
+            .admin-avatar {
+                width:37px;
+                height:37px;
+            }
+        }
+
+        @media(max-width:390px) {
+            .customer-card-meta {
+                grid-template-columns:1fr;
+            }
+
+            .stat-card {
+                padding:16px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-  <!-- =======================================================
-       SECURITY GATE
-  ======================================================== -->
-
-  <div id="securityGate">
+<div id="securityGate">
     <div class="security-box">
-      <div class="security-logo">KT</div>
-      <h2>Securing Admin Console</h2>
-      <p>
-        Verifying your authenticated session and administrator permissions.
-      </p>
-      <div class="security-spinner"></div>
-    </div>
-  </div>
 
-  <!-- =======================================================
-       APP
-  ======================================================== -->
+        <div class="security-logo">KT</div>
 
-  <div class="app" id="app" style="display:none;">
+        <h2>Securing Admin Console</h2>
 
-    <!-- SIDEBAR -->
+        <p id="securityMessage">
+            Verifying your authenticated session and administrator permissions.
+        </p>
 
-    <aside class="sidebar" id="sidebar">
+        <div class="security-spinner" id="securitySpinner"></div>
 
-      <div class="brand">
-        <div class="brand-mark">KT</div>
-        <div class="brand-text">
-          <strong>K-Tickets</strong>
-          <span>Admin CMS</span>
-        </div>
-      </div>
-
-      <nav class="nav">
-
-        <div class="nav-section">Overview</div>
-
-        <a class="nav-link" href="./dashboard.html">
-          <span class="nav-icon">⌂</span>
-          <span>Dashboard</span>
-        </a>
-
-        <div class="nav-section">Management</div>
-
-        <a class="nav-link" href="./events.html">
-          <span class="nav-icon">◫</span>
-          <span>Events</span>
-        </a>
-
-        <a class="nav-link" href="./merchants.html">
-          <span class="nav-icon">♙</span>
-          <span>Merchants</span>
-        </a>
-
-        <a class="nav-link active" href="./customers.html">
-          <span class="nav-icon">♧</span>
-          <span>Customers</span>
-        </a>
-
-        <a class="nav-link" href="./orders.html">
-          <span class="nav-icon">▣</span>
-          <span>Orders</span>
-        </a>
-
-        <div class="nav-section">Finance</div>
-
-        <a class="nav-link" href="./payments.html">
-          <span class="nav-icon">¤</span>
-          <span>Payments</span>
-        </a>
-
-        <a class="nav-link" href="./wamd.html">
-          <span class="nav-icon">⇄</span>
-          <span>WAMD</span>
-        </a>
-
-        <a class="nav-link" href="./withdrawals.html">
-          <span class="nav-icon">↗</span>
-          <span>Withdrawals</span>
-        </a>
-
-        <a class="nav-link" href="./fees.html">
-          <span class="nav-icon">%</span>
-          <span>Fees</span>
-        </a>
-
-        <div class="nav-section">System</div>
-
-        <a class="nav-link" href="./reports.html">
-          <span class="nav-icon">▥</span>
-          <span>Reports</span>
-        </a>
-
-        <a class="nav-link" href="./settings.html">
-          <span class="nav-icon">⚙</span>
-          <span>Settings</span>
-        </a>
-
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="secure-label">
-          <span class="secure-dot"></span>
-          <span>Protected administrator session</span>
-        </div>
-      </div>
-
-    </aside>
-
-    <!-- MAIN -->
-
-    <main class="main">
-
-      <header class="topbar">
-
-        <div class="topbar-left">
-
-          <button
-            class="mobile-menu"
-            id="mobileMenu"
-            aria-label="Open navigation"
-          >
-            ☰
-          </button>
-
-          <div class="page-heading">
-            <h1>Customers</h1>
-            <p>Customer accounts and platform activity</p>
-          </div>
-
-        </div>
-
-        <div class="topbar-right">
-
-          <button
-            class="notification"
-            id="notificationButton"
-            aria-label="Notifications"
-          >
-            ♢
-            <span
-              class="notification-badge"
-              id="notificationBadge"
-            ></span>
-          </button>
-
-          <div class="admin-profile">
-
-            <div class="admin-avatar" id="adminAvatar">
-              A
-            </div>
-
-            <div class="admin-profile-text">
-              <strong id="adminName">Administrator</strong>
-              <span>Platform Admin</span>
-            </div>
-
-          </div>
-
-        </div>
-
-      </header>
-
-      <section class="content">
-
-        <div class="welcome-row">
-          <h2>Customer Directory</h2>
-          <p>
-            View platform customers while keeping unnecessary personal
-            information out of the CMS.
-          </p>
-        </div>
-
-        <!-- STATS -->
-
-        <div class="stats-grid">
-
-          <article class="stat-card">
-
-            <div class="stat-top">
-              <span class="stat-label">Total Customers</span>
-              <span class="stat-icon">♧</span>
-            </div>
-
-            <div class="stat-value" id="totalCustomers">
-              —
-            </div>
-
-          </article>
-
-          <article class="stat-card">
-
-            <div class="stat-top">
-              <span class="stat-label">With Orders</span>
-              <span class="stat-icon">▣</span>
-            </div>
-
-            <div class="stat-value" id="customersWithOrders">
-              —
-            </div>
-
-          </article>
-
-          <article class="stat-card">
-
-            <div class="stat-top">
-              <span class="stat-label">Tickets Issued</span>
-              <span class="stat-icon">✓</span>
-            </div>
-
-            <div class="stat-value" id="ticketsIssued">
-              —
-            </div>
-
-          </article>
-
-        </div>
-
-        <!-- CUSTOMER PANEL -->
-
-        <section class="panel">
-
-          <div class="toolbar">
-
-            <div class="search-wrap">
-
-              <span>⌕</span>
-
-              <input
-                class="input search-input"
-                id="searchInput"
-                type="search"
-                autocomplete="off"
-                placeholder="Search customer name, phone or ID..."
-              >
-
-            </div>
-
-            <select
-              class="select"
-              id="activityFilter"
-            >
-              <option value="all">All customers</option>
-              <option value="orders">With orders</option>
-              <option value="tickets">With tickets</option>
-              <option value="none">No activity</option>
-            </select>
-
-            <button
-              class="btn btn-secondary"
-              id="refreshButton"
-              type="button"
-            >
-              ↻ Refresh
-            </button>
-
-          </div>
-
-          <!-- DESKTOP -->
-
-          <div
-            class="table-wrap"
-            id="tableWrap"
-          >
-
-            <div class="loading-row" id="loadingState">
-              <div class="loader"></div>
-              Loading customer records...
-            </div>
-
-            <table id="customerTable" style="display:none;">
-
-              <thead>
-                <tr>
-                  <th>Customer</th>
-                  <th>Phone</th>
-                  <th>Orders</th>
-                  <th>Tickets</th>
-                  <th>Joined</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-
-              <tbody id="customerTableBody"></tbody>
-
-            </table>
-
-            <div
-              class="state"
-              id="emptyState"
-              style="display:none;"
-            >
-              <div class="state-icon">♧</div>
-              <h3>No customers found</h3>
-              <p>
-                No customer accounts match the current search or activity
-                filter.
-              </p>
-            </div>
-
-            <div
-              class="state error-state"
-              id="errorState"
-              style="display:none;"
-            >
-              <div class="state-icon">!</div>
-              <h3>Unable to load customers</h3>
-              <p id="errorMessage">
-                Customer records could not be loaded.
-              </p>
-            </div>
-
-          </div>
-
-          <!-- MOBILE -->
-
-          <div
-            class="mobile-list"
-            id="mobileList"
-          ></div>
-
-        </section>
-
-      </section>
-
-    </main>
-
-  </div>
-
-  <!-- =======================================================
-       CUSTOMER DRAWER
-  ======================================================== -->
-
-  <div
-    class="drawer-backdrop"
-    id="drawerBackdrop"
-  >
-
-    <aside
-      class="drawer"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="drawerTitle"
-    >
-
-      <div class="drawer-header">
-
-        <div
-          class="drawer-title"
-          id="drawerTitle"
-        >
-          Customer Details
+        <div class="security-error" id="securityError">
+            <strong>Authorization check failed</strong>
+            <span id="securityErrorText"></span>
         </div>
 
         <button
-          class="drawer-close"
-          id="drawerClose"
-          aria-label="Close customer details"
+            class="security-login"
+            id="securityLogin"
+            type="button"
         >
-          ×
+            Return to Login
         </button>
 
-      </div>
+    </div>
+</div>
 
-      <div
-        class="drawer-body"
-        id="drawerBody"
-      ></div>
+
+<div class="app" id="app" style="display:none;">
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-mark">KT</div>
+
+            <div class="brand-text">
+                <strong>K-Tickets</strong>
+                <span>Admin CMS</span>
+            </div>
+        </div>
+
+        <nav class="nav">
+
+            <div class="nav-section">Overview</div>
+
+            <a class="nav-link" href="/admin/dashboard.html">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <div class="nav-section">Management</div>
+
+            <a class="nav-link" href="/admin/events.html">
+                <span class="nav-icon">◫</span>
+                <span>Events</span>
+            </a>
+
+            <a class="nav-link" href="/admin/merchants.html">
+                <span class="nav-icon">♙</span>
+                <span>Merchants</span>
+            </a>
+
+            <a class="nav-link active" href="/admin/customers.html">
+                <span class="nav-icon">♧</span>
+                <span>Customers</span>
+            </a>
+
+            <a class="nav-link" href="/admin/orders.html">
+                <span class="nav-icon">▣</span>
+                <span>Orders</span>
+            </a>
+
+            <div class="nav-section">Finance</div>
+
+            <a class="nav-link" href="/admin/payments.html">
+                <span class="nav-icon">¤</span>
+                <span>Payments</span>
+            </a>
+
+            <a class="nav-link" href="/admin/wamd.html">
+                <span class="nav-icon">⇄</span>
+                <span>WAMD</span>
+            </a>
+
+            <a class="nav-link" href="/admin/withdrawals.html">
+                <span class="nav-icon">↗</span>
+                <span>Withdrawals</span>
+            </a>
+
+            <a class="nav-link" href="/admin/fees.html">
+                <span class="nav-icon">%</span>
+                <span>Fees</span>
+            </a>
+
+            <div class="nav-section">System</div>
+
+            <a class="nav-link" href="/admin/reports.html">
+                <span class="nav-icon">▥</span>
+                <span>Reports</span>
+            </a>
+
+            <a class="nav-link" href="/admin/settings.html">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+            <a class="nav-link" href="/admin/audit-logs.html">
+                <span class="nav-icon">◉</span>
+                <span>Audit Logs</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="secure-label">
+                <span class="secure-dot"></span>
+                <span>Protected administrator session</span>
+            </div>
+        </div>
 
     </aside>
 
-  </div>
 
-  <!-- TOAST -->
+    <main class="main">
 
-  <div
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    class="mobile-menu"
+                    id="mobileMenu"
+                    type="button"
+                    aria-label="Open navigation"
+                >
+                    ☰
+                </button>
+
+                <div class="page-heading">
+                    <h1>Customers</h1>
+                    <p>Customer accounts and platform activity</p>
+                </div>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <button
+                    class="notification"
+                    id="notificationButton"
+                    type="button"
+                    aria-label="Notifications"
+                >
+                    ♢
+                    <span
+                        class="notification-badge"
+                        id="notificationBadge"
+                    ></span>
+                </button>
+
+                <div class="admin-profile">
+
+                    <div class="admin-avatar" id="adminAvatar">
+                        A
+                    </div>
+
+                    <div class="admin-profile-text">
+                        <strong id="adminName">Administrator</strong>
+                        <span>Platform Admin</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+            <div class="welcome-row">
+
+                <h2>Customer Directory</h2>
+
+                <p>
+                    View platform customers while keeping unnecessary
+                    personal information out of the CMS.
+                </p>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            Total Customers
+                        </span>
+
+                        <span class="stat-icon">♧</span>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="totalCustomers"
+                    >
+                        —
+                    </div>
+                </article>
+
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            With Orders
+                        </span>
+
+                        <span class="stat-icon">▣</span>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="customersWithOrders"
+                    >
+                        —
+                    </div>
+                </article>
+
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            Tickets Issued
+                        </span>
+
+                        <span class="stat-icon">✓</span>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="ticketsIssued"
+                    >
+                        —
+                    </div>
+                </article>
+
+            </div>
+
+
+            <section class="panel">
+
+                <div class="toolbar">
+
+                    <div class="search-wrap">
+
+                        <span>⌕</span>
+
+                        <input
+                            class="input search-input"
+                            id="searchInput"
+                            type="search"
+                            autocomplete="off"
+                            placeholder="Search customer name, phone or ID..."
+                        >
+
+                    </div>
+
+
+                    <select
+                        class="select"
+                        id="activityFilter"
+                    >
+                        <option value="all">All customers</option>
+                        <option value="orders">With orders</option>
+                        <option value="tickets">With tickets</option>
+                        <option value="none">No activity</option>
+                    </select>
+
+
+                    <button
+                        class="btn btn-secondary"
+                        id="refreshButton"
+                        type="button"
+                    >
+                        ↻ Refresh
+                    </button>
+
+                </div>
+
+
+                <div class="table-wrap">
+
+                    <div
+                        class="loading-row"
+                        id="loadingState"
+                    >
+                        <div class="loader"></div>
+                        Loading customer records...
+                    </div>
+
+
+                    <table
+                        id="customerTable"
+                        style="display:none;"
+                    >
+
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Orders</th>
+                                <th>Tickets</th>
+                                <th>Joined</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="customerTableBody"></tbody>
+
+                    </table>
+
+
+                    <div
+                        class="state"
+                        id="emptyState"
+                        style="display:none;"
+                    >
+                        <div class="state-icon">♧</div>
+
+                        <h3>No customers found</h3>
+
+                        <p>
+                            No customer accounts match the current
+                            search or activity filter.
+                        </p>
+                    </div>
+
+
+                    <div
+                        class="state error-state"
+                        id="errorState"
+                        style="display:none;"
+                    >
+                        <div class="state-icon">!</div>
+
+                        <h3>Unable to load customers</h3>
+
+                        <p id="errorMessage">
+                            Customer records could not be loaded.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="mobile-list"
+                    id="mobileList"
+                ></div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<div
+    class="drawer-backdrop"
+    id="drawerBackdrop"
+>
+
+    <aside
+        class="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawerTitle"
+    >
+
+        <div class="drawer-header">
+
+            <div
+                class="drawer-title"
+                id="drawerTitle"
+            >
+                Customer Details
+            </div>
+
+            <button
+                class="drawer-close"
+                id="drawerClose"
+                type="button"
+                aria-label="Close customer details"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div
+            class="drawer-body"
+            id="drawerBody"
+        ></div>
+
+    </aside>
+
+</div>
+
+
+<div
     class="toast-container"
     id="toastContainer"
-  ></div>
+></div>
 
-  <script>
-    /* =========================================================
-       K-TICKETS ADMIN CUSTOMERS
-       SECURITY MODEL
-       ---------------------------------------------------------
-       - Browser uses only Supabase anon/public key.
-       - No service-role key.
-       - No passwords.
-       - No auth tokens are manually stored.
-       - Admin authorization is checked server-side through
-         Supabase Auth + profiles/RLS.
-       - UI hiding is NOT treated as authorization.
-       - Customer status/role changes are intentionally absent
-         until secure RPCs are implemented.
-    ========================================================= */
 
-    const SUPABASE_URL =
-      window.KTICKETS_SUPABASE_URL || "";
+<script>
+"use strict";
 
-    const SUPABASE_ANON_KEY =
-      window.KTICKETS_SUPABASE_ANON_KEY || "";
+/*
+|--------------------------------------------------------------------------
+| K-TICKETS ADMIN CUSTOMERS
+|--------------------------------------------------------------------------
+|
+| SECURITY
+|
+| - Browser only receives the Supabase publishable/anon key.
+| - No service-role key is exposed.
+| - No passwords or auth.users data are requested.
+| - Admin access is verified through Supabase Auth + profiles.
+| - is_active is required.
+| - RLS must independently enforce admin access.
+| - Customer records are read from the real database.
+| - No fake/demo customer records are generated.
+|
+|--------------------------------------------------------------------------
+*/
 
-    let supabaseClient = null;
 
-    let currentUser = null;
-    let currentAdminProfile = null;
+/* -----------------------------------------------------------------------
+   SUPABASE CONFIG
+------------------------------------------------------------------------ */
 
-    let customers = [];
-    let orders = [];
-    let tickets = [];
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-    let filteredCustomers = [];
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
-    /* =========================================================
-       DOM
-    ========================================================= */
 
-    const securityGate =
-      document.getElementById("securityGate");
+/* -----------------------------------------------------------------------
+   STATE
+------------------------------------------------------------------------ */
 
-    const app =
-      document.getElementById("app");
+let supabaseClient = null;
 
-    const sidebar =
-      document.getElementById("sidebar");
+let currentUser = null;
+let currentAdminProfile = null;
 
-    const mobileMenu =
-      document.getElementById("mobileMenu");
+let customers = [];
+let orders = [];
+let tickets = [];
 
-    const adminName =
-      document.getElementById("adminName");
+let filteredCustomers = [];
 
-    const adminAvatar =
-      document.getElementById("adminAvatar");
 
-    const notificationBadge =
-      document.getElementById("notificationBadge");
+/* -----------------------------------------------------------------------
+   DOM
+------------------------------------------------------------------------ */
 
-    const notificationButton =
-      document.getElementById("notificationButton");
+const securityGate =
+    document.getElementById("securityGate");
 
-    const searchInput =
-      document.getElementById("searchInput");
+const securityMessage =
+    document.getElementById("securityMessage");
 
-    const activityFilter =
-      document.getElementById("activityFilter");
+const securitySpinner =
+    document.getElementById("securitySpinner");
 
-    const refreshButton =
-      document.getElementById("refreshButton");
+const securityError =
+    document.getElementById("securityError");
 
-    const customerTable =
-      document.getElementById("customerTable");
+const securityErrorText =
+    document.getElementById("securityErrorText");
 
-    const customerTableBody =
-      document.getElementById("customerTableBody");
+const securityLogin =
+    document.getElementById("securityLogin");
 
-    const mobileList =
-      document.getElementById("mobileList");
+const app =
+    document.getElementById("app");
 
-    const loadingState =
-      document.getElementById("loadingState");
+const sidebar =
+    document.getElementById("sidebar");
 
-    const emptyState =
-      document.getElementById("emptyState");
+const mobileMenu =
+    document.getElementById("mobileMenu");
 
-    const errorState =
-      document.getElementById("errorState");
+const adminName =
+    document.getElementById("adminName");
 
-    const errorMessage =
-      document.getElementById("errorMessage");
+const adminAvatar =
+    document.getElementById("adminAvatar");
 
-    const totalCustomers =
-      document.getElementById("totalCustomers");
+const notificationButton =
+    document.getElementById("notificationButton");
 
-    const customersWithOrders =
-      document.getElementById("customersWithOrders");
+const searchInput =
+    document.getElementById("searchInput");
 
-    const ticketsIssued =
-      document.getElementById("ticketsIssued");
+const activityFilter =
+    document.getElementById("activityFilter");
 
-    const drawerBackdrop =
-      document.getElementById("drawerBackdrop");
+const refreshButton =
+    document.getElementById("refreshButton");
 
-    const drawerClose =
-      document.getElementById("drawerClose");
+const customerTable =
+    document.getElementById("customerTable");
 
-    const drawerBody =
-      document.getElementById("drawerBody");
+const customerTableBody =
+    document.getElementById("customerTableBody");
 
-    /* =========================================================
-       HELPERS
-    ========================================================= */
+const mobileList =
+    document.getElementById("mobileList");
 
-    function escapeHtml(value) {
-      return String(value ?? "")
+const loadingState =
+    document.getElementById("loadingState");
+
+const emptyState =
+    document.getElementById("emptyState");
+
+const errorState =
+    document.getElementById("errorState");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const totalCustomers =
+    document.getElementById("totalCustomers");
+
+const customersWithOrders =
+    document.getElementById("customersWithOrders");
+
+const ticketsIssued =
+    document.getElementById("ticketsIssued");
+
+const drawerBackdrop =
+    document.getElementById("drawerBackdrop");
+
+const drawerClose =
+    document.getElementById("drawerClose");
+
+const drawerBody =
+    document.getElementById("drawerBody");
+
+
+/* -----------------------------------------------------------------------
+   HELPERS
+------------------------------------------------------------------------ */
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+
+function getInitials(name) {
+
+    const clean =
+        String(name || "Customer")
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if (!clean.length) {
+        return "C";
     }
 
-    function getInitials(name) {
-      const clean =
-        String(name || "Customer")
-          .trim()
-          .split(/\s+/)
-          .filter(Boolean);
+    if (clean.length === 1) {
+        return clean[0]
+            .slice(0, 2)
+            .toUpperCase();
+    }
 
-      if (!clean.length) return "C";
-
-      if (clean.length === 1) {
-        return clean[0].slice(0, 2).toUpperCase();
-      }
-
-      return (
+    return (
         clean[0][0] +
         clean[clean.length - 1][0]
-      ).toUpperCase();
+    ).toUpperCase();
+}
+
+
+function maskPhone(phone) {
+
+    if (!phone) {
+        return "Not provided";
     }
 
-    function maskPhone(phone) {
-      if (!phone) return "Not provided";
+    const value =
+        String(phone).trim();
 
-      const value = String(phone).trim();
-
-      if (value.length <= 4) {
+    if (value.length <= 4) {
         return "••••";
-      }
-
-      return "••••••" + value.slice(-4);
     }
 
-    function formatDate(value) {
-      if (!value) return "—";
+    return "••••••" + value.slice(-4);
+}
 
-      const date = new Date(value);
 
-      if (Number.isNaN(date.getTime())) {
+function formatDate(value) {
+
+    if (!value) {
         return "—";
-      }
-
-      return date.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-      });
     }
 
-    function formatNumber(value) {
-      return Number(value || 0).toLocaleString();
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "—";
     }
 
-    function showToast(message, type = "normal") {
-      const container =
-        document.getElementById("toastContainer");
+    return date.toLocaleDateString(
+        undefined,
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }
+    );
+}
 
-      const toast =
+
+function formatDateTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "—";
+    }
+
+    return date.toLocaleString(
+        undefined,
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+}
+
+
+function formatNumber(value) {
+
+    return Number(value || 0)
+        .toLocaleString();
+}
+
+
+function showToast(
+    message,
+    type = "normal"
+) {
+
+    const container =
+        document.getElementById(
+            "toastContainer"
+        );
+
+    const toast =
         document.createElement("div");
 
-      toast.className =
+    toast.className =
         "toast" +
-        (type === "error" ? " error" : "");
+        (type === "error"
+            ? " error"
+            : "");
 
-      toast.textContent = message;
+    toast.textContent =
+        message;
 
-      container.appendChild(toast);
+    container.appendChild(toast);
 
-      setTimeout(() => {
+    setTimeout(() => {
         toast.remove();
-      }, 3500);
-    }
+    }, 3500);
+}
 
-    function redirectLogin(reason = "") {
-      const suffix =
+
+function redirectLogin(reason = "") {
+
+    const suffix =
         reason
-          ? "?error=" + encodeURIComponent(reason)
-          : "";
+            ? "?error=" +
+              encodeURIComponent(reason)
+            : "";
 
-      window.location.replace(
-        "../auth/login.html" + suffix
-      );
-    }
+    window.location.replace(
+        "/login.html" + suffix
+    );
+}
 
-    async function safeSignOut() {
-      try {
+
+async function safeSignOut() {
+
+    try {
+
         if (supabaseClient) {
-          await supabaseClient.auth.signOut();
+            await supabaseClient.auth.signOut();
         }
-      } catch (_) {
+
+    } catch (_) {
         /* intentionally ignored */
-      }
     }
+}
 
-    function setLoading(isLoading) {
-      loadingState.style.display =
-        isLoading ? "block" : "none";
 
-      if (isLoading) {
-        customerTable.style.display = "none";
-        emptyState.style.display = "none";
-        errorState.style.display = "none";
-      }
-    }
+function showSecurityFailure(error) {
 
-    /* =========================================================
-       SECURITY
-    ========================================================= */
-
-    async function verifyAdminSession() {
-
-      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-
-        throw new Error(
-          "Supabase configuration is missing."
-        );
-      }
-
-      supabaseClient =
-        window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_ANON_KEY,
-          {
-            auth: {
-              persistSession: true,
-              autoRefreshToken: true,
-              detectSessionInUrl: true
-            }
-          }
-        );
-
-      const {
-        data: { session },
-        error: sessionError
-      } =
-        await supabaseClient.auth.getSession();
-
-      if (sessionError) {
-        throw sessionError;
-      }
-
-      if (!session || !session.user) {
-        redirectLogin("login_required");
-        return false;
-      }
-
-      currentUser = session.user;
-
-      /*
-       * IMPORTANT:
-       * This query must be protected by Supabase RLS.
-       *
-       * The browser does NOT get to decide whether the user
-       * is an administrator.
-       */
-
-      const {
-        data: profile,
-        error: profileError
-      } =
-        await supabaseClient
-          .from("profiles")
-          .select(`
-            id,
-            full_name,
-            phone,
-            role
-          `)
-          .eq("id", currentUser.id)
-          .maybeSingle();
-
-      if (profileError) {
-        throw profileError;
-      }
-
-      if (
-        !profile ||
-        String(profile.role || "").toLowerCase() !== "admin"
-      ) {
-        await safeSignOut();
-
-        redirectLogin("unauthorized");
-
-        return false;
-      }
-
-      currentAdminProfile = profile;
-
-      return true;
-    }
-
-    /* =========================================================
-       ADMIN UI
-    ========================================================= */
-
-    function renderAdminIdentity() {
-
-      const name =
-        currentAdminProfile?.full_name ||
-        "Administrator";
-
-      adminName.textContent = name;
-      adminAvatar.textContent = getInitials(name);
-    }
-
-    /* =========================================================
-       CUSTOMER DATA
-    ========================================================= */
-
-    async function loadCustomers() {
-
-      setLoading(true);
-
-      /*
-       * Only fields required by this CMS page are requested.
-       *
-       * No auth.users data.
-       * No passwords.
-       * No access tokens.
-       * No unnecessary customer fields.
-       */
-
-      const {
-        data,
+    console.error(
+        "K-Tickets customer admin authorization failure:",
         error
-      } =
-        await supabaseClient
-          .from("profiles")
-          .select(`
-            id,
-            full_name,
-            phone,
-            role,
-            created_at
-          `)
-          .eq("role", "customer")
-          .order("created_at", {
-            ascending: false
-          });
+    );
 
-      if (error) {
-        throw error;
-      }
+    securitySpinner.style.display =
+        "none";
 
-      customers =
-        Array.isArray(data)
-          ? data
-          : [];
+    securityMessage.textContent =
+        "The administrator session could not be verified.";
 
-      /*
-       * Orders and tickets are queried separately so that this
-       * page doesn't depend on fragile nested relationship
-       * definitions.
-       */
+    securityError.style.display =
+        "block";
 
-      await loadCustomerActivity();
+    securityErrorText.textContent =
+        error?.message ||
+        "Unknown authorization error.";
 
-      calculateStats();
-      applyFilters();
+    securityLogin.style.display =
+        "block";
+}
 
-      setLoading(false);
-    }
 
-    async function loadCustomerActivity() {
+function setLoading(isLoading) {
 
-      orders = [];
-      tickets = [];
-
-      const customerIds =
-        customers
-          .map(customer => customer.id)
-          .filter(Boolean);
-
-      if (!customerIds.length) {
-        return;
-      }
-
-      /*
-       * Orders:
-       * Only identifiers are needed for activity counts.
-       */
-
-      const {
-        data: orderData,
-        error: orderError
-      } =
-        await supabaseClient
-          .from("orders")
-          .select(`
-            id,
-            user_id
-          `)
-          .in("user_id", customerIds);
-
-      if (orderError) {
-
-        /*
-         * Orders may not exist yet in an early deployment.
-         * The customer directory remains usable.
-         */
-
-        console.warn(
-          "Customer order activity unavailable:",
-          orderError.message
-        );
-
-      } else {
-        orders =
-          Array.isArray(orderData)
-            ? orderData
-            : [];
-      }
-
-      /*
-       * Tickets:
-       * Again, only identifiers are requested.
-       */
-
-      const {
-        data: ticketData,
-        error: ticketError
-      } =
-        await supabaseClient
-          .from("tickets")
-          .select(`
-            id,
-            user_id
-          `)
-          .in("user_id", customerIds);
-
-      if (ticketError) {
-
-        console.warn(
-          "Customer ticket activity unavailable:",
-          ticketError.message
-        );
-
-      } else {
-        tickets =
-          Array.isArray(ticketData)
-            ? ticketData
-            : [];
-      }
-    }
-
-    /* =========================================================
-       ACTIVITY COUNTS
-    ========================================================= */
-
-    function getOrderCount(customerId) {
-
-      return orders.filter(
-        order =>
-          order.user_id === customerId
-      ).length;
-    }
-
-    function getTicketCount(customerId) {
-
-      return tickets.filter(
-        ticket =>
-          ticket.user_id === customerId
-      ).length;
-    }
-
-    function calculateStats() {
-
-      const withOrders =
-        customers.filter(
-          customer =>
-            getOrderCount(customer.id) > 0
-        ).length;
-
-      totalCustomers.textContent =
-        formatNumber(customers.length);
-
-      customersWithOrders.textContent =
-        formatNumber(withOrders);
-
-      ticketsIssued.textContent =
-        formatNumber(tickets.length);
-    }
-
-    /* =========================================================
-       FILTERING
-    ========================================================= */
-
-    function applyFilters() {
-
-      const search =
-        String(searchInput.value || "")
-          .trim()
-          .toLowerCase();
-
-      const activity =
-        activityFilter.value;
-
-      filteredCustomers =
-        customers.filter(customer => {
-
-          const name =
-            String(
-              customer.full_name || ""
-            ).toLowerCase();
-
-          const phone =
-            String(
-              customer.phone || ""
-            ).toLowerCase();
-
-          const id =
-            String(
-              customer.id || ""
-            ).toLowerCase();
-
-          const matchesSearch =
-            !search ||
-            name.includes(search) ||
-            phone.includes(search) ||
-            id.includes(search);
-
-          const orderCount =
-            getOrderCount(customer.id);
-
-          const ticketCount =
-            getTicketCount(customer.id);
-
-          let matchesActivity = true;
-
-          if (activity === "orders") {
-            matchesActivity =
-              orderCount > 0;
-          }
-
-          if (activity === "tickets") {
-            matchesActivity =
-              ticketCount > 0;
-          }
-
-          if (activity === "none") {
-            matchesActivity =
-              orderCount === 0 &&
-              ticketCount === 0;
-          }
-
-          return (
-            matchesSearch &&
-            matchesActivity
-          );
-        });
-
-      renderCustomers();
-    }
-
-    /* =========================================================
-       RENDER DESKTOP
-    ========================================================= */
-
-    function renderCustomers() {
-
-      customerTableBody.innerHTML = "";
-      mobileList.innerHTML = "";
-
-      if (!filteredCustomers.length) {
-
-        customerTable.style.display = "none";
-        emptyState.style.display = "block";
-        mobileList.style.display =
-          window.innerWidth <= 680
+    loadingState.style.display =
+        isLoading
             ? "block"
             : "none";
 
-        return;
-      }
+    if (isLoading) {
 
-      emptyState.style.display = "none";
+        customerTable.style.display =
+            "none";
 
-      customerTable.style.display =
-        window.innerWidth > 680
-          ? "table"
-          : "none";
+        emptyState.style.display =
+            "none";
 
-      mobileList.style.display =
-        window.innerWidth <= 680
-          ? "block"
-          : "none";
+        errorState.style.display =
+            "none";
 
-      filteredCustomers.forEach(customer => {
+    }
+}
 
-        const orderCount =
-          getOrderCount(customer.id);
 
-        const ticketCount =
-          getTicketCount(customer.id);
+function customerOrderCount(customerId) {
 
-        const name =
-          customer.full_name ||
-          "Unnamed customer";
+    return orders.filter(
+        order =>
+            order.user_id === customerId
+    ).length;
+}
 
-        const row =
-          document.createElement("tr");
 
-        row.innerHTML = `
-          <td>
-            <div class="customer-cell">
-              <div class="customer-avatar">
-                ${escapeHtml(getInitials(name))}
-              </div>
+function customerTicketCount(customerId) {
 
-              <div>
-                <div class="customer-name">
-                  ${escapeHtml(name)}
-                </div>
+    return tickets.filter(
+        ticket =>
+            ticket.user_id === customerId
+    ).length;
+}
 
-                <div class="customer-id">
-                  ${escapeHtml(customer.id)}
-                </div>
-              </div>
-            </div>
-          </td>
 
-          <td>
-            <span class="masked-phone">
-              ${escapeHtml(maskPhone(customer.phone))}
-            </span>
-          </td>
+function customerLastActivity(customerId) {
 
-          <td>
-            <span class="count-badge">
-              ${formatNumber(orderCount)}
-            </span>
-          </td>
+    const orderDates =
+        orders
+            .filter(
+                order =>
+                    order.user_id === customerId
+            )
+            .map(order => order.created_at)
+            .filter(Boolean)
+            .map(value => new Date(value).getTime());
 
-          <td>
-            <span class="count-badge">
-              ${formatNumber(ticketCount)}
-            </span>
-          </td>
+    const ticketDates =
+        tickets
+            .filter(
+                ticket =>
+                    ticket.user_id === customerId
+            )
+            .map(ticket => ticket.created_at || ticket.issued_at)
+            .filter(Boolean)
+            .map(value => new Date(value).getTime());
 
-          <td>
-            ${escapeHtml(formatDate(customer.created_at))}
-          </td>
+    const dates = [
+        ...orderDates,
+        ...ticketDates
+    ].filter(Number.isFinite);
 
-          <td>
-            <button
-              class="action-btn"
-              type="button"
-              title="View customer"
-              aria-label="View customer"
-              data-customer-id="${escapeHtml(customer.id)}"
-            >
-              →
-            </button>
-          </td>
-        `;
-
-        row
-          .querySelector(".action-btn")
-          .addEventListener(
-            "click",
-            () => openCustomer(customer.id)
-          );
-
-        customerTableBody.appendChild(row);
-
-        /* =====================================================
-           MOBILE CARD
-        ===================================================== */
-
-        const card =
-          document.createElement("article");
-
-        card.className =
-          "customer-card";
-
-        card.innerHTML = `
-          <div class="customer-card-head">
-
-            <div class="customer-card-info">
-
-              <div class="customer-avatar">
-                ${escapeHtml(getInitials(name))}
-              </div>
-
-              <div>
-                <div class="customer-card-name">
-                  ${escapeHtml(name)}
-                </div>
-
-                <div class="customer-card-id">
-                  ${escapeHtml(customer.id)}
-                </div>
-              </div>
-
-            </div>
-
-            <button
-              class="action-btn"
-              type="button"
-              aria-label="View customer"
-            >
-              →
-            </button>
-
-          </div>
-
-          <div class="customer-card-meta">
-
-            <div class="mini-meta">
-              <span>Phone</span>
-              <strong>
-                ${escapeHtml(maskPhone(customer.phone))}
-              </strong>
-            </div>
-
-            <div class="mini-meta">
-              <span>Joined</span>
-              <strong>
-                ${escapeHtml(formatDate(customer.created_at))}
-              </strong>
-            </div>
-
-            <div class="mini-meta">
-              <span>Orders</span>
-              <strong>
-                ${formatNumber(orderCount)}
-              </strong>
-            </div>
-
-            <div class="mini-meta">
-              <span>Tickets</span>
-              <strong>
-                ${formatNumber(ticketCount)}
-              </strong>
-            </div>
-
-          </div>
-        `;
-
-        card
-          .querySelector(".action-btn")
-          .addEventListener(
-            "click",
-            () => openCustomer(customer.id)
-          );
-
-        mobileList.appendChild(card);
-      });
+    if (!dates.length) {
+        return null;
     }
 
-    /* =========================================================
-       CUSTOMER DRAWER
-    ========================================================= */
+    return new Date(
+        Math.max(...dates)
+    ).toISOString();
+}
 
-    function openCustomer(customerId) {
 
-      const customer =
-        customers.find(
-          item => item.id === customerId
+/* -----------------------------------------------------------------------
+   SECURITY
+------------------------------------------------------------------------ */
+
+async function verifyAdminSession() {
+
+    if (
+        !SUPABASE_URL ||
+        !SUPABASE_PUBLISHABLE_KEY
+    ) {
+        throw new Error(
+            "Supabase configuration is missing."
+        );
+    }
+
+    if (!window.supabase) {
+        throw new Error(
+            "Supabase client library failed to load."
+        );
+    }
+
+    supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY,
+            {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
+                }
+            }
         );
 
-      if (!customer) {
+
+    const {
+        data: sessionData,
+        error: sessionError
+    } =
+        await supabaseClient.auth.getSession();
+
+
+    if (sessionError) {
+        throw new Error(
+            `Session check failed: ${sessionError.message}`
+        );
+    }
+
+
+    const session =
+        sessionData?.session;
+
+
+    if (!session?.user) {
+
+        redirectLogin(
+            "login_required"
+        );
+
+        return false;
+    }
+
+
+    currentUser =
+        session.user;
+
+
+    const {
+        data: profile,
+        error: profileError
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                is_active
+            `)
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+
+    if (profileError) {
+
+        throw new Error(
+            `Profile query failed: ${profileError.message}`
+        );
+    }
+
+
+    if (!profile) {
+
+        throw new Error(
+            "No K-Tickets profile exists for this account."
+        );
+    }
+
+
+    const role =
+        String(
+            profile.role || ""
+        ).trim().toLowerCase();
+
+
+    if (
+        role !== "admin" ||
+        profile.is_active !== true
+    ) {
+
+        await safeSignOut();
+
+        redirectLogin(
+            "unauthorized"
+        );
+
+        return false;
+    }
+
+
+    currentAdminProfile =
+        profile;
+
+
+    return true;
+}
+
+
+/* -----------------------------------------------------------------------
+   ADMIN IDENTITY
+------------------------------------------------------------------------ */
+
+function renderAdminIdentity() {
+
+    const name =
+        currentAdminProfile?.full_name ||
+        "Administrator";
+
+    adminName.textContent =
+        name;
+
+    adminAvatar.textContent =
+        getInitials(name);
+}
+
+
+/* -----------------------------------------------------------------------
+   LOAD CUSTOMERS
+------------------------------------------------------------------------ */
+
+async function loadCustomers() {
+
+    setLoading(true);
+
+    try {
+
+        /*
+         * Only customer profile fields required by this page.
+         *
+         * No auth.users.
+         * No passwords.
+         * No tokens.
+         */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select(`
+                    id,
+                    full_name,
+                    phone,
+                    role,
+                    is_active,
+                    created_at,
+                    updated_at
+                `)
+                .eq("role", "customer")
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                );
+
+
+        if (error) {
+            throw new Error(
+                `Customer query failed: ${error.message}`
+            );
+        }
+
+
+        customers =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        await loadCustomerActivity();
+
+        calculateStats();
+
+        applyFilters();
+
+    } catch (error) {
+
+        console.error(
+            "Customer loading failed:",
+            error
+        );
+
+        customers = [];
+        orders = [];
+        tickets = [];
+
+        totalCustomers.textContent =
+            "—";
+
+        customersWithOrders.textContent =
+            "—";
+
+        ticketsIssued.textContent =
+            "—";
+
+        customerTable.style.display =
+            "none";
+
+        mobileList.innerHTML =
+            "";
+
+        loadingState.style.display =
+            "none";
+
+        emptyState.style.display =
+            "none";
+
+        errorState.style.display =
+            "block";
+
+        errorMessage.textContent =
+            error?.message ||
+            "Customer records could not be loaded.";
+
         showToast(
-          "Customer record could not be found.",
-          "error"
+            error?.message ||
+            "Customer records could not be loaded.",
+            "error"
         );
+
+    } finally {
+
+        setLoading(false);
+    }
+}
+
+
+/* -----------------------------------------------------------------------
+   LOAD ACTIVITY
+------------------------------------------------------------------------ */
+
+async function loadCustomerActivity() {
+
+    orders = [];
+    tickets = [];
+
+
+    const customerIds =
+        customers
+            .map(customer => customer.id)
+            .filter(Boolean);
+
+
+    if (!customerIds.length) {
         return;
-      }
+    }
 
-      const orderCount =
-        getOrderCount(customer.id);
 
-      const ticketCount =
-        getTicketCount(customer.id);
+    /*
+     * Orders
+     */
 
-      const name =
-        customer.full_name ||
-        "Unnamed customer";
+    const {
+        data: orderData,
+        error: orderError
+    } =
+        await supabaseClient
+            .from("orders")
+            .select(`
+                id,
+                user_id,
+                status,
+                total,
+                currency,
+                created_at,
+                paid_at
+            `)
+            .in(
+                "user_id",
+                customerIds
+            );
 
-      drawerBody.innerHTML = `
+
+    if (orderError) {
+
+        /*
+         * Keep customer directory usable,
+         * but surface the issue in console.
+         */
+
+        console.warn(
+            "Customer order activity unavailable:",
+            orderError.message
+        );
+
+    } else {
+
+        orders =
+            Array.isArray(orderData)
+                ? orderData
+                : [];
+    }
+
+
+    /*
+     * Tickets
+     */
+
+    const {
+        data: ticketData,
+        error: ticketError
+    } =
+        await supabaseClient
+            .from("tickets")
+            .select(`
+                id,
+                user_id,
+                order_id,
+                event_id,
+                status,
+                issued_at,
+                checked_in_at,
+                created_at
+            `)
+            .in(
+                "user_id",
+                customerIds
+            );
+
+
+    if (ticketError) {
+
+        console.warn(
+            "Customer ticket activity unavailable:",
+            ticketError.message
+        );
+
+    } else {
+
+        tickets =
+            Array.isArray(ticketData)
+                ? ticketData
+                : [];
+    }
+}
+
+
+/* -----------------------------------------------------------------------
+   STATS
+------------------------------------------------------------------------ */
+
+function calculateStats() {
+
+    totalCustomers.textContent =
+        formatNumber(
+            customers.length
+        );
+
+
+    const activeOrderCustomers =
+        new Set(
+            orders
+                .map(order => order.user_id)
+                .filter(Boolean)
+        );
+
+
+    customersWithOrders.textContent =
+        formatNumber(
+            activeOrderCustomers.size
+        );
+
+
+    ticketsIssued.textContent =
+        formatNumber(
+            tickets.length
+        );
+}
+
+
+/* -----------------------------------------------------------------------
+   FILTERING
+------------------------------------------------------------------------ */
+
+function applyFilters() {
+
+    const search =
+        String(
+            searchInput.value || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const activity =
+        activityFilter.value;
+
+
+    filteredCustomers =
+        customers.filter(customer => {
+
+            const orderCount =
+                customerOrderCount(
+                    customer.id
+                );
+
+            const ticketCount =
+                customerTicketCount(
+                    customer.id
+                );
+
+
+            if (activity === "orders") {
+
+                if (orderCount < 1) {
+                    return false;
+                }
+            }
+
+
+            if (activity === "tickets") {
+
+                if (ticketCount < 1) {
+                    return false;
+                }
+            }
+
+
+            if (activity === "none") {
+
+                if (
+                    orderCount > 0 ||
+                    ticketCount > 0
+                ) {
+                    return false;
+                }
+            }
+
+
+            if (!search) {
+                return true;
+            }
+
+
+            const haystack = [
+
+                customer.id,
+
+                customer.full_name,
+
+                customer.phone,
+
+                customer.role,
+
+                customer.is_active
+                    ? "active"
+                    : "inactive",
+
+                formatDate(
+                    customer.created_at
+                ),
+
+                String(orderCount),
+
+                String(ticketCount)
+
+            ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+
+            return haystack.includes(
+                search
+            );
+        });
+
+
+    renderCustomers(
+        filteredCustomers
+    );
+}
+
+
+/* -----------------------------------------------------------------------
+   RENDER
+------------------------------------------------------------------------ */
+
+function renderCustomers(list) {
+
+    customerTableBody.innerHTML =
+        "";
+
+    mobileList.innerHTML =
+        "";
+
+    errorState.style.display =
+        "none";
+
+
+    if (!list.length) {
+
+        customerTable.style.display =
+            "none";
+
+        emptyState.style.display =
+            "block";
+
+        return;
+    }
+
+
+    emptyState.style.display =
+        "none";
+
+    customerTable.style.display =
+        "table";
+
+
+    list.forEach(customer => {
+
+        const orderCount =
+            customerOrderCount(
+                customer.id
+            );
+
+        const ticketCount =
+            customerTicketCount(
+                customer.id
+            );
+
+        const initials =
+            getInitials(
+                customer.full_name
+            );
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+                <div class="customer-cell">
+
+                    <div class="customer-avatar">
+                        ${escapeHtml(initials)}
+                    </div>
+
+                    <div>
+                        <div class="customer-name">
+                            ${escapeHtml(
+                                customer.full_name ||
+                                "Unnamed customer"
+                            )}
+                        </div>
+
+                        <div
+                            class="customer-id"
+                            title="${escapeHtml(customer.id)}"
+                        >
+                            ${escapeHtml(
+                                customer.id
+                            )}
+                        </div>
+                    </div>
+
+                </div>
+            </td>
+
+
+            <td>
+                <span class="masked-phone">
+                    ${escapeHtml(
+                        maskPhone(
+                            customer.phone
+                        )
+                    )}
+                </span>
+            </td>
+
+
+            <td>
+                <span class="count-badge">
+                    ${formatNumber(orderCount)}
+                </span>
+            </td>
+
+
+            <td>
+                <span class="count-badge">
+                    ${formatNumber(ticketCount)}
+                </span>
+            </td>
+
+
+            <td>
+                ${escapeHtml(
+                    formatDate(
+                        customer.created_at
+                    )
+                )}
+            </td>
+
+
+            <td>
+                <button
+                    class="action-btn"
+                    type="button"
+                    title="View customer"
+                    data-customer-id="${escapeHtml(customer.id)}"
+                >
+                    →
+                </button>
+            </td>
+
+        `;
+
+
+        customerTableBody.appendChild(
+            row
+        );
+
+
+        const card =
+            document.createElement("article");
+
+        card.className =
+            "customer-card";
+
+
+        card.innerHTML = `
+
+            <div class="customer-card-head">
+
+                <div class="customer-card-info">
+
+                    <div class="customer-avatar">
+                        ${escapeHtml(initials)}
+                    </div>
+
+                    <div>
+
+                        <div class="customer-card-name">
+                            ${escapeHtml(
+                                customer.full_name ||
+                                "Unnamed customer"
+                            )}
+                        </div>
+
+                        <div class="customer-card-id">
+                            ${escapeHtml(
+                                customer.id
+                            )}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="action-btn"
+                    type="button"
+                    title="View customer"
+                    data-customer-id="${escapeHtml(customer.id)}"
+                >
+                    →
+                </button>
+
+            </div>
+
+
+            <div class="customer-card-meta">
+
+                <div class="mini-meta">
+                    <span>Phone</span>
+                    <strong>
+                        ${escapeHtml(
+                            maskPhone(
+                                customer.phone
+                            )
+                        )}
+                    </strong>
+                </div>
+
+
+                <div class="mini-meta">
+                    <span>Orders</span>
+                    <strong>
+                        ${formatNumber(orderCount)}
+                    </strong>
+                </div>
+
+
+                <div class="mini-meta">
+                    <span>Tickets</span>
+                    <strong>
+                        ${formatNumber(ticketCount)}
+                    </strong>
+                </div>
+
+
+                <div class="mini-meta">
+                    <span>Joined</span>
+                    <strong>
+                        ${escapeHtml(
+                            formatDate(
+                                customer.created_at
+                            )
+                        )}
+                    </strong>
+                </div>
+
+            </div>
+
+        `;
+
+
+        mobileList.appendChild(
+            card
+        );
+    });
+}
+
+
+/* -----------------------------------------------------------------------
+   CUSTOMER DRAWER
+------------------------------------------------------------------------ */
+
+function openCustomer(customerId) {
+
+    const customer =
+        customers.find(
+            item =>
+                item.id === customerId
+        );
+
+
+    if (!customer) {
+
+        showToast(
+            "Customer record could not be found.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const orderList =
+        orders.filter(
+            order =>
+                order.user_id === customer.id
+        );
+
+
+    const ticketList =
+        tickets.filter(
+            ticket =>
+                ticket.user_id === customer.id
+        );
+
+
+    const lastActivity =
+        customerLastActivity(
+            customer.id
+        );
+
+
+    const initials =
+        getInitials(
+            customer.full_name
+        );
+
+
+    drawerBody.innerHTML = `
 
         <div class="detail-hero">
 
-          <div class="detail-avatar">
-            ${escapeHtml(getInitials(name))}
-          </div>
-
-          <div>
-            <div class="detail-name">
-              ${escapeHtml(name)}
+            <div class="detail-avatar">
+                ${escapeHtml(initials)}
             </div>
 
-            <div class="detail-role">
-              Customer account
+            <div>
+                <div class="detail-name">
+                    ${escapeHtml(
+                        customer.full_name ||
+                        "Unnamed customer"
+                    )}
+                </div>
+
+                <div class="detail-role">
+                    Customer account
+                </div>
             </div>
-          </div>
 
         </div>
 
-        <div class="detail-section">
 
-          <div class="detail-section-title">
-            Account
-          </div>
+        <section class="detail-section">
 
-          <div class="detail-row">
-            <span>Customer ID</span>
-            <strong>
-              ${escapeHtml(customer.id)}
-            </strong>
-          </div>
+            <div class="detail-section-title">
+                Account
+            </div>
 
-          <div class="detail-row">
-            <span>Role</span>
-            <strong>
-              ${escapeHtml(customer.role || "customer")}
-            </strong>
-          </div>
 
-          <div class="detail-row">
-            <span>Joined</span>
-            <strong>
-              ${escapeHtml(formatDate(customer.created_at))}
-            </strong>
-          </div>
+            <div class="detail-row">
+                <span>Customer ID</span>
+                <strong>
+                    ${escapeHtml(customer.id)}
+                </strong>
+            </div>
 
-        </div>
 
-        <div class="detail-section">
+            <div class="detail-row">
+                <span>Role</span>
+                <strong>
+                    ${escapeHtml(
+                        customer.role || "customer"
+                    )}
+                </strong>
+            </div>
 
-          <div class="detail-section-title">
-            Contact
-          </div>
 
-          <div class="detail-row">
-            <span>Phone</span>
-            <strong>
-              ${escapeHtml(maskPhone(customer.phone))}
-            </strong>
-          </div>
+            <div class="detail-row">
+                <span>Status</span>
+                <strong>
+                    ${customer.is_active
+                        ? "Active"
+                        : "Inactive"}
+                </strong>
+            </div>
 
-          <div class="privacy-note">
-            Customer contact information is intentionally
-            minimized in the administrator interface.
-            Authentication email, passwords, sessions and
-            authentication credentials are not exposed here.
-          </div>
 
-        </div>
+            <div class="detail-row">
+                <span>Joined</span>
+                <strong>
+                    ${escapeHtml(
+                        formatDateTime(
+                            customer.created_at
+                        )
+                    )}
+                </strong>
+            </div>
 
-        <div class="detail-section">
 
-          <div class="detail-section-title">
-            Platform Activity
-          </div>
+            <div class="detail-row">
+                <span>Updated</span>
+                <strong>
+                    ${escapeHtml(
+                        formatDateTime(
+                            customer.updated_at
+                        )
+                    )}
+                </strong>
+            </div>
 
-          <div class="detail-row">
-            <span>Orders</span>
-            <strong>
-              ${formatNumber(orderCount)}
-            </strong>
-          </div>
+        </section>
 
-          <div class="detail-row">
-            <span>Tickets</span>
-            <strong>
-              ${formatNumber(ticketCount)}
-            </strong>
-          </div>
 
-        </div>
+        <section class="detail-section">
 
-        <div class="detail-section">
+            <div class="detail-section-title">
+                Contact
+            </div>
 
-          <div class="detail-section-title">
-            Administrative Controls
-          </div>
 
-          <div class="privacy-note">
-            Account role changes, account suspension and
-            deletion are intentionally unavailable from this
-            browser page until dedicated server-side RPC
-            controls with audit logging and RLS enforcement
-            are installed.
-          </div>
+            <div class="detail-row">
+                <span>Phone</span>
+                <strong>
+                    ${escapeHtml(
+                        maskPhone(
+                            customer.phone
+                        )
+                    )}
+                </strong>
+            </div>
 
-        </div>
-      `;
+        </section>
 
-      drawerBackdrop.classList.add("open");
-      document.body.style.overflow = "hidden";
+
+        <section class="detail-section">
+
+            <div class="detail-section-title">
+                Platform Activity
+            </div>
+
+
+            <div class="detail-row">
+                <span>Orders</span>
+                <strong>
+                    ${formatNumber(
+                        orderList.length
+                    )}
+                </strong>
+            </div>
+
+
+            <div class="detail-row">
+                <span>Tickets</span>
+                <strong>
+                    ${formatNumber(
+                        ticketList.length
+                    )}
+                </strong>
+            </div>
+
+
+            <div class="detail-row">
+                <span>Last activity</span>
+                <strong>
+                    ${escapeHtml(
+                        formatDateTime(
+                            lastActivity
+                        )
+                    )}
+                </strong>
+            </div>
+
+        </section>
+
+
+        <section class="detail-section">
+
+            <div class="privacy-note">
+
+                Customer information displayed here is
+                intentionally limited to fields available
+                in the K-Tickets public profile model.
+                Authentication credentials, passwords,
+                access tokens and private authentication
+                records are never exposed by this page.
+
+            </div>
+
+        </section>
+
+    `;
+
+
+    drawerBackdrop.classList.add(
+        "open"
+    );
+
+    document.body.style.overflow =
+        "hidden";
+}
+
+
+function closeCustomerDrawer() {
+
+    drawerBackdrop.classList.remove(
+        "open"
+    );
+
+    document.body.style.overflow =
+        "";
+}
+
+
+/* -----------------------------------------------------------------------
+   EVENTS
+------------------------------------------------------------------------ */
+
+searchInput.addEventListener(
+    "input",
+    applyFilters
+);
+
+
+activityFilter.addEventListener(
+    "change",
+    applyFilters
+);
+
+
+refreshButton.addEventListener(
+    "click",
+    async () => {
+
+        refreshButton.disabled =
+            true;
+
+        refreshButton.textContent =
+            "Loading...";
+
+        try {
+
+            await loadCustomers();
+
+            showToast(
+                "Customer directory refreshed."
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            showToast(
+                "Customer refresh failed.",
+                "error"
+            );
+
+        } finally {
+
+            refreshButton.disabled =
+                false;
+
+            refreshButton.textContent =
+                "↻ Refresh";
+        }
     }
+);
 
-    function closeCustomer() {
-      drawerBackdrop.classList.remove("open");
-      document.body.style.overflow = "";
-    }
 
-    /* =========================================================
-       NOTIFICATIONS
-    ========================================================= */
+customerTableBody.addEventListener(
+    "click",
+    event => {
 
-    async function loadNotifications() {
+        const button =
+            event.target.closest(
+                "[data-customer-id]"
+            );
 
-      /*
-       * Optional table.
-       * The page remains functional if notifications does not
-       * exist yet.
-       */
-
-      try {
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient
-            .from("notifications")
-            .select("id, read")
-            .eq("user_id", currentUser.id)
-            .eq("read", false)
-            .limit(20);
-
-        if (error) {
-          return;
+        if (!button) {
+            return;
         }
 
-        if (Array.isArray(data) && data.length) {
-          notificationBadge.style.display =
-            "block";
+        openCustomer(
+            button.dataset.customerId
+        );
+    }
+);
+
+
+mobileList.addEventListener(
+    "click",
+    event => {
+
+        const button =
+            event.target.closest(
+                "[data-customer-id]"
+            );
+
+        if (!button) {
+            return;
         }
 
-      } catch (_) {
-        /* optional feature */
-      }
+        openCustomer(
+            button.dataset.customerId
+        );
     }
+);
 
-    /* =========================================================
-       REFRESH
-    ========================================================= */
 
-    async function refreshCustomers() {
+drawerClose.addEventListener(
+    "click",
+    closeCustomerDrawer
+);
 
-      refreshButton.disabled = true;
-      refreshButton.textContent = "↻ Loading...";
 
-      try {
+drawerBackdrop.addEventListener(
+    "click",
+    event => {
 
-        await loadCustomers();
+        if (
+            event.target ===
+            drawerBackdrop
+        ) {
+            closeCustomerDrawer();
+        }
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape"
+        ) {
+            closeCustomerDrawer();
+        }
+    }
+);
+
+
+mobileMenu.addEventListener(
+    "click",
+    () => {
+
+        sidebar.classList.toggle(
+            "open"
+        );
+    }
+);
+
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const link =
+            event.target.closest(
+                ".nav-link"
+            );
+
+        if (
+            link &&
+            window.innerWidth <= 850
+        ) {
+            sidebar.classList.remove(
+                "open"
+            );
+        }
+    }
+);
+
+
+notificationButton.addEventListener(
+    "click",
+    () => {
 
         showToast(
-          "Customer records refreshed."
+            "Notifications are available from the notifications module."
         );
+    }
+);
 
-      } catch (error) {
 
-        console.error(error);
+securityLogin.addEventListener(
+    "click",
+    () => {
 
-        showLoadError(
-          error?.message ||
-          "Unable to refresh customer records."
+        redirectLogin(
+            "admin_session_failed"
         );
-
-      } finally {
-
-        refreshButton.disabled = false;
-        refreshButton.textContent = "↻ Refresh";
-      }
     }
+);
 
-    /* =========================================================
-       ERROR STATE
-    ========================================================= */
 
-    function showLoadError(message) {
+/* -----------------------------------------------------------------------
+   AUTH STATE
+------------------------------------------------------------------------ */
 
-      setLoading(false);
+async function handleAuthState(
+    event,
+    session
+) {
 
-      customerTable.style.display = "none";
-      emptyState.style.display = "none";
-      errorState.style.display = "block";
+    if (
+        event === "SIGNED_OUT" ||
+        !session
+    ) {
 
-      errorMessage.textContent =
-        message ||
-        "Customer records could not be loaded.";
-    }
-
-    /* =========================================================
-       EVENT LISTENERS
-    ========================================================= */
-
-    searchInput.addEventListener(
-      "input",
-      applyFilters
-    );
-
-    activityFilter.addEventListener(
-      "change",
-      applyFilters
-    );
-
-    refreshButton.addEventListener(
-      "click",
-      refreshCustomers
-    );
-
-    mobileMenu.addEventListener(
-      "click",
-      () => {
-        sidebar.classList.toggle("open");
-      }
-    );
-
-    notificationButton.addEventListener(
-      "click",
-      () => {
-        showToast(
-          "Notifications are loaded from the platform notification system."
+        window.location.replace(
+            "/login.html?error=session_expired"
         );
-      }
-    );
-
-    drawerClose.addEventListener(
-      "click",
-      closeCustomer
-    );
-
-    drawerBackdrop.addEventListener(
-      "click",
-      event => {
-        if (event.target === drawerBackdrop) {
-          closeCustomer();
-        }
-      }
-    );
-
-    document.addEventListener(
-      "keydown",
-      event => {
-
-        if (event.key === "Escape") {
-
-          closeCustomer();
-
-          sidebar.classList.remove("open");
-        }
-      }
-    );
-
-    window.addEventListener(
-      "resize",
-      () => {
-        if (filteredCustomers.length) {
-          renderCustomers();
-        }
-      }
-    );
-
-    /* =========================================================
-       AUTH STATE MONITORING
-    ========================================================= */
-
-    function subscribeToAuthChanges() {
-
-      if (!supabaseClient) return;
-
-      supabaseClient.auth.onAuthStateChange(
-        async (event, session) => {
-
-          if (
-            event === "SIGNED_OUT" ||
-            !session
-          ) {
-            redirectLogin("session_expired");
-          }
-
-        }
-      );
     }
+}
 
-    /* =========================================================
-       INITIALIZE
-    ========================================================= */
 
-    async function initialize() {
+/* -----------------------------------------------------------------------
+   INITIALIZE
+------------------------------------------------------------------------ */
 
-      try {
+async function initialize() {
+
+    try {
 
         const authorized =
-          await verifyAdminSession();
+            await verifyAdminSession();
+
 
         if (!authorized) {
-          return;
+            return;
         }
+
 
         renderAdminIdentity();
 
-        /*
-         * Reveal the application only AFTER the admin
-         * authorization check succeeds.
-         */
 
-        securityGate.classList.add("hidden");
-        app.style.display = "flex";
+        app.style.display =
+            "flex";
 
-        subscribeToAuthChanges();
+        securityGate.classList.add(
+            "hidden"
+        );
+
+
+        supabaseClient.auth.onAuthStateChange(
+            handleAuthState
+        );
+
 
         await loadCustomers();
 
-        await loadNotifications();
 
-      } catch (error) {
+    } catch (error) {
 
-        console.error(
-          "Admin customers initialization failed:",
-          error
+        showSecurityFailure(
+            error
         );
 
-        securityGate.innerHTML = `
-          <div class="security-box">
-
-            <div class="security-logo">
-              KT
-            </div>
-
-            <h2>
-              Access verification failed
-            </h2>
-
-            <p>
-              The administrator session could not be
-              securely verified. Please sign in again.
-            </p>
-
-            <button
-              class="btn"
-              style="
-                margin-top:22px;
-                background:#F5DABF;
-                color:#6C151E;
-              "
-              type="button"
-              id="securityLoginButton"
-            >
-              Return to Login
-            </button>
-
-          </div>
-        `;
-
-        const button =
-          document.getElementById(
-            "securityLoginButton"
-          );
-
-        if (button) {
-          button.addEventListener(
-            "click",
-            async () => {
-              await safeSignOut();
-              redirectLogin("verification_failed");
-            }
-          );
-        }
-      }
     }
 
-    initialize();
+}
 
-  </script>
+
+initialize();
+</script>
 
 </body>
 </html>
