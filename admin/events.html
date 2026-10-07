@@ -43,7 +43,9 @@ body{
     font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
-button,input,select{
+button,
+input,
+select{
     font:inherit;
 }
 
@@ -56,7 +58,9 @@ a{
     text-decoration:none;
 }
 
-/* SECURITY */
+/* =========================================================
+   SECURITY
+========================================================= */
 
 #securityScreen{
     position:fixed;
@@ -70,7 +74,7 @@ a{
 }
 
 .security-box{
-    width:min(420px,90%);
+    width:min(430px,90%);
     text-align:center;
 }
 
@@ -94,7 +98,7 @@ a{
 
 .security-box p{
     color:rgba(245,218,191,.75);
-    line-height:1.6;
+    line-height:1.65;
     font-size:13px;
 }
 
@@ -116,7 +120,9 @@ a{
     display:none;
 }
 
-/* SIDEBAR */
+/* =========================================================
+   SIDEBAR
+========================================================= */
 
 .sidebar{
     position:fixed;
@@ -225,7 +231,9 @@ a{
     background:#6ec39f;
 }
 
-/* MAIN */
+/* =========================================================
+   MAIN
+========================================================= */
 
 .main{
     margin-left:255px;
@@ -309,7 +317,9 @@ a{
     color:var(--muted);
 }
 
-/* CONTENT */
+/* =========================================================
+   CONTENT
+========================================================= */
 
 .content{
     max-width:1800px;
@@ -371,11 +381,18 @@ a{
     color:#fff;
 }
 
-/* STATS */
+.btn:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
 
 .stats{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(5,1fr);
     gap:15px;
     margin-bottom:20px;
 }
@@ -402,7 +419,9 @@ a{
     font-weight:900;
 }
 
-/* CARD */
+/* =========================================================
+   CARD
+========================================================= */
 
 .card{
     background:#fff;
@@ -469,7 +488,7 @@ select{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:900px;
+    min-width:1100px;
 }
 
 th{
@@ -503,6 +522,20 @@ tr:last-child td{
     color:var(--muted);
     font-size:10px;
 }
+
+.merchant-name{
+    font-weight:800;
+}
+
+.merchant-meta{
+    margin-top:3px;
+    color:var(--muted);
+    font-size:10px;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
 
 .status{
     display:inline-flex;
@@ -544,6 +577,73 @@ tr:last-child td{
     background:#eceeed;
 }
 
+.status.completed{
+    color:#53636a;
+    background:#edf1f2;
+}
+
+.status.unknown{
+    color:#6b7070;
+    background:#eceeed;
+}
+
+/* =========================================================
+   INVENTORY
+========================================================= */
+
+.inventory{
+    min-width:125px;
+}
+
+.inventory-line{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-size:10px;
+    margin-bottom:6px;
+}
+
+.inventory-label{
+    color:var(--muted);
+}
+
+.inventory-value{
+    font-weight:800;
+}
+
+.inventory-bar{
+    width:100%;
+    height:5px;
+    background:#ecebe7;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.inventory-fill{
+    height:100%;
+    border-radius:99px;
+    background:var(--green);
+    transition:.25s ease;
+}
+
+.inventory-fill.low{
+    background:var(--warning);
+}
+
+.inventory-fill.sold-out{
+    background:var(--danger);
+}
+
+.inventory-note{
+    margin-top:5px;
+    color:var(--muted);
+    font-size:9px;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
 .actions{
     display:flex;
     gap:6px;
@@ -567,7 +667,9 @@ tr:last-child td{
     color:var(--danger);
 }
 
-/* MOBILE CARDS */
+/* =========================================================
+   MOBILE
+========================================================= */
 
 .mobile-events{
     display:none;
@@ -600,7 +702,7 @@ tr:last-child td{
     margin-top:5px;
     color:var(--muted);
     font-size:10px;
-    line-height:1.6;
+    line-height:1.7;
 }
 
 .event-card-actions{
@@ -610,7 +712,15 @@ tr:last-child td{
     flex-wrap:wrap;
 }
 
-/* EMPTY */
+.mobile-inventory{
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px solid var(--border);
+}
+
+/* =========================================================
+   EMPTY / ERROR / LOADING
+========================================================= */
 
 .empty{
     padding:50px 20px;
@@ -636,8 +746,6 @@ tr:last-child td{
     font-size:12px;
 }
 
-/* LOADING */
-
 .loading{
     padding:35px;
     text-align:center;
@@ -645,7 +753,154 @@ tr:last-child td{
     font-size:12px;
 }
 
-/* MOBILE */
+/* =========================================================
+   DRAWER
+========================================================= */
+
+.drawer-backdrop{
+    position:fixed;
+    inset:0;
+    z-index:3000;
+    background:rgba(15,61,58,.35);
+    backdrop-filter:blur(3px);
+    opacity:0;
+    pointer-events:none;
+    transition:.2s ease;
+}
+
+.drawer-backdrop.open{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.drawer{
+    position:absolute;
+    top:0;
+    right:0;
+    height:100%;
+    width:min(520px,94vw);
+    background:#fff;
+    box-shadow:-20px 0 60px rgba(0,0,0,.14);
+    transform:translateX(100%);
+    transition:.25s ease;
+    display:flex;
+    flex-direction:column;
+}
+
+.drawer-backdrop.open .drawer{
+    transform:translateX(0);
+}
+
+.drawer-head{
+    padding:20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:15px;
+}
+
+.drawer-head h2{
+    font-size:19px;
+    line-height:1.3;
+}
+
+.drawer-head p{
+    margin-top:5px;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.drawer-close{
+    width:36px;
+    height:36px;
+    border:1px solid var(--border);
+    background:#fff;
+    border-radius:10px;
+}
+
+.drawer-body{
+    flex:1;
+    overflow-y:auto;
+    padding:20px;
+}
+
+.detail-section{
+    margin-bottom:24px;
+}
+
+.detail-section h3{
+    margin-bottom:11px;
+    font-size:11px;
+    color:var(--bordo);
+    letter-spacing:.1em;
+    text-transform:uppercase;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.detail-item{
+    padding:12px;
+    border:1px solid var(--border);
+    border-radius:11px;
+    background:#fbfbfa;
+}
+
+.detail-item.full{
+    grid-column:1/-1;
+}
+
+.detail-label{
+    color:var(--muted);
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+}
+
+.detail-value{
+    margin-top:5px;
+    font-size:12px;
+    font-weight:800;
+    word-break:break-word;
+}
+
+.ticket-type-row{
+    padding:13px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.ticket-type-row:last-child{
+    border-bottom:0;
+}
+
+.ticket-type-name{
+    font-weight:800;
+    font-size:12px;
+}
+
+.ticket-type-meta{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:6px;
+    color:var(--muted);
+    font-size:10px;
+}
+
+.drawer-footer{
+    padding:16px 20px;
+    border-top:1px solid var(--border);
+    display:flex;
+    gap:9px;
+}
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
 
 .mobile-menu{
     display:none;
@@ -656,8 +911,17 @@ tr:last-child td{
     border-radius:10px;
 }
 
-@media(max-width:1100px){
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
+@media(max-width:1250px){
+    .stats{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+
+@media(max-width:900px){
     .stats{
         grid-template-columns:repeat(2,1fr);
     }
@@ -747,17 +1011,26 @@ tr:last-child td{
     .heading-actions .btn{
         flex:1;
     }
+
+    .detail-grid{
+        grid-template-columns:1fr;
+    }
+
+    .detail-item.full{
+        grid-column:auto;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<!-- SECURITY SCREEN -->
+<!-- =========================================================
+     SECURITY SCREEN
+========================================================= -->
+
 <div id="securityScreen">
-
     <div class="security-box">
-
         <div class="security-logo">K</div>
 
         <h1>Securing Admin Session</h1>
@@ -767,19 +1040,19 @@ tr:last-child td{
         </p>
 
         <div class="loader"></div>
-
     </div>
-
 </div>
 
 
 <div id="app">
 
-<!-- SIDEBAR -->
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
 <aside class="sidebar" id="sidebar">
 
     <div class="brand">
-
         <div class="brand-main">K-TICKETS</div>
 
         <div class="brand-sub">
@@ -789,9 +1062,7 @@ tr:last-child td{
         <div class="admin-badge">
             Administrator
         </div>
-
     </div>
-
 
     <nav class="nav">
 
@@ -871,20 +1142,20 @@ tr:last-child td{
 
     </nav>
 
-
     <div class="sidebar-footer">
-
         <div class="security-status">
             <span class="security-dot"></span>
             Protected administrator session
         </div>
-
     </div>
 
 </aside>
 
 
-<!-- MAIN -->
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
 <main class="main">
 
 <header class="topbar">
@@ -895,6 +1166,7 @@ tr:last-child td{
             class="mobile-menu"
             id="mobileMenu"
             type="button"
+            aria-label="Open menu"
         >
             ☰
         </button>
@@ -912,9 +1184,10 @@ tr:last-child td{
             class="icon-button"
             type="button"
             title="Notifications"
-            onclick="window.location.href='./settings.html#notifications'"
+            onclick="window.location.href='./notifications.html'"
         >
             ♢
+
             <span
                 class="notification-dot"
                 id="notificationDot"
@@ -964,7 +1237,7 @@ tr:last-child td{
             <h1>Events</h1>
 
             <p>
-                Review and manage event records across K-Tickets.
+                Review event records, merchants, ticket inventory and event status.
             </p>
 
         </div>
@@ -985,13 +1258,17 @@ tr:last-child td{
     </div>
 
 
-    <!-- STATS -->
+    <!-- =====================================================
+         STATS
+    ====================================================== -->
+
     <section class="stats">
 
         <div class="stat">
             <div class="stat-label">
                 Total Events
             </div>
+
             <div
                 class="stat-value"
                 id="totalEvents"
@@ -1005,6 +1282,7 @@ tr:last-child td{
             <div class="stat-label">
                 Active
             </div>
+
             <div
                 class="stat-value"
                 id="activeEvents"
@@ -1018,6 +1296,7 @@ tr:last-child td{
             <div class="stat-label">
                 Draft
             </div>
+
             <div
                 class="stat-value"
                 id="draftEvents"
@@ -1031,6 +1310,7 @@ tr:last-child td{
             <div class="stat-label">
                 Cancelled
             </div>
+
             <div
                 class="stat-value"
                 id="cancelledEvents"
@@ -1039,10 +1319,27 @@ tr:last-child td{
             </div>
         </div>
 
+
+        <div class="stat">
+            <div class="stat-label">
+                Tickets Sold
+            </div>
+
+            <div
+                class="stat-value"
+                id="ticketsSold"
+            >
+                —
+            </div>
+        </div>
+
     </section>
 
 
-    <!-- EVENTS CARD -->
+    <!-- =====================================================
+         EVENTS
+    ====================================================== -->
+
     <section class="card">
 
         <div class="toolbar">
@@ -1057,7 +1354,7 @@ tr:last-child td{
                     id="searchInput"
                     type="search"
                     autocomplete="off"
-                    placeholder="Search events, venue or city..."
+                    placeholder="Search event, venue, city or merchant..."
                 >
 
             </div>
@@ -1089,6 +1386,10 @@ tr:last-child td{
                     Archived
                 </option>
 
+                <option value="completed">
+                    Completed
+                </option>
+
             </select>
 
 
@@ -1100,6 +1401,10 @@ tr:last-child td{
 
                 <option value="upcoming">
                     Upcoming
+                </option>
+
+                <option value="today">
+                    Today
                 </option>
 
                 <option value="past">
@@ -1118,7 +1423,8 @@ tr:last-child td{
         ></div>
 
 
-        <!-- DESKTOP TABLE -->
+        <!-- DESKTOP -->
+
         <div class="table-wrap">
 
             <table>
@@ -1126,15 +1432,14 @@ tr:last-child td{
                 <thead>
 
                     <tr>
-
                         <th>Event</th>
                         <th>Location</th>
                         <th>Start</th>
                         <th>Status</th>
                         <th>Merchant</th>
+                        <th>Inventory</th>
                         <th>Created</th>
                         <th>Actions</th>
-
                     </tr>
 
                 </thead>
@@ -1142,7 +1447,7 @@ tr:last-child td{
                 <tbody id="eventsTable">
 
                     <tr>
-                        <td colspan="7">
+                        <td colspan="8">
                             <div class="loading">
                                 Loading events…
                             </div>
@@ -1157,6 +1462,7 @@ tr:last-child td{
 
 
         <!-- MOBILE -->
+
         <div
             class="mobile-events"
             id="mobileEvents"
@@ -1175,14 +1481,81 @@ tr:last-child td{
 </div>
 
 
+<!-- =========================================================
+     EVENT DRAWER
+========================================================= -->
+
+<div
+    class="drawer-backdrop"
+    id="drawerBackdrop"
+    aria-hidden="true"
+>
+
+    <aside
+        class="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawerTitle"
+    >
+
+        <div class="drawer-head">
+
+            <div>
+
+                <h2 id="drawerTitle">
+                    Event
+                </h2>
+
+                <p id="drawerSubtitle">
+                    Event details
+                </p>
+
+            </div>
+
+            <button
+                class="drawer-close"
+                id="drawerClose"
+                type="button"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div
+            class="drawer-body"
+            id="drawerBody"
+        ></div>
+
+
+        <div class="drawer-footer">
+
+            <button
+                class="btn"
+                id="drawerCloseBottom"
+                type="button"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </aside>
+
+</div>
+
+
 <script>
 "use strict";
 
 /*
 ============================================================
 K-TICKETS ADMIN EVENTS
-SECURITY MODEL
 ============================================================
+
+SECURITY RULES
 
 This browser file must NEVER contain:
 
@@ -1193,18 +1566,25 @@ This browser file must NEVER contain:
 - SMTP credentials
 - payment provider private key
 
-Only the public/anon key is permitted.
+Only the public/publishable Supabase key is used here.
 
-Actual authorization must be enforced by Supabase RLS
-and secure server-side RPC / Edge Functions.
+Authorization must be enforced by Supabase RLS and secure
+server-side RPC / Edge Functions.
+
+NO PRODUCTION EVENT DATA IS HARDCODED.
 ============================================================
 */
 
-const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
 
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+/* ============================================================
+   SUPABASE CONFIGURATION
+============================================================ */
+
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 let supabaseClient = null;
 
@@ -1212,6 +1592,8 @@ let currentUser = null;
 let currentProfile = null;
 
 let allEvents = [];
+let allTicketTypes = [];
+let merchantProfiles = new Map();
 
 
 /* ============================================================
@@ -1242,15 +1624,29 @@ const statusFilter =
 const dateFilter =
     document.getElementById("dateFilter");
 
+const drawerBackdrop =
+    document.getElementById("drawerBackdrop");
+
+const drawerBody =
+    document.getElementById("drawerBody");
+
+const drawerTitle =
+    document.getElementById("drawerTitle");
+
+const drawerSubtitle =
+    document.getElementById("drawerSubtitle");
+
 
 /* ============================================================
-   INITIALIZE
+   INITIALIZE SUPABASE
 ============================================================ */
 
 function initializeSupabase(){
 
-    if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
-
+    if(
+        !SUPABASE_URL ||
+        !SUPABASE_PUBLISHABLE_KEY
+    ){
         throw new Error(
             "Supabase configuration is missing."
         );
@@ -1259,7 +1655,7 @@ function initializeSupabase(){
     supabaseClient =
         window.supabase.createClient(
             SUPABASE_URL,
-            SUPABASE_ANON_KEY,
+            SUPABASE_PUBLISHABLE_KEY,
             {
                 auth:{
                     persistSession:true,
@@ -1296,6 +1692,7 @@ async function secureAdminGate(){
         if(!session?.user){
 
             redirectLogin();
+
             return false;
         }
 
@@ -1313,30 +1710,44 @@ async function secureAdminGate(){
                     id,
                     full_name,
                     phone,
-                    role
+                    role,
+                    is_active
                 `)
                 .eq("id",currentUser.id)
                 .maybeSingle();
 
+
         if(profileError){
+
+            console.error(
+                "Admin profile query failed:",
+                profileError
+            );
+
             throw profileError;
         }
 
-        if(!profile || profile.role !== "admin"){
+
+        if(
+            !profile ||
+            profile.role !== "admin" ||
+            profile.is_active !== true
+        ){
 
             await safeSignOut();
 
-            window.location.replace(
-                "../auth/login.html?error=unauthorized"
-            );
+            redirectLogin("unauthorized");
 
             return false;
         }
 
+
         currentProfile =
             profile;
 
+
         applyIdentity();
+
 
         securityScreen.style.display =
             "none";
@@ -1344,7 +1755,9 @@ async function secureAdminGate(){
         app.style.display =
             "block";
 
+
         return true;
+
 
     }catch(error){
 
@@ -1353,7 +1766,10 @@ async function secureAdminGate(){
             error
         );
 
-        showSecurityFailure();
+        showSecurityFailure(
+            error?.message ||
+            "Administrator verification failed."
+        );
 
         return false;
     }
@@ -1369,19 +1785,25 @@ function applyIdentity(){
     const name =
         currentProfile?.full_name ||
         currentUser?.user_metadata?.full_name ||
+        currentUser?.email ||
         "Administrator";
+
 
     document.getElementById("adminName")
         .textContent = name;
+
 
     const initials =
         name
             .trim()
             .split(/\s+/)
             .slice(0,2)
-            .map(x => x.charAt(0))
+            .map(
+                x => x.charAt(0)
+            )
             .join("")
             .toUpperCase() || "A";
+
 
     document.getElementById("adminAvatar")
         .textContent = initials;
@@ -1395,73 +1817,336 @@ function applyIdentity(){
 async function loadEvents(){
 
     showLoading();
-
     hideError();
 
-    /*
-        IMPORTANT:
 
-        No merchant/customer/event details are hardcoded.
+    try{
 
-        RLS must ensure the authenticated admin can read
-        this data.
-    */
+        /*
+        --------------------------------------------------------
+        EVENTS
+        --------------------------------------------------------
+        */
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("events")
-            .select(`
-                id,
-                merchant_id,
-                title,
-                description,
-                venue,
-                city,
-                start_at,
-                end_at,
-                status,
-                created_at,
-                updated_at
-            `)
-            .order("start_at",{
-                ascending:true,
-                nullsFirst:false
-            });
+        const {
+            data:events,
+            error:eventError
+        } =
+            await supabaseClient
+                .from("events")
+                .select(`
+                    id,
+                    merchant_id,
+                    title,
+                    description,
+                    venue,
+                    city,
+                    start_at,
+                    end_at,
+                    status,
+                    created_at,
+                    updated_at
+                `)
+                .order(
+                    "start_at",
+                    {
+                        ascending:true,
+                        nullsFirst:false
+                    }
+                );
 
-    if(error){
+
+        if(eventError){
+            throw eventError;
+        }
+
+
+        allEvents =
+            Array.isArray(events)
+                ? events
+                : [];
+
+
+        /*
+        --------------------------------------------------------
+        TICKET TYPES
+        --------------------------------------------------------
+        */
+
+        const {
+            data:ticketTypes,
+            error:ticketError
+        } =
+            await supabaseClient
+                .from("ticket_types")
+                .select(`
+                    id,
+                    event_id,
+                    name,
+                    description,
+                    price,
+                    currency,
+                    quantity_total,
+                    quantity_sold,
+                    sales_start,
+                    sales_end,
+                    active,
+                    created_at,
+                    updated_at
+                `);
+
+
+        if(ticketError){
+            throw ticketError;
+        }
+
+
+        allTicketTypes =
+            Array.isArray(ticketTypes)
+                ? ticketTypes
+                : [];
+
+
+        /*
+        --------------------------------------------------------
+        MERCHANT PROFILES
+        --------------------------------------------------------
+        */
+
+        const merchantIds =
+            [
+                ...new Set(
+                    allEvents
+                        .map(event => event.merchant_id)
+                        .filter(Boolean)
+                )
+            ];
+
+
+        merchantProfiles =
+            new Map();
+
+
+        if(merchantIds.length){
+
+            const {
+                data:merchants,
+                error:merchantError
+            } =
+                await supabaseClient
+                    .from("profiles")
+                    .select(`
+                        id,
+                        full_name,
+                        phone,
+                        role,
+                        is_active
+                    `)
+                    .in(
+                        "id",
+                        merchantIds
+                    )
+                    .eq(
+                        "role",
+                        "merchant"
+                    );
+
+
+            if(merchantError){
+
+                /*
+                Merchant enrichment should not prevent the
+                actual event directory from loading.
+                */
+
+                console.warn(
+                    "Merchant enrichment failed:",
+                    merchantError
+                );
+
+            }else{
+
+                (merchants || []).forEach(
+                    merchant => {
+
+                        merchantProfiles.set(
+                            String(merchant.id),
+                            merchant
+                        );
+
+                    }
+                );
+            }
+        }
+
+
+        updateStats();
+        renderEvents();
+
+
+        /*
+        --------------------------------------------------------
+        NOTIFICATION INDICATOR
+        --------------------------------------------------------
+        */
+
+        await loadNotificationIndicator();
+
+
+    }catch(error){
 
         console.error(
-            "Events query failed:",
+            "Events loading failed:",
             error
         );
 
         allEvents = [];
+        allTicketTypes = [];
+        merchantProfiles = new Map();
 
         showError(
-            "Events could not be loaded. Database permissions or the event schema may need to be configured."
+            "Events could not be loaded. " +
+            "Check Supabase permissions, RLS policies and the event schema."
         );
 
+        updateStats();
         renderEvents();
-
-        return;
     }
-
-    allEvents =
-        Array.isArray(data)
-        ? data
-        : [];
-
-    updateStats();
-
-    renderEvents();
 }
 
 
 /* ============================================================
-   RENDER
+   NOTIFICATIONS
+============================================================ */
+
+async function loadNotificationIndicator(){
+
+    try{
+
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select(
+                    "id",
+                    {
+                        count:"exact",
+                        head:true
+                    }
+                )
+                .eq(
+                    "is_read",
+                    false
+                );
+
+
+        if(error){
+
+            console.warn(
+                "Notification indicator unavailable:",
+                error
+            );
+
+            return;
+        }
+
+
+        const dot =
+            document.getElementById(
+                "notificationDot"
+            );
+
+
+        dot.hidden =
+            !(Number(count || 0) > 0);
+
+
+    }catch(error){
+
+        console.warn(
+            "Notification indicator failed:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   EVENT HELPERS
+============================================================ */
+
+function getTicketTypesForEvent(eventId){
+
+    return allTicketTypes.filter(
+        ticketType =>
+            String(ticketType.event_id) ===
+            String(eventId)
+    );
+}
+
+
+function getMerchant(event){
+
+    if(!event?.merchant_id){
+        return null;
+    }
+
+    return merchantProfiles.get(
+        String(event.merchant_id)
+    ) || null;
+}
+
+
+function getInventory(event){
+
+    const types =
+        getTicketTypesForEvent(event.id);
+
+
+    let total = 0;
+    let sold = 0;
+
+
+    types.forEach(type => {
+
+        total +=
+            Number(type.quantity_total || 0);
+
+        sold +=
+            Number(type.quantity_sold || 0);
+
+    });
+
+
+    const remaining =
+        Math.max(
+            total - sold,
+            0
+        );
+
+
+    return {
+        types,
+        total,
+        sold,
+        remaining,
+        percentage:
+            total > 0
+                ? Math.min(
+                    100,
+                    Math.round(
+                        (sold / total) * 100
+                    )
+                )
+                : 0
+    };
+}
+
+
+/* ============================================================
+   RENDER EVENTS
 ============================================================ */
 
 function renderEvents(){
@@ -1469,53 +2154,99 @@ function renderEvents(){
     let filtered =
         [...allEvents];
 
+
     const search =
         searchInput.value
             .trim()
             .toLowerCase();
 
+
     const status =
         statusFilter.value;
+
 
     const date =
         dateFilter.value;
 
+
+    /*
+    --------------------------------------------------------
+    SEARCH
+    --------------------------------------------------------
+    */
 
     if(search){
 
         filtered =
             filtered.filter(event => {
 
+                const merchant =
+                    getMerchant(event);
+
+
                 const haystack = [
+
                     event.title,
+
                     event.description,
+
                     event.venue,
-                    event.city
+
+                    event.city,
+
+                    event.id,
+
+                    event.merchant_id,
+
+                    merchant?.full_name,
+
+                    merchant?.phone
+
                 ]
                 .filter(Boolean)
                 .join(" ")
                 .toLowerCase();
 
-                return haystack.includes(search);
+
+                return haystack.includes(
+                    search
+                );
             });
     }
 
+
+    /*
+    --------------------------------------------------------
+    STATUS
+    --------------------------------------------------------
+    */
 
     if(status){
 
         filtered =
             filtered.filter(
                 event =>
-                    String(event.status || "")
-                        .toLowerCase() === status
+                    String(
+                        event.status || ""
+                    )
+                    .toLowerCase()
+                    .trim() ===
+                    status
             );
     }
 
 
+    /*
+    --------------------------------------------------------
+    DATE
+    --------------------------------------------------------
+    */
+
     if(date !== "all"){
 
         const now =
-            Date.now();
+            new Date();
+
 
         filtered =
             filtered.filter(event => {
@@ -1524,17 +2255,46 @@ function renderEvents(){
                     return false;
                 }
 
-                const time =
-                    new Date(event.start_at)
-                        .getTime();
+
+                const start =
+                    new Date(
+                        event.start_at
+                    );
+
+
+                if(
+                    Number.isNaN(
+                        start.getTime()
+                    )
+                ){
+                    return false;
+                }
+
 
                 if(date === "upcoming"){
-                    return time >= now;
+                    return start >= now;
                 }
 
+
                 if(date === "past"){
-                    return time < now;
+                    return start < now;
                 }
+
+
+                if(date === "today"){
+
+                    return (
+                        start.getFullYear() ===
+                            now.getFullYear() &&
+
+                        start.getMonth() ===
+                            now.getMonth() &&
+
+                        start.getDate() ===
+                            now.getDate()
+                    );
+                }
+
 
                 return true;
             });
@@ -1556,7 +2316,7 @@ function renderDesktop(events){
 
         eventsTable.innerHTML = `
             <tr>
-                <td colspan="7">
+                <td colspan="8">
                     <div class="empty">
                         <strong>No events found</strong>
                         There are no records matching the current filters.
@@ -1573,15 +2333,33 @@ function renderDesktop(events){
         events.map(event => {
 
             const status =
-                normalizeStatus(event.status);
+                normalizeStatus(
+                    event.status
+                );
+
+
+            const merchant =
+                getMerchant(event);
+
+
+            const inventory =
+                getInventory(event);
+
+
+            const merchantName =
+                merchant?.full_name ||
+                "Merchant profile unavailable";
+
 
             return `
                 <tr>
 
                     <td>
+
                         <div class="event-title">
                             ${escapeHTML(
-                                event.title || "Untitled event"
+                                event.title ||
+                                "Untitled event"
                             )}
                         </div>
 
@@ -1589,43 +2367,81 @@ function renderDesktop(events){
                             ID:
                             ${escapeHTML(event.id)}
                         </div>
+
                     </td>
 
 
                     <td>
+
                         ${escapeHTML(
-                            [event.venue,event.city]
-                                .filter(Boolean)
-                                .join(", ") || "—"
+                            [
+                                event.venue,
+                                event.city
+                            ]
+                            .filter(Boolean)
+                            .join(", ") ||
+                            "—"
+                        )}
+
+                    </td>
+
+
+                    <td>
+                        ${formatDate(
+                            event.start_at
                         )}
                     </td>
 
 
                     <td>
-                        ${formatDate(event.start_at)}
-                    </td>
 
-
-                    <td>
                         <span class="status ${escapeHTML(status)}">
                             ${escapeHTML(
-                                event.status || "unknown"
+                                event.status ||
+                                "unknown"
                             )}
                         </span>
+
                     </td>
 
 
                     <td>
-                        <span class="event-meta">
+
+                        <div class="merchant-name">
                             ${escapeHTML(
-                                event.merchant_id || "—"
+                                merchantName
                             )}
-                        </span>
+                        </div>
+
+                        <div class="merchant-meta">
+                            ${merchant?.phone
+                                ? escapeHTML(
+                                    merchant.phone
+                                )
+                                : "Merchant ID: " +
+                                  escapeHTML(
+                                      event.merchant_id ||
+                                      "—"
+                                  )
+                            }
+                        </div>
+
                     </td>
 
 
                     <td>
-                        ${formatDate(event.created_at)}
+
+                        ${renderInventory(
+                            inventory
+                        )}
+
+                    </td>
+
+
+                    <td>
+                        ${formatDate(
+                            event.created_at
+                        )}
                     </td>
 
 
@@ -1687,7 +2503,18 @@ function renderMobile(events){
         events.map(event => {
 
             const status =
-                normalizeStatus(event.status);
+                normalizeStatus(
+                    event.status
+                );
+
+
+            const merchant =
+                getMerchant(event);
+
+
+            const inventory =
+                getInventory(event);
+
 
             return `
                 <article class="event-card">
@@ -1704,14 +2531,17 @@ function renderMobile(events){
                             </div>
 
                             <div class="event-card-meta">
-                                ID: ${escapeHTML(event.id)}
+                                ID:
+                                ${escapeHTML(event.id)}
                             </div>
 
                         </div>
 
+
                         <span class="status ${escapeHTML(status)}">
                             ${escapeHTML(
-                                event.status || "unknown"
+                                event.status ||
+                                "unknown"
                             )}
                         </span>
 
@@ -1720,23 +2550,43 @@ function renderMobile(events){
 
                     <div class="event-card-meta">
 
-                        Location:
+                        <strong>Location</strong><br>
+
                         ${escapeHTML(
-                            [event.venue,event.city]
-                                .filter(Boolean)
-                                .join(", ") || "—"
+                            [
+                                event.venue,
+                                event.city
+                            ]
+                            .filter(Boolean)
+                            .join(", ") ||
+                            "—"
                         )}
 
-                        <br>
+                        <br><br>
 
-                        Start:
-                        ${formatDate(event.start_at)}
+                        <strong>Start</strong><br>
 
-                        <br>
+                        ${formatDate(
+                            event.start_at
+                        )}
 
-                        Merchant:
+                        <br><br>
+
+                        <strong>Merchant</strong><br>
+
                         ${escapeHTML(
-                            event.merchant_id || "—"
+                            merchant?.full_name ||
+                            event.merchant_id ||
+                            "Merchant profile unavailable"
+                        )}
+
+                    </div>
+
+
+                    <div class="mobile-inventory">
+
+                        ${renderInventory(
+                            inventory
                         )}
 
                     </div>
@@ -1752,6 +2602,7 @@ function renderMobile(events){
                         >
                             View
                         </button>
+
 
                         <button
                             class="action danger"
@@ -1774,6 +2625,68 @@ function renderMobile(events){
 
 
 /* ============================================================
+   INVENTORY RENDER
+============================================================ */
+
+function renderInventory(inventory){
+
+    const percentage =
+        Number(
+            inventory.percentage || 0
+        );
+
+
+    const fillClass =
+        inventory.total <= 0
+            ? "sold-out"
+            : percentage >= 100
+                ? "sold-out"
+                : percentage >= 80
+                    ? "low"
+                    : "";
+
+
+    const label =
+        inventory.total <= 0
+            ? "No ticket inventory"
+            : `${inventory.sold.toLocaleString()} sold / ${inventory.total.toLocaleString()}`;
+
+
+    return `
+        <div class="inventory">
+
+            <div class="inventory-line">
+
+                <span class="inventory-label">
+                    Tickets
+                </span>
+
+                <span class="inventory-value">
+                    ${inventory.remaining.toLocaleString()}
+                    left
+                </span>
+
+            </div>
+
+            <div class="inventory-bar">
+
+                <div
+                    class="inventory-fill ${fillClass}"
+                    style="width:${percentage}%"
+                ></div>
+
+            </div>
+
+            <div class="inventory-note">
+                ${label}
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* ============================================================
    STATS
 ============================================================ */
 
@@ -1781,39 +2694,74 @@ function updateStats(){
 
     document.getElementById("totalEvents")
         .textContent =
-            allEvents.length.toLocaleString();
+            allEvents.length
+                .toLocaleString();
 
 
     document.getElementById("activeEvents")
         .textContent =
-            allEvents.filter(event => {
+            allEvents
+                .filter(event => {
 
-                const status =
-                    String(event.status || "")
+                    const status =
+                        String(
+                            event.status || ""
+                        )
                         .toLowerCase();
 
-                return [
-                    "active",
-                    "published"
-                ].includes(status);
 
-            }).length.toLocaleString();
+                    return [
+                        "active",
+                        "published"
+                    ].includes(status);
+
+                })
+                .length
+                .toLocaleString();
 
 
     document.getElementById("draftEvents")
         .textContent =
-            allEvents.filter(event =>
-                String(event.status || "")
-                    .toLowerCase() === "draft"
-            ).length.toLocaleString();
+            allEvents
+                .filter(event =>
+                    String(
+                        event.status || ""
+                    )
+                    .toLowerCase() ===
+                    "draft"
+                )
+                .length
+                .toLocaleString();
 
 
     document.getElementById("cancelledEvents")
         .textContent =
-            allEvents.filter(event =>
-                String(event.status || "")
-                    .toLowerCase() === "cancelled"
-            ).length.toLocaleString();
+            allEvents
+                .filter(event =>
+                    String(
+                        event.status || ""
+                    )
+                    .toLowerCase() ===
+                    "cancelled"
+                )
+                .length
+                .toLocaleString();
+
+
+    const sold =
+        allTicketTypes.reduce(
+            (total,type) =>
+                total +
+                Number(
+                    type.quantity_sold || 0
+                ),
+            0
+        );
+
+
+    document.getElementById("ticketsSold")
+        .textContent =
+            sold.toLocaleString();
 }
 
 
@@ -1821,12 +2769,18 @@ function updateStats(){
    EVENT ACTIONS
 ============================================================ */
 
-async function handleAction(action,id){
+async function handleAction(
+    action,
+    id
+){
 
     const event =
         allEvents.find(
-            item => String(item.id) === String(id)
+            item =>
+                String(item.id) ===
+                String(id)
         );
+
 
     if(!event){
         return;
@@ -1835,16 +2789,7 @@ async function handleAction(action,id){
 
     if(action === "view"){
 
-        /*
-            We do not expose an unsafe generic edit form here.
-
-            A dedicated admin event-detail/edit page can later
-            use secure RPC operations.
-        */
-
-        window.location.href =
-            "./events.html?id=" +
-            encodeURIComponent(id);
+        openEventDrawer(event);
 
         return;
     }
@@ -1852,37 +2797,56 @@ async function handleAction(action,id){
 
     if(action === "archive"){
 
-        const currentlyArchived =
-            isArchived(event);
+        await toggleArchive(event);
+    }
+}
 
-        const nextStatus =
-            currentlyArchived
+
+/* ============================================================
+   ARCHIVE / RESTORE
+============================================================ */
+
+async function toggleArchive(event){
+
+    const currentlyArchived =
+        isArchived(event);
+
+
+    const nextStatus =
+        currentlyArchived
             ? "draft"
             : "archived";
 
 
-        const confirmed =
-            window.confirm(
-                currentlyArchived
+    const confirmed =
+        window.confirm(
+            currentlyArchived
                 ? "Restore this event to draft status?"
                 : "Archive this event?"
-            );
-
-        if(!confirmed){
-            return;
-        }
+        );
 
 
-        /*
-            IMPORTANT SECURITY NOTE:
+    if(!confirmed){
+        return;
+    }
 
-            This direct UPDATE is only acceptable if RLS
-            strictly permits administrator event updates.
 
-            For production, destructive/high-impact actions
-            should preferably use a SECURITY DEFINER RPC
-            with explicit admin checks and audit logging.
-        */
+    /*
+    ------------------------------------------------------------
+    IMPORTANT
+
+    The browser only attempts the update.
+
+    Supabase RLS must independently verify that the current
+    authenticated user is authorized to modify this event.
+
+    For production, a dedicated admin SECURITY DEFINER RPC
+    can replace this direct update and provide mandatory audit
+    logging.
+    ------------------------------------------------------------
+    */
+
+    try{
 
         const {
             error
@@ -1891,33 +2855,466 @@ async function handleAction(action,id){
                 .from("events")
                 .update({
                     status:nextStatus,
-                    updated_at:new Date().toISOString()
+                    updated_at:
+                        new Date()
+                            .toISOString()
                 })
-                .eq("id",event.id);
+                .eq(
+                    "id",
+                    event.id
+                );
 
 
         if(error){
-
-            console.error(
-                "Event status update failed:",
-                error
-            );
-
-            showError(
-                "The event could not be updated. The server rejected the operation."
-            );
-
-            return;
+            throw error;
         }
 
 
         await loadEvents();
+
+
+    }catch(error){
+
+        console.error(
+            "Event status update failed:",
+            error
+        );
+
+
+        showError(
+            "The event could not be updated. " +
+            "Supabase RLS or the event update policy rejected the operation."
+        );
     }
 }
 
 
 /* ============================================================
-   EVENTS
+   EVENT DRAWER
+============================================================ */
+
+function openEventDrawer(event){
+
+    const merchant =
+        getMerchant(event);
+
+
+    const inventory =
+        getInventory(event);
+
+
+    drawerTitle.textContent =
+        event.title ||
+        "Untitled event";
+
+
+    drawerSubtitle.textContent =
+        event.id ||
+        "";
+
+
+    const ticketRows =
+        inventory.types.length
+            ? inventory.types.map(
+                ticketType => {
+
+                    const total =
+                        Number(
+                            ticketType.quantity_total ||
+                            0
+                        );
+
+                    const sold =
+                        Number(
+                            ticketType.quantity_sold ||
+                            0
+                        );
+
+                    const remaining =
+                        Math.max(
+                            total - sold,
+                            0
+                        );
+
+
+                    return `
+                        <div class="ticket-type-row">
+
+                            <div class="ticket-type-name">
+                                ${escapeHTML(
+                                    ticketType.name ||
+                                    "Unnamed ticket type"
+                                )}
+                            </div>
+
+                            <div class="ticket-type-meta">
+
+                                <span>
+                                    Price:
+                                    ${formatMoney(
+                                        ticketType.price,
+                                        ticketType.currency
+                                    )}
+                                </span>
+
+                                <span>
+                                    Sold:
+                                    ${sold.toLocaleString()}
+                                </span>
+
+                                <span>
+                                    Remaining:
+                                    ${remaining.toLocaleString()}
+                                </span>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }
+            ).join("")
+            : `
+                <div class="empty" style="padding:25px 0;">
+                    <strong>No ticket types</strong>
+                    No ticket type records are currently associated with this event.
+                </div>
+            `;
+
+
+    drawerBody.innerHTML = `
+
+        <section class="detail-section">
+
+            <h3>Event</h3>
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Status
+                    </div>
+
+                    <div class="detail-value">
+                        <span class="status ${escapeHTML(
+                            normalizeStatus(event.status)
+                        )}">
+                            ${escapeHTML(
+                                event.status ||
+                                "unknown"
+                            )}
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Event ID
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHTML(
+                            event.id
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item full">
+
+                    <div class="detail-label">
+                        Description
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHTML(
+                            event.description ||
+                            "No description provided."
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="detail-section">
+
+            <h3>Schedule & Location</h3>
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Starts
+                    </div>
+
+                    <div class="detail-value">
+                        ${formatDate(
+                            event.start_at
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Ends
+                    </div>
+
+                    <div class="detail-value">
+                        ${formatDate(
+                            event.end_at
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Venue
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHTML(
+                            event.venue ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        City
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHTML(
+                            event.city ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="detail-section">
+
+            <h3>Merchant</h3>
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Merchant
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHTML(
+                            merchant?.full_name ||
+                            "Merchant profile unavailable"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Phone
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHTML(
+                            merchant?.phone ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item full">
+
+                    <div class="detail-label">
+                        Merchant ID
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHTML(
+                            event.merchant_id ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="detail-section">
+
+            <h3>Ticket Inventory</h3>
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Total Capacity
+                    </div>
+
+                    <div class="detail-value">
+                        ${inventory.total.toLocaleString()}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Tickets Sold
+                    </div>
+
+                    <div class="detail-value">
+                        ${inventory.sold.toLocaleString()}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Remaining
+                    </div>
+
+                    <div class="detail-value">
+                        ${inventory.remaining.toLocaleString()}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Sell-through
+                    </div>
+
+                    <div class="detail-value">
+                        ${inventory.percentage}%
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div style="margin-top:15px;">
+
+                ${ticketRows}
+
+            </div>
+
+        </section>
+
+
+        <section class="detail-section">
+
+            <h3>Record</h3>
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Created
+                    </div>
+
+                    <div class="detail-value">
+                        ${formatDate(
+                            event.created_at
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Last Updated
+                    </div>
+
+                    <div class="detail-value">
+                        ${formatDate(
+                            event.updated_at
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+    `;
+
+
+    drawerBackdrop.classList.add("open");
+    drawerBackdrop.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+}
+
+
+function closeEventDrawer(){
+
+    drawerBackdrop.classList.remove(
+        "open"
+    );
+
+    drawerBackdrop.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    document.body.style.overflow =
+        "";
+}
+
+
+/* ============================================================
+   EVENT LISTENERS
 ============================================================ */
 
 eventsTable.addEventListener(
@@ -1929,9 +3326,11 @@ eventsTable.addEventListener(
                 "button[data-action]"
             );
 
+
         if(!button){
             return;
         }
+
 
         handleAction(
             button.dataset.action,
@@ -1950,9 +3349,11 @@ mobileEvents.addEventListener(
                 "button[data-action]"
             );
 
+
         if(!button){
             return;
         }
+
 
         handleAction(
             button.dataset.action,
@@ -1962,23 +3363,62 @@ mobileEvents.addEventListener(
 );
 
 
-/* ============================================================
-   FILTER EVENTS
-============================================================ */
-
 searchInput.addEventListener(
     "input",
     renderEvents
 );
+
 
 statusFilter.addEventListener(
     "change",
     renderEvents
 );
 
+
 dateFilter.addEventListener(
     "change",
     renderEvents
+);
+
+
+document
+    .getElementById("drawerClose")
+    .addEventListener(
+        "click",
+        closeEventDrawer
+    );
+
+
+document
+    .getElementById("drawerCloseBottom")
+    .addEventListener(
+        "click",
+        closeEventDrawer
+    );
+
+
+drawerBackdrop.addEventListener(
+    "click",
+    event => {
+
+        if(
+            event.target ===
+            drawerBackdrop
+        ){
+            closeEventDrawer();
+        }
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Escape"){
+            closeEventDrawer();
+        }
+    }
 );
 
 
@@ -1993,16 +3433,29 @@ document
         async () => {
 
             const button =
-                document.getElementById("refreshBtn");
+                document.getElementById(
+                    "refreshBtn"
+                );
 
-            button.disabled = true;
-            button.textContent = "↻ Loading…";
+
+            button.disabled =
+                true;
+
+            button.textContent =
+                "↻ Loading…";
+
 
             try{
+
                 await loadEvents();
+
             }finally{
-                button.disabled = false;
-                button.textContent = "↻ Refresh";
+
+                button.disabled =
+                    false;
+
+                button.textContent =
+                    "↻ Refresh";
             }
         }
     );
@@ -2020,7 +3473,8 @@ document
 
             document
                 .getElementById("sidebar")
-                .classList.toggle("open");
+                .classList
+                .toggle("open");
         }
     );
 
@@ -2034,22 +3488,14 @@ function monitorAuth(){
     supabaseClient.auth.onAuthStateChange(
         (event,session) => {
 
-            if(!session){
-
-                window.location.replace(
-                    "../auth/login.html"
-                );
-
-                return;
-            }
-
             if(
                 event === "SIGNED_OUT" ||
-                event === "USER_DELETED"
+                event === "USER_DELETED" ||
+                !session
             ){
 
                 window.location.replace(
-                    "../auth/login.html"
+                    "../login.html"
                 );
             }
         }
@@ -2068,24 +3514,31 @@ function normalizeStatus(status){
             .toLowerCase()
             .trim();
 
+
     const allowed = [
         "active",
         "published",
         "draft",
         "cancelled",
-        "archived"
+        "archived",
+        "completed"
     ];
+
 
     return allowed.includes(value)
         ? value
-        : "draft";
+        : "unknown";
 }
 
 
 function isArchived(event){
 
-    return String(event.status || "")
-        .toLowerCase() === "archived";
+    return String(
+        event.status || ""
+    )
+    .toLowerCase()
+    .trim() ===
+    "archived";
 }
 
 
@@ -2095,28 +3548,100 @@ function formatDate(value){
         return "—";
     }
 
+
     const date =
         new Date(value);
 
-    if(Number.isNaN(date.getTime())){
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
         return "—";
     }
 
-    return date.toLocaleString([],{
-        dateStyle:"medium",
-        timeStyle:"short"
-    });
+
+    return date.toLocaleString(
+        [],
+        {
+            dateStyle:"medium",
+            timeStyle:"short"
+        }
+    );
+}
+
+
+function formatMoney(
+    amount,
+    currency
+){
+
+    const numeric =
+        Number(amount);
+
+
+    if(
+        !Number.isFinite(
+            numeric
+        )
+    ){
+        return "—";
+    }
+
+
+    const code =
+        String(
+            currency || ""
+        )
+        .trim()
+        .toUpperCase();
+
+
+    try{
+
+        return new Intl.NumberFormat(
+            undefined,
+            {
+                style:"currency",
+                currency:
+                    code || "USD",
+                maximumFractionDigits:2
+            }
+        ).format(numeric);
+
+    }catch{
+
+        return `${numeric.toLocaleString()} ${code}`;
+    }
 }
 
 
 function escapeHTML(value){
 
-    return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+    return String(
+        value ?? ""
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
 }
 
 
@@ -2124,13 +3649,14 @@ function showLoading(){
 
     eventsTable.innerHTML = `
         <tr>
-            <td colspan="7">
+            <td colspan="8">
                 <div class="loading">
                     Loading events…
                 </div>
             </td>
         </tr>
     `;
+
 
     mobileEvents.innerHTML = `
         <div class="loading">
@@ -2142,15 +3668,21 @@ function showLoading(){
 
 function showError(message){
 
-    errorBox.hidden = false;
-    errorBox.textContent = message;
+    errorBox.hidden =
+        false;
+
+    errorBox.textContent =
+        message;
 }
 
 
 function hideError(){
 
-    errorBox.hidden = true;
-    errorBox.textContent = "";
+    errorBox.hidden =
+        true;
+
+    errorBox.textContent =
+        "";
 }
 
 
@@ -2159,6 +3691,7 @@ async function safeSignOut(){
     try{
 
         if(supabaseClient){
+
             await supabaseClient.auth.signOut();
         }
 
@@ -2172,32 +3705,50 @@ async function safeSignOut(){
 }
 
 
-function redirectLogin(){
+function redirectLogin(reason){
+
+    const target =
+        reason
+            ? `../login.html?error=${encodeURIComponent(reason)}`
+            : "../login.html";
+
 
     window.location.replace(
-        "../auth/login.html"
+        target
     );
 }
 
 
-function showSecurityFailure(){
+function showSecurityFailure(message){
 
     securityScreen.innerHTML = `
 
         <div class="security-box">
 
-            <div class="security-logo">!</div>
+            <div class="security-logo">
+                !
+            </div>
 
-            <h1>Access Unavailable</h1>
+            <h1>
+                Access Unavailable
+            </h1>
 
             <p>
                 This administrator session could not be verified.
                 Please sign in again.
             </p>
 
+            <p style="
+                margin-top:10px;
+                font-size:11px;
+                opacity:.65;
+            ">
+                ${escapeHTML(message)}
+            </p>
+
             <button
                 type="button"
-                onclick="window.location.replace('../auth/login.html')"
+                onclick="window.location.replace('../login.html')"
                 style="
                     margin-top:22px;
                     padding:12px 18px;
@@ -2225,11 +3776,14 @@ function showSecurityFailure(){
     const authorized =
         await secureAdminGate();
 
+
     if(!authorized){
         return;
     }
 
+
     monitorAuth();
+
 
     await loadEvents();
 

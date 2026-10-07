@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,7 +46,10 @@
       overflow-x:hidden;
     }
 
-    button,input,select,textarea{
+    button,
+    input,
+    select,
+    textarea{
       font:inherit;
     }
 
@@ -121,7 +124,9 @@
     }
 
     @keyframes spin{
-      to{transform:rotate(360deg)}
+      to{
+        transform:rotate(360deg);
+      }
     }
 
     /* =====================================================
@@ -467,7 +472,7 @@
     }
 
     /* =====================================================
-       WITHDRAWAL RULES
+       CONTROL RULES
     ===================================================== */
 
     .rules-panel{
@@ -479,20 +484,13 @@
       box-shadow:var(--shadow);
     }
 
-    .rules-head{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:20px;
-    }
-
     .rules-head h2{
       color:var(--green);
       font-size:14px;
     }
 
     .rules-head p{
-      max-width:700px;
+      max-width:760px;
       margin-top:5px;
       color:var(--muted);
       font-size:11px;
@@ -670,7 +668,7 @@
 
     table{
       width:100%;
-      min-width:1180px;
+      min-width:1120px;
       border-collapse:collapse;
     }
 
@@ -695,6 +693,10 @@
       vertical-align:middle;
     }
 
+    tbody tr{
+      cursor:pointer;
+    }
+
     tbody tr:hover{
       background:#fcfaf8;
     }
@@ -711,7 +713,7 @@
     }
 
     .primary-text{
-      max-width:210px;
+      max-width:220px;
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
@@ -768,11 +770,7 @@
       background:rgba(166,107,0,.1);
     }
 
-    .status-approved{
-      color:var(--info);
-      background:rgba(39,100,165,.09);
-    }
-
+    .status-approved,
     .status-processing{
       color:var(--info);
       background:rgba(39,100,165,.09);
@@ -818,7 +816,7 @@
     }
 
     .empty p{
-      max-width:520px;
+      max-width:560px;
       margin:6px auto 0;
       color:var(--muted);
       font-size:11px;
@@ -826,7 +824,7 @@
     }
 
     /* =====================================================
-       MOBILE CARDS
+       MOBILE
     ===================================================== */
 
     .mobile-list{
@@ -899,7 +897,7 @@
 
     .mobile-actions{
       display:grid;
-      grid-template-columns:1fr 1fr;
+      grid-template-columns:1fr;
       gap:8px;
       margin-top:14px;
     }
@@ -924,7 +922,7 @@
     .drawer{
       position:absolute;
       inset:0 0 0 auto;
-      width:min(560px,94vw);
+      width:min(570px,94vw);
       overflow-y:auto;
       padding:24px;
       background:#fff;
@@ -933,8 +931,12 @@
     }
 
     @keyframes slideIn{
-      from{transform:translateX(100%)}
-      to{transform:translateX(0)}
+      from{
+        transform:translateX(100%);
+      }
+      to{
+        transform:translateX(0);
+      }
     }
 
     .drawer-head{
@@ -964,6 +966,7 @@
       border-radius:10px;
       background:#fff;
       color:var(--green);
+      font-size:20px;
     }
 
     .detail-section{
@@ -997,7 +1000,7 @@
     }
 
     .detail-row > span:last-child{
-      max-width:300px;
+      max-width:320px;
       color:var(--ink);
       font-size:11px;
       font-weight:700;
@@ -1006,7 +1009,7 @@
     }
 
     .action-box{
-      margin-top:18px;
+      margin-top:16px;
       padding:15px;
       border:1px solid var(--line);
       border-radius:14px;
@@ -1014,6 +1017,7 @@
     }
 
     .action-box h3{
+      margin-bottom:5px;
       color:var(--green);
       font-size:11px;
       letter-spacing:.08em;
@@ -1021,14 +1025,12 @@
     }
 
     .action-box p{
-      margin-top:5px;
       color:var(--muted);
       font-size:10px;
       line-height:1.55;
     }
 
     .action-box textarea,
-    .action-box select,
     .action-box input{
       width:100%;
       margin-top:11px;
@@ -1042,12 +1044,11 @@
     }
 
     .action-box textarea{
-      min-height:85px;
+      min-height:82px;
       resize:vertical;
     }
 
     .action-box textarea:focus,
-    .action-box select:focus,
     .action-box input:focus{
       border-color:var(--green);
       box-shadow:0 0 0 3px rgba(15,61,58,.08);
@@ -1082,6 +1083,17 @@
       line-height:1.55;
     }
 
+    .locked-note{
+      margin-top:12px;
+      padding:11px;
+      border:1px solid rgba(108,21,30,.12);
+      border-radius:10px;
+      background:rgba(108,21,30,.035);
+      color:#72565a;
+      font-size:9px;
+      line-height:1.55;
+    }
+
     /* =====================================================
        TOAST
     ===================================================== */
@@ -1091,7 +1103,7 @@
       right:22px;
       bottom:22px;
       z-index:5000;
-      max-width:min(380px,calc(100vw - 30px));
+      max-width:min(400px,calc(100vw - 30px));
       padding:13px 16px;
       border-radius:12px;
       background:var(--green);
@@ -1128,10 +1140,6 @@
         grid-template-columns:1fr 1fr;
       }
 
-      .rule-grid{
-        grid-template-columns:repeat(2,1fr);
-      }
-
       .toolbar{
         align-items:stretch;
         flex-direction:column;
@@ -1139,6 +1147,10 @@
 
       .toolbar > .button{
         align-self:flex-start;
+      }
+
+      .rule-grid{
+        grid-template-columns:repeat(2,1fr);
       }
     }
 
@@ -1243,11 +1255,7 @@
         grid-template-columns:1fr;
       }
 
-      .mobile-grid{
-        grid-template-columns:1fr;
-      }
-
-      .mobile-actions,
+      .mobile-grid,
       .action-buttons{
         grid-template-columns:1fr;
       }
@@ -1274,9 +1282,9 @@
       </h2>
 
       <p>
-        K-Tickets is checking your authenticated
-        Supabase session and administrator role
-        before loading withdrawal records.
+        K-Tickets is checking your authenticated Supabase
+        session and administrator role before loading
+        withdrawal records.
       </p>
 
       <div class="loader"></div>
@@ -1346,9 +1354,9 @@
           Orders
         </a>
 
-        <a href="./payments.html">
-          <span class="nav-icon">₿</span>
-          Payments
+        <a href="./tickets.html">
+          <span class="nav-icon">🎟</span>
+          Tickets
         </a>
 
         <a href="./wamd.html">
@@ -1380,6 +1388,16 @@
         <div class="nav-label">
           System
         </div>
+
+        <a href="./notifications.html">
+          <span class="nav-icon">♧</span>
+          Notifications
+        </a>
+
+        <a href="./audit-logs.html">
+          <span class="nav-icon">◉</span>
+          Audit Logs
+        </a>
 
         <a href="./settings.html">
           <span class="nav-icon">⚙</span>
@@ -1419,8 +1437,6 @@
     <!-- MAIN -->
 
     <main class="main">
-
-      <!-- TOPBAR -->
 
       <header class="topbar">
 
@@ -1481,8 +1497,6 @@
       </header>
 
 
-      <!-- CONTENT -->
-
       <section class="content">
 
         <!-- SECURITY NOTICE -->
@@ -1500,12 +1514,12 @@
             </strong>
 
             <p>
-              This page never contains service-role keys, database
-              passwords, payout credentials, wallet secrets, or payment
-              gateway secrets. Approval, rejection, processing and
-              completion must be enforced by protected server-side
-              RPCs or Edge Functions with administrator authorization,
-              balance validation and audit logging.
+              This page only reads withdrawal records and requests
+              protected server-side actions. It never contains
+              service-role keys, database passwords, payout credentials,
+              wallet secrets or payment gateway secrets. Financial
+              state changes must be authorized, validated and audited
+              by Supabase RPCs or Edge Functions.
             </p>
 
           </div>
@@ -1529,10 +1543,7 @@
               </span>
             </div>
 
-            <div
-              class="stat-value"
-              id="statTotal"
-            >
+            <div class="stat-value" id="statTotal">
               —
             </div>
 
@@ -1555,10 +1566,7 @@
               </span>
             </div>
 
-            <div
-              class="stat-value"
-              id="statPending"
-            >
+            <div class="stat-value" id="statPending">
               —
             </div>
 
@@ -1581,10 +1589,7 @@
               </span>
             </div>
 
-            <div
-              class="stat-value"
-              id="statApproved"
-            >
+            <div class="stat-value" id="statApproved">
               —
             </div>
 
@@ -1607,10 +1612,7 @@
               </span>
             </div>
 
-            <div
-              class="stat-value"
-              id="statProcessing"
-            >
+            <div class="stat-value" id="statProcessing">
               —
             </div>
 
@@ -1633,10 +1635,7 @@
               </span>
             </div>
 
-            <div
-              class="stat-value"
-              id="statPaid"
-            >
+            <div class="stat-value" id="statPaid">
               —
             </div>
 
@@ -1649,26 +1648,21 @@
         </section>
 
 
-        <!-- WITHDRAWAL RULES -->
+        <!-- CONTROL RULES -->
 
         <section class="rules-panel">
 
           <div class="rules-head">
 
-            <div>
+            <h2>
+              Withdrawal control layer
+            </h2>
 
-              <h2>
-                Withdrawal control layer
-              </h2>
-
-              <p>
-                A merchant withdrawal must never be treated as simply
-                changing a status in the browser. The backend should
-                calculate the eligible balance, lock the claim, validate
-                payout ownership and record every financial state change.
-              </p>
-
-            </div>
+            <p>
+              Every payout must be validated server-side. The browser
+              must never decide whether a merchant has enough eligible
+              balance or directly change a financial status.
+            </p>
 
           </div>
 
@@ -1686,7 +1680,7 @@
               </strong>
 
               <span>
-                Confirm the merchant has sufficient eligible earnings.
+                Server verifies the merchant's eligible balance.
               </span>
 
             </div>
@@ -1699,11 +1693,11 @@
               </div>
 
               <strong>
-                Merchant ownership
+                Ownership
               </strong>
 
               <span>
-                Confirm the withdrawal belongs to the authenticated merchant.
+                Withdrawal must belong to the correct merchant.
               </span>
 
             </div>
@@ -1720,7 +1714,7 @@
               </strong>
 
               <span>
-                Prevent the same withdrawal or payout reference being reused.
+                Payout references must not be reused.
               </span>
 
             </div>
@@ -1737,7 +1731,7 @@
               </strong>
 
               <span>
-                Record reviewer, decision, payout reference and timestamps.
+                Every financial decision must be traceable.
               </span>
 
             </div>
@@ -1758,7 +1752,7 @@
               <input
                 type="search"
                 id="searchInput"
-                placeholder="Search withdrawal, merchant or payout reference..."
+                placeholder="Search withdrawal, merchant or destination..."
                 autocomplete="off"
               >
 
@@ -1797,10 +1791,6 @@
                   Cancelled
                 </option>
 
-                <option value="failed">
-                  Failed
-                </option>
-
               </select>
 
             </div>
@@ -1811,7 +1801,7 @@
               <select id="channelFilter">
 
                 <option value="all">
-                  All payout channels
+                  All channels
                 </option>
 
                 <option value="mpesa">
@@ -1876,7 +1866,7 @@
         </div>
 
 
-        <!-- WITHDRAWALS PANEL -->
+        <!-- WITHDRAWALS -->
 
         <section class="panel">
 
@@ -1905,7 +1895,7 @@
           </div>
 
 
-          <!-- DESKTOP TABLE -->
+          <!-- DESKTOP -->
 
           <div class="table-wrap">
 
@@ -1944,7 +1934,7 @@
                       </h3>
 
                       <p>
-                        Retrieving merchant withdrawal claims from Supabase.
+                        Retrieving real merchant withdrawal claims from Supabase.
                       </p>
 
                     </div>
@@ -1978,7 +1968,7 @@
               </h3>
 
               <p>
-                Retrieving merchant withdrawal claims from Supabase.
+                Retrieving real merchant withdrawal claims from Supabase.
               </p>
 
             </div>
@@ -2048,12 +2038,9 @@
   <div id="toast"></div>
 
 
-  <!-- =====================================================
-       SUPABASE
-  ====================================================== -->
+  <!-- SUPABASE -->
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 
   <script>
 
@@ -2061,62 +2048,78 @@
        K-TICKETS ADMIN WITHDRAWALS
        =====================================================
 
-       SECURITY MODEL
+       PRODUCTION RULE:
 
-       - Only Supabase anon/public key is used in browser.
-       - No service-role key.
-       - No database password.
-       - No payout credentials.
-       - No wallet secrets.
-       - Admin role is checked before loading.
-       - RLS independently protects withdrawal records.
-       - Financial mutations happen through protected RPCs
-         or Edge Functions.
-       - Server re-checks admin authorization.
-       - Server validates merchant balance.
-       - Server locks withdrawal rows before state changes.
-       - Server prevents duplicate payout processing.
-       - Server records audit history.
+       Nothing below creates fake withdrawal records.
 
-       EXPECTED FUTURE RPCs:
+       The browser:
+       - authenticates the administrator
+       - reads real withdrawal records
+       - displays real merchant profiles
+       - filters/export real records
+       - calls protected RPCs for financial state changes
 
-         admin_approve_withdrawal(
-           p_withdrawal_id,
-           p_note
-         )
+       The browser NEVER:
+       - changes withdrawal status directly
+       - changes merchant balance
+       - creates payout references
+       - stores service-role credentials
+       - stores payment secrets
+       - decides merchant eligibility
 
-         admin_reject_withdrawal(
-           p_withdrawal_id,
-           p_note
-         )
+       CONFIRMED WITHDRAWAL TABLE:
 
-         admin_start_withdrawal(
-           p_withdrawal_id,
-           p_note
-         )
+         id
+         merchant_id
+         amount
+         currency
+         channel
+         account_reference
+         status
+         requested_at
+         processed_at
+         processed_by
+         admin_notes
+         created_at
+         updated_at
 
-         admin_complete_withdrawal(
-           p_withdrawal_id,
-           p_payout_reference,
-           p_note
-         )
+       EXPECTED SECURE RPCs:
 
-       These RPCs are intentionally NOT assumed to exist yet.
+         admin_approve_withdrawal
+         admin_reject_withdrawal
+         admin_start_withdrawal
+         admin_complete_withdrawal
+
+       These RPCs must validate authorization, current state,
+       merchant ownership, eligible balance, duplicate payout
+       references and audit logging server-side.
     ===================================================== */
 
 
     /* =====================================================
-       CONFIG
+       SUPABASE CONFIG
     ===================================================== */
 
     const SUPABASE_URL =
-      window.KTICKETS_SUPABASE_URL || "";
+      "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-    const SUPABASE_ANON_KEY =
-      window.KTICKETS_SUPABASE_ANON_KEY || "";
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 
-    let supabaseClient = null;
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth:{
+            persistSession:true,
+            autoRefreshToken:true,
+            detectSessionInUrl:true
+          }
+        }
+      );
+
 
     let currentUser = null;
     let currentProfile = null;
@@ -2222,66 +2225,18 @@
        SECURITY
     ===================================================== */
 
-    function redirectLogin(reason = "unauthorized"){
+    function redirectLogin(reason){
 
       window.location.replace(
-        "../auth/login.html?error=" +
-        encodeURIComponent(reason)
+        "../login.html?error=" +
+        encodeURIComponent(reason || "unauthorized")
       );
-    }
-
-
-    async function safeSignOut(){
-
-      try{
-
-        if(supabaseClient){
-
-          await supabaseClient.auth.signOut();
-
-        }
-
-      }catch(error){
-
-        console.warn(
-          "Sign-out cleanup failed.",
-          error
-        );
-
-      }
     }
 
 
     async function verifyAdmin(){
 
       try{
-
-        if(
-          !SUPABASE_URL ||
-          !SUPABASE_ANON_KEY
-        ){
-
-          redirectLogin(
-            "configuration"
-          );
-
-          return false;
-        }
-
-
-        supabaseClient =
-          window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY,
-            {
-              auth:{
-                persistSession:true,
-                autoRefreshToken:true,
-                detectSessionInUrl:true
-              }
-            }
-          );
-
 
         const {
           data:sessionData,
@@ -2292,11 +2247,12 @@
 
         if(sessionError){
 
-          await safeSignOut();
-
-          redirectLogin(
-            "session"
+          console.error(
+            "Session verification failed:",
+            sessionError
           );
+
+          redirectLogin("session");
 
           return false;
         }
@@ -2308,9 +2264,7 @@
 
         if(!session?.user){
 
-          redirectLogin(
-            "login_required"
-          );
+          redirectLogin("login_required");
 
           return false;
         }
@@ -2330,7 +2284,8 @@
               id,
               full_name,
               phone,
-              role
+              role,
+              is_active
             `)
             .eq(
               "id",
@@ -2339,17 +2294,28 @@
             .maybeSingle();
 
 
+        if(profileError){
+
+          console.error(
+            "Administrator profile lookup failed:",
+            profileError
+          );
+
+          redirectLogin("profile_error");
+
+          return false;
+        }
+
+
         if(
-          profileError ||
           !profile ||
-          profile.role !== "admin"
+          profile.role !== "admin" ||
+          profile.is_active !== true
         ){
 
-          await safeSignOut();
+          await supabaseClient.auth.signOut();
 
-          redirectLogin(
-            "unauthorized"
-          );
+          redirectLogin("unauthorized");
 
           return false;
         }
@@ -2367,15 +2333,15 @@
       }catch(error){
 
         console.error(
-          "Admin security verification failed:",
+          "Administrator verification failed:",
           error
         );
 
-        await safeSignOut();
+        try{
+          await supabaseClient.auth.signOut();
+        }catch(_){}
 
-        redirectLogin(
-          "security_error"
-        );
+        redirectLogin("security_error");
 
         return false;
       }
@@ -2401,7 +2367,7 @@
     function initials(name){
 
       const parts =
-        String(name)
+        String(name || "")
           .trim()
           .split(/\s+/)
           .filter(Boolean);
@@ -2472,7 +2438,7 @@
         String(value);
 
 
-      if(text.length <= 16){
+      if(text.length <= 14){
         return text;
       }
 
@@ -2480,7 +2446,7 @@
       return (
         text.slice(0,8) +
         "…" +
-        text.slice(-6)
+        text.slice(-4)
       );
     }
 
@@ -2496,12 +2462,7 @@
         new Date(value);
 
 
-      if(
-        Number.isNaN(
-          date.getTime()
-        )
-      ){
-
+      if(Number.isNaN(date.getTime())){
         return "—";
       }
 
@@ -2516,66 +2477,22 @@
     }
 
 
-    function formatMoney(
-      amount,
-      currency = ""
-    ){
-
-      if(
-        amount === null ||
-        amount === undefined ||
-        amount === ""
-      ){
-
-        return "—";
-      }
-
-
-      const number =
-        Number(amount);
-
-
-      if(
-        !Number.isFinite(number)
-      ){
-
-        return "—";
-      }
-
-
-      return (
-        currency
-          ? currency + " "
-          : ""
-      ) +
-      number.toLocaleString(
-        undefined,
-        {
-          minimumFractionDigits:2,
-          maximumFractionDigits:2
-        }
-      );
-    }
-
-
     function normalizeStatus(status){
 
       const value =
         String(status || "")
           .trim()
           .toLowerCase()
-          .replace(/[\s-]+/g,"_");
+          .replace(/[\\s-]+/g,"_");
 
 
       if(
         [
           "pending",
-          "requested",
-          "submitted",
-          "awaiting_review"
+          "awaiting",
+          "requested"
         ].includes(value)
       ){
-
         return "pending";
       }
 
@@ -2583,10 +2500,9 @@
       if(
         [
           "approved",
-          "approval"
+          "approve"
         ].includes(value)
       ){
-
         return "approved";
       }
 
@@ -2595,10 +2511,9 @@
         [
           "processing",
           "in_progress",
-          "payout_processing"
+          "inprogress"
         ].includes(value)
       ){
-
         return "processing";
       }
 
@@ -2607,11 +2522,11 @@
         [
           "paid",
           "completed",
+          "complete",
           "successful",
           "success"
         ].includes(value)
       ){
-
         return "paid";
       }
 
@@ -2620,28 +2535,16 @@
         [
           "rejected",
           "declined",
-          "denied"
+          "failed",
+          "failure"
         ].includes(value)
       ){
-
         return "rejected";
       }
 
 
       if(value === "cancelled"){
-
         return "cancelled";
-      }
-
-
-      if(
-        [
-          "failed",
-          "failure"
-        ].includes(value)
-      ){
-
-        return "failed";
       }
 
 
@@ -2655,46 +2558,22 @@
         normalizeStatus(status);
 
 
-      if(normalized === "pending"){
-        return "status-pending";
-      }
-
-
-      if(normalized === "approved"){
-        return "status-approved";
-      }
-
-
-      if(normalized === "processing"){
-        return "status-processing";
-      }
-
-
-      if(normalized === "paid"){
-        return "status-paid";
-      }
-
-
-      if(
-        [
-          "rejected",
-          "cancelled",
-          "failed"
-        ].includes(normalized)
-      ){
-
-        return "status-rejected";
-      }
-
-
-      return "status-unknown";
+      return (
+        "status-" +
+        normalized
+      );
     }
 
 
     function displayStatus(status){
 
       return normalizeStatus(status)
-        .replace(/_/g," ");
+        .replace(/_/g," ")
+        .replace(
+          /\b\w/g,
+          character =>
+            character.toUpperCase()
+        );
     }
 
 
@@ -2714,7 +2593,6 @@
           "m-pesa"
         ].includes(value)
       ){
-
         return "mpesa";
       }
 
@@ -2722,21 +2600,14 @@
       if(
         [
           "bank",
-          "bank_transfer",
-          "bank_transfer_payout"
+          "bank_transfer"
         ].includes(value)
       ){
-
         return "bank";
       }
 
 
-      if(
-        [
-          "wamd"
-        ].includes(value)
-      ){
-
+      if(value === "wamd"){
         return "wamd";
       }
 
@@ -2747,27 +2618,32 @@
 
     function displayChannel(channel){
 
-      const normalized =
+      const value =
         normalizeChannel(channel);
 
 
-      if(normalized === "mpesa"){
+      if(value === "mpesa"){
         return "M-Pesa";
       }
 
 
-      if(normalized === "bank"){
+      if(value === "bank"){
         return "Bank";
       }
 
 
-      if(normalized === "wamd"){
+      if(value === "wamd"){
         return "WAMD";
       }
 
 
-      return normalized
-        .replace(/_/g," ");
+      return value
+        .replace(/_/g," ")
+        .replace(
+          /\b\w/g,
+          character =>
+            character.toUpperCase()
+        );
     }
 
 
@@ -2794,16 +2670,204 @@
     }
 
 
+    function formatAmount(
+      amount,
+      currency
+    ){
+
+      if(
+        amount === null ||
+        amount === undefined ||
+        amount === ""
+      ){
+        return "—";
+      }
+
+
+      const numeric =
+        Number(amount);
+
+
+      if(!Number.isFinite(numeric)){
+        return (
+          escapeHtml(amount) +
+          (
+            currency
+              ? " " + escapeHtml(currency)
+              : ""
+          )
+        );
+      }
+
+
+      const formatted =
+        new Intl.NumberFormat(
+          undefined,
+          {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+          }
+        ).format(numeric);
+
+
+      return (
+        formatted +
+        (
+          currency
+            ? " " + escapeHtml(currency)
+            : ""
+        )
+      );
+    }
+
+
+    function isWithinPeriod(
+      value,
+      period
+    ){
+
+      if(period === "all"){
+        return true;
+      }
+
+
+      if(!value){
+        return false;
+      }
+
+
+      const date =
+        new Date(value);
+
+
+      if(Number.isNaN(date.getTime())){
+        return false;
+      }
+
+
+      const now =
+        new Date();
+
+
+      if(period === "today"){
+
+        return (
+          date.getFullYear() ===
+            now.getFullYear() &&
+          date.getMonth() ===
+            now.getMonth() &&
+          date.getDate() ===
+            now.getDate()
+        );
+      }
+
+
+      const days =
+        Number(period);
+
+
+      if(!Number.isFinite(days)){
+        return true;
+      }
+
+
+      const cutoff =
+        new Date(
+          Date.now() -
+          days * 24 * 60 * 60 * 1000
+        );
+
+
+      return date >= cutoff;
+    }
+
+
+    /* =====================================================
+       LOAD MERCHANT PROFILES
+    ===================================================== */
+
+    async function loadMerchantProfiles(
+      merchantIds
+    ){
+
+      const map =
+        new Map();
+
+
+      const ids =
+        [
+          ...new Set(
+            merchantIds.filter(Boolean)
+          )
+        ];
+
+
+      if(!ids.length){
+        return map;
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(`
+            id,
+            full_name,
+            phone,
+            role,
+            is_active
+          `)
+          .in(
+            "id",
+            ids
+          );
+
+
+      if(error){
+
+        console.warn(
+          "Merchant profile enrichment failed:",
+          error
+        );
+
+        return map;
+      }
+
+
+      (data || []).forEach(
+        profile => {
+
+          if(profile?.id){
+            map.set(
+              profile.id,
+              profile
+            );
+          }
+
+        }
+      );
+
+
+      return map;
+    }
+
+
     /* =====================================================
        NORMALIZE WITHDRAWAL
     ===================================================== */
 
-    function normalizeWithdrawal(row){
+    function normalizeWithdrawal(
+      row,
+      merchantMap
+    ){
 
       const merchant =
-        Array.isArray(row?.profiles)
-          ? row.profiles[0]
-          : row?.profiles;
+        merchantMap.get(
+          row?.merchant_id
+        );
 
 
       return {
@@ -2811,91 +2875,68 @@
         raw:row,
 
         id:
-          row?.id ??
-          row?.withdrawal_id ??
-          null,
+          row?.id ?? null,
 
         merchantId:
-          row?.merchant_id ??
-          row?.user_id ??
-          null,
+          row?.merchant_id ?? null,
 
         merchantName:
-          row?.merchant_name ??
-          merchant?.full_name ??
-          null,
+          merchant?.full_name ||
+          "Merchant profile unavailable",
 
         merchantPhone:
-          row?.merchant_phone ??
-          merchant?.phone ??
+          merchant?.phone ||
           null,
+
+        merchantRole:
+          merchant?.role ||
+          null,
+
+        merchantActive:
+          merchant?.is_active === true,
 
         amount:
-          row?.amount ??
-          row?.withdrawal_amount ??
-          row?.requested_amount ??
-          null,
+          row?.amount ?? null,
 
         currency:
-          row?.currency ??
-          "KES",
+          row?.currency ?? null,
 
         channel:
           normalizeChannel(
-            row?.payout_channel ??
-            row?.withdrawal_channel ??
-            row?.channel ??
-            row?.method
+            row?.channel
           ),
 
         destination:
-          row?.payout_destination ??
-          row?.destination ??
-          row?.account_number ??
-          row?.phone ??
-          null,
+          row?.account_reference ?? null,
 
         status:
           normalizeStatus(
-            row?.status ??
-            row?.withdrawal_status
+            row?.status
           ),
-
-        note:
-          row?.admin_note ??
-          row?.review_note ??
-          row?.rejection_reason ??
-          null,
-
-        payoutReference:
-          row?.payout_reference ??
-          row?.transaction_reference ??
-          row?.receipt_number ??
-          null,
 
         requestedAt:
           row?.requested_at ??
           row?.created_at ??
           null,
 
-        reviewedAt:
-          row?.reviewed_at ??
-          row?.approved_at ??
-          null,
-
         processedAt:
           row?.processed_at ??
-          row?.paid_at ??
-          row?.completed_at ??
           null,
 
-        reviewedBy:
-          row?.reviewed_by ??
-          row?.approved_by ??
+        processedBy:
+          row?.processed_by ??
           null,
 
-        eventId:
-          row?.event_id ??
+        adminNotes:
+          row?.admin_notes ??
+          null,
+
+        createdAt:
+          row?.created_at ??
+          null,
+
+        updatedAt:
+          row?.updated_at ??
           null
 
       };
@@ -2914,43 +2955,13 @@
       try{
 
         /*
-          EXPECTED FUTURE TABLE:
+          IMPORTANT:
 
-          withdrawals
+          This select intentionally uses ONLY the confirmed
+          withdrawals schema.
 
-            id
-            merchant_id
-            amount
-            currency
-            payout_channel
-            payout_destination
-            status
-            admin_note
-            review_note
-            rejection_reason
-            payout_reference
-            transaction_reference
-            requested_at
-            created_at
-            reviewed_at
-            approved_at
-            processed_at
-            paid_at
-            completed_at
-            reviewed_by
-            approved_by
-            event_id
-
-          profiles is joined only for merchant display.
-
-          Exact final schema can be tightened when
-          the Supabase SQL is finalized.
-
-          RLS MUST restrict this table to authorized
-          administrators and merchant-owned records
-          for merchant-side pages.
+          No guessed/future columns are requested.
         */
-
 
         const {
           data,
@@ -2961,64 +2972,61 @@
             .select(`
               id,
               merchant_id,
-              user_id,
               amount,
-              withdrawal_amount,
-              requested_amount,
               currency,
-              payout_channel,
-              withdrawal_channel,
               channel,
-              method,
-              payout_destination,
-              destination,
-              account_number,
-              phone,
+              account_reference,
               status,
-              withdrawal_status,
-              admin_note,
-              review_note,
-              rejection_reason,
-              payout_reference,
-              transaction_reference,
-              receipt_number,
               requested_at,
-              created_at,
-              reviewed_at,
-              approved_at,
               processed_at,
-              paid_at,
-              completed_at,
-              reviewed_by,
-              approved_by,
-              event_id,
-              profiles(
-                id,
-                full_name,
-                phone,
-                role
-              )
+              processed_by,
+              admin_notes,
+              created_at,
+              updated_at
             `)
             .order(
               "created_at",
               {
                 ascending:false
               }
-            );
+            )
+            .limit(5000);
 
 
         if(error){
-
           throw error;
         }
 
 
-        allWithdrawals =
+        const rows =
           Array.isArray(data)
-            ? data.map(
-                normalizeWithdrawal
-              )
+            ? data
             : [];
+
+
+        const merchantIds =
+          rows
+            .map(
+              row =>
+                row?.merchant_id
+            )
+            .filter(Boolean);
+
+
+        const merchantMap =
+          await loadMerchantProfiles(
+            merchantIds
+          );
+
+
+        allWithdrawals =
+          rows.map(
+            row =>
+              normalizeWithdrawal(
+                row,
+                merchantMap
+              )
+          );
 
 
         updateStats();
@@ -3041,7 +3049,8 @@
 
         renderEmpty(
           "Withdrawal records unavailable",
-          "The withdrawals table or its current schema could not be read. Check Supabase RLS and the finalized withdrawal schema."
+          error?.message ||
+          "The withdrawals table could not be read. Check Supabase RLS and the current withdrawal migration."
         );
 
 
@@ -3049,24 +3058,15 @@
           "Unable to load withdrawal records";
 
 
-        statTotal.textContent =
-          "—";
-
-        statPending.textContent =
-          "—";
-
-        statApproved.textContent =
-          "—";
-
-        statProcessing.textContent =
-          "—";
-
-        statPaid.textContent =
-          "—";
+        statTotal.textContent = "—";
+        statPending.textContent = "—";
+        statApproved.textContent = "—";
+        statProcessing.textContent = "—";
+        statPaid.textContent = "—";
 
 
         showToast(
-          "Unable to load withdrawal records.",
+          "Unable to load withdrawal records. Check the browser console for the Supabase error.",
           true
         );
       }
@@ -3081,7 +3081,9 @@
             <div class="empty">
               <div class="empty-icon">◷</div>
               <h3>Loading withdrawal records</h3>
-              <p>Retrieving merchant withdrawal claims from Supabase.</p>
+              <p>
+                Retrieving real merchant withdrawal claims from Supabase.
+              </p>
             </div>
           </td>
         </tr>
@@ -3092,7 +3094,9 @@
         <div class="empty">
           <div class="empty-icon">◷</div>
           <h3>Loading withdrawal records</h3>
-          <p>Retrieving merchant withdrawal claims from Supabase.</p>
+          <p>
+            Retrieving real merchant withdrawal claims from Supabase.
+          </p>
         </div>
       `;
 
@@ -3137,23 +3141,23 @@
 
 
       statTotal.textContent =
-        allWithdrawals.length.toLocaleString();
+        allWithdrawals.length;
 
 
       statPending.textContent =
-        pending.toLocaleString();
+        pending;
 
 
       statApproved.textContent =
-        approved.toLocaleString();
+        approved;
 
 
       statProcessing.textContent =
-        processing.toLocaleString();
+        processing;
 
 
       statPaid.textContent =
-        paid.toLocaleString();
+        paid;
     }
 
 
@@ -3181,43 +3185,38 @@
         periodFilter.value;
 
 
-      const now =
-        Date.now();
-
-
       visibleWithdrawals =
         allWithdrawals.filter(
           row => {
 
-            if(search){
-
-              const haystack =
-                [
-                  row.id,
-                  row.merchantId,
-                  row.merchantName,
-                  row.merchantPhone,
-                  row.amount,
-                  row.currency,
-                  row.channel,
-                  row.destination,
-                  row.payoutReference,
-                  row.status,
-                  row.eventId
-                ]
-                  .filter(Boolean)
-                  .join(" ")
-                  .toLowerCase();
-
-
-              if(
-                !haystack.includes(
-                  search
+            const searchable =
+              [
+                row.id,
+                row.merchantId,
+                row.merchantName,
+                row.merchantPhone,
+                row.amount,
+                row.currency,
+                row.channel,
+                row.destination,
+                row.status,
+                row.processedBy,
+                row.adminNotes
+              ]
+                .filter(
+                  value =>
+                    value !== null &&
+                    value !== undefined
                 )
-              ){
+                .join(" ")
+                .toLowerCase();
 
-                return false;
-              }
+
+            if(
+              search &&
+              !searchable.includes(search)
+            ){
+              return false;
             }
 
 
@@ -3225,7 +3224,6 @@
               status !== "all" &&
               row.status !== status
             ){
-
               return false;
             }
 
@@ -3234,77 +3232,17 @@
               channel !== "all" &&
               row.channel !== channel
             ){
-
               return false;
             }
 
 
             if(
-              period !== "all"
+              !isWithinPeriod(
+                row.requestedAt,
+                period
+              )
             ){
-
-              const created =
-                row.requestedAt
-                  ? new Date(
-                      row.requestedAt
-                    ).getTime()
-                  : NaN;
-
-
-              if(
-                !Number.isFinite(
-                  created
-                )
-              ){
-
-                return false;
-              }
-
-
-              if(period === "today"){
-
-                const start =
-                  new Date();
-
-                start.setHours(
-                  0,
-                  0,
-                  0,
-                  0
-                );
-
-
-                if(
-                  created <
-                  start.getTime()
-                ){
-
-                  return false;
-                }
-
-              }else{
-
-                const days =
-                  Number(period);
-
-
-                const cutoff =
-                  now -
-                  days *
-                  24 *
-                  60 *
-                  60 *
-                  1000;
-
-
-                if(
-                  created <
-                  cutoff
-                ){
-
-                  return false;
-                }
-              }
+              return false;
             }
 
 
@@ -3313,25 +3251,16 @@
         );
 
 
-      renderWithdrawals(
-        visibleWithdrawals
-      );
+      renderWithdrawals();
     }
 
 
     function clearAllFilters(){
 
-      searchInput.value =
-        "";
-
-      statusFilter.value =
-        "all";
-
-      channelFilter.value =
-        "all";
-
-      periodFilter.value =
-        "all";
+      searchInput.value = "";
+      statusFilter.value = "all";
+      channelFilter.value = "all";
+      periodFilter.value = "all";
 
 
       applyFilters();
@@ -3342,17 +3271,21 @@
        RENDER
     ===================================================== */
 
-    function renderWithdrawals(rows){
+    function renderWithdrawals(){
 
       resultSummary.textContent =
-        `${rows.length.toLocaleString()} withdrawal${rows.length === 1 ? "" : "s"} shown`;
+        `${visibleWithdrawals.length} of ${allWithdrawals.length} withdrawal records`;
 
 
-      if(!rows.length){
+      if(!visibleWithdrawals.length){
 
         renderEmpty(
-          "No withdrawal records found",
-          "No withdrawal claims match the current filters. No sample or placeholder financial records are generated."
+          allWithdrawals.length
+            ? "No matching withdrawals"
+            : "No withdrawal records",
+          allWithdrawals.length
+            ? "Try changing the search or filters."
+            : "No merchant withdrawal claims are currently stored in Supabase."
         );
 
         return;
@@ -3360,338 +3293,259 @@
 
 
       withdrawalsBody.innerHTML =
-        rows
+        visibleWithdrawals
           .map(
             row =>
-              tableRow(row)
+              `
+                <tr
+                  data-withdrawal-id="${escapeHtml(row.id)}"
+                >
+
+                  <td>
+
+                    <div class="id">
+                      ${escapeHtml(
+                        shortId(row.id)
+                      )}
+                    </div>
+
+                    <div class="subtext">
+                      ${escapeHtml(
+                        row.merchantId
+                          ? shortId(row.merchantId)
+                          : "Merchant unavailable"
+                      )}
+                    </div>
+
+                  </td>
+
+
+                  <td>
+
+                    <div class="primary-text">
+                      ${escapeHtml(
+                        row.merchantName
+                      )}
+                    </div>
+
+                    <div class="subtext">
+                      ${escapeHtml(
+                        row.merchantPhone || "No phone"
+                      )}
+                    </div>
+
+                  </td>
+
+
+                  <td>
+
+                    <div class="amount">
+                      ${formatAmount(
+                        row.amount,
+                        row.currency
+                      )}
+                    </div>
+
+                  </td>
+
+
+                  <td>
+
+                    <span class="channel">
+                      ${escapeHtml(
+                        displayChannel(
+                          row.channel
+                        )
+                      )}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <div class="primary-text">
+                      ${escapeHtml(
+                        maskDestination(
+                          row.destination
+                        )
+                      )}
+                    </div>
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="status ${escapeHtml(
+                        statusClass(row.status)
+                      )}"
+                    >
+                      ${escapeHtml(
+                        displayStatus(row.status)
+                      )}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+                    ${escapeHtml(
+                      formatDate(
+                        row.requestedAt
+                      )
+                    )}
+                  </td>
+
+
+                  <td>
+
+                    <button
+                      class="button button-secondary"
+                      type="button"
+                      data-view-id="${escapeHtml(row.id)}"
+                    >
+                      Review
+                    </button>
+
+                  </td>
+
+                </tr>
+              `
           )
           .join("");
 
 
       mobileList.innerHTML =
-        rows
+        visibleWithdrawals
           .map(
             row =>
-              mobileCard(row)
+              `
+                <article class="withdrawal-card">
+
+                  <div class="card-top">
+
+                    <div class="card-title">
+
+                      <strong>
+                        ${escapeHtml(
+                          row.merchantName
+                        )}
+                      </strong>
+
+                      <span>
+                        ${escapeHtml(
+                          shortId(row.id)
+                        )}
+                      </span>
+
+                    </div>
+
+
+                    <span
+                      class="status ${escapeHtml(
+                        statusClass(row.status)
+                      )}"
+                    >
+                      ${escapeHtml(
+                        displayStatus(row.status)
+                      )}
+                    </span>
+
+                  </div>
+
+
+                  <div class="mobile-grid">
+
+                    <div class="mobile-field">
+
+                      <label>
+                        Amount
+                      </label>
+
+                      <span class="amount">
+                        ${formatAmount(
+                          row.amount,
+                          row.currency
+                        )}
+                      </span>
+
+                    </div>
+
+
+                    <div class="mobile-field">
+
+                      <label>
+                        Channel
+                      </label>
+
+                      <span>
+                        ${escapeHtml(
+                          displayChannel(
+                            row.channel
+                          )
+                        )}
+                      </span>
+
+                    </div>
+
+
+                    <div class="mobile-field">
+
+                      <label>
+                        Destination
+                      </label>
+
+                      <span>
+                        ${escapeHtml(
+                          maskDestination(
+                            row.destination
+                          )
+                        )}
+                      </span>
+
+                    </div>
+
+
+                    <div class="mobile-field">
+
+                      <label>
+                        Requested
+                      </label>
+
+                      <span>
+                        ${escapeHtml(
+                          formatDate(
+                            row.requestedAt
+                          )
+                        )}
+                      </span>
+
+                    </div>
+
+                  </div>
+
+
+                  <div class="mobile-actions">
+
+                    <button
+                      class="button button-secondary"
+                      type="button"
+                      data-view-id="${escapeHtml(row.id)}"
+                    >
+                      Review withdrawal
+                    </button>
+
+                  </div>
+
+                </article>
+              `
           )
           .join("");
 
 
-      document
-        .querySelectorAll(
-          "[data-withdrawal-id]"
-        )
-        .forEach(
-          button => {
-
-            button.addEventListener(
-              "click",
-              () => {
-
-                const id =
-                  button.dataset.withdrawalId;
-
-
-                const row =
-                  allWithdrawals.find(
-                    item =>
-                      String(
-                        item.id
-                      ) ===
-                      String(id)
-                  );
-
-
-                if(row){
-
-                  openDrawer(
-                    row
-                  );
-                }
-              }
-            );
-
-          }
-        );
-    }
-
-
-    function tableRow(row){
-
-      return `
-        <tr>
-
-          <td>
-
-            <div class="id">
-              ${escapeHtml(
-                shortId(row.id)
-              )}
-            </div>
-
-            ${
-              row.payoutReference
-                ? `
-                  <div class="subtext">
-                    Payout:
-                    ${escapeHtml(
-                      shortId(
-                        row.payoutReference
-                      )
-                    )}
-                  </div>
-                `
-                : ""
-            }
-
-          </td>
-
-
-          <td>
-
-            <div class="primary-text">
-              ${escapeHtml(
-                row.merchantName ||
-                "Merchant"
-              )}
-            </div>
-
-            <div class="subtext">
-              ${escapeHtml(
-                shortId(
-                  row.merchantId
-                )
-              )}
-            </div>
-
-          </td>
-
-
-          <td>
-
-            <span class="amount">
-              ${escapeHtml(
-                formatMoney(
-                  row.amount,
-                  row.currency
-                )
-              )}
-            </span>
-
-          </td>
-
-
-          <td>
-
-            <span class="channel">
-              ${escapeHtml(
-                displayChannel(
-                  row.channel
-                )
-              )}
-            </span>
-
-          </td>
-
-
-          <td>
-
-            <div class="id">
-              ${escapeHtml(
-                maskDestination(
-                  row.destination
-                )
-              )}
-            </div>
-
-          </td>
-
-
-          <td>
-
-            <span
-              class="status ${statusClass(
-                row.status
-              )}"
-            >
-              ${escapeHtml(
-                displayStatus(
-                  row.status
-                )
-              )}
-            </span>
-
-          </td>
-
-
-          <td>
-
-            ${escapeHtml(
-              formatDate(
-                row.requestedAt
-              )
-            )}
-
-          </td>
-
-
-          <td>
-
-            <button
-              class="button button-secondary"
-              style="min-height:34px;padding:0 10px"
-              data-withdrawal-id="${escapeHtml(
-                row.id
-              )}"
-            >
-              Review
-            </button>
-
-          </td>
-
-        </tr>
-      `;
-    }
-
-
-    function mobileCard(row){
-
-      return `
-        <article class="withdrawal-card">
-
-          <div class="card-top">
-
-            <div class="card-title">
-
-              <strong>
-                ${escapeHtml(
-                  row.merchantName ||
-                  "Merchant"
-                )}
-              </strong>
-
-              <span>
-                ${escapeHtml(
-                  shortId(row.id)
-                )}
-              </span>
-
-            </div>
-
-
-            <span
-              class="status ${statusClass(
-                row.status
-              )}"
-            >
-              ${escapeHtml(
-                displayStatus(
-                  row.status
-                )
-              )}
-            </span>
-
-          </div>
-
-
-          <div class="mobile-grid">
-
-            <div class="mobile-field">
-
-              <label>
-                Amount
-              </label>
-
-              <span>
-                ${escapeHtml(
-                  formatMoney(
-                    row.amount,
-                    row.currency
-                  )
-                )}
-              </span>
-
-            </div>
-
-
-            <div class="mobile-field">
-
-              <label>
-                Channel
-              </label>
-
-              <span>
-                ${escapeHtml(
-                  displayChannel(
-                    row.channel
-                  )
-                )}
-              </span>
-
-            </div>
-
-
-            <div class="mobile-field">
-
-              <label>
-                Destination
-              </label>
-
-              <span>
-                ${escapeHtml(
-                  maskDestination(
-                    row.destination
-                  )
-                )}
-              </span>
-
-            </div>
-
-
-            <div class="mobile-field">
-
-              <label>
-                Requested
-              </label>
-
-              <span>
-                ${escapeHtml(
-                  formatDate(
-                    row.requestedAt
-                  )
-                )}
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <div class="mobile-actions">
-
-            <button
-              class="button button-secondary"
-              data-withdrawal-id="${escapeHtml(
-                row.id
-              )}"
-            >
-              Review
-            </button>
-
-
-            <button
-              class="button button-primary"
-              data-withdrawal-id="${escapeHtml(
-                row.id
-              )}"
-            >
-              Open claim
-            </button>
-
-          </div>
-
-        </article>
-      `;
+      bindRowActions();
     }
 
 
@@ -3707,7 +3561,7 @@
             <div class="empty">
 
               <div class="empty-icon">
-                ◌
+                ⇩
               </div>
 
               <h3>
@@ -3729,7 +3583,7 @@
         <div class="empty">
 
           <div class="empty-icon">
-            ◌
+            ⇩
           </div>
 
           <h3>
@@ -3745,11 +3599,85 @@
     }
 
 
+    function bindRowActions(){
+
+      document
+        .querySelectorAll(
+          "[data-view-id]"
+        )
+        .forEach(
+          button => {
+
+            button.addEventListener(
+              "click",
+              event => {
+
+                event.stopPropagation();
+
+                openWithdrawal(
+                  button.dataset.viewId
+                );
+              }
+            );
+
+          }
+        );
+
+
+      document
+        .querySelectorAll(
+          "#withdrawalsBody tr[data-withdrawal-id]"
+        )
+        .forEach(
+          row => {
+
+            row.addEventListener(
+              "click",
+              event => {
+
+                if(
+                  event.target.closest("button")
+                ){
+                  return;
+                }
+
+
+                openWithdrawal(
+                  row.dataset.withdrawalId
+                );
+              }
+            );
+
+          }
+        );
+    }
+
+
     /* =====================================================
        DRAWER
     ===================================================== */
 
-    function openDrawer(row){
+    function openWithdrawal(
+      withdrawalId
+    ){
+
+      const row =
+        allWithdrawals.find(
+          item =>
+            item.id === withdrawalId
+        );
+
+
+      if(!row){
+
+        showToast(
+          "Withdrawal record could not be found.",
+          true
+        );
+
+        return;
+      }
+
 
       selectedWithdrawal =
         row;
@@ -3760,9 +3688,7 @@
 
 
       drawerSubtitle.textContent =
-        row.id
-          ? String(row.id)
-          : "Merchant payout claim";
+        row.merchantName;
 
 
       const isPending =
@@ -3777,9 +3703,21 @@
         row.status === "processing";
 
 
+      const isPaid =
+        row.status === "paid";
+
+
+      const isRejected =
+        row.status === "rejected";
+
+
+      const isCancelled =
+        row.status === "cancelled";
+
+
       drawerContent.innerHTML = `
 
-        <div class="detail-section">
+        <section class="detail-section">
 
           <h3>
             Withdrawal
@@ -3794,7 +3732,7 @@
 
             <span>
               ${escapeHtml(
-                safeText(row.id)
+                row.id
               )}
             </span>
 
@@ -3808,19 +3746,15 @@
             </span>
 
             <span>
-
               <span
-                class="status ${statusClass(
-                  row.status
+                class="status ${escapeHtml(
+                  statusClass(row.status)
                 )}"
               >
                 ${escapeHtml(
-                  displayStatus(
-                    row.status
-                  )
+                  displayStatus(row.status)
                 )}
               </span>
-
             </span>
 
           </div>
@@ -3833,118 +3767,13 @@
             </span>
 
             <span>
-              ${escapeHtml(
-                formatMoney(
-                  row.amount,
-                  row.currency
-                )
+              ${formatAmount(
+                row.amount,
+                row.currency
               )}
             </span>
 
           </div>
-
-
-          <div class="detail-row">
-
-            <span>
-              Currency
-            </span>
-
-            <span>
-              ${escapeHtml(
-                safeText(
-                  row.currency
-                )
-              )}
-            </span>
-
-          </div>
-
-
-          <div class="detail-row">
-
-            <span>
-              Requested
-            </span>
-
-            <span>
-              ${escapeHtml(
-                formatDate(
-                  row.requestedAt
-                )
-              )}
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="detail-section">
-
-          <h3>
-            Merchant
-          </h3>
-
-
-          <div class="detail-row">
-
-            <span>
-              Merchant
-            </span>
-
-            <span>
-              ${escapeHtml(
-                safeText(
-                  row.merchantName
-                )
-              )}
-            </span>
-
-          </div>
-
-
-          <div class="detail-row">
-
-            <span>
-              Merchant ID
-            </span>
-
-            <span>
-              ${escapeHtml(
-                safeText(
-                  row.merchantId
-                )
-              )}
-            </span>
-
-          </div>
-
-
-          <div class="detail-row">
-
-            <span>
-              Phone
-            </span>
-
-            <span>
-              ${escapeHtml(
-                safeText(
-                  row.merchantPhone
-                )
-              )}
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="detail-section">
-
-          <h3>
-            Payout
-          </h3>
 
 
           <div class="detail-row">
@@ -3955,9 +3784,7 @@
 
             <span>
               ${escapeHtml(
-                displayChannel(
-                  row.channel
-                )
+                displayChannel(row.channel)
               )}
             </span>
 
@@ -3984,73 +3811,13 @@
           <div class="detail-row">
 
             <span>
-              Payout reference
-            </span>
-
-            <span>
-              ${escapeHtml(
-                safeText(
-                  row.payoutReference
-                )
-              )}
-            </span>
-
-          </div>
-
-
-          <div class="detail-row">
-
-            <span>
-              Event ID
-            </span>
-
-            <span>
-              ${escapeHtml(
-                safeText(
-                  row.eventId
-                )
-              )}
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="detail-section">
-
-          <h3>
-            Review history
-          </h3>
-
-
-          <div class="detail-row">
-
-            <span>
-              Reviewed
+              Requested
             </span>
 
             <span>
               ${escapeHtml(
                 formatDate(
-                  row.reviewedAt
-                )
-              )}
-            </span>
-
-          </div>
-
-
-          <div class="detail-row">
-
-            <span>
-              Reviewed by
-            </span>
-
-            <span>
-              ${escapeHtml(
-                safeText(
-                  row.reviewedBy
+                  row.requestedAt
                 )
               )}
             </span>
@@ -4074,24 +3841,150 @@
 
           </div>
 
+        </section>
+
+
+        <section class="detail-section">
+
+          <h3>
+            Merchant
+          </h3>
+
 
           <div class="detail-row">
 
             <span>
-              Existing note
+              Name
             </span>
 
             <span>
               ${escapeHtml(
-                safeText(
-                  row.note
+                row.merchantName
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Merchant ID
+            </span>
+
+            <span>
+              ${escapeHtml(
+                row.merchantId
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Phone
+            </span>
+
+            <span>
+              ${escapeHtml(
+                row.merchantPhone || "—"
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Account status
+            </span>
+
+            <span>
+              ${row.merchantActive
+                ? "Active"
+                : "Inactive / unavailable"
+              }
+            </span>
+
+          </div>
+
+        </section>
+
+
+        <section class="detail-section">
+
+          <h3>
+            Processing history
+          </h3>
+
+
+          <div class="detail-row">
+
+            <span>
+              Processed by
+            </span>
+
+            <span>
+              ${escapeHtml(
+                row.processedBy || "—"
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Admin notes
+            </span>
+
+            <span>
+              ${escapeHtml(
+                row.adminNotes || "—"
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Created
+            </span>
+
+            <span>
+              ${escapeHtml(
+                formatDate(
+                  row.createdAt
                 )
               )}
             </span>
 
           </div>
 
-        </div>
+
+          <div class="detail-row">
+
+            <span>
+              Last updated
+            </span>
+
+            <span>
+              ${escapeHtml(
+                formatDate(
+                  row.updatedAt
+                )
+              )}
+            </span>
+
+          </div>
+
+        </section>
 
 
         ${
@@ -4100,47 +3993,45 @@
               <div class="action-box">
 
                 <h3>
-                  Review claim
+                  Administrator decision
                 </h3>
 
                 <p>
-                  Before approving, confirm that the merchant's
-                  eligible balance is sufficient and that the
-                  payout destination belongs to the merchant.
+                  Approval must be validated server-side against
+                  the merchant's eligible balance and withdrawal
+                  ownership.
                 </p>
-
 
                 <textarea
                   id="withdrawalNote"
-                  maxlength="1000"
-                  placeholder="Review note..."
+                  placeholder="Optional administrator note..."
                 ></textarea>
-
 
                 <div class="action-buttons">
 
                   <button
-                    class="button button-success"
-                    id="approveButton"
-                  >
-                    Approve claim
-                  </button>
-
-
-                  <button
                     class="button button-danger"
                     id="rejectButton"
+                    type="button"
                   >
                     Reject claim
                   </button>
 
+                  <button
+                    class="button button-success"
+                    id="approveButton"
+                    type="button"
+                  >
+                    Approve claim
+                  </button>
+
                 </div>
 
-
                 <div class="secure-note">
-                  These actions must execute through protected
-                  server-side RPCs. The browser must never directly
-                  change the withdrawal status or merchant balance.
+                  This does not directly update the withdrawal.
+                  The browser calls a protected
+                  <strong>admin_approve_withdrawal</strong> or
+                  <strong>admin_reject_withdrawal</strong> RPC.
                 </div>
 
               </div>
@@ -4155,22 +4046,18 @@
               <div class="action-box">
 
                 <h3>
-                  Start payout
+                  Start payout processing
                 </h3>
 
                 <p>
-                  Starting a payout should atomically reserve the
-                  withdrawal and prevent another administrator from
-                  processing the same claim simultaneously.
+                  Use this only when the approved claim is ready
+                  to enter the real payout workflow.
                 </p>
-
 
                 <textarea
                   id="processingNote"
-                  maxlength="1000"
                   placeholder="Optional processing note..."
                 ></textarea>
-
 
                 <div style="margin-top:10px">
 
@@ -4178,16 +4065,16 @@
                     class="button button-primary"
                     style="width:100%"
                     id="processButton"
+                    type="button"
                   >
-                    Mark payout as processing
+                    Start processing
                   </button>
 
                 </div>
 
-
-                <div class="secure-note">
-                  The backend must lock the withdrawal before
-                  transitioning it from approved to processing.
+                <div class="warning-note">
+                  Starting processing should lock the claim against
+                  concurrent payout processing on the server.
                 </div>
 
               </div>
@@ -4202,30 +4089,25 @@
               <div class="action-box">
 
                 <h3>
-                  Complete payout
+                  Confirm payout completion
                 </h3>
 
                 <p>
-                  Enter the payout transaction reference only after
-                  the actual payout has been confirmed through the
-                  configured payout channel.
+                  Enter the real payout reference only after the
+                  payout has actually succeeded.
                 </p>
-
 
                 <input
                   id="payoutReference"
-                  maxlength="200"
+                  type="text"
                   autocomplete="off"
-                  placeholder="Payout transaction reference"
+                  placeholder="Real payout transaction reference"
                 >
-
 
                 <textarea
                   id="completionNote"
-                  maxlength="1000"
-                  placeholder="Completion note..."
+                  placeholder="Optional completion note..."
                 ></textarea>
-
 
                 <div style="margin-top:10px">
 
@@ -4233,17 +4115,17 @@
                     class="button button-success"
                     style="width:100%"
                     id="completeButton"
+                    type="button"
                   >
                     Confirm payout completed
                   </button>
 
                 </div>
 
-
                 <div class="warning-note">
-                  Completing a payout is a financial state change.
-                  Never mark a claim paid without confirming the
-                  real payout result.
+                  Never mark a withdrawal as paid without confirming
+                  the real payout result. The payout reference must
+                  be validated and protected against duplication.
                 </div>
 
               </div>
@@ -4253,23 +4135,42 @@
 
 
         ${
+          isPaid
+            ? `
+              <div class="secure-note">
+                This withdrawal is already recorded as paid.
+                Further financial changes require a dedicated
+                privileged correction workflow.
+              </div>
+            `
+            : ""
+        }
+
+
+        ${
+          isRejected || isCancelled
+            ? `
+              <div class="locked-note">
+                This withdrawal is currently locked from normal
+                processing. Any correction should use a dedicated
+                audited administrative workflow.
+              </div>
+            `
+            : ""
+        }
+
+
+        ${
           !isPending &&
           !isApproved &&
-          !isProcessing
+          !isProcessing &&
+          !isPaid &&
+          !isRejected &&
+          !isCancelled
             ? `
-              <div class="action-box">
-
-                <h3>
-                  Record locked
-                </h3>
-
-                <p>
-                  This withdrawal is not currently awaiting an
-                  administrator financial action. Further changes
-                  should use a dedicated privileged correction
-                  workflow with audit logging.
-                </p>
-
+              <div class="locked-note">
+                This withdrawal has an unrecognized status.
+                No browser-side financial action is available.
               </div>
             `
             : ""
@@ -4278,10 +4179,7 @@
       `;
 
 
-      drawerBackdrop.classList.add(
-        "open"
-      );
-
+      drawerBackdrop.classList.add("open");
 
       document.body.style.overflow =
         "hidden";
@@ -4290,10 +4188,8 @@
       if(isPending){
 
         document
-          .getElementById(
-            "approveButton"
-          )
-          .addEventListener(
+          .getElementById("approveButton")
+          ?.addEventListener(
             "click",
             () =>
               approveWithdrawal(
@@ -4303,10 +4199,8 @@
 
 
         document
-          .getElementById(
-            "rejectButton"
-          )
-          .addEventListener(
+          .getElementById("rejectButton")
+          ?.addEventListener(
             "click",
             () =>
               rejectWithdrawal(
@@ -4319,10 +4213,8 @@
       if(isApproved){
 
         document
-          .getElementById(
-            "processButton"
-          )
-          .addEventListener(
+          .getElementById("processButton")
+          ?.addEventListener(
             "click",
             () =>
               processWithdrawal(
@@ -4335,10 +4227,8 @@
       if(isProcessing){
 
         document
-          .getElementById(
-            "completeButton"
-          )
-          .addEventListener(
+          .getElementById("completeButton")
+          ?.addEventListener(
             "click",
             () =>
               completeWithdrawal(
@@ -4355,10 +4245,8 @@
         "open"
       );
 
-
       document.body.style.overflow =
         "";
-
 
       selectedWithdrawal =
         null;
@@ -4373,24 +4261,14 @@
       withdrawalId
     ){
 
-      if(!withdrawalId){
-
-        showToast(
-          "Missing withdrawal ID.",
-          true
-        );
-
-        return;
-      }
-
-
       const note =
         document
           .getElementById(
             "withdrawalNote"
           )
           ?.value
-          .trim() || null;
+          .trim() ||
+        null;
 
 
       const button =
@@ -4400,31 +4278,14 @@
 
 
       if(button){
-        button.disabled =
-          true;
+        button.disabled = true;
       }
 
 
       try{
 
-        /*
-          Secure RPC requirements:
-
-          1. Verify auth.uid() is an admin.
-          2. Lock the withdrawal.
-          3. Confirm current status is pending.
-          4. Identify merchant.
-          5. Calculate eligible merchant balance server-side.
-          6. Confirm requested amount <= eligible balance.
-          7. Confirm payout destination.
-          8. Set status to approved.
-          9. Record reviewer and note.
-          10. Create immutable audit entry.
-
-          Never perform a direct browser UPDATE.
-        */
-
         const {
+          data,
           error
         } =
           await supabaseClient.rpc(
@@ -4439,9 +4300,14 @@
 
 
         if(error){
-
           throw error;
         }
+
+
+        console.log(
+          "Withdrawal approval RPC result:",
+          data
+        );
 
 
         showToast(
@@ -4450,7 +4316,6 @@
 
 
         closeDrawer();
-
 
         await loadWithdrawals();
 
@@ -4463,15 +4328,17 @@
 
 
         showToast(
-          "Approval was not completed. The secure RPC may not be installed or authorization failed.",
+          getRpcErrorMessage(
+            error,
+            "Withdrawal approval was not completed."
+          ),
           true
         );
 
       }finally{
 
         if(button){
-          button.disabled =
-            false;
+          button.disabled = false;
         }
       }
     }
@@ -4485,35 +4352,14 @@
       withdrawalId
     ){
 
-      if(!withdrawalId){
-
-        showToast(
-          "Missing withdrawal ID.",
-          true
-        );
-
-        return;
-      }
-
-
       const note =
         document
           .getElementById(
             "withdrawalNote"
           )
           ?.value
-          .trim();
-
-
-      if(!note){
-
-        showToast(
-          "Add a rejection reason before rejecting the claim.",
-          true
-        );
-
-        return;
-      }
+          .trim() ||
+        null;
 
 
       const button =
@@ -4523,14 +4369,14 @@
 
 
       if(button){
-        button.disabled =
-          true;
+        button.disabled = true;
       }
 
 
       try{
 
         const {
+          data,
           error
         } =
           await supabaseClient.rpc(
@@ -4545,9 +4391,14 @@
 
 
         if(error){
-
           throw error;
         }
+
+
+        console.log(
+          "Withdrawal rejection RPC result:",
+          data
+        );
 
 
         showToast(
@@ -4556,7 +4407,6 @@
 
 
         closeDrawer();
-
 
         await loadWithdrawals();
 
@@ -4569,15 +4419,17 @@
 
 
         showToast(
-          "Rejection was not completed. The secure RPC may not be installed or authorization failed.",
+          getRpcErrorMessage(
+            error,
+            "Withdrawal rejection was not completed."
+          ),
           true
         );
 
       }finally{
 
         if(button){
-          button.disabled =
-            false;
+          button.disabled = false;
         }
       }
     }
@@ -4591,24 +4443,14 @@
       withdrawalId
     ){
 
-      if(!withdrawalId){
-
-        showToast(
-          "Missing withdrawal ID.",
-          true
-        );
-
-        return;
-      }
-
-
       const note =
         document
           .getElementById(
             "processingNote"
           )
           ?.value
-          .trim() || null;
+          .trim() ||
+        null;
 
 
       const button =
@@ -4618,26 +4460,14 @@
 
 
       if(button){
-        button.disabled =
-          true;
+        button.disabled = true;
       }
 
 
       try{
 
-        /*
-          Secure RPC requirements:
-
-          - Admin authorization.
-          - Row lock.
-          - Current status must be approved.
-          - Prevent concurrent payout processing.
-          - Reserve/lock the claim.
-          - Record processing administrator.
-          - Create audit record.
-        */
-
         const {
+          data,
           error
         } =
           await supabaseClient.rpc(
@@ -4652,9 +4482,14 @@
 
 
         if(error){
-
           throw error;
         }
+
+
+        console.log(
+          "Withdrawal processing RPC result:",
+          data
+        );
 
 
         showToast(
@@ -4664,27 +4499,28 @@
 
         closeDrawer();
 
-
         await loadWithdrawals();
 
       }catch(error){
 
         console.error(
-          "Withdrawal processing start failed:",
+          "Withdrawal processing failed:",
           error
         );
 
 
         showToast(
-          "Processing could not be started. The secure RPC may not be installed or authorization failed.",
+          getRpcErrorMessage(
+            error,
+            "Withdrawal processing could not be started."
+          ),
           true
         );
 
       }finally{
 
         if(button){
-          button.disabled =
-            false;
+          button.disabled = false;
         }
       }
     }
@@ -4697,17 +4533,6 @@
     async function completeWithdrawal(
       withdrawalId
     ){
-
-      if(!withdrawalId){
-
-        showToast(
-          "Missing withdrawal ID.",
-          true
-        );
-
-        return;
-      }
-
 
       const reference =
         document
@@ -4724,7 +4549,8 @@
             "completionNote"
           )
           ?.value
-          .trim() || null;
+          .trim() ||
+        null;
 
 
       if(!reference){
@@ -4745,35 +4571,14 @@
 
 
       if(button){
-        button.disabled =
-          true;
+        button.disabled = true;
       }
 
 
       try{
 
-        /*
-          Secure RPC requirements:
-
-          - Admin authorization.
-          - Current status must be processing.
-          - Validate payout reference.
-          - Prevent duplicate payout reference.
-          - Confirm payout result.
-          - Mark withdrawal paid.
-          - Update merchant ledger/balance atomically.
-          - Record payout reference.
-          - Record administrator.
-          - Write audit log.
-          - Trigger merchant notification.
-
-          IMPORTANT:
-
-          Do not directly update withdrawals or balances
-          from the browser.
-        */
-
         const {
+          data,
           error
         } =
           await supabaseClient.rpc(
@@ -4790,9 +4595,14 @@
 
 
         if(error){
-
           throw error;
         }
+
+
+        console.log(
+          "Withdrawal completion RPC result:",
+          data
+        );
 
 
         showToast(
@@ -4801,7 +4611,6 @@
 
 
         closeDrawer();
-
 
         await loadWithdrawals();
 
@@ -4814,17 +4623,48 @@
 
 
         showToast(
-          "Payout completion was not recorded. Verify the secure RPC and payout reference.",
+          getRpcErrorMessage(
+            error,
+            "Payout completion was not recorded."
+          ),
           true
         );
 
       }finally{
 
         if(button){
-          button.disabled =
-            false;
+          button.disabled = false;
         }
       }
+    }
+
+
+    function getRpcErrorMessage(
+      error,
+      fallback
+    ){
+
+      const message =
+        error?.message ||
+        error?.details ||
+        error?.hint ||
+        "";
+
+
+      if(
+        message
+          .toLowerCase()
+          .includes("function")
+      ){
+
+        return (
+          "The protected withdrawal RPC is not installed yet."
+        );
+      }
+
+
+      return message ||
+        fallback;
     }
 
 
@@ -4844,15 +4684,15 @@
             .from("notifications")
             .select(`
               id,
-              read_at
+              is_read
             `)
             .eq(
               "user_id",
               currentUser.id
             )
-            .is(
-              "read_at",
-              null
+            .eq(
+              "is_read",
+              false
             )
             .limit(1);
 
@@ -4903,15 +4743,13 @@
         "Merchant Phone",
         "Amount",
         "Currency",
-        "Payout Channel",
-        "Payout Destination",
+        "Channel",
+        "Account Reference",
         "Status",
-        "Payout Reference",
         "Requested At",
-        "Reviewed At",
         "Processed At",
-        "Reviewed By",
-        "Note"
+        "Processed By",
+        "Admin Notes"
       ];
 
 
@@ -4928,12 +4766,10 @@
             row.channel,
             row.destination,
             row.status,
-            row.payoutReference,
             row.requestedAt,
-            row.reviewedAt,
             row.processedAt,
-            row.reviewedBy,
-            row.note
+            row.processedBy,
+            row.adminNotes
 
           ]
         );
@@ -4973,9 +4809,7 @@
 
 
       const link =
-        document.createElement(
-          "a"
-        );
+        document.createElement("a");
 
 
       link.href =
@@ -5006,15 +4840,16 @@
     function csvEscape(value){
 
       const text =
-        String(
-          value ?? ""
-        );
+        String(value ?? "");
 
 
-      return `"${text
-        .replace(/"/g,'""')
-        .replace(/\r?\n/g," ")
-      }"`;
+      return (
+        '"' +
+        text
+          .replace(/"/g,'""')
+          .replace(/\r?\n/g," ") +
+        '"'
+      );
     }
 
 
@@ -5056,7 +4891,7 @@
             );
 
           },
-          3500
+          4000
         );
     }
 
@@ -5095,7 +4930,6 @@
           sidebar.classList.remove(
             "open"
           );
-
         }
 
       }
@@ -5136,21 +4970,17 @@
       "click",
       async () => {
 
-        refreshButton.disabled =
-          true;
+        refreshButton.disabled = true;
 
-        refreshButton.style.opacity =
-          ".6";
+        refreshButton.style.opacity = ".6";
 
 
         await loadWithdrawals();
 
 
-        refreshButton.disabled =
-          false;
+        refreshButton.disabled = false;
 
-        refreshButton.style.opacity =
-          "1";
+        refreshButton.style.opacity = "1";
 
 
         showToast(
@@ -5192,9 +5022,8 @@
       "click",
       () => {
 
-        showToast(
-          "Notification center is available through the admin notification system."
-        );
+        window.location.href =
+          "./notifications.html";
 
       }
     );
@@ -5222,33 +5051,24 @@
        AUTH STATE
     ===================================================== */
 
-    async function setupAuthListener(){
+    supabaseClient.auth.onAuthStateChange(
+      (
+        event,
+        session
+      ) => {
 
-      if(!supabaseClient){
-        return;
-      }
+        if(
+          event === "SIGNED_OUT" ||
+          !session?.user
+        ){
 
-
-      supabaseClient.auth.onAuthStateChange(
-        async (
-          event,
-          session
-        ) => {
-
-          if(
-            event === "SIGNED_OUT" ||
-            !session?.user
-          ){
-
-            window.location.replace(
-              "../auth/login.html?error=session_expired"
-            );
-
-          }
-
+          window.location.replace(
+            "../login.html?error=session_expired"
+          );
         }
-      );
-    }
+
+      }
+    );
 
 
     /* =====================================================
@@ -5271,11 +5091,7 @@
       );
 
 
-      await setupAuthListener();
-
-
       await loadWithdrawals();
-
     }
 
 
@@ -5285,4 +5101,3 @@
 
 </body>
 </html>
-```

@@ -3,21 +3,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
-
     <meta
         name="robots"
         content="noindex,nofollow,noarchive,nosnippet"
     >
-
-    <meta
-        name="referrer"
-        content="same-origin"
-    >
+    <meta name="referrer" content="same-origin">
 
     <title>K-Tickets — QR Scans</title>
 
@@ -58,7 +52,8 @@
             min-height:100vh;
             background:var(--bg);
             color:var(--text);
-            font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,
+                "Segoe UI",sans-serif;
         }
 
         button,
@@ -391,10 +386,6 @@
             color:white;
         }
 
-        .btn.danger{
-            color:var(--danger);
-        }
-
         .stats{
             display:grid;
             grid-template-columns:repeat(4,minmax(0,1fr));
@@ -451,13 +442,10 @@
 
         .filters{
             display:grid;
-            grid-template-columns:minmax(180px,1.5fr) repeat(4,minmax(130px,1fr)) auto;
+            grid-template-columns:minmax(180px,1.5fr)
+                repeat(4,minmax(130px,1fr)) auto;
             gap:9px;
             margin-bottom:16px;
-        }
-
-        .field{
-            position:relative;
         }
 
         .field input,
@@ -503,6 +491,7 @@
         }
 
         .panel-meta{
+            margin-top:3px;
             color:var(--muted);
             font-size:11px;
         }
@@ -515,7 +504,7 @@
         table{
             width:100%;
             border-collapse:collapse;
-            min-width:950px;
+            min-width:1050px;
         }
 
         th,
@@ -575,16 +564,20 @@
             text-transform:capitalize;
         }
 
-        .badge.valid,
         .badge.success,
-        .badge.checked-in{
+        .badge.accepted{
             color:var(--success);
             background:#e8f5ee;
         }
 
         .badge.invalid,
         .badge.failed,
-        .badge.rejected{
+        .badge.rejected,
+        .badge.unauthorized,
+        .badge.cancelled,
+        .badge.refunded,
+        .badge.wrong-event,
+        .badge.already-used{
             color:var(--danger);
             background:#f9e9ea;
         }
@@ -615,8 +608,61 @@
             font-weight:800;
         }
 
+        .small-btn:hover{
+            border-color:var(--green);
+        }
+
         .mobile-list{
             display:none;
+        }
+
+        .scan-card{
+            padding:15px;
+            border-bottom:1px solid var(--border);
+        }
+
+        .scan-card:last-child{
+            border-bottom:0;
+        }
+
+        .scan-card-head{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:10px;
+        }
+
+        .scan-card-title{
+            min-width:0;
+        }
+
+        .scan-card-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+            margin-top:13px;
+        }
+
+        .scan-mini label{
+            display:block;
+            color:var(--muted);
+            font-size:9px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.06em;
+        }
+
+        .scan-mini div{
+            margin-top:4px;
+            font-size:11px;
+            font-weight:700;
+            word-break:break-word;
+        }
+
+        .scan-card-actions{
+            display:flex;
+            gap:7px;
+            margin-top:13px;
         }
 
         .empty{
@@ -657,7 +703,7 @@
             right:0;
             top:0;
             bottom:0;
-            width:min(520px,100%);
+            width:min(540px,100%);
             padding:25px;
             background:white;
             overflow-y:auto;
@@ -756,8 +802,7 @@
         }
 
         .loading{
-            opacity:.55;
-            pointer-events:none;
+            opacity:.72;
         }
 
         @media(max-width:1180px){
@@ -820,60 +865,7 @@
             }
 
             .mobile-list{
-                display:grid;
-            }
-
-            .scan-card{
-                padding:15px;
-                border-bottom:1px solid var(--border);
-            }
-
-            .scan-card:last-child{
-                border-bottom:0;
-            }
-
-            .scan-card-head{
-                display:flex;
-                align-items:flex-start;
-                justify-content:space-between;
-                gap:10px;
-            }
-
-            .scan-card-title{
-                min-width:0;
-            }
-
-            .scan-card-grid{
-                display:grid;
-                grid-template-columns:1fr 1fr;
-                gap:10px;
-                margin-top:13px;
-            }
-
-            .scan-mini{
-                min-width:0;
-            }
-
-            .scan-mini label{
                 display:block;
-                color:var(--muted);
-                font-size:9px;
-                font-weight:900;
-                text-transform:uppercase;
-                letter-spacing:.06em;
-            }
-
-            .scan-mini div{
-                margin-top:4px;
-                font-size:11px;
-                font-weight:700;
-                word-break:break-word;
-            }
-
-            .scan-card-actions{
-                display:flex;
-                gap:7px;
-                margin-top:13px;
             }
         }
 
@@ -900,10 +892,6 @@
 
             .page-heading h1{
                 font-size:18px;
-            }
-
-            .top-actions{
-                gap:5px;
             }
 
             .toolbar-actions{
@@ -943,6 +931,7 @@
 
         <div class="brand">
             <div class="brand-mark">KT</div>
+
             <div class="brand-copy">
                 <strong>K-Tickets</strong>
                 <span>Admin CMS</span>
@@ -1047,13 +1036,22 @@
 
         <header class="topbar">
 
-            <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+            <div
+                style="
+                    display:flex;
+                    align-items:center;
+                    gap:12px;
+                    min-width:0;
+                "
+            >
 
                 <button
                     class="mobile-menu"
                     id="mobileMenu"
                     aria-label="Open menu"
-                >☰</button>
+                >
+                    ☰
+                </button>
 
                 <div class="page-heading">
                     <div class="eyebrow">Gate Operations</div>
@@ -1102,9 +1100,10 @@
 
                 <div class="toolbar-copy">
                     <h2>Ticket scan activity</h2>
+
                     <p>
-                        Monitor QR ticket verification and check-in activity
-                        from the platform.
+                        Monitor QR verification and event check-in
+                        activity recorded by K-Tickets.
                     </p>
                 </div>
 
@@ -1132,38 +1131,86 @@
 
                 <div class="stat">
                     <div class="stat-top">
-                        <div class="stat-label">Total Scans</div>
+                        <div class="stat-label">
+                            Total Scans
+                        </div>
+
                         <div class="stat-icon">▦</div>
                     </div>
-                    <div class="stat-value" id="totalScans">0</div>
-                    <div class="stat-note">Records returned</div>
+
+                    <div
+                        class="stat-value"
+                        id="totalScans"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-note">
+                        Records returned
+                    </div>
                 </div>
 
                 <div class="stat">
                     <div class="stat-top">
-                        <div class="stat-label">Successful</div>
+                        <div class="stat-label">
+                            Accepted
+                        </div>
+
                         <div class="stat-icon">✓</div>
                     </div>
-                    <div class="stat-value" id="successfulScans">0</div>
-                    <div class="stat-note">Valid / checked-in scans</div>
+
+                    <div
+                        class="stat-value"
+                        id="successfulScans"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-note">
+                        Successful gate scans
+                    </div>
                 </div>
 
                 <div class="stat">
                     <div class="stat-top">
-                        <div class="stat-label">Rejected</div>
+                        <div class="stat-label">
+                            Rejected
+                        </div>
+
                         <div class="stat-icon">!</div>
                     </div>
-                    <div class="stat-value" id="rejectedScans">0</div>
-                    <div class="stat-note">Invalid or rejected scans</div>
+
+                    <div
+                        class="stat-value"
+                        id="rejectedScans"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-note">
+                        Non-accepted scan results
+                    </div>
                 </div>
 
                 <div class="stat">
                     <div class="stat-top">
-                        <div class="stat-label">Today</div>
+                        <div class="stat-label">
+                            Today
+                        </div>
+
                         <div class="stat-icon">◷</div>
                     </div>
-                    <div class="stat-value" id="todayScans">0</div>
-                    <div class="stat-note">Scans recorded today</div>
+
+                    <div
+                        class="stat-value"
+                        id="todayScans"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-note">
+                        Scans recorded today
+                    </div>
                 </div>
 
             </section>
@@ -1181,44 +1228,100 @@
 
                 <div class="field">
                     <select id="statusFilter">
-                        <option value="">All statuses</option>
-                        <option value="success">Successful</option>
-                        <option value="checked-in">Checked in</option>
-                        <option value="valid">Valid</option>
-                        <option value="invalid">Invalid</option>
-                        <option value="failed">Failed</option>
-                        <option value="pending">Pending</option>
-                        <option value="rejected">Rejected</option>
+                        <option value="">
+                            All results
+                        </option>
+
+                        <option value="accepted">
+                            Accepted
+                        </option>
+
+                        <option value="already-used">
+                            Already Used
+                        </option>
+
+                        <option value="invalid">
+                            Invalid
+                        </option>
+
+                        <option value="cancelled">
+                            Cancelled
+                        </option>
+
+                        <option value="refunded">
+                            Refunded
+                        </option>
+
+                        <option value="wrong-event">
+                            Wrong Event
+                        </option>
+
+                        <option value="unauthorized">
+                            Unauthorized
+                        </option>
                     </select>
                 </div>
 
                 <div class="field">
                     <select id="periodFilter">
-                        <option value="all">All time</option>
-                        <option value="today">Today</option>
-                        <option value="7">Last 7 days</option>
-                        <option value="30">Last 30 days</option>
-                        <option value="90">Last 90 days</option>
+                        <option value="all">
+                            All time
+                        </option>
+
+                        <option value="today">
+                            Today
+                        </option>
+
+                        <option value="7">
+                            Last 7 days
+                        </option>
+
+                        <option value="30">
+                            Last 30 days
+                        </option>
+
+                        <option value="90">
+                            Last 90 days
+                        </option>
                     </select>
                 </div>
 
                 <div class="field">
                     <select id="eventFilter">
-                        <option value="">All events</option>
+                        <option value="">
+                            All events
+                        </option>
                     </select>
                 </div>
 
                 <div class="field">
                     <select id="sourceFilter">
-                        <option value="">All sources</option>
-                        <option value="gate">Gate</option>
-                        <option value="merchant">Merchant</option>
-                        <option value="admin">Admin</option>
-                        <option value="system">System</option>
+                        <option value="">
+                            All sources
+                        </option>
+
+                        <option value="gate">
+                            Gate
+                        </option>
+
+                        <option value="merchant">
+                            Merchant
+                        </option>
+
+                        <option value="admin">
+                            Admin
+                        </option>
+
+                        <option value="system">
+                            System
+                        </option>
                     </select>
                 </div>
 
-                <button class="btn" id="clearFilters">
+                <button
+                    class="btn"
+                    id="clearFilters"
+                >
                     Clear
                 </button>
 
@@ -1227,23 +1330,32 @@
             <section class="panel">
 
                 <div class="panel-head">
+
                     <div>
-                        <div class="panel-title">Scan records</div>
-                        <div class="panel-meta" id="resultMeta">
+                        <div class="panel-title">
+                            Scan records
+                        </div>
+
+                        <div
+                            class="panel-meta"
+                            id="resultMeta"
+                        >
                             Loading…
                         </div>
                     </div>
+
                 </div>
 
                 <div class="table-wrap">
 
                     <table>
+
                         <thead>
                             <tr>
                                 <th>Ticket</th>
                                 <th>Event</th>
                                 <th>Holder</th>
-                                <th>Status</th>
+                                <th>Result</th>
                                 <th>Scanner</th>
                                 <th>Source</th>
                                 <th>Scanned</th>
@@ -1257,7 +1369,10 @@
 
                 </div>
 
-                <div class="mobile-list" id="mobileList"></div>
+                <div
+                    class="mobile-list"
+                    id="mobileList"
+                ></div>
 
                 <div
                     class="empty"
@@ -1265,7 +1380,11 @@
                     style="display:none;"
                 >
                     <div class="empty-icon">▦</div>
-                    <strong>No QR scan records</strong>
+
+                    <strong>
+                        No QR scan records
+                    </strong>
+
                     <span id="emptyText">
                         No scan records match the current filters.
                     </span>
@@ -1279,7 +1398,10 @@
 
 </div>
 
-<div class="drawer-backdrop" id="drawerBackdrop">
+<div
+    class="drawer-backdrop"
+    id="drawerBackdrop"
+>
 
     <aside class="drawer">
 
@@ -1287,6 +1409,7 @@
 
             <div>
                 <h3>Scan details</h3>
+
                 <p id="drawerSubtitle">
                     QR verification record
                 </p>
@@ -1310,7 +1433,7 @@
             </div>
 
             <div class="detail">
-                <label>Status</label>
+                <label>Result</label>
                 <div id="dStatus">—</div>
             </div>
 
@@ -1365,6 +1488,11 @@
             </div>
 
             <div class="detail full">
+                <label>Device</label>
+                <div id="dDevice">—</div>
+            </div>
+
+            <div class="detail full">
                 <label>Notes / Result</label>
                 <div id="dNotes">—</div>
             </div>
@@ -1372,80 +1500,80 @@
         </div>
 
         <div class="notice">
-            QR scan records are displayed for monitoring and audit purposes.
-            This page intentionally contains no client-side check-in mutation
-            controls. Ticket validation and check-in must be performed through
-            server-side authorization, RLS and a protected RPC or Edge
-            Function.
+            QR scan records are read-only on this administrative page.
+            Ticket validation and check-in are performed through the
+            protected K-Tickets check-in RPC and are not exposed as
+            client-side mutation controls here.
         </div>
 
     </aside>
 
 </div>
 
-<div class="toast" id="toast"></div>
+<div
+    class="toast"
+    id="toast"
+></div>
 
 <script>
 "use strict";
 
 /*
 |--------------------------------------------------------------------------
-| K-TICKETS ADMIN QR SCANS
+| K-TICKETS ADMIN — QR SCANS
 |--------------------------------------------------------------------------
 |
-| SECURITY MODEL
+| Production data sources:
 |
-| 1. This page uses only the Supabase anonymous browser key.
-| 2. NEVER place a Supabase service-role key here.
-| 3. NEVER place a database password here.
-| 4. Admin authorization must be enforced by Supabase RLS.
-| 5. QR check-in mutations must be protected by RPC / Edge Function.
-| 6. The UI is NOT the security boundary.
-| 7. This page is intentionally read-only.
+|   qr_scans
+|   tickets
+|   ticket_types
+|   events
+|   profiles
+|   notifications
 |
-| IMPORTANT:
-| The exact production QR scan table has not been permanently locked.
-| The reader below attempts common schema names and normalizes records.
-| Once the final schema is confirmed, replace the tolerant reader with
-| an explicit approved-column query.
+| This page is intentionally READ-ONLY.
+|
+| The browser only receives the public/publishable Supabase key.
+| NEVER place a service-role key, database password, payment secret,
+| M-Pesa secret, WAMD secret, or webhook secret in this file.
+|
 |--------------------------------------------------------------------------
 */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
-let supabaseClient = null;
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
+        }
+    );
+
 let currentUser = null;
 let currentProfile = null;
 
 let scanRows = [];
 let filteredRows = [];
 let notifications = [];
-let currentDrawerRow = null;
 
-const securityGate = document.getElementById("securityGate");
-const securityMessage = document.getElementById("securityMessage");
-const app = document.getElementById("app");
+const $ = id =>
+    document.getElementById(id);
 
-const tableBody = document.getElementById("tableBody");
-const mobileList = document.getElementById("mobileList");
-const emptyState = document.getElementById("emptyState");
-const emptyText = document.getElementById("emptyText");
 
-const searchInput = document.getElementById("searchInput");
-const statusFilter = document.getElementById("statusFilter");
-const periodFilter = document.getElementById("periodFilter");
-const eventFilter = document.getElementById("eventFilter");
-const sourceFilter = document.getElementById("sourceFilter");
-
-const drawerBackdrop = document.getElementById("drawerBackdrop");
-
-function $(id){
-    return document.getElementById(id);
-}
+/* ------------------------------------------------------------------
+   Helpers
+------------------------------------------------------------------ */
 
 function escapeHtml(value){
     return String(value ?? "")
@@ -1456,8 +1584,12 @@ function escapeHtml(value){
         .replace(/'/g,"&#039;");
 }
 
-function safeValue(value, fallback = "—"){
-    if(value === null || value === undefined || value === ""){
+function safeValue(value,fallback="—"){
+    if(
+        value === null ||
+        value === undefined ||
+        value === ""
+    ){
         return fallback;
     }
 
@@ -1465,16 +1597,23 @@ function safeValue(value, fallback = "—"){
 }
 
 function initials(name){
-    const value = String(name || "Admin").trim();
+    const value =
+        String(name || "Admin")
+            .trim();
 
     if(!value){
         return "A";
     }
 
-    const parts = value.split(/\s+/).filter(Boolean);
+    const parts =
+        value
+            .split(/\s+/)
+            .filter(Boolean);
 
     if(parts.length === 1){
-        return parts[0].slice(0,2).toUpperCase();
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
     }
 
     return (
@@ -1488,7 +1627,8 @@ function formatDate(value){
         return "—";
     }
 
-    const date = new Date(value);
+    const date =
+        new Date(value);
 
     if(Number.isNaN(date.getTime())){
         return String(value);
@@ -1503,357 +1643,166 @@ function formatDate(value){
     ).format(date);
 }
 
-function formatShortDate(value){
-    if(!value){
-        return "—";
-    }
+function normalizeResult(value){
+    const raw =
+        String(value || "")
+            .trim()
+            .toLowerCase()
+            .replace(/_/g,"-")
+            .replace(/\s+/g,"-");
 
-    const date = new Date(value);
-
-    if(Number.isNaN(date.getTime())){
-        return String(value);
-    }
-
-    return new Intl.DateTimeFormat(
-        undefined,
-        {
-            dateStyle:"medium",
-            timeStyle:"short"
-        }
-    ).format(date);
-}
-
-function normalizeStatus(value){
-    const raw = String(value || "")
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g,"-")
-        .replace(/_/g,"-");
-
-    if(
-        [
-            "success",
-            "successful",
-            "valid",
-            "checked-in",
-            "checkedin",
-            "accepted",
-            "approved"
-        ].includes(raw)
-    ){
-        if(raw === "checkedin"){
-            return "checked-in";
-        }
-
-        if(
-            raw === "successful" ||
-            raw === "accepted" ||
-            raw === "approved"
-        ){
-            return "success";
-        }
-
-        return raw;
+    if(raw === "accepted"){
+        return "accepted";
     }
 
     if(
-        [
-            "invalid",
-            "failed",
-            "rejected",
-            "declined",
-            "denied"
-        ].includes(raw)
+        raw === "already-used" ||
+        raw === "alreadyused"
     ){
-        if(
-            raw === "declined" ||
-            raw === "denied"
-        ){
-            return "rejected";
-        }
+        return "already-used";
+    }
 
-        return raw;
+    if(raw === "invalid"){
+        return "invalid";
+    }
+
+    if(raw === "cancelled"){
+        return "cancelled";
+    }
+
+    if(raw === "refunded"){
+        return "refunded";
     }
 
     if(
-        [
-            "pending",
-            "processing",
-            "waiting"
-        ].includes(raw)
+        raw === "wrong-event" ||
+        raw === "wrongevent"
     ){
-        return "pending";
+        return "wrong-event";
+    }
+
+    if(raw === "unauthorized"){
+        return "unauthorized";
     }
 
     return raw || "unknown";
 }
 
-function statusClass(value){
-    const normalized = normalizeStatus(value);
+function resultLabel(value){
+    const result =
+        normalizeResult(value);
 
-    if(
-        [
-            "success",
-            "checked-in",
-            "valid"
-        ].includes(normalized)
-    ){
-        return normalized;
+    const labels = {
+        "accepted":"Accepted",
+        "already-used":"Already Used",
+        "invalid":"Invalid",
+        "cancelled":"Cancelled",
+        "refunded":"Refunded",
+        "wrong-event":"Wrong Event",
+        "unauthorized":"Unauthorized",
+        "unknown":"Unknown"
+    };
+
+    return labels[result] || result;
+}
+
+function resultClass(value){
+    const result =
+        normalizeResult(value);
+
+    if(result === "accepted"){
+        return "accepted";
     }
 
     if(
         [
+            "already-used",
             "invalid",
-            "failed",
-            "rejected"
-        ].includes(normalized)
+            "cancelled",
+            "refunded",
+            "wrong-event",
+            "unauthorized"
+        ].includes(result)
     ){
-        return normalized;
-    }
-
-    if(normalized === "pending"){
-        return "pending";
+        return result;
     }
 
     return "info";
 }
 
-function humanStatus(value){
-    const raw = String(value || "Unknown")
-        .replace(/[_-]+/g," ");
+function deriveSource(scannerRole){
+    const role =
+        String(scannerRole || "")
+            .toLowerCase();
 
-    return raw
-        .replace(/\b\w/g, char => char.toUpperCase());
+    if(role === "gate_staff"){
+        return "gate";
+    }
+
+    if(role === "merchant"){
+        return "merchant";
+    }
+
+    if(role === "admin"){
+        return "admin";
+    }
+
+    return "system";
 }
 
-function showToast(message, isError = false){
-    const toast = $("toast");
+function showToast(
+    message,
+    isError=false
+){
+    const toast =
+        $("toast");
 
-    toast.textContent = message;
-    toast.classList.toggle("error", isError);
-    toast.style.display = "block";
+    toast.textContent =
+        message;
 
-    clearTimeout(showToast.timer);
+    toast.classList.toggle(
+        "error",
+        isError
+    );
 
-    showToast.timer = setTimeout(() => {
-        toast.style.display = "none";
-    }, 4000);
+    toast.style.display =
+        "block";
+
+    clearTimeout(
+        showToast.timer
+    );
+
+    showToast.timer =
+        setTimeout(
+            () => {
+                toast.style.display =
+                    "none";
+            },
+            4000
+        );
 }
 
-function redirectLogin(){
+function redirectLogin(reason="admin_session_required"){
     window.location.replace(
-        "../auth/login.html?error=admin_session_required"
+        `/login.html?error=${encodeURIComponent(reason)}`
     );
 }
 
-async function safeSignOut(){
-    try{
-        if(supabaseClient){
-            await supabaseClient.auth.signOut();
-        }
-    }catch(error){
-        console.warn("Sign out failed:", error);
-    }
-}
 
-function setSecurityMessage(message){
-    securityMessage.textContent = message;
-}
+/* ------------------------------------------------------------------
+   Admin security
+------------------------------------------------------------------ */
 
-function openApp(){
-    securityGate.style.display = "none";
-    app.style.display = "block";
-}
+async function verifyAdmin(){
 
-function normalizeScan(row){
-    const raw = row || {};
-
-    const ticket =
-        raw.tickets ||
-        raw.ticket ||
-        {};
-
-    const event =
-        raw.events ||
-        raw.event ||
-        ticket.events ||
-        ticket.event ||
-        {};
-
-    const ticketType =
-        raw.ticket_types ||
-        raw.ticket_type ||
-        ticket.ticket_types ||
-        ticket.ticket_type ||
-        {};
-
-    const scanner =
-        raw.scanner ||
-        raw.scanner_profile ||
-        raw.profiles ||
-        raw.profile ||
-        {};
-
-    const scannedAt =
-        raw.scanned_at ||
-        raw.scan_time ||
-        raw.scan_at ||
-        raw.created_at ||
-        raw.timestamp ||
-        raw.occurred_at;
-
-    const status =
-        raw.status ||
-        raw.result ||
-        raw.scan_status ||
-        raw.verification_status ||
-        "unknown";
-
-    return {
-        raw,
-
-        id:
-            raw.id ||
-            raw.scan_id ||
-            raw.log_id ||
-            "",
-
-        ticketId:
-            raw.ticket_id ||
-            ticket.id ||
-            "",
-
-        ticketCode:
-            raw.ticket_code ||
-            raw.code ||
-            ticket.ticket_code ||
-            "",
-
-        eventId:
-            raw.event_id ||
-            event.id ||
-            ticket.event_id ||
-            "",
-
-        eventTitle:
-            raw.event_title ||
-            raw.event_name ||
-            event.title ||
-            "",
-
-        venue:
-            raw.venue ||
-            event.venue ||
-            "",
-
-        ticketType:
-            raw.ticket_type_name ||
-            raw.ticket_type ||
-            ticketType.name ||
-            "",
-
-        holderName:
-            raw.holder_name ||
-            raw.ticket_holder_name ||
-            raw.customer_name ||
-            raw.user_name ||
-            "",
-
-        holderId:
-            raw.user_id ||
-            raw.customer_id ||
-            ticket.user_id ||
-            "",
-
-        scannerId:
-            raw.scanned_by ||
-            raw.scanner_id ||
-            raw.actor_id ||
-            raw.user_id ||
-            "",
-
-        scannerName:
-            raw.scanner_name ||
-            raw.scanned_by_name ||
-            raw.actor_name ||
-            scanner.full_name ||
-            "",
-
-        scannerRole:
-            raw.scanner_role ||
-            raw.actor_role ||
-            scanner.role ||
-            "",
-
-        source:
-            raw.source ||
-            raw.origin ||
-            raw.channel ||
-            raw.scan_source ||
-            "",
-
-        status:
-            normalizeStatus(status),
-
-        ticketStatus:
-            raw.ticket_status ||
-            ticket.status ||
-            "",
-
-        scannedAt,
-
-        checkedInAt:
-            raw.checked_in_at ||
-            ticket.checked_in_at ||
-            "",
-
-        notes:
-            raw.notes ||
-            raw.message ||
-            raw.description ||
-            raw.reason ||
-            raw.result_message ||
-            "",
-
-        ipAddress:
-            raw.ip_address ||
-            raw.client_ip ||
-            raw.remote_ip ||
-            ""
-    };
-}
-
-async function loadAdmin(){
-    if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
-        setSecurityMessage(
-            "Supabase configuration is missing."
-        );
-
-        throw new Error(
-            "Missing KTICKETS_SUPABASE_URL or KTICKETS_SUPABASE_ANON_KEY."
-        );
-    }
-
-    supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY,
-        {
-            auth:{
-                persistSession:true,
-                autoRefreshToken:true,
-                detectSessionInUrl:true
-            }
-        }
-    );
-
-    setSecurityMessage(
-        "Checking authenticated administrator…"
-    );
+    $("securityMessage").textContent =
+        "Checking authenticated administrator…";
 
     const {
         data,
         error
-    } = await supabaseClient.auth.getSession();
+    } =
+        await supabaseClient.auth.getSession();
 
     if(error){
         throw error;
@@ -1864,25 +1813,30 @@ async function loadAdmin(){
         return false;
     }
 
-    currentUser = data.session.user;
+    currentUser =
+        data.session.user;
 
-    setSecurityMessage(
-        "Verifying administrator permissions…"
-    );
+    $("securityMessage").textContent =
+        "Verifying administrator permissions…";
 
     const {
         data:profile,
         error:profileError
-    } = await supabaseClient
-        .from("profiles")
-        .select(`
-            id,
-            full_name,
-            phone,
-            role
-        `)
-        .eq("id", currentUser.id)
-        .maybeSingle();
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                is_active
+            `)
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
 
     if(profileError){
         throw profileError;
@@ -1890,30 +1844,32 @@ async function loadAdmin(){
 
     if(
         !profile ||
-        String(profile.role || "").toLowerCase() !== "admin"
+        String(profile.role || "")
+            .toLowerCase() !== "admin" ||
+        profile.is_active !== true
     ){
-        await safeSignOut();
 
-        window.location.replace(
-            "../auth/login.html?error=unauthorized"
-        );
+        await supabaseClient.auth.signOut();
+
+        redirectLogin("unauthorized");
 
         return false;
     }
 
-    currentProfile = profile;
+    currentProfile =
+        profile;
 
     updateAdminIdentity();
 
     supabaseClient.auth.onAuthStateChange(
-        async (event, session) => {
+        (event,session) => {
 
             if(
                 event === "SIGNED_OUT" ||
                 !session?.user
             ){
-                window.location.replace(
-                    "../auth/login.html?error=session_expired"
+                redirectLogin(
+                    "session_expired"
                 );
             }
         }
@@ -1923,48 +1879,86 @@ async function loadAdmin(){
 }
 
 function updateAdminIdentity(){
+
     const name =
         currentProfile?.full_name ||
         currentUser?.user_metadata?.full_name ||
         currentUser?.email ||
         "Administrator";
 
-    $("adminName").textContent = name;
-    $("sidebarAdminName").textContent = name;
-    $("adminAvatar").textContent = initials(name);
+    $("adminName").textContent =
+        name;
+
+    $("sidebarAdminName").textContent =
+        name;
+
+    $("adminAvatar").textContent =
+        initials(name);
 }
 
+
+/* ------------------------------------------------------------------
+   Notifications
+------------------------------------------------------------------ */
+
 async function loadNotifications(){
+
     try{
 
         const {
             data,
             error
-        } = await supabaseClient
-            .from("notifications")
-            .select("*")
-            .eq("user_id", currentUser.id)
-            .order("created_at",{
-                ascending:false
-            })
-            .limit(20);
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select(`
+                    id,
+                    user_id,
+                    title,
+                    message,
+                    type,
+                    data,
+                    is_read,
+                    created_at,
+                    read_at
+                `)
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                )
+                .limit(20);
 
         if(error){
+            console.warn(
+                "Notification query failed:",
+                error
+            );
+
             return;
         }
 
-        notifications = data || [];
+        notifications =
+            data || [];
 
-        const unread = notifications.some(
-            item =>
-                !item.read &&
-                !item.is_read
-        );
+        const unread =
+            notifications.some(
+                notification =>
+                    notification.is_read !== true
+            );
 
         $("notificationDot").style.display =
-            unread ? "block" : "none";
+            unread
+                ? "block"
+                : "none";
 
     }catch(error){
+
         console.warn(
             "Notifications unavailable:",
             error
@@ -1972,59 +1966,99 @@ async function loadNotifications(){
     }
 }
 
+
+/* ------------------------------------------------------------------
+   Load QR scans
+------------------------------------------------------------------ */
+
 async function loadScans(){
-    setLoading(true);
+
+    document.body.classList.add(
+        "loading"
+    );
 
     try{
 
         /*
-         * The final production table should preferably be named
-         * `qr_scans` with explicit columns.
+         * Migration 05 production schema:
          *
-         * This tolerant query keeps the frontend from crashing while
-         * the schema is being finalized.
+         * qr_scans:
+         *   id
+         *   ticket_id
+         *   event_id
+         *   scanned_by
+         *   qr_token
+         *   result
+         *   device_info
+         *   scanned_at
+         *
+         * Exact columns are intentionally selected.
          */
 
-        let result =
+        const {
+            data,
+            error
+        } =
             await supabaseClient
                 .from("qr_scans")
-                .select("*")
-                .order("created_at",{
-                    ascending:false
-                })
+                .select(`
+                    id,
+                    ticket_id,
+                    event_id,
+                    scanned_by,
+                    qr_token,
+                    result,
+                    device_info,
+                    scanned_at
+                `)
+                .order(
+                    "scanned_at",
+                    {
+                        ascending:false
+                    }
+                )
                 .limit(5000);
 
-        if(
-            result.error &&
-            (
-                result.error.code === "42P01" ||
-                /does not exist/i.test(
-                    result.error.message || ""
-                )
-            )
-        ){
-            result =
-                await supabaseClient
-                    .from("qr_scan_logs")
-                    .select("*")
-                    .order("created_at",{
-                        ascending:false
-                    })
-                    .limit(5000);
-        }
-
-        if(result.error){
-            throw result.error;
+        if(error){
+            throw error;
         }
 
         scanRows =
-            (result.data || [])
-                .map(normalizeScan)
-                .filter(Boolean);
+            (data || [])
+                .map(row => ({
+                    id:row.id,
+                    ticketId:row.ticket_id,
+                    eventId:row.event_id,
+                    scannerId:row.scanned_by,
+                    qrToken:row.qr_token,
+                    result:normalizeResult(
+                        row.result
+                    ),
+                    deviceInfo:row.device_info,
+                    scannedAt:row.scanned_at,
 
-        await enrichScanRows();
+                    ticketCode:"",
+                    ticketStatus:"",
+                    ticketType:"",
+                    ticketTypeId:"",
+
+                    holderId:"",
+                    holderName:"",
+
+                    eventTitle:"",
+                    venue:"",
+                    city:"",
+
+                    scannerName:"",
+                    scannerRole:"",
+
+                    source:"system"
+                }));
+
+        await enrichScans();
 
         populateEventFilter();
+
         applyFilters();
 
     }catch(error){
@@ -2038,369 +2072,539 @@ async function loadScans(){
         filteredRows = [];
 
         renderRows();
+        updateStats();
 
         $("resultMeta").textContent =
-            "QR scan table unavailable or blocked by RLS.";
+            "Unable to load QR scan records.";
 
         showToast(
-            "QR scan data could not be loaded. Check the final table name and RLS policy.",
+            `QR scan data could not be loaded: ${
+                error.message || "Unknown error"
+            }`,
             true
         );
 
     }finally{
-        setLoading(false);
+
+        document.body.classList.remove(
+            "loading"
+        );
     }
 }
 
-async function enrichScanRows(){
 
-    /*
-     * Enrichment is deliberately best-effort.
-     * Missing optional relationships never create fake values.
-     */
+/* ------------------------------------------------------------------
+   Enrichment
+------------------------------------------------------------------ */
 
-    const eventIds = [
-        ...new Set(
-            scanRows
-                .map(row => row.eventId)
-                .filter(Boolean)
-        )
-    ];
+async function enrichScans(){
 
-    const ticketIds = [
-        ...new Set(
-            scanRows
-                .map(row => row.ticketId)
-                .filter(Boolean)
-        )
-    ];
+    const ticketIds =
+        [
+            ...new Set(
+                scanRows
+                    .map(row => row.ticketId)
+                    .filter(Boolean)
+            )
+        ];
 
-    if(eventIds.length){
+    const eventIds =
+        [
+            ...new Set(
+                scanRows
+                    .map(row => row.eventId)
+                    .filter(Boolean)
+            )
+        ];
 
-        try{
+    const scannerIds =
+        [
+            ...new Set(
+                scanRows
+                    .map(row => row.scannerId)
+                    .filter(Boolean)
+            )
+        ];
 
-            const {
-                data,
-                error
-            } = await supabaseClient
-                .from("events")
-                .select(`
-                    id,
-                    title,
-                    venue,
-                    city
-                `)
-                .in("id",eventIds);
 
-            if(!error && data){
-
-                const map =
-                    new Map(
-                        data.map(event => [
-                            event.id,
-                            event
-                        ])
-                    );
-
-                scanRows.forEach(row => {
-
-                    const event =
-                        map.get(row.eventId);
-
-                    if(!event){
-                        return;
-                    }
-
-                    if(!row.eventTitle){
-                        row.eventTitle =
-                            event.title || "";
-                    }
-
-                    if(!row.venue){
-                        row.venue =
-                            event.venue || "";
-                    }
-                });
-            }
-
-        }catch(error){
-            console.warn(
-                "Event enrichment unavailable:",
-                error
-            );
-        }
-    }
+    /* Tickets */
 
     if(ticketIds.length){
 
-        try{
-
-            const {
-                data,
-                error
-            } = await supabaseClient
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
                 .from("tickets")
                 .select(`
                     id,
-                    ticket_code,
+                    order_id,
+                    order_item_id,
                     user_id,
                     event_id,
                     ticket_type_id,
+                    ticket_code,
+                    qr_token,
                     status,
-                    checked_in_at
+                    issued_at,
+                    checked_in_at,
+                    created_at,
+                    updated_at
                 `)
-                .in("id",ticketIds);
+                .in(
+                    "id",
+                    ticketIds
+                );
 
-            if(!error && data){
+        if(error){
 
-                const map =
-                    new Map(
-                        data.map(ticket => [
+            console.warn(
+                "Ticket enrichment failed:",
+                error
+            );
+
+        }else{
+
+            const map =
+                new Map(
+                    (data || [])
+                        .map(ticket => [
                             ticket.id,
                             ticket
                         ])
+                );
+
+            scanRows.forEach(row => {
+
+                const ticket =
+                    map.get(
+                        row.ticketId
                     );
 
-                scanRows.forEach(row => {
+                if(!ticket){
+                    return;
+                }
 
-                    const ticket =
-                        map.get(row.ticketId);
+                row.ticketCode =
+                    ticket.ticket_code ||
+                    "";
 
-                    if(!ticket){
-                        return;
-                    }
+                row.ticketStatus =
+                    ticket.status ||
+                    "";
 
-                    if(!row.ticketCode){
-                        row.ticketCode =
-                            ticket.ticket_code || "";
-                    }
+                row.holderId =
+                    ticket.user_id ||
+                    "";
 
-                    if(!row.holderId){
-                        row.holderId =
-                            ticket.user_id || "";
-                    }
+                row.eventId =
+                    row.eventId ||
+                    ticket.event_id ||
+                    "";
 
-                    if(!row.eventId){
-                        row.eventId =
-                            ticket.event_id || "";
-                    }
+                row.ticketTypeId =
+                    ticket.ticket_type_id ||
+                    "";
 
-                    if(!row.ticketStatus){
-                        row.ticketStatus =
-                            ticket.status || "";
-                    }
-
-                    if(!row.checkedInAt){
-                        row.checkedInAt =
-                            ticket.checked_in_at || "";
-                    }
-                });
-            }
-
-        }catch(error){
-            console.warn(
-                "Ticket enrichment unavailable:",
-                error
-            );
+                if(
+                    !row.scannedAt
+                ){
+                    row.scannedAt =
+                        ticket.checked_in_at ||
+                        ticket.created_at ||
+                        "";
+                }
+            });
         }
     }
 
-    const holderIds = [
-        ...new Set(
-            scanRows
-                .map(row => row.holderId)
-                .filter(Boolean)
-        )
-    ];
+
+    /* Events */
+
+    const finalEventIds =
+        [
+            ...new Set(
+                scanRows
+                    .map(row => row.eventId)
+                    .filter(Boolean)
+            )
+        ];
+
+    if(finalEventIds.length){
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("events")
+                .select(`
+                    id,
+                    merchant_id,
+                    title,
+                    venue,
+                    city,
+                    start_at,
+                    end_at,
+                    status
+                `)
+                .in(
+                    "id",
+                    finalEventIds
+                );
+
+        if(error){
+
+            console.warn(
+                "Event enrichment failed:",
+                error
+            );
+
+        }else{
+
+            const map =
+                new Map(
+                    (data || [])
+                        .map(event => [
+                            event.id,
+                            event
+                        ])
+                );
+
+            scanRows.forEach(row => {
+
+                const event =
+                    map.get(
+                        row.eventId
+                    );
+
+                if(!event){
+                    return;
+                }
+
+                row.eventTitle =
+                    event.title ||
+                    "";
+
+                row.venue =
+                    event.venue ||
+                    "";
+
+                row.city =
+                    event.city ||
+                    "";
+            });
+        }
+    }
+
+
+    /* Ticket types
+       The migration establishes the ticket_types table, but the
+       exact display-name column was not part of the locked schema.
+       Therefore we safely read the existing row and normalize
+       whichever display field actually exists. */
+
+    const ticketTypeIds =
+        [
+            ...new Set(
+                scanRows
+                    .map(row => row.ticketTypeId)
+                    .filter(Boolean)
+            )
+        ];
+
+    if(ticketTypeIds.length){
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("ticket_types")
+                .select("*")
+                .in(
+                    "id",
+                    ticketTypeIds
+                );
+
+        if(error){
+
+            console.warn(
+                "Ticket type enrichment failed:",
+                error
+            );
+
+        }else{
+
+            const map =
+                new Map(
+                    (data || [])
+                        .map(type => [
+                            type.id,
+                            type
+                        ])
+                );
+
+            scanRows.forEach(row => {
+
+                const type =
+                    map.get(
+                        row.ticketTypeId
+                    );
+
+                if(!type){
+                    return;
+                }
+
+                row.ticketType =
+                    type.name ||
+                    type.title ||
+                    type.ticket_name ||
+                    type.type_name ||
+                    type.description ||
+                    "";
+            });
+        }
+    }
+
+
+    /* Profiles — ticket holders */
+
+    const holderIds =
+        [
+            ...new Set(
+                scanRows
+                    .map(row => row.holderId)
+                    .filter(Boolean)
+            )
+        ];
 
     if(holderIds.length){
 
-        try{
-
-            const {
-                data,
-                error
-            } = await supabaseClient
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
                 .from("profiles")
                 .select(`
                     id,
                     full_name,
-                    role
+                    role,
+                    is_active
                 `)
-                .in("id",holderIds);
+                .in(
+                    "id",
+                    holderIds
+                );
 
-            if(!error && data){
+        if(error){
 
-                const map =
-                    new Map(
-                        data.map(profile => [
+            console.warn(
+                "Holder enrichment failed:",
+                error
+            );
+
+        }else{
+
+            const map =
+                new Map(
+                    (data || [])
+                        .map(profile => [
                             profile.id,
                             profile
                         ])
+                );
+
+            scanRows.forEach(row => {
+
+                const profile =
+                    map.get(
+                        row.holderId
                     );
 
-                scanRows.forEach(row => {
+                if(profile){
 
-                    const profile =
-                        map.get(row.holderId);
-
-                    if(
-                        profile &&
-                        !row.holderName
-                    ){
-                        row.holderName =
-                            profile.full_name || "";
-                    }
-                });
-            }
-
-        }catch(error){
-            console.warn(
-                "Holder enrichment unavailable:",
-                error
-            );
+                    row.holderName =
+                        profile.full_name ||
+                        "";
+                }
+            });
         }
     }
 
-    const scannerIds = [
-        ...new Set(
-            scanRows
-                .map(row => row.scannerId)
-                .filter(Boolean)
-        )
-    ];
+
+    /* Profiles — scanners */
 
     if(scannerIds.length){
 
-        try{
-
-            const {
-                data,
-                error
-            } = await supabaseClient
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
                 .from("profiles")
                 .select(`
                     id,
                     full_name,
-                    role
+                    role,
+                    is_active
                 `)
-                .in("id",scannerIds);
+                .in(
+                    "id",
+                    scannerIds
+                );
 
-            if(!error && data){
+        if(error){
 
-                const map =
-                    new Map(
-                        data.map(profile => [
+            console.warn(
+                "Scanner enrichment failed:",
+                error
+            );
+
+        }else{
+
+            const map =
+                new Map(
+                    (data || [])
+                        .map(profile => [
                             profile.id,
                             profile
                         ])
+                );
+
+            scanRows.forEach(row => {
+
+                const profile =
+                    map.get(
+                        row.scannerId
                     );
 
-                scanRows.forEach(row => {
+                if(profile){
 
-                    const profile =
-                        map.get(row.scannerId);
+                    row.scannerName =
+                        profile.full_name ||
+                        "";
 
-                    if(
-                        profile &&
-                        !row.scannerName
-                    ){
-                        row.scannerName =
-                            profile.full_name || "";
-                    }
+                    row.scannerRole =
+                        profile.role ||
+                        "";
 
-                    if(
-                        profile &&
-                        !row.scannerRole
-                    ){
-                        row.scannerRole =
-                            profile.role || "";
-                    }
-                });
-            }
-
-        }catch(error){
-            console.warn(
-                "Scanner enrichment unavailable:",
-                error
-            );
+                    row.source =
+                        deriveSource(
+                            profile.role
+                        );
+                }
+            });
         }
     }
+
+
+    /*
+     * If there is no scanner profile, do not invent a person.
+     * The source remains "system" only as a classification of
+     * an unassociated scanner, not as a fake user.
+     */
 }
+
+
+/* ------------------------------------------------------------------
+   Filters
+------------------------------------------------------------------ */
 
 function populateEventFilter(){
 
     const current =
-        eventFilter.value;
+        $("eventFilter").value;
 
-    const events =
-        [...new Map(
-            scanRows
-                .filter(row => row.eventId || row.eventTitle)
-                .map(row => [
-                    row.eventId || row.eventTitle,
-                    {
-                        id:row.eventId || row.eventTitle,
-                        title:
-                            row.eventTitle ||
-                            row.eventId
-                    }
-                ])
-        ).values()]
-        .sort((a,b) =>
-            String(a.title)
-                .localeCompare(
-                    String(b.title)
-                )
+    const uniqueEvents =
+        new Map();
+
+    scanRows.forEach(row => {
+
+        if(!row.eventId){
+            return;
+        }
+
+        uniqueEvents.set(
+            row.eventId,
+            row.eventTitle ||
+            row.eventId
         );
+    });
 
-    eventFilter.innerHTML =
-        `<option value="">All events</option>` +
-        events.map(event => `
-            <option value="${escapeHtml(event.id)}">
-                ${escapeHtml(event.title)}
+    const sorted =
+        [...uniqueEvents.entries()]
+            .sort(
+                (a,b) =>
+                    String(a[1])
+                        .localeCompare(
+                            String(b[1])
+                        )
+            );
+
+    $("eventFilter").innerHTML =
+        `
+            <option value="">
+                All events
             </option>
-        `).join("");
+        ` +
+        sorted
+            .map(
+                ([id,title]) => `
+                    <option value="${escapeHtml(id)}">
+                        ${escapeHtml(title)}
+                    </option>
+                `
+            )
+            .join("");
 
     if(
-        events.some(
-            event => String(event.id) === String(current)
+        sorted.some(
+            ([id]) =>
+                String(id) ===
+                String(current)
         )
     ){
-        eventFilter.value = current;
+        $("eventFilter").value =
+            current;
     }
 }
 
 function applyFilters(){
 
     const search =
-        searchInput.value
+        $("searchInput")
+            .value
             .trim()
             .toLowerCase();
 
     const status =
-        statusFilter.value;
+        $("statusFilter").value;
 
     const period =
-        periodFilter.value;
+        $("periodFilter").value;
 
     const eventId =
-        eventFilter.value;
+        $("eventFilter").value;
 
     const source =
-        sourceFilter.value;
+        $("sourceFilter").value;
 
-    const now = Date.now();
+    const now =
+        new Date();
 
     filteredRows =
         scanRows.filter(row => {
 
             if(status){
 
-                const normalized =
-                    normalizeStatus(row.status);
-
-                if(normalized !== status){
+                if(
+                    normalizeResult(
+                        row.result
+                    ) !== status
+                ){
                     return false;
                 }
             }
@@ -2417,12 +2621,9 @@ function applyFilters(){
 
             if(source){
 
-                const rowSource =
-                    String(row.source || "")
-                        .toLowerCase();
-
                 if(
-                    rowSource !==
+                    String(row.source || "")
+                        .toLowerCase() !==
                     source.toLowerCase()
                 ){
                     return false;
@@ -2431,14 +2632,19 @@ function applyFilters(){
 
             if(period !== "all"){
 
-                const date =
-                    row.scannedAt
-                        ? new Date(row.scannedAt)
-                        : null;
+                if(!row.scannedAt){
+                    return false;
+                }
+
+                const scanned =
+                    new Date(
+                        row.scannedAt
+                    );
 
                 if(
-                    !date ||
-                    Number.isNaN(date.getTime())
+                    Number.isNaN(
+                        scanned.getTime()
+                    )
                 ){
                     return false;
                 }
@@ -2447,8 +2653,13 @@ function applyFilters(){
                     new Date();
 
                 if(period === "today"){
-                    start.setHours(0,0,0,0);
+
+                    start.setHours(
+                        0,0,0,0
+                    );
+
                 }else{
+
                     start.setDate(
                         start.getDate() -
                         Number(period)
@@ -2456,7 +2667,7 @@ function applyFilters(){
                 }
 
                 if(
-                    date.getTime() <
+                    scanned.getTime() <
                     start.getTime()
                 ){
                     return false;
@@ -2466,28 +2677,36 @@ function applyFilters(){
             if(search){
 
                 const haystack = [
+
                     row.id,
                     row.ticketId,
                     row.ticketCode,
                     row.eventId,
                     row.eventTitle,
                     row.venue,
+                    row.city,
                     row.ticketType,
                     row.holderName,
                     row.holderId,
-                    row.scannerId,
                     row.scannerName,
+                    row.scannerId,
                     row.scannerRole,
                     row.source,
-                    row.status,
+                    row.result,
                     row.ticketStatus,
-                    row.notes
+                    row.qrToken,
+                    row.deviceInfo
+
                 ]
                     .filter(Boolean)
                     .join(" ")
                     .toLowerCase();
 
-                if(!haystack.includes(search)){
+                if(
+                    !haystack.includes(
+                        search
+                    )
+                ){
                     return false;
                 }
             }
@@ -2499,152 +2718,63 @@ function applyFilters(){
     updateStats();
 }
 
+
+/* ------------------------------------------------------------------
+   Render
+------------------------------------------------------------------ */
+
 function renderRows(){
 
-    tableBody.innerHTML = "";
-    mobileList.innerHTML = "";
+    $("tableBody").innerHTML =
+        "";
+
+    $("mobileList").innerHTML =
+        "";
 
     if(!filteredRows.length){
 
-        emptyState.style.display = "block";
+        $("emptyState")
+            .style.display =
+            "block";
 
-        emptyText.textContent =
+        $("emptyText")
+            .textContent =
             scanRows.length
                 ? "No scan records match the current filters."
-                : "No QR scan records are available from the configured source.";
+                : "No QR scan records are available.";
 
-        $("resultMeta").textContent =
+        $("resultMeta")
+            .textContent =
             "0 records";
 
         return;
     }
 
-    emptyState.style.display = "none";
+    $("emptyState")
+        .style.display =
+        "none";
 
-    $("resultMeta").textContent =
-        `${filteredRows.length.toLocaleString()} of ${scanRows.length.toLocaleString()} records`;
+    $("resultMeta")
+        .textContent =
+        `${filteredRows.length.toLocaleString()} of ${
+            scanRows.length.toLocaleString()
+        } records`;
 
-    filteredRows.forEach((row,index) => {
+    filteredRows.forEach(
+        (row,index) => {
 
-        const tr =
-            document.createElement("tr");
+            const tr =
+                document.createElement(
+                    "tr"
+                );
 
-        tr.innerHTML = `
-            <td>
-                <div class="scan-code">
-                    ${escapeHtml(
-                        safeValue(
-                            row.ticketCode,
-                            row.ticketId || "—"
-                        )
-                    )}
-                </div>
-                <div class="secondary-text">
-                    ${escapeHtml(
-                        row.id || ""
-                    )}
-                </div>
-            </td>
-
-            <td>
-                <div class="primary-text">
-                    ${escapeHtml(
-                        safeValue(
-                            row.eventTitle
-                        )
-                    )}
-                </div>
-                <div class="secondary-text">
-                    ${escapeHtml(
-                        row.venue || ""
-                    )}
-                </div>
-            </td>
-
-            <td>
-                <div class="primary-text">
-                    ${escapeHtml(
-                        safeValue(
-                            row.holderName
-                        )
-                    )}
-                </div>
-                <div class="secondary-text">
-                    ${escapeHtml(
-                        row.holderId || ""
-                    )}
-                </div>
-            </td>
-
-            <td>
-                <span class="badge ${statusClass(row.status)}">
-                    ${escapeHtml(
-                        humanStatus(row.status)
-                    )}
-                </span>
-            </td>
-
-            <td>
-                <div class="primary-text">
-                    ${escapeHtml(
-                        safeValue(
-                            row.scannerName,
-                            row.scannerId || "—"
-                        )
-                    )}
-                </div>
-                <div class="secondary-text">
-                    ${escapeHtml(
-                        row.scannerRole || ""
-                    )}
-                </div>
-            </td>
-
-            <td>
-                ${escapeHtml(
-                    humanStatus(
-                        row.source || "—"
-                    )
-                )}
-            </td>
-
-            <td>
-                ${escapeHtml(
-                    formatShortDate(
-                        row.scannedAt
-                    )
-                )}
-            </td>
-
-            <td>
-                <div class="row-actions">
-                    <button
-                        class="small-btn"
-                        data-index="${index}"
-                        data-action="view"
-                    >
-                        View
-                    </button>
-                </div>
-            </td>
-        `;
-
-        tableBody.appendChild(tr);
-
-        const card =
-            document.createElement("article");
-
-        card.className = "scan-card";
-
-        card.innerHTML = `
-            <div class="scan-card-head">
-
-                <div class="scan-card-title">
+            tr.innerHTML = `
+                <td>
                     <div class="scan-code">
                         ${escapeHtml(
                             safeValue(
                                 row.ticketCode,
-                                row.ticketId || "—"
+                                row.ticketId
                             )
                         )}
                     </div>
@@ -2652,110 +2782,259 @@ function renderRows(){
                     <div class="secondary-text">
                         ${escapeHtml(
                             safeValue(
-                                row.eventTitle
+                                row.id
                             )
                         )}
                     </div>
-                </div>
+                </td>
 
-                <span class="badge ${statusClass(row.status)}">
-                    ${escapeHtml(
-                        humanStatus(row.status)
-                    )}
-                </span>
-
-            </div>
-
-            <div class="scan-card-grid">
-
-                <div class="scan-mini">
-                    <label>Holder</label>
-                    <div>
+                <td>
+                    <div class="primary-text">
                         ${escapeHtml(
-                            safeValue(row.holderName)
+                            safeValue(
+                                row.eventTitle,
+                                row.eventId
+                            )
                         )}
                     </div>
-                </div>
 
-                <div class="scan-mini">
-                    <label>Scanner</label>
-                    <div>
+                    <div class="secondary-text">
+                        ${escapeHtml(
+                            row.venue ||
+                            row.city ||
+                            ""
+                        )}
+                    </div>
+                </td>
+
+                <td>
+                    <div class="primary-text">
+                        ${escapeHtml(
+                            safeValue(
+                                row.holderName,
+                                row.holderId
+                            )
+                        )}
+                    </div>
+
+                    <div class="secondary-text">
+                        ${escapeHtml(
+                            row.holderId ||
+                            ""
+                        )}
+                    </div>
+                </td>
+
+                <td>
+                    <span class="badge ${resultClass(row.result)}">
+                        ${escapeHtml(
+                            resultLabel(
+                                row.result
+                            )
+                        )}
+                    </span>
+                </td>
+
+                <td>
+                    <div class="primary-text">
                         ${escapeHtml(
                             safeValue(
                                 row.scannerName,
-                                row.scannerId || "—"
+                                row.scannerId
                             )
                         )}
                     </div>
-                </div>
 
-                <div class="scan-mini">
-                    <label>Source</label>
-                    <div>
+                    <div class="secondary-text">
                         ${escapeHtml(
-                            humanStatus(
-                                row.source || "—"
-                            )
+                            row.scannerRole ||
+                            ""
                         )}
                     </div>
-                </div>
+                </td>
 
-                <div class="scan-mini">
-                    <label>Scanned</label>
-                    <div>
+                <td>
+                    ${escapeHtml(
+                        resultLabel(
+                            row.source
+                        )
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        formatDate(
+                            row.scannedAt
+                        )
+                    )}
+                </td>
+
+                <td>
+                    <div class="row-actions">
+                        <button
+                            class="small-btn"
+                            data-action="view"
+                            data-index="${index}"
+                        >
+                            View
+                        </button>
+                    </div>
+                </td>
+            `;
+
+            $("tableBody")
+                .appendChild(tr);
+
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+            card.className =
+                "scan-card";
+
+            card.innerHTML = `
+                <div class="scan-card-head">
+
+                    <div class="scan-card-title">
+
+                        <div class="scan-code">
+                            ${escapeHtml(
+                                safeValue(
+                                    row.ticketCode,
+                                    row.ticketId
+                                )
+                            )}
+                        </div>
+
+                        <div class="secondary-text">
+                            ${escapeHtml(
+                                safeValue(
+                                    row.eventTitle,
+                                    row.eventId
+                                )
+                            )}
+                        </div>
+
+                    </div>
+
+                    <span class="badge ${resultClass(row.result)}">
                         ${escapeHtml(
-                            formatShortDate(
-                                row.scannedAt
+                            resultLabel(
+                                row.result
                             )
                         )}
-                    </div>
+                    </span>
+
                 </div>
 
-            </div>
+                <div class="scan-card-grid">
 
-            <div class="scan-card-actions">
+                    <div class="scan-mini">
+                        <label>Holder</label>
+                        <div>
+                            ${escapeHtml(
+                                safeValue(
+                                    row.holderName,
+                                    row.holderId
+                                )
+                            )}
+                        </div>
+                    </div>
 
-                <button
-                    class="small-btn"
-                    data-index="${index}"
-                    data-action="view"
-                >
-                    View details
-                </button>
+                    <div class="scan-mini">
+                        <label>Scanner</label>
+                        <div>
+                            ${escapeHtml(
+                                safeValue(
+                                    row.scannerName,
+                                    row.scannerId
+                                )
+                            )}
+                        </div>
+                    </div>
 
-            </div>
-        `;
+                    <div class="scan-mini">
+                        <label>Source</label>
+                        <div>
+                            ${escapeHtml(
+                                resultLabel(
+                                    row.source
+                                )
+                            )}
+                        </div>
+                    </div>
 
-        mobileList.appendChild(card);
-    });
+                    <div class="scan-mini">
+                        <label>Scanned</label>
+                        <div>
+                            ${escapeHtml(
+                                formatDate(
+                                    row.scannedAt
+                                )
+                            )}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="scan-card-actions">
+
+                    <button
+                        class="small-btn"
+                        data-action="view"
+                        data-index="${index}"
+                    >
+                        View details
+                    </button>
+
+                </div>
+            `;
+
+            $("mobileList")
+                .appendChild(card);
+        }
+    );
 }
+
+
+/* ------------------------------------------------------------------
+   Stats
+------------------------------------------------------------------ */
 
 function updateStats(){
 
     const total =
         scanRows.length;
 
-    const successful =
-        scanRows.filter(row =>
-            [
-                "success",
-                "valid",
-                "checked-in"
-            ].includes(
-                normalizeStatus(row.status)
-            )
+    const accepted =
+        scanRows.filter(
+            row =>
+                normalizeResult(
+                    row.result
+                ) === "accepted"
         ).length;
 
     const rejected =
-        scanRows.filter(row =>
-            [
-                "invalid",
-                "failed",
-                "rejected"
-            ].includes(
-                normalizeStatus(row.status)
-            )
+        scanRows.filter(
+            row =>
+                [
+                    "already-used",
+                    "invalid",
+                    "cancelled",
+                    "refunded",
+                    "wrong-event",
+                    "unauthorized"
+                ].includes(
+                    normalizeResult(
+                        row.result
+                    )
+                )
         ).length;
+
+    const now =
+        new Date();
 
     const today =
         scanRows.filter(row => {
@@ -2765,113 +3044,177 @@ function updateStats(){
             }
 
             const date =
-                new Date(row.scannedAt);
+                new Date(
+                    row.scannedAt
+                );
 
-            if(Number.isNaN(date.getTime())){
+            if(
+                Number.isNaN(
+                    date.getTime()
+                )
+            ){
                 return false;
             }
-
-            const now =
-                new Date();
 
             return (
                 date.getFullYear() ===
                     now.getFullYear() &&
+
                 date.getMonth() ===
                     now.getMonth() &&
+
                 date.getDate() ===
                     now.getDate()
             );
         }).length;
 
-    $("totalScans").textContent =
+    $("totalScans")
+        .textContent =
         total.toLocaleString();
 
-    $("successfulScans").textContent =
-        successful.toLocaleString();
+    $("successfulScans")
+        .textContent =
+        accepted.toLocaleString();
 
-    $("rejectedScans").textContent =
+    $("rejectedScans")
+        .textContent =
         rejected.toLocaleString();
 
-    $("todayScans").textContent =
+    $("todayScans")
+        .textContent =
         today.toLocaleString();
 }
 
+
+/* ------------------------------------------------------------------
+   Drawer
+------------------------------------------------------------------ */
+
 function openDrawer(row){
 
-    currentDrawerRow = row;
-
-    $("dScanId").textContent =
+    $("dScanId")
+        .textContent =
         safeValue(row.id);
 
     $("dStatus").innerHTML = `
-        <span class="badge ${statusClass(row.status)}">
+        <span class="badge ${resultClass(row.result)}">
             ${escapeHtml(
-                humanStatus(row.status)
+                resultLabel(
+                    row.result
+                )
             )}
         </span>
     `;
 
-    $("dTicketCode").textContent =
+    $("dTicketCode")
+        .textContent =
         safeValue(
             row.ticketCode,
-            row.ticketId || "—"
+            row.ticketId
         );
 
-    $("dScannedAt").textContent =
-        formatDate(row.scannedAt);
+    $("dScannedAt")
+        .textContent =
+        formatDate(
+            row.scannedAt
+        );
 
-    $("dEvent").textContent =
+    $("dEvent")
+        .textContent =
         safeValue(
             row.eventTitle,
-            row.eventId || "—"
+            row.eventId
         );
 
-    $("dTicketType").textContent =
-        safeValue(row.ticketType);
+    $("dTicketType")
+        .textContent =
+        safeValue(
+            row.ticketType
+        );
 
-    $("dHolder").textContent =
+    $("dHolder")
+        .textContent =
         safeValue(
             row.holderName,
-            row.holderId || "—"
+            row.holderId
         );
 
-    $("dScanner").textContent =
+    $("dScanner")
+        .textContent =
         safeValue(
             row.scannerName,
-            row.scannerId || "—"
+            row.scannerId
         );
 
-    $("dScannerRole").textContent =
-        safeValue(row.scannerRole);
-
-    $("dSource").textContent =
-        humanStatus(
-            row.source || "—"
+    $("dScannerRole")
+        .textContent =
+        safeValue(
+            row.scannerRole
         );
 
-    $("dTicketStatus").textContent =
-        humanStatus(
-            row.ticketStatus || "—"
+    $("dSource")
+        .textContent =
+        resultLabel(
+            row.source
         );
 
-    $("dCheckedInAt").textContent =
-        formatDate(row.checkedInAt);
+    $("dTicketStatus")
+        .textContent =
+        safeValue(
+            row.ticketStatus
+        );
 
-    $("dNotes").textContent =
-        safeValue(row.notes);
+    $("dCheckedInAt")
+        .textContent =
+        row.result === "accepted"
+            ? formatDate(
+                row.scannedAt
+            )
+            : "—";
 
-    $("drawerSubtitle").textContent =
+    $("dDevice")
+        .textContent =
+        safeValue(
+            row.deviceInfo
+        );
+
+    $("dNotes")
+        .textContent =
+        `QR result: ${resultLabel(
+            row.result
+        )}`;
+
+    $("drawerSubtitle")
+        .textContent =
         row.ticketCode
             ? `Ticket ${row.ticketCode}`
             : "QR verification record";
 
-    drawerBackdrop.style.display = "block";
+    $("drawerBackdrop")
+        .style.display =
+        "block";
 }
 
 function closeDrawer(){
-    drawerBackdrop.style.display = "none";
-    currentDrawerRow = null;
+
+    $("drawerBackdrop")
+        .style.display =
+        "none";
+}
+
+
+/* ------------------------------------------------------------------
+   CSV
+------------------------------------------------------------------ */
+
+function csvCell(value){
+
+    return `"${String(
+        value ?? ""
+    ).replace(
+        /"/g,
+        '""'
+    )}"`;
 }
 
 function exportCsv(){
@@ -2879,7 +3222,7 @@ function exportCsv(){
     if(!filteredRows.length){
 
         showToast(
-            "There are no scan records to export.",
+            "There are no QR scan records to export.",
             true
         );
 
@@ -2893,6 +3236,7 @@ function exportCsv(){
         "Event ID",
         "Event",
         "Venue",
+        "City",
         "Ticket Type",
         "Holder",
         "Holder ID",
@@ -2900,93 +3244,97 @@ function exportCsv(){
         "Scanner ID",
         "Scanner Role",
         "Source",
-        "Status",
+        "Result",
         "Ticket Status",
-        "Scanned At",
-        "Checked In At",
-        "Notes"
+        "QR Token",
+        "Device Info",
+        "Scanned At"
     ];
 
     const rows =
-        filteredRows.map(row => [
-            row.id,
-            row.ticketId,
-            row.ticketCode,
-            row.eventId,
-            row.eventTitle,
-            row.venue,
-            row.ticketType,
-            row.holderName,
-            row.holderId,
-            row.scannerName,
-            row.scannerId,
-            row.scannerRole,
-            row.source,
-            row.status,
-            row.ticketStatus,
-            row.scannedAt,
-            row.checkedInAt,
-            row.notes
-        ]);
+        filteredRows.map(
+            row => [
+                row.id,
+                row.ticketId,
+                row.ticketCode,
+                row.eventId,
+                row.eventTitle,
+                row.venue,
+                row.city,
+                row.ticketType,
+                row.holderName,
+                row.holderId,
+                row.scannerName,
+                row.scannerId,
+                row.scannerRole,
+                row.source,
+                row.result,
+                row.ticketStatus,
+                row.qrToken,
+                row.deviceInfo,
+                row.scannedAt
+            ]
+        );
 
-    const csv = [
-        headers,
-        ...rows
-    ]
-        .map(row =>
-            row.map(value =>
-                `"${String(value ?? "")
-                    .replace(/"/g,'""')}"`
-            ).join(",")
-        )
-        .join("\n");
+    const csv =
+        [
+            headers,
+            ...rows
+        ]
+            .map(
+                row =>
+                    row
+                        .map(csvCell)
+                        .join(",")
+            )
+            .join("\n");
 
     const blob =
         new Blob(
             [csv],
             {
-                type:"text/csv;charset=utf-8;"
+                type:
+                    "text/csv;charset=utf-8;"
             }
         );
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
-    link.href = url;
+    link.href =
+        url;
 
     link.download =
-        `k-tickets-qr-scans-${new Date()
-            .toISOString()
-            .slice(0,10)}.csv`;
+        `k-tickets-qr-scans-${
+            new Date()
+                .toISOString()
+                .slice(0,10)
+        }.csv`;
 
-    document.body.appendChild(link);
+    document.body.appendChild(
+        link
+    );
+
     link.click();
+
     link.remove();
 
-    URL.revokeObjectURL(url);
-}
-
-function setLoading(isLoading){
-
-    document.body.classList.toggle(
-        "loading",
-        isLoading
+    URL.revokeObjectURL(
+        url
     );
 }
 
-function clearFilters(){
 
-    searchInput.value = "";
-    statusFilter.value = "";
-    periodFilter.value = "all";
-    eventFilter.value = "";
-    sourceFilter.value = "";
-
-    applyFilters();
-}
+/* ------------------------------------------------------------------
+   UI events
+------------------------------------------------------------------ */
 
 document.addEventListener(
     "click",
@@ -3002,11 +3350,14 @@ document.addEventListener(
         }
 
         if(
-            target.dataset.action === "view"
+            target.dataset.action ===
+            "view"
         ){
 
             const index =
-                Number(target.dataset.index);
+                Number(
+                    target.dataset.index
+                );
 
             const row =
                 filteredRows[index];
@@ -3018,100 +3369,165 @@ document.addEventListener(
     }
 );
 
-searchInput.addEventListener(
-    "input",
-    applyFilters
-);
+$("searchInput")
+    .addEventListener(
+        "input",
+        applyFilters
+    );
 
-statusFilter.addEventListener(
-    "change",
-    applyFilters
-);
+$("statusFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
 
-periodFilter.addEventListener(
-    "change",
-    applyFilters
-);
+$("periodFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
 
-eventFilter.addEventListener(
-    "change",
-    applyFilters
-);
+$("eventFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
 
-sourceFilter.addEventListener(
-    "change",
-    applyFilters
-);
+$("sourceFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
 
-$("clearFilters").addEventListener(
-    "click",
-    clearFilters
-);
+$("clearFilters")
+    .addEventListener(
+        "click",
+        () => {
 
-$("exportButton").addEventListener(
-    "click",
-    exportCsv
-);
+            $("searchInput")
+                .value = "";
 
-$("refreshButton").addEventListener(
-    "click",
-    async () => {
-        await loadScans();
-        await loadNotifications();
-    }
-);
+            $("statusFilter")
+                .value = "";
 
-$("refreshButton2").addEventListener(
-    "click",
-    async () => {
-        await loadScans();
-        await loadNotifications();
-    }
-);
+            $("periodFilter")
+                .value = "all";
 
-$("drawerClose").addEventListener(
-    "click",
-    closeDrawer
-);
+            $("eventFilter")
+                .value = "";
 
-drawerBackdrop.addEventListener(
-    "click",
-    event => {
-        if(event.target === drawerBackdrop){
-            closeDrawer();
+            $("sourceFilter")
+                .value = "";
+
+            applyFilters();
         }
-    }
-);
+    );
 
-$("mobileMenu").addEventListener(
-    "click",
-    () => {
-        $("sidebar").classList.toggle("open");
-    }
-);
+async function refreshAll(){
 
-$("notificationButton").addEventListener(
-    "click",
-    () => {
+    await Promise.all([
+        loadScans(),
+        loadNotifications()
+    ]);
 
-        if(notifications.length){
+    showToast(
+        "QR scan data refreshed."
+    );
+}
+
+$("refreshButton")
+    .addEventListener(
+        "click",
+        refreshAll
+    );
+
+$("refreshButton2")
+    .addEventListener(
+        "click",
+        refreshAll
+    );
+
+$("exportButton")
+    .addEventListener(
+        "click",
+        exportCsv
+    );
+
+$("drawerClose")
+    .addEventListener(
+        "click",
+        closeDrawer
+    );
+
+$("drawerBackdrop")
+    .addEventListener(
+        "click",
+        event => {
+
+            if(
+                event.target ===
+                $("drawerBackdrop")
+            ){
+                closeDrawer();
+            }
+        }
+    );
+
+$("mobileMenu")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("sidebar")
+                .classList.toggle(
+                    "open"
+                );
+        }
+    );
+
+$("notificationButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            if(!notifications.length){
+
+                showToast(
+                    "No notification records available."
+                );
+
+                return;
+            }
+
+            const unread =
+                notifications.filter(
+                    item =>
+                        item.is_read !== true
+                ).length;
+
             showToast(
-                `${notifications.length} notification record(s) available.`
-            );
-        }else{
-            showToast(
-                "No notification records available."
+                unread
+                    ? `${unread} unread notification${
+                        unread === 1
+                            ? ""
+                            : "s"
+                    }.`
+                    : "No unread notifications."
             );
         }
-    }
-);
+    );
+
+
+/* ------------------------------------------------------------------
+   Boot
+------------------------------------------------------------------ */
 
 async function boot(){
 
     try{
 
         const authenticated =
-            await loadAdmin();
+            await verifyAdmin();
 
         if(!authenticated){
             return;
@@ -3122,22 +3538,37 @@ async function boot(){
             loadNotifications()
         ]);
 
-        openApp();
+        $("securityGate")
+            .style.display =
+            "none";
+
+        $("app")
+            .style.display =
+            "block";
 
     }catch(error){
 
         console.error(
-            "K-Tickets admin QR scans boot error:",
+            "K-Tickets QR scans boot error:",
             error
         );
 
-        setSecurityMessage(
-            "Unable to verify this administrator session."
-        );
+        $("securityMessage")
+            .textContent =
+            `Unable to verify this administrator session${
+                error?.message
+                    ? `: ${error.message}`
+                    : "."
+            }`;
 
-        setTimeout(() => {
-            redirectLogin();
-        },1500);
+        setTimeout(
+            () => {
+                redirectLogin(
+                    "admin_session_error"
+                );
+            },
+            1800
+        );
     }
 }
 

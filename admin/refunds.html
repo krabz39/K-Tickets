@@ -19,7 +19,7 @@
         content="same-origin"
     >
 
-    <title>K-Tickets — Refunds</title>
+    <title>K-Tickets Admin — Refunds</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -31,7 +31,7 @@
 
             --bg:#f7f4ef;
             --surface:#ffffff;
-            --surface-2:#fbf9f6;
+            --surface2:#fbf9f6;
 
             --text:#202020;
             --muted:#746d67;
@@ -57,8 +57,10 @@
         body{
             margin:0;
             min-height:100vh;
+
             background:var(--bg);
             color:var(--text);
+
             font-family:
                 Inter,
                 system-ui,
@@ -70,8 +72,7 @@
 
         button,
         input,
-        select,
-        textarea{
+        select{
             font:inherit;
         }
 
@@ -84,41 +85,52 @@
             text-decoration:none;
         }
 
-        /* ---------------------------------------------------------
+        /* =====================================================
            SECURITY GATE
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .security-gate{
             position:fixed;
             inset:0;
             z-index:99999;
+
             display:flex;
             align-items:center;
             justify-content:center;
+
             background:var(--green);
-            color:white;
+            color:#fff;
         }
 
         .security-box{
-            width:min(420px,calc(100% - 32px));
+            width:min(430px,calc(100% - 32px));
+
             padding:32px;
+
+            border:1px solid rgba(255,255,255,.13);
             border-radius:24px;
-            background:rgba(255,255,255,.08);
-            border:1px solid rgba(255,255,255,.15);
+
+            background:rgba(255,255,255,.07);
+
             text-align:center;
         }
 
         .security-logo{
             width:58px;
             height:58px;
+
             margin:0 auto 18px;
+
             display:grid;
             place-items:center;
+
             border-radius:18px;
+
             background:var(--cream);
             color:var(--bordo);
-            font-weight:900;
+
             font-size:20px;
+            font-weight:900;
         }
 
         .security-box h2{
@@ -128,76 +140,116 @@
 
         .security-box p{
             margin:0;
+
             color:rgba(255,255,255,.72);
-            font-size:14px;
-            line-height:1.6;
+
+            font-size:13px;
+            line-height:1.65;
         }
 
-        /* ---------------------------------------------------------
+        .security-button{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+
+            min-height:42px;
+
+            margin-top:20px;
+            padding:0 16px;
+
+            border:0;
+            border-radius:11px;
+
+            background:var(--cream);
+            color:var(--green);
+
+            font-size:12px;
+            font-weight:900;
+        }
+
+        /* =====================================================
            APP
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .app{
             display:none;
             min-height:100vh;
         }
 
-        /* ---------------------------------------------------------
+        /* =====================================================
            SIDEBAR
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .sidebar{
             position:fixed;
             left:0;
             top:0;
             bottom:0;
+
             width:260px;
+
             z-index:100;
+
             padding:22px 16px;
+
             background:var(--green);
-            color:white;
+            color:#fff;
+
             overflow-y:auto;
+
+            transition:.25s ease;
         }
 
         .brand{
             display:flex;
             align-items:center;
             gap:12px;
+
             padding:5px 10px 25px;
         }
 
         .brand-mark{
             width:42px;
             height:42px;
+
             display:grid;
             place-items:center;
+
             border-radius:13px;
+
             background:var(--cream);
             color:var(--bordo);
+
             font-weight:900;
-            letter-spacing:-1px;
         }
 
         .brand-copy strong{
             display:block;
+
             font-size:15px;
             letter-spacing:.04em;
         }
 
         .brand-copy span{
             display:block;
+
             margin-top:3px;
+
             color:rgba(255,255,255,.55);
-            font-size:11px;
+
+            font-size:10px;
             text-transform:uppercase;
             letter-spacing:.13em;
         }
 
         .nav-label{
             margin:10px 10px 8px;
+
             color:rgba(255,255,255,.4);
+
             font-size:10px;
             font-weight:800;
+
             letter-spacing:.14em;
             text-transform:uppercase;
         }
@@ -211,16 +263,21 @@
             display:flex;
             align-items:center;
             gap:11px;
+
             padding:11px 12px;
+
             border-radius:12px;
+
             color:rgba(255,255,255,.72);
+
             font-size:13px;
-            transition:.2s ease;
+
+            transition:.18s ease;
         }
 
         .nav a:hover{
             background:rgba(255,255,255,.07);
-            color:white;
+            color:#fff;
         }
 
         .nav a.active{
@@ -230,35 +287,46 @@
 
         .nav-icon{
             width:20px;
+            flex:none;
             text-align:center;
-            opacity:.85;
         }
 
         .sidebar-footer{
             margin-top:25px;
             padding:14px;
+
             border:1px solid rgba(255,255,255,.08);
             border-radius:15px;
+
             background:rgba(255,255,255,.035);
         }
 
         .sidebar-footer small{
             display:block;
+
             color:rgba(255,255,255,.42);
-            font-size:10px;
-            line-height:1.6;
+
+            font-size:9px;
+            letter-spacing:.08em;
         }
 
         .sidebar-footer strong{
             display:block;
-            margin-top:3px;
+
+            margin-top:4px;
+
+            color:rgba(255,255,255,.82);
+
             font-size:12px;
-            color:rgba(255,255,255,.8);
+
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
         }
 
-        /* ---------------------------------------------------------
-           MAIN / TOPBAR
-        --------------------------------------------------------- */
+        /* =====================================================
+           MAIN
+        ===================================================== */
 
         .main{
             margin-left:260px;
@@ -269,25 +337,43 @@
             position:sticky;
             top:0;
             z-index:80;
+
             min-height:72px;
+
             display:flex;
             align-items:center;
             justify-content:space-between;
+
             gap:18px;
+
             padding:12px 28px;
+
             background:rgba(247,244,239,.94);
+
             border-bottom:1px solid var(--border);
+
             backdrop-filter:blur(16px);
+        }
+
+        .topbar-left{
+            min-width:0;
+
+            display:flex;
+            align-items:center;
+            gap:12px;
         }
 
         .mobile-menu{
             display:none;
-            border:0;
-            background:var(--surface);
+
             width:42px;
             height:42px;
+
+            border:1px solid var(--border);
             border-radius:12px;
-            box-shadow:var(--shadow);
+
+            background:#fff;
+            color:var(--green);
         }
 
         .page-heading{
@@ -296,14 +382,17 @@
 
         .eyebrow{
             color:var(--bordo);
+
             font-size:10px;
             font-weight:900;
+
             letter-spacing:.14em;
             text-transform:uppercase;
         }
 
         .page-heading h1{
             margin:3px 0 0;
+
             font-size:22px;
             letter-spacing:-.03em;
         }
@@ -311,63 +400,78 @@
         .top-actions{
             display:flex;
             align-items:center;
-            gap:10px;
+            gap:9px;
         }
 
         .icon-button{
             position:relative;
+
             width:40px;
             height:40px;
+
             border:1px solid var(--border);
             border-radius:12px;
-            background:var(--surface);
-            color:var(--green);
-        }
 
-        .notification-dot{
-            position:absolute;
-            right:8px;
-            top:7px;
-            width:7px;
-            height:7px;
-            border-radius:50%;
-            background:var(--bordo);
+            background:#fff;
+            color:var(--green);
         }
 
         .admin-chip{
             display:flex;
             align-items:center;
-            gap:9px;
-            padding:5px 10px 5px 5px;
+            gap:8px;
+
+            padding:4px 10px 4px 4px;
+
             border:1px solid var(--border);
             border-radius:999px;
-            background:white;
+
+            background:#fff;
         }
 
         .avatar{
             width:32px;
             height:32px;
+
             display:grid;
             place-items:center;
+
             border-radius:50%;
+
             background:var(--green);
-            color:white;
-            font-size:11px;
-            font-weight:800;
+            color:#fff;
+
+            font-size:10px;
+            font-weight:900;
         }
 
         .admin-chip span{
             max-width:150px;
+
             overflow:hidden;
             text-overflow:ellipsis;
             white-space:nowrap;
-            font-size:12px;
-            font-weight:700;
+
+            font-size:11px;
+            font-weight:800;
         }
 
-        /* ---------------------------------------------------------
+        .notification-dot{
+            position:absolute;
+            top:7px;
+            right:7px;
+
+            width:7px;
+            height:7px;
+
+            border-radius:50%;
+
+            background:var(--bordo);
+        }
+
+        /* =====================================================
            CONTENT
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .content{
             padding:28px;
@@ -377,7 +481,9 @@
             display:flex;
             align-items:center;
             justify-content:space-between;
-            gap:16px;
+
+            gap:18px;
+
             margin-bottom:22px;
         }
 
@@ -388,8 +494,11 @@
 
         .toolbar-copy p{
             margin:6px 0 0;
+
             color:var(--muted);
-            font-size:13px;
+
+            font-size:12px;
+            line-height:1.6;
         }
 
         .toolbar-actions{
@@ -400,102 +509,102 @@
 
         .btn{
             min-height:40px;
+
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:7px;
+
             padding:0 14px;
+
             border:1px solid var(--border);
             border-radius:11px;
-            background:white;
+
+            background:#fff;
             color:var(--green);
-            font-size:12px;
-            font-weight:800;
+
+            font-size:11px;
+            font-weight:900;
+
+            transition:.18s ease;
         }
 
         .btn:hover{
-            border-color:#d5c8bd;
+            transform:translateY(-1px);
         }
 
         .btn.primary{
             background:var(--green);
             border-color:var(--green);
-            color:white;
+            color:#fff;
         }
 
-        .btn.danger{
-            color:var(--danger);
-        }
-
-        .btn.warning{
-            color:var(--warning);
-        }
-
-        /* ---------------------------------------------------------
+        /* =====================================================
            STATS
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .stats{
             display:grid;
-            grid-template-columns:repeat(4,minmax(0,1fr));
+            grid-template-columns:repeat(5,minmax(0,1fr));
             gap:14px;
+
             margin-bottom:20px;
         }
 
         .stat{
             min-width:0;
-            padding:18px;
+
+            padding:17px;
+
             border:1px solid var(--border);
             border-radius:var(--radius);
-            background:var(--surface);
-            box-shadow:var(--shadow);
-        }
 
-        .stat-top{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:10px;
+            background:#fff;
+
+            box-shadow:var(--shadow);
         }
 
         .stat-label{
             color:var(--muted);
-            font-size:11px;
-            font-weight:800;
-            text-transform:uppercase;
-            letter-spacing:.07em;
-        }
 
-        .stat-icon{
-            width:34px;
-            height:34px;
-            display:grid;
-            place-items:center;
-            border-radius:10px;
-            background:var(--cream);
-            color:var(--bordo);
+            font-size:9px;
+            font-weight:900;
+
+            letter-spacing:.08em;
+            text-transform:uppercase;
         }
 
         .stat-value{
-            margin-top:14px;
-            font-size:26px;
+            margin-top:10px;
+
+            font-size:25px;
             font-weight:900;
+
             letter-spacing:-.04em;
         }
 
         .stat-note{
-            margin-top:5px;
+            margin-top:4px;
+
             color:var(--muted);
-            font-size:11px;
+
+            font-size:9px;
         }
 
-        /* ---------------------------------------------------------
+        /* =====================================================
            FILTERS
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .filters{
             display:grid;
+
             grid-template-columns:
-                minmax(180px,1.6fr)
+                minmax(190px,1.8fr)
                 repeat(4,minmax(130px,1fr))
                 auto;
+
             gap:9px;
+
             margin-bottom:16px;
         }
 
@@ -503,52 +612,70 @@
         .field select{
             width:100%;
             min-height:43px;
+
             padding:0 12px;
+
             border:1px solid var(--border);
             border-radius:11px;
+
             outline:none;
-            background:white;
+
+            background:#fff;
             color:var(--text);
-            font-size:12px;
+
+            font-size:11px;
         }
 
         .field input:focus,
         .field select:focus{
             border-color:var(--green);
-            box-shadow:0 0 0 3px rgba(15,61,58,.08);
+
+            box-shadow:
+                0 0 0 3px rgba(15,61,58,.08);
         }
 
-        /* ---------------------------------------------------------
-           PANEL / TABLE
-        --------------------------------------------------------- */
+        /* =====================================================
+           PANEL
+        ===================================================== */
 
         .panel{
+            overflow:hidden;
+
             border:1px solid var(--border);
             border-radius:var(--radius);
-            background:white;
+
+            background:#fff;
+
             box-shadow:var(--shadow);
-            overflow:hidden;
         }
 
         .panel-head{
             min-height:62px;
+
             display:flex;
             align-items:center;
             justify-content:space-between;
+
             gap:15px;
-            padding:16px 18px;
+
+            padding:15px 18px;
+
             border-bottom:1px solid var(--border);
         }
 
         .panel-title{
-            font-size:14px;
+            font-size:13px;
             font-weight:900;
         }
 
         .panel-meta{
             color:var(--muted);
-            font-size:11px;
+            font-size:10px;
         }
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
 
         .table-wrap{
             width:100%;
@@ -557,29 +684,36 @@
 
         table{
             width:100%;
+
+            min-width:1150px;
+
             border-collapse:collapse;
-            min-width:1100px;
         }
 
         th,
         td{
-            padding:14px 16px;
-            text-align:left;
+            padding:13px 15px;
+
             border-bottom:1px solid #eee7e0;
+
+            text-align:left;
             vertical-align:middle;
         }
 
         th{
-            color:#827a73;
-            font-size:10px;
-            font-weight:900;
-            text-transform:uppercase;
-            letter-spacing:.08em;
             background:#fcfaf8;
+
+            color:#827a73;
+
+            font-size:9px;
+            font-weight:900;
+
+            letter-spacing:.08em;
+            text-transform:uppercase;
         }
 
         td{
-            font-size:12px;
+            font-size:11px;
         }
 
         tbody tr:hover{
@@ -591,21 +725,27 @@
         }
 
         .primary-text{
-            font-weight:800;
+            font-weight:850;
         }
 
         .secondary-text{
             margin-top:3px;
+
             color:var(--muted);
-            font-size:10px;
+
+            font-size:9px;
         }
 
         .money{
-            font-weight:900;
             color:var(--green);
+            font-weight:900;
         }
 
         .reference{
+            max-width:170px;
+
+            color:var(--green);
+
             font-family:
                 ui-monospace,
                 SFMono-Regular,
@@ -613,65 +753,73 @@
                 Monaco,
                 Consolas,
                 monospace;
-            color:var(--green);
-            font-size:11px;
-            font-weight:800;
+
+            font-size:9px;
+
             word-break:break-all;
         }
 
-        /* ---------------------------------------------------------
+        /* =====================================================
            BADGES
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .badge{
             display:inline-flex;
             align-items:center;
-            min-height:25px;
-            padding:0 9px;
+            justify-content:center;
+
+            min-height:24px;
+
+            padding:0 8px;
+
             border-radius:999px;
-            font-size:10px;
+
+            font-size:9px;
             font-weight:900;
+
             text-transform:capitalize;
+            white-space:nowrap;
         }
 
         .badge.pending{
-            color:var(--warning);
             background:#fff4d9;
+            color:var(--warning);
         }
 
         .badge.approved,
         .badge.processing{
-            color:var(--info);
             background:#eaf2f8;
+            color:var(--info);
         }
 
         .badge.refunded,
         .badge.completed,
         .badge.success{
-            color:var(--success);
             background:#e8f5ee;
+            color:var(--success);
         }
 
         .badge.rejected,
         .badge.failed,
-        .badge.cancelled{
-            color:var(--danger);
+        .badge.cancelled,
+        .badge.canceled{
             background:#f9e9ea;
+            color:var(--danger);
         }
 
         .badge.partial{
-            color:#6a4c00;
             background:#f8efd7;
+            color:#6a4c00;
         }
 
-        .badge.info{
-            color:var(--info);
-            background:#eaf2f8;
+        .badge.neutral{
+            background:#efeeeb;
+            color:#666;
         }
 
-        /* ---------------------------------------------------------
+        /* =====================================================
            ACTIONS
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .row-actions{
             display:flex;
@@ -680,22 +828,26 @@
 
         .small-btn{
             min-height:31px;
+
             padding:0 9px;
+
             border:1px solid var(--border);
             border-radius:8px;
-            background:white;
+
+            background:#fff;
             color:var(--green);
-            font-size:10px;
-            font-weight:800;
+
+            font-size:9px;
+            font-weight:900;
         }
 
         .small-btn:hover{
             border-color:#cfc2b7;
         }
 
-        /* ---------------------------------------------------------
+        /* =====================================================
            MOBILE CARDS
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .mobile-list{
             display:none;
@@ -703,6 +855,7 @@
 
         .refund-card{
             padding:15px;
+
             border-bottom:1px solid var(--border);
         }
 
@@ -714,88 +867,128 @@
             display:flex;
             align-items:flex-start;
             justify-content:space-between;
-            gap:12px;
+
+            gap:10px;
         }
 
         .refund-card-grid{
             display:grid;
             grid-template-columns:1fr 1fr;
-            gap:11px;
+
+            gap:12px;
+
             margin-top:14px;
         }
 
-        .refund-mini label{
+        .mini-label{
             display:block;
+
             color:var(--muted);
-            font-size:9px;
+
+            font-size:8px;
             font-weight:900;
+
+            letter-spacing:.07em;
             text-transform:uppercase;
-            letter-spacing:.06em;
         }
 
-        .refund-mini div{
+        .mini-value{
             margin-top:4px;
-            font-size:11px;
-            font-weight:700;
+
+            font-size:10px;
+            font-weight:800;
+
             word-break:break-word;
         }
 
-        .refund-card-actions{
+        .mobile-actions{
             display:flex;
             gap:7px;
+
             margin-top:14px;
         }
 
-        /* ---------------------------------------------------------
+        /* =====================================================
            EMPTY
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .empty{
-            padding:50px 20px;
+            padding:55px 22px;
+
             text-align:center;
-            color:var(--muted);
         }
 
         .empty-icon{
-            width:50px;
-            height:50px;
-            margin:0 auto 12px;
+            width:52px;
+            height:52px;
+
+            margin:0 auto 13px;
+
             display:grid;
             place-items:center;
-            border-radius:15px;
+
+            border-radius:16px;
+
             background:var(--cream);
             color:var(--bordo);
+
             font-size:20px;
+            font-weight:900;
         }
 
         .empty strong{
             display:block;
+
+            margin-bottom:6px;
+
             color:var(--text);
-            margin-bottom:5px;
+
+            font-size:14px;
         }
 
-        /* ---------------------------------------------------------
+        .empty p{
+            max-width:620px;
+
+            margin:0 auto;
+
+            color:var(--muted);
+
+            font-size:10px;
+            line-height:1.7;
+        }
+
+        /* =====================================================
            DRAWER
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .drawer-backdrop{
             position:fixed;
             inset:0;
+
             z-index:300;
+
             display:none;
+
             background:rgba(20,18,16,.42);
+
             backdrop-filter:blur(4px);
         }
 
         .drawer{
             position:absolute;
-            right:0;
+
             top:0;
+            right:0;
             bottom:0;
-            width:min(540px,100%);
+
+            width:min(560px,100%);
+
             padding:25px;
-            background:white;
+
             overflow-y:auto;
+
+            background:#fff;
+
             box-shadow:-20px 0 50px rgba(0,0,0,.15);
         }
 
@@ -803,8 +996,11 @@
             display:flex;
             align-items:flex-start;
             justify-content:space-between;
-            gap:16px;
-            padding-bottom:20px;
+
+            gap:15px;
+
+            padding-bottom:19px;
+
             border-bottom:1px solid var(--border);
         }
 
@@ -815,30 +1011,38 @@
 
         .drawer-head p{
             margin:5px 0 0;
+
             color:var(--muted);
-            font-size:11px;
+
+            font-size:10px;
         }
 
         .drawer-close{
             width:36px;
             height:36px;
+
             border:1px solid var(--border);
             border-radius:10px;
-            background:white;
+
+            background:#fff;
         }
 
         .detail-grid{
             display:grid;
             grid-template-columns:repeat(2,minmax(0,1fr));
-            gap:11px;
-            margin-top:20px;
+
+            gap:10px;
+
+            margin-top:19px;
         }
 
         .detail{
-            padding:13px;
+            padding:12px;
+
             border:1px solid var(--border);
             border-radius:12px;
-            background:var(--surface-2);
+
+            background:var(--surface2);
         }
 
         .detail.full{
@@ -847,27 +1051,36 @@
 
         .detail label{
             display:block;
+
             color:var(--muted);
-            font-size:9px;
+
+            font-size:8px;
             font-weight:900;
-            text-transform:uppercase;
+
             letter-spacing:.08em;
+            text-transform:uppercase;
         }
 
         .detail div{
-            margin-top:6px;
-            font-size:12px;
-            font-weight:750;
+            margin-top:5px;
+
+            font-size:10px;
+            font-weight:800;
+
             word-break:break-word;
         }
 
         .security-notice{
-            margin-top:18px;
+            margin-top:17px;
             padding:14px;
+
             border-radius:12px;
+
             background:#f7f4ef;
+
             color:var(--muted);
-            font-size:11px;
+
+            font-size:10px;
             line-height:1.65;
         }
 
@@ -875,46 +1088,53 @@
             color:var(--green);
         }
 
-        /* ---------------------------------------------------------
+        /* =====================================================
            TOAST
-        --------------------------------------------------------- */
+        ===================================================== */
 
         .toast{
             position:fixed;
+
             right:20px;
             bottom:20px;
+
             z-index:500;
-            max-width:380px;
+
             display:none;
+
+            max-width:380px;
+
             padding:13px 15px;
+
             border-radius:12px;
+
             background:var(--green);
-            color:white;
+            color:#fff;
+
             box-shadow:var(--shadow);
-            font-size:12px;
+
+            font-size:11px;
+            line-height:1.5;
         }
 
         .toast.error{
             background:var(--danger);
         }
 
-        .loading{
-            opacity:.55;
-            pointer-events:none;
-        }
-
-        /* ---------------------------------------------------------
+        /* =====================================================
            RESPONSIVE
-        --------------------------------------------------------- */
+        ===================================================== */
 
-        @media(max-width:1180px){
-
-            .filters{
-                grid-template-columns:repeat(3,minmax(0,1fr));
-            }
+        @media(max-width:1250px){
 
             .stats{
-                grid-template-columns:repeat(2,minmax(0,1fr));
+                grid-template-columns:
+                    repeat(3,minmax(0,1fr));
+            }
+
+            .filters{
+                grid-template-columns:
+                    repeat(3,minmax(0,1fr));
             }
         }
 
@@ -922,7 +1142,6 @@
 
             .sidebar{
                 transform:translateX(-100%);
-                transition:.25s ease;
             }
 
             .sidebar.open{
@@ -962,7 +1181,7 @@
             }
 
             .filters{
-                grid-template-columns:1fr 1fr;
+                grid-template-columns:1fr;
             }
 
             .table-wrap{
@@ -985,23 +1204,11 @@
             }
 
             .stat{
-                padding:14px;
+                padding:13px;
             }
 
             .stat-value{
                 font-size:21px;
-            }
-
-            .filters{
-                grid-template-columns:1fr;
-            }
-
-            .page-heading h1{
-                font-size:18px;
-            }
-
-            .top-actions{
-                gap:5px;
             }
 
             .toolbar-actions{
@@ -1020,16 +1227,47 @@
                 grid-column:auto;
             }
         }
+
+        @media print{
+
+            .sidebar,
+            .topbar,
+            .toolbar-actions,
+            .filters,
+            .drawer-backdrop{
+                display:none !important;
+            }
+
+            .main{
+                margin-left:0;
+            }
+
+            .content{
+                padding:0;
+            }
+
+            .panel,
+            .stat{
+                box-shadow:none;
+            }
+
+            body{
+                background:#fff;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-<!-- =============================================================
+<!-- =========================================================
      SECURITY GATE
-============================================================== -->
+========================================================== -->
 
-<div class="security-gate" id="securityGate">
+<div
+    class="security-gate"
+    id="securityGate"
+>
 
     <div class="security-box">
 
@@ -1045,109 +1283,149 @@
             Verifying your K-Tickets administrator session…
         </p>
 
+        <button
+            class="security-button"
+            id="securityLoginButton"
+            style="display:none;"
+        >
+            Return to login
+        </button>
+
     </div>
 
 </div>
 
 
-<!-- =============================================================
-     APPLICATION
-============================================================== -->
+<!-- =========================================================
+     APP
+========================================================== -->
 
-<div class="app" id="app">
+<div
+    class="app"
+    id="app"
+>
 
-    <!-- SIDEBAR -->
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
 
-    <aside class="sidebar" id="sidebar">
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
 
         <div class="brand">
 
             <div class="brand-mark">
-                KT
+                K
             </div>
 
             <div class="brand-copy">
-                <strong>K-Tickets</strong>
-                <span>Admin CMS</span>
+
+                <strong>
+                    K-TICKETS
+                </strong>
+
+                <span>
+                    Administration CMS
+                </span>
+
             </div>
 
         </div>
 
 
         <div class="nav-label">
-            Platform
+            Overview
         </div>
 
         <nav class="nav">
 
             <a href="./dashboard.html">
                 <span class="nav-icon">⌂</span>
-                <span>Dashboard</span>
-            </a>
-
-            <a href="./events.html">
-                <span class="nav-icon">◫</span>
-                <span>Events</span>
-            </a>
-
-            <a href="./merchants.html">
-                <span class="nav-icon">♟</span>
-                <span>Merchants</span>
-            </a>
-
-            <a href="./customers.html">
-                <span class="nav-icon">♙</span>
-                <span>Customers</span>
-            </a>
-
-            <a href="./orders.html">
-                <span class="nav-icon">▤</span>
-                <span>Orders</span>
-            </a>
-
-            <a href="./payments.html">
-                <span class="nav-icon">◆</span>
-                <span>Payments</span>
-            </a>
-
-            <a href="./mpesa.html">
-                <span class="nav-icon">M</span>
-                <span>M-Pesa</span>
-            </a>
-
-            <a href="./wamd.html">
-                <span class="nav-icon">↔</span>
-                <span>WAMD</span>
-            </a>
-
-            <a href="./withdrawals.html">
-                <span class="nav-icon">↓</span>
-                <span>Withdrawals</span>
-            </a>
-
-            <a href="./refunds.html" class="active">
-                <span class="nav-icon">↩</span>
-                <span>Refunds</span>
-            </a>
-
-            <a href="./fees.html">
-                <span class="nav-icon">%</span>
-                <span>Fees</span>
-            </a>
-
-            <a href="./promotions.html">
-                <span class="nav-icon">★</span>
-                <span>Promotions</span>
-            </a>
-
-            <a href="./qr-scans.html">
-                <span class="nav-icon">▦</span>
-                <span>QR Scans</span>
+                Dashboard
             </a>
 
             <a href="./reports.html">
                 <span class="nav-icon">▥</span>
-                <span>Reports</span>
+                Reports
+            </a>
+
+        </nav>
+
+
+        <div class="nav-label">
+            Management
+        </div>
+
+        <nav class="nav">
+
+            <a href="./events.html">
+                <span class="nav-icon">◫</span>
+                Events
+            </a>
+
+            <a href="./merchants.html">
+                <span class="nav-icon">♟</span>
+                Merchants
+            </a>
+
+            <a href="./customers.html">
+                <span class="nav-icon">♙</span>
+                Customers
+            </a>
+
+            <a href="./orders.html">
+                <span class="nav-icon">▤</span>
+                Orders
+            </a>
+
+            <a href="./tickets.html">
+                <span class="nav-icon">▧</span>
+                Tickets
+            </a>
+
+            <a href="./payments.html">
+                <span class="nav-icon">◆</span>
+                Payments
+            </a>
+
+            <a href="./mpesa.html">
+                <span class="nav-icon">M</span>
+                M-Pesa
+            </a>
+
+            <a href="./wamd.html">
+                <span class="nav-icon">↔</span>
+                WAMD
+            </a>
+
+            <a href="./withdrawals.html">
+                <span class="nav-icon">↓</span>
+                Withdrawals
+            </a>
+
+            <a
+                href="./refunds.html"
+                class="active"
+            >
+                <span class="nav-icon">↩</span>
+                Refunds
+            </a>
+
+            <a href="./fees.html">
+                <span class="nav-icon">%</span>
+                Fees
+            </a>
+
+            <a href="./promotions.html">
+                <span class="nav-icon">★</span>
+                Promotions
+            </a>
+
+            <a href="./qr-scans.html">
+                <span class="nav-icon">▦</span>
+                QR Scans
             </a>
 
         </nav>
@@ -1161,12 +1439,17 @@
 
             <a href="./audit-logs.html">
                 <span class="nav-icon">◉</span>
-                <span>Audit Logs</span>
+                Audit Logs
+            </a>
+
+            <a href="./notifications.html">
+                <span class="nav-icon">◇</span>
+                Notifications
             </a>
 
             <a href="./settings.html">
                 <span class="nav-icon">⚙</span>
-                <span>Settings</span>
+                Settings
             </a>
 
         </nav>
@@ -1187,22 +1470,15 @@
     </aside>
 
 
-    <!-- MAIN -->
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
 
     <main class="main">
 
-        <!-- TOPBAR -->
-
         <header class="topbar">
 
-            <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:12px;
-                    min-width:0;
-                "
-            >
+            <div class="topbar-left">
 
                 <button
                     class="mobile-menu"
@@ -1244,16 +1520,13 @@
                     title="Notifications"
                     aria-label="Notifications"
                 >
-                    ♢
-
+                    ◇
                     <span
                         class="notification-dot"
                         id="notificationDot"
                         style="display:none;"
                     ></span>
-
                 </button>
-
 
                 <div class="admin-chip">
 
@@ -1265,7 +1538,7 @@
                     </div>
 
                     <span id="adminName">
-                        Admin
+                        Administrator
                     </span>
 
                 </div>
@@ -1275,7 +1548,9 @@
         </header>
 
 
-        <!-- CONTENT -->
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
 
         <section class="content">
 
@@ -1288,12 +1563,11 @@
                     </h2>
 
                     <p>
-                        Review customer refund requests,
-                        refund status and processed amounts.
+                        Review real customer refund requests,
+                        payment references, status and processed amounts.
                     </p>
 
                 </div>
-
 
                 <div class="toolbar-actions">
 
@@ -1301,14 +1575,21 @@
                         class="btn"
                         id="exportButton"
                     >
-                        Export CSV
+                        ⇩ Export CSV
+                    </button>
+
+                    <button
+                        class="btn"
+                        id="printButton"
+                    >
+                        ⎙ Print
                     </button>
 
                     <button
                         class="btn primary"
                         id="refreshButton2"
                     >
-                        Refresh
+                        ↻ Refresh
                     </button>
 
                 </div>
@@ -1316,33 +1597,27 @@
             </div>
 
 
-            <!-- STATS -->
+            <!-- =================================================
+                 STATS
+            ================================================== -->
 
             <section class="stats">
 
                 <div class="stat">
 
-                    <div class="stat-top">
-
-                        <div class="stat-label">
-                            Total Refunds
-                        </div>
-
-                        <div class="stat-icon">
-                            ↩
-                        </div>
-
+                    <div class="stat-label">
+                        Total Refunds
                     </div>
 
                     <div
                         class="stat-value"
-                        id="totalRefunds"
+                        id="statTotal"
                     >
                         0
                     </div>
 
                     <div class="stat-note">
-                        Refund records returned
+                        Visible refund records
                     </div>
 
                 </div>
@@ -1350,27 +1625,19 @@
 
                 <div class="stat">
 
-                    <div class="stat-top">
-
-                        <div class="stat-label">
-                            Pending
-                        </div>
-
-                        <div class="stat-icon">
-                            ◷
-                        </div>
-
+                    <div class="stat-label">
+                        Pending
                     </div>
 
                     <div
                         class="stat-value"
-                        id="pendingRefunds"
+                        id="statPending"
                     >
                         0
                     </div>
 
                     <div class="stat-note">
-                        Awaiting decision
+                        Awaiting review
                     </div>
 
                 </div>
@@ -1378,21 +1645,13 @@
 
                 <div class="stat">
 
-                    <div class="stat-top">
-
-                        <div class="stat-label">
-                            Approved
-                        </div>
-
-                        <div class="stat-icon">
-                            ✓
-                        </div>
-
+                    <div class="stat-label">
+                        Approved
                     </div>
 
                     <div
                         class="stat-value"
-                        id="approvedRefunds"
+                        id="statApproved"
                     >
                         0
                     </div>
@@ -1406,273 +1665,326 @@
 
                 <div class="stat">
 
-                    <div class="stat-top">
-
-                        <div class="stat-label">
-                            Refunded
-                        </div>
-
-                        <div class="stat-icon">
-                            ✓
-                        </div>
-
+                    <div class="stat-label">
+                        Completed
                     </div>
 
                     <div
                         class="stat-value"
-                        id="completedRefunds"
+                        id="statCompleted"
                     >
                         0
                     </div>
 
                     <div class="stat-note">
-                        Completed refund records
+                        Refunded records
                     </div>
 
                 </div>
 
-            </section>
 
+                <div class="stat">
 
-            <!-- FILTERS -->
+                    <div class="stat-label">
+                        Failed / Rejected
+                    </div>
 
-            <section class="filters">
-
-                <div class="field">
-
-                    <input
-                        id="searchInput"
-                        type="search"
-                        placeholder="Search refund, order, customer, event…"
-                        autocomplete="off"
+                    <div
+                        class="stat-value"
+                        id="statFailed"
                     >
+                        0
+                    </div>
 
-                </div>
-
-
-                <div class="field">
-
-                    <select id="statusFilter">
-
-                        <option value="">
-                            All statuses
-                        </option>
-
-                        <option value="pending">
-                            Pending
-                        </option>
-
-                        <option value="approved">
-                            Approved
-                        </option>
-
-                        <option value="processing">
-                            Processing
-                        </option>
-
-                        <option value="refunded">
-                            Refunded
-                        </option>
-
-                        <option value="partial">
-                            Partial
-                        </option>
-
-                        <option value="rejected">
-                            Rejected
-                        </option>
-
-                        <option value="failed">
-                            Failed
-                        </option>
-
-                        <option value="cancelled">
-                            Cancelled
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="field">
-
-                    <select id="methodFilter">
-
-                        <option value="">
-                            All payment methods
-                        </option>
-
-                        <option value="mpesa">
-                            M-Pesa
-                        </option>
-
-                        <option value="wamd">
-                            WAMD
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="field">
-
-                    <select id="periodFilter">
-
-                        <option value="all">
-                            All time
-                        </option>
-
-                        <option value="today">
-                            Today
-                        </option>
-
-                        <option value="7">
-                            Last 7 days
-                        </option>
-
-                        <option value="30">
-                            Last 30 days
-                        </option>
-
-                        <option value="90">
-                            Last 90 days
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="field">
-
-                    <select id="eventFilter">
-
-                        <option value="">
-                            All events
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <button
-                    class="btn"
-                    id="clearFilters"
-                >
-                    Clear
-                </button>
-
-            </section>
-
-
-            <!-- TABLE -->
-
-            <section class="panel">
-
-                <div class="panel-head">
-
-                    <div>
-
-                        <div class="panel-title">
-                            Refund records
-                        </div>
-
-                        <div
-                            class="panel-meta"
-                            id="resultMeta"
-                        >
-                            Loading…
-                        </div>
-
+                    <div class="stat-note">
+                        Unsuccessful requests
                     </div>
 
                 </div>
 
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Refund
-                                </th>
-
-                                <th>
-                                    Order
-                                </th>
-
-                                <th>
-                                    Customer
-                                </th>
-
-                                <th>
-                                    Event
-                                </th>
-
-                                <th>
-                                    Amount
-                                </th>
-
-                                <th>
-                                    Method
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
-
-                                <th>
-                                    Requested
-                                </th>
-
-                                <th></th>
-
-                            </tr>
-
-                        </thead>
+            </section>
 
 
-                        <tbody id="tableBody"></tbody>
+            <!-- =================================================
+                 DATABASE NOTICE
+            ================================================== -->
 
-                    </table>
+            <div
+                class="panel"
+                id="databaseNotice"
+                style="display:none;margin-bottom:16px;"
+            >
 
-                </div>
-
-
-                <div
-                    class="mobile-list"
-                    id="mobileList"
-                ></div>
-
-
-                <div
-                    class="empty"
-                    id="emptyState"
-                    style="display:none;"
-                >
+                <div class="empty">
 
                     <div class="empty-icon">
                         ↩
                     </div>
 
-                    <strong>
-                        No refund records
+                    <strong id="databaseNoticeTitle">
+                        Refund data unavailable
                     </strong>
 
-                    <span id="emptyText">
-                        No refund records match the current filters.
-                    </span>
+                    <p id="databaseNoticeMessage">
+                        No refund data could be loaded.
+                    </p>
 
                 </div>
 
-            </section>
+            </div>
+
+
+            <!-- =================================================
+                 FILTERS
+            ================================================== -->
+
+            <div
+                id="refundWorkspace"
+            >
+
+                <div class="filters">
+
+                    <div class="field">
+
+                        <input
+                            id="searchInput"
+                            type="search"
+                            placeholder="Search refund, order, customer, reference…"
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <select id="statusFilter">
+
+                            <option value="">
+                                All statuses
+                            </option>
+
+                            <option value="pending">
+                                Pending
+                            </option>
+
+                            <option value="approved">
+                                Approved
+                            </option>
+
+                            <option value="processing">
+                                Processing
+                            </option>
+
+                            <option value="refunded">
+                                Refunded
+                            </option>
+
+                            <option value="completed">
+                                Completed
+                            </option>
+
+                            <option value="rejected">
+                                Rejected
+                            </option>
+
+                            <option value="failed">
+                                Failed
+                            </option>
+
+                            <option value="cancelled">
+                                Cancelled
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <select id="methodFilter">
+
+                            <option value="">
+                                All methods
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <select id="eventFilter">
+
+                            <option value="">
+                                All events
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <select id="periodFilter">
+
+                            <option value="all">
+                                All time
+                            </option>
+
+                            <option value="today">
+                                Today
+                            </option>
+
+                            <option value="7">
+                                Last 7 days
+                            </option>
+
+                            <option value="30">
+                                Last 30 days
+                            </option>
+
+                            <option value="90">
+                                Last 90 days
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        class="btn"
+                        id="clearFilters"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                     TABLE PANEL
+                ================================================== -->
+
+                <section class="panel">
+
+                    <div class="panel-head">
+
+                        <div>
+
+                            <div class="panel-title">
+                                Refund records
+                            </div>
+
+                            <div
+                                class="panel-meta"
+                                id="resultMeta"
+                            >
+                                0 records
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="table-wrap"
+                        id="tableWrap"
+                    >
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Refund
+                                    </th>
+
+                                    <th>
+                                        Customer
+                                    </th>
+
+                                    <th>
+                                        Order
+                                    </th>
+
+                                    <th>
+                                        Event
+                                    </th>
+
+                                    <th>
+                                        Amount
+                                    </th>
+
+                                    <th>
+                                        Method
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Requested
+                                    </th>
+
+                                    <th>
+                                        Actions
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="tableBody">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- MOBILE -->
+
+                    <div
+                        class="mobile-list"
+                        id="mobileList"
+                    >
+                    </div>
+
+
+                    <!-- EMPTY -->
+
+                    <div
+                        class="empty"
+                        id="emptyState"
+                        style="display:none;"
+                    >
+
+                        <div class="empty-icon">
+                            ↩
+                        </div>
+
+                        <strong>
+                            No refund records
+                        </strong>
+
+                        <p id="emptyText">
+                            No refund records match the current filters.
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </div>
 
         </section>
 
@@ -1681,9 +1993,9 @@
 </div>
 
 
-<!-- =============================================================
-     DETAILS DRAWER
-============================================================== -->
+<!-- =========================================================
+     DRAWER
+========================================================== -->
 
 <div
     class="drawer-backdrop"
@@ -1697,7 +2009,7 @@
             <div>
 
                 <h3>
-                    Refund details
+                    Refund Details
                 </h3>
 
                 <p id="drawerSubtitle">
@@ -1705,7 +2017,6 @@
                 </p>
 
             </div>
-
 
             <button
                 class="drawer-close"
@@ -1718,241 +2029,10 @@
         </div>
 
 
-        <div class="detail-grid">
-
-            <div class="detail">
-
-                <label>
-                    Refund ID
-                </label>
-
-                <div id="dRefundId">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Status
-                </label>
-
-                <div id="dStatus">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Order ID
-                </label>
-
-                <div id="dOrderId">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Payment ID
-                </label>
-
-                <div id="dPaymentId">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Customer
-                </label>
-
-                <div id="dCustomer">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Customer ID
-                </label>
-
-                <div id="dCustomerId">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail full">
-
-                <label>
-                    Event
-                </label>
-
-                <div id="dEvent">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Requested Amount
-                </label>
-
-                <div id="dRequestedAmount">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Approved Amount
-                </label>
-
-                <div id="dApprovedAmount">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Refunded Amount
-                </label>
-
-                <div id="dRefundedAmount">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Currency
-                </label>
-
-                <div id="dCurrency">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Payment Method
-                </label>
-
-                <div id="dMethod">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Refund Reference
-                </label>
-
-                <div id="dReference">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Requested At
-                </label>
-
-                <div id="dRequestedAt">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Processed At
-                </label>
-
-                <div id="dProcessedAt">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <label>
-                    Processed By
-                </label>
-
-                <div id="dProcessedBy">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail full">
-
-                <label>
-                    Reason
-                </label>
-
-                <div id="dReason">
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="detail full">
-
-                <label>
-                    Admin Notes
-                </label>
-
-                <div id="dNotes">
-                    —
-                </div>
-
-            </div>
-
+        <div
+            class="detail-grid"
+            id="drawerDetails"
+        >
         </div>
 
 
@@ -1965,9 +2045,9 @@
             This page is intentionally read-only.
             Approving, rejecting or executing a refund must happen
             through a protected Supabase RPC or Edge Function that
-            verifies the authenticated admin, validates the original
-            payment/order, prevents duplicate refunds and writes an
-            audit record.
+            verifies the authenticated administrator, validates the
+            original payment/order, prevents duplicate refunds and
+            writes an audit record.
 
         </div>
 
@@ -1985,107 +2065,104 @@
 <script>
 "use strict";
 
-/*
-|--------------------------------------------------------------------------
-| K-TICKETS ADMIN — REFUNDS
-|--------------------------------------------------------------------------
-|
-| SECURITY
-|
-| This browser page uses only the public Supabase anon key.
-|
-| NEVER:
-| - Put a service-role key here.
-| - Put a database password here.
-| - Put payment gateway secrets here.
-| - Trust hidden buttons as authorization.
-| - Execute a privileged refund directly from the browser.
-|
-| Refund authorization must be enforced by:
-|
-|   Supabase Auth
-|        ↓
-|   profiles.role = admin
-|        ↓
-|   RLS
-|        ↓
-|   protected refund RPC / Edge Function
-|        ↓
-|   payment-provider operation
-|        ↓
-|   audit log
-|
-| The exact final refunds table has not been permanently locked.
-| This page tolerates common field names and fails safely if the
-| table is missing or blocked by RLS.
-|--------------------------------------------------------------------------
-*/
+/* ============================================================
+   K-TICKETS ADMIN — REFUNDS
+
+   SECURITY MODEL
+   ------------------------------------------------------------
+   • Uses only the public/publishable Supabase browser key.
+   • NEVER expose service-role keys here.
+   • NEVER expose database passwords here.
+   • NEVER expose payment gateway secrets here.
+   • Browser UI is not a security boundary.
+   • Supabase Auth + RLS must enforce administrator access.
+   • Refund mutations must be performed by protected RPC /
+     Edge Functions.
+   • This page creates NO refund records.
+   • This page contains NO fake production data.
+
+   DATA MODEL
+   ------------------------------------------------------------
+   The completed K-Tickets migrations currently establish:
+
+       profiles
+       events
+       orders
+       payments
+
+   A dedicated `refunds` table has not yet been established
+   in the migrations completed so far.
+
+   Therefore this page attempts to read the actual `refunds`
+   table using select("*").
+
+   If the table does not exist, the page reports that fact
+   instead of inventing a refund dataset.
+
+   Once the refunds migration is finalized, this tolerant reader
+   can be replaced by an exact-column production query.
+============================================================ */
+
+
+/* ============================================================
+   SUPABASE CONFIG
+============================================================ */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
-let supabaseClient = null;
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
+        }
+    );
+
+
+/* ============================================================
+   STATE
+============================================================ */
 
 let currentUser = null;
-let currentProfile = null;
+let adminProfile = null;
 
-let refundRows = [];
-let filteredRows = [];
+let refunds = [];
+let filteredRefunds = [];
+
+let eventsById = {};
+let profilesById = {};
+let ordersById = {};
+let paymentsById = {};
 
 let notifications = [];
 
 
-const securityGate =
-    document.getElementById("securityGate");
+/* ============================================================
+   DOM
+============================================================ */
 
-const securityMessage =
-    document.getElementById("securityMessage");
-
-const app =
-    document.getElementById("app");
-
-const tableBody =
-    document.getElementById("tableBody");
-
-const mobileList =
-    document.getElementById("mobileList");
-
-const emptyState =
-    document.getElementById("emptyState");
-
-const emptyText =
-    document.getElementById("emptyText");
-
-const searchInput =
-    document.getElementById("searchInput");
-
-const statusFilter =
-    document.getElementById("statusFilter");
-
-const methodFilter =
-    document.getElementById("methodFilter");
-
-const periodFilter =
-    document.getElementById("periodFilter");
-
-const eventFilter =
-    document.getElementById("eventFilter");
-
-const drawerBackdrop =
-    document.getElementById("drawerBackdrop");
+const $ = id =>
+    document.getElementById(id);
 
 
-function $(id){
-    return document.getElementById(id);
-}
+/* ============================================================
+   BASIC HELPERS
+============================================================ */
 
+function escapeHTML(value){
 
-function escapeHtml(value){
-
-    return String(value ?? "")
+    return String(
+        value ?? ""
+    )
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;")
@@ -2096,7 +2173,7 @@ function escapeHtml(value){
 
 function safeValue(
     value,
-    fallback = "—"
+    fallback="—"
 ){
 
     if(
@@ -2111,36 +2188,52 @@ function safeValue(
 }
 
 
-function initials(name){
+function firstValue(
+    object,
+    keys,
+    fallback=""
+){
 
-    const value =
-        String(name || "Admin")
-            .trim();
-
-    if(!value){
-        return "A";
+    if(!object){
+        return fallback;
     }
 
-    const parts =
-        value
-            .split(/\s+/)
-            .filter(Boolean);
+    for(
+        const key of keys
+    ){
 
-    if(parts.length === 1){
+        const value =
+            object[key];
 
-        return parts[0]
-            .slice(0,2)
-            .toUpperCase();
+        if(
+            value !== null &&
+            value !== undefined &&
+            value !== ""
+        ){
+            return value;
+        }
     }
 
-    return (
-        parts[0][0] +
-        parts[parts.length - 1][0]
-    ).toUpperCase();
+    return fallback;
 }
 
 
-function formatDate(value){
+function normalize(
+    value
+){
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toLowerCase()
+        .replace(/[\s-]+/g,"_");
+}
+
+
+function formatDate(
+    value
+){
 
     if(!value){
         return "—";
@@ -2169,7 +2262,7 @@ function formatDate(value){
 
 function formatMoney(
     amount,
-    currency = ""
+    currency="KWD"
 ){
 
     if(
@@ -2180,218 +2273,76 @@ function formatMoney(
         return "—";
     }
 
-    const numeric =
+    const number =
         Number(amount);
 
     if(
-        !Number.isFinite(numeric)
+        Number.isNaN(number)
     ){
         return String(amount);
     }
 
-    const formatted =
-        new Intl.NumberFormat(
+    const code =
+        String(
+            currency || "KWD"
+        )
+            .toUpperCase();
+
+    try{
+
+        return new Intl.NumberFormat(
             undefined,
             {
-                minimumFractionDigits:2,
-                maximumFractionDigits:2
+                style:"currency",
+                currency:code,
+                minimumFractionDigits:3,
+                maximumFractionDigits:3
             }
-        ).format(numeric);
+        ).format(number);
 
-    return currency
-        ? `${formatted} ${currency}`
-        : formatted;
+    }catch{
+
+        return `${code} ${number.toFixed(3)}`;
+    }
 }
 
 
-function normalizeStatus(value){
+function initials(
+    name
+){
 
-    const raw =
-        String(value || "")
-            .trim()
-            .toLowerCase()
-            .replace(/_/g,"-")
-            .replace(/\s+/g,"-");
+    const value =
+        String(
+            name || "Admin"
+        )
+            .trim();
 
-    if(
-        [
-            "pending",
-            "requested",
-            "request",
-            "awaiting",
-            "waiting"
-        ].includes(raw)
-    ){
-        return "pending";
+    if(!value){
+        return "A";
     }
 
-    if(
-        [
-            "approved",
-            "approve"
-        ].includes(raw)
-    ){
-        return "approved";
+    const parts =
+        value
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if(parts.length === 1){
+
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
     }
 
-    if(
-        [
-            "processing",
-            "in-progress",
-            "inprogress"
-        ].includes(raw)
-    ){
-        return "processing";
-    }
-
-    if(
-        [
-            "refunded",
-            "completed",
-            "complete",
-            "success",
-            "successful",
-            "paid"
-        ].includes(raw)
-    ){
-        return raw === "success" ||
-               raw === "successful" ||
-               raw === "paid"
-            ? "completed"
-            : "refunded";
-    }
-
-    if(
-        [
-            "partial",
-            "partially-refunded",
-            "partial-refund"
-        ].includes(raw)
-    ){
-        return "partial";
-    }
-
-    if(
-        [
-            "rejected",
-            "reject",
-            "declined",
-            "denied"
-        ].includes(raw)
-    ){
-        return "rejected";
-    }
-
-    if(
-        [
-            "failed",
-            "error"
-        ].includes(raw)
-    ){
-        return "failed";
-    }
-
-    if(
-        [
-            "cancelled",
-            "canceled"
-        ].includes(raw)
-    ){
-        return "cancelled";
-    }
-
-    return raw || "unknown";
-}
-
-
-function statusClass(value){
-
-    const status =
-        normalizeStatus(value);
-
-    if(
-        [
-            "refunded",
-            "completed"
-        ].includes(status)
-    ){
-        return "refunded";
-    }
-
-    if(
-        [
-            "approved",
-            "processing"
-        ].includes(status)
-    ){
-        return status;
-    }
-
-    if(status === "pending"){
-        return "pending";
-    }
-
-    if(status === "partial"){
-        return "partial";
-    }
-
-    if(
-        [
-            "rejected",
-            "failed",
-            "cancelled"
-        ].includes(status)
-    ){
-        return status;
-    }
-
-    return "info";
-}
-
-
-function humanStatus(value){
-
-    return String(
-        value || "Unknown"
-    )
-        .replace(/[_-]+/g," ")
-        .replace(
-            /\b\w/g,
-            character =>
-                character.toUpperCase()
-        );
-}
-
-
-function normalizeMethod(value){
-
-    const raw =
-        String(value || "")
-            .trim()
-            .toLowerCase();
-
-    if(
-        raw.includes("mpesa") ||
-        raw.includes("m-pesa")
-    ){
-        return "M-Pesa";
-    }
-
-    if(
-        raw.includes("wamd")
-    ){
-        return "WAMD";
-    }
-
-    return value
-        ? String(value)
-        : "—";
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
 }
 
 
 function showToast(
     message,
-    isError = false
+    error=false
 ){
 
     const toast =
@@ -2402,7 +2353,7 @@ function showToast(
 
     toast.classList.toggle(
         "error",
-        isError
+        error
     );
 
     toast.style.display =
@@ -2414,7 +2365,7 @@ function showToast(
 
     showToast.timer =
         setTimeout(
-            () => {
+            ()=>{
                 toast.style.display =
                     "none";
             },
@@ -2423,280 +2374,45 @@ function showToast(
 }
 
 
-function setSecurityMessage(
-    message
+/* ============================================================
+   SECURITY
+============================================================ */
+
+function redirectLogin(
+    reason="admin_session_required"
 ){
 
-    securityMessage.textContent =
-        message;
-}
-
-
-function redirectLogin(){
-
     window.location.replace(
-        "../auth/login.html?error=admin_session_required"
+        `/login.html?error=${encodeURIComponent(reason)}`
     );
 }
 
 
-async function safeSignOut(){
+function setSecurityMessage(
+    message
+){
 
-    try{
-
-        if(supabaseClient){
-
-            await supabaseClient
-                .auth
-                .signOut();
-        }
-
-    }catch(error){
-
-        console.warn(
-            "Sign out failed:",
-            error
-        );
-    }
+    $("securityMessage")
+        .textContent =
+        message;
 }
 
 
-function openApp(){
-
-    securityGate.style.display =
-        "none";
-
-    app.style.display =
-        "block";
-}
-
-
-function normalizeRefund(row){
-
-    const raw =
-        row || {};
-
-    const order =
-        raw.orders ||
-        raw.order ||
-        {};
-
-    const payment =
-        raw.payments ||
-        raw.payment ||
-        {};
-
-    const event =
-        raw.events ||
-        raw.event ||
-        order.events ||
-        order.event ||
-        {};
-
-    const customer =
-        raw.profiles ||
-        raw.profile ||
-        raw.customer ||
-        {};
-
-    const status =
-        raw.status ||
-        raw.refund_status ||
-        raw.state ||
-        "unknown";
-
-    return {
-
-        raw,
-
-        id:
-            raw.id ||
-            raw.refund_id ||
-            raw.request_id ||
-            "",
-
-        orderId:
-            raw.order_id ||
-            order.id ||
-            "",
-
-        paymentId:
-            raw.payment_id ||
-            payment.id ||
-            "",
-
-        customerId:
-            raw.user_id ||
-            raw.customer_id ||
-            order.user_id ||
-            customer.id ||
-            "",
-
-        customerName:
-            raw.customer_name ||
-            raw.user_name ||
-            raw.full_name ||
-            customer.full_name ||
-            "",
-
-        eventId:
-            raw.event_id ||
-            order.event_id ||
-            event.id ||
-            "",
-
-        eventTitle:
-            raw.event_title ||
-            raw.event_name ||
-            event.title ||
-            "",
-
-        venue:
-            raw.venue ||
-            event.venue ||
-            "",
-
-        requestedAmount:
-            raw.requested_amount ??
-            raw.refund_amount ??
-            raw.amount ??
-            "",
-
-        approvedAmount:
-            raw.approved_amount ??
-            raw.approved_refund_amount ??
-            "",
-
-        refundedAmount:
-            raw.refunded_amount ??
-            raw.paid_amount ??
-            raw.completed_amount ??
-            "",
-
-        currency:
-            raw.currency ||
-            payment.currency ||
-            order.currency ||
-            "",
-
-        method:
-            raw.method ||
-            raw.payment_method ||
-            raw.channel ||
-            raw.provider ||
-            payment.method ||
-            payment.payment_method ||
-            payment.channel ||
-            "",
-
-        status:
-            normalizeStatus(status),
-
-        reference:
-            raw.refund_reference ||
-            raw.reference ||
-            raw.refund_code ||
-            raw.transaction_id ||
-            raw.transaction_code ||
-            "",
-
-        requestedAt:
-            raw.requested_at ||
-            raw.created_at ||
-            raw.created ||
-            "",
-
-        processedAt:
-            raw.processed_at ||
-            raw.completed_at ||
-            raw.refunded_at ||
-            raw.updated_at ||
-            "",
-
-        processedBy:
-            raw.processed_by_name ||
-            raw.approved_by_name ||
-            raw.processed_by ||
-            raw.approved_by ||
-            "",
-
-        processedById:
-            raw.processed_by_id ||
-            raw.approved_by ||
-            "",
-
-        reason:
-            raw.reason ||
-            raw.refund_reason ||
-            raw.request_reason ||
-            "",
-
-        notes:
-            raw.admin_notes ||
-            raw.notes ||
-            raw.internal_note ||
-            "",
-
-        createdAt:
-            raw.created_at ||
-            "",
-
-        updatedAt:
-            raw.updated_at ||
-            ""
-    };
-}
-
-
-async function loadAdmin(){
-
-    if(
-        !SUPABASE_URL ||
-        !SUPABASE_ANON_KEY
-    ){
-
-        setSecurityMessage(
-            "Supabase configuration is missing."
-        );
-
-        throw new Error(
-            "Missing Supabase configuration."
-        );
-    }
-
-
-    supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY,
-            {
-                auth:{
-                    persistSession:true,
-                    autoRefreshToken:true,
-                    detectSessionInUrl:true
-                }
-            }
-        );
-
+async function verifyAdmin(){
 
     setSecurityMessage(
         "Checking authenticated administrator…"
     );
 
-
     const {
         data,
         error
     } =
-        await supabaseClient
-            .auth
-            .getSession();
-
+        await supabaseClient.auth.getSession();
 
     if(error){
         throw error;
     }
-
 
     if(
         !data?.session?.user
@@ -2707,15 +2423,12 @@ async function loadAdmin(){
         return false;
     }
 
-
     currentUser =
         data.session.user;
-
 
     setSecurityMessage(
         "Verifying administrator permissions…"
     );
-
 
     const {
         data:profile,
@@ -2727,7 +2440,8 @@ async function loadAdmin(){
                 id,
                 full_name,
                 phone,
-                role
+                role,
+                is_active
             `)
             .eq(
                 "id",
@@ -2735,38 +2449,49 @@ async function loadAdmin(){
             )
             .maybeSingle();
 
-
     if(profileError){
         throw profileError;
     }
-
 
     if(
         !profile ||
         String(
             profile.role || ""
-        ).toLowerCase() !== "admin"
+        ).toLowerCase() !== "admin" ||
+        profile.is_active !== true
     ){
 
-        await safeSignOut();
+        await supabaseClient.auth.signOut();
 
-        window.location.replace(
-            "../auth/login.html?error=unauthorized"
+        redirectLogin(
+            "unauthorized"
         );
 
         return false;
     }
 
-
-    currentProfile =
+    adminProfile =
         profile;
 
+    const name =
+        profile.full_name ||
+        currentUser.email ||
+        "Administrator";
 
-    updateAdminIdentity();
+    $("adminName")
+        .textContent =
+        name;
 
+    $("sidebarAdminName")
+        .textContent =
+        name;
+
+    $("adminAvatar")
+        .textContent =
+        initials(name);
 
     supabaseClient.auth.onAuthStateChange(
-        async (
+        (
             event,
             session
         ) => {
@@ -2776,123 +2501,289 @@ async function loadAdmin(){
                 !session?.user
             ){
 
-                window.location.replace(
-                    "../auth/login.html?error=session_expired"
+                redirectLogin(
+                    "session_expired"
                 );
             }
         }
     );
 
-
     return true;
 }
 
 
-function updateAdminIdentity(){
+/* ============================================================
+   REFUND NORMALIZATION
+============================================================ */
 
-    const name =
-        currentProfile?.full_name ||
-        currentUser?.user_metadata?.full_name ||
-        currentUser?.email ||
-        "Administrator";
+function normalizeRefund(
+    row
+){
 
+    return {
 
-    $("adminName").textContent =
-        name;
+        raw:row,
 
-    $("sidebarAdminName").textContent =
-        name;
+        id:firstValue(
+            row,
+            [
+                "id",
+                "refund_id",
+                "request_id"
+            ]
+        ),
 
-    $("adminAvatar").textContent =
-        initials(name);
+        orderId:firstValue(
+            row,
+            [
+                "order_id"
+            ]
+        ),
+
+        paymentId:firstValue(
+            row,
+            [
+                "payment_id",
+                "original_payment_id"
+            ]
+        ),
+
+        userId:firstValue(
+            row,
+            [
+                "user_id",
+                "customer_id"
+            ]
+        ),
+
+        eventId:firstValue(
+            row,
+            [
+                "event_id"
+            ]
+        ),
+
+        merchantId:firstValue(
+            row,
+            [
+                "merchant_id"
+            ]
+        ),
+
+        status:firstValue(
+            row,
+            [
+                "status",
+                "refund_status",
+                "state"
+            ],
+            "unknown"
+        ),
+
+        amount:firstValue(
+            row,
+            [
+                "refund_amount",
+                "requested_amount",
+                "amount"
+            ]
+        ),
+
+        approvedAmount:firstValue(
+            row,
+            [
+                "approved_amount"
+            ]
+        ),
+
+        refundedAmount:firstValue(
+            row,
+            [
+                "refunded_amount",
+                "completed_amount"
+            ]
+        ),
+
+        currency:firstValue(
+            row,
+            [
+                "currency"
+            ],
+            "KWD"
+        ),
+
+        method:firstValue(
+            row,
+            [
+                "payment_method",
+                "method",
+                "channel",
+                "provider",
+                "gateway"
+            ]
+        ),
+
+        reference:firstValue(
+            row,
+            [
+                "refund_reference",
+                "reference",
+                "refund_code"
+            ]
+        ),
+
+        transactionId:firstValue(
+            row,
+            [
+                "transaction_id",
+                "transaction_code"
+            ]
+        ),
+
+        receiptNumber:firstValue(
+            row,
+            [
+                "receipt_number"
+            ]
+        ),
+
+        reason:firstValue(
+            row,
+            [
+                "reason",
+                "refund_reason",
+                "request_reason"
+            ]
+        ),
+
+        notes:firstValue(
+            row,
+            [
+                "admin_notes",
+                "notes",
+                "internal_note"
+            ]
+        ),
+
+        requestedAt:firstValue(
+            row,
+            [
+                "requested_at",
+                "created_at"
+            ],
+            null
+        ),
+
+        approvedAt:firstValue(
+            row,
+            [
+                "approved_at"
+            ],
+            null
+        ),
+
+        processedAt:firstValue(
+            row,
+            [
+                "processed_at"
+            ],
+            null
+        ),
+
+        completedAt:firstValue(
+            row,
+            [
+                "completed_at",
+                "refunded_at"
+            ],
+            null
+        ),
+
+        updatedAt:firstValue(
+            row,
+            [
+                "updated_at"
+            ],
+            null
+        ),
+
+        processedBy:firstValue(
+            row,
+            [
+                "processed_by_name",
+                "approved_by_name",
+                "processed_by"
+            ]
+        ),
+
+        customerName:firstValue(
+            row,
+            [
+                "customer_name",
+                "full_name",
+                "customer_full_name"
+            ]
+        ),
+
+        customerEmail:firstValue(
+            row,
+            [
+                "customer_email",
+                "email"
+            ]
+        ),
+
+        customerPhone:firstValue(
+            row,
+            [
+                "customer_phone",
+                "phone"
+            ]
+        ),
+
+        eventTitle:firstValue(
+            row,
+            [
+                "event_title",
+                "event_name"
+            ]
+        ),
+
+        orderNumber:firstValue(
+            row,
+            [
+                "order_number"
+            ]
+        )
+    };
 }
 
 
-async function loadNotifications(){
+/* ============================================================
+   LOAD REFUNDS
+============================================================ */
+
+async function loadRefunds(){
+
+    setLoadingState(true);
 
     try{
+
+        /*
+         * select("*") is deliberate here.
+         *
+         * The exact refunds migration has not yet been finalized.
+         * Selecting guessed columns would make the entire page fail
+         * whenever one guessed column does not exist.
+         */
 
         const {
             data,
             error
         } =
             await supabaseClient
-                .from("notifications")
-                .select("*")
-                .eq(
-                    "user_id",
-                    currentUser.id
-                )
-                .order(
-                    "created_at",
-                    {
-                        ascending:false
-                    }
-                )
-                .limit(20);
-
-
-        if(error){
-            return;
-        }
-
-
-        notifications =
-            data || [];
-
-
-        const unread =
-            notifications.some(
-                item =>
-                    !item.read &&
-                    !item.is_read
-            );
-
-
-        $("notificationDot").style.display =
-            unread
-                ? "block"
-                : "none";
-
-    }catch(error){
-
-        console.warn(
-            "Notifications unavailable:",
-            error
-        );
-    }
-}
-
-
-async function loadRefunds(){
-
-    setLoading(true);
-
-
-    try{
-
-        /*
-         * Preferred production table:
-         *
-         * refunds
-         *
-         * During development the page uses select("*")
-         * so the frontend remains tolerant while the exact
-         * schema is finalized.
-         */
-
-        let result =
-            await supabaseClient
                 .from("refunds")
-                .select(`
-                    *,
-                    orders(
-                        id,
-                        user_id,
-                        event_id,
-                        currency
-                    )
-                `)
+                .select("*")
                 .order(
                     "created_at",
                     {
@@ -2901,1084 +2792,1779 @@ async function loadRefunds(){
                 )
                 .limit(5000);
 
+        if(error){
 
-        /*
-         * Some installations may not yet have a relationship
-         * between refunds and orders. Fall back to a flat query.
-         */
+            handleRefundTableError(
+                error
+            );
 
-        if(
-            result.error &&
-            (
-                /relationship/i.test(
-                    result.error.message || ""
-                ) ||
-                /foreign key/i.test(
-                    result.error.message || ""
-                )
-            )
-        ){
-
-            result =
-                await supabaseClient
-                    .from("refunds")
-                    .select("*")
-                    .order(
-                        "created_at",
-                        {
-                            ascending:false
-                        }
-                    )
-                    .limit(5000);
+            return;
         }
 
-
-        if(result.error){
-
-            throw result.error;
-        }
-
-
-        refundRows =
-            (result.data || [])
-                .map(
+        refunds =
+            Array.isArray(data)
+                ? data.map(
                     normalizeRefund
-                );
+                )
+                : [];
 
+        await enrichRefunds();
 
-        await enrichRefundRows();
+        populateFilterOptions();
 
-
-        populateEventFilter();
+        updateStats();
 
         applyFilters();
 
+        $("databaseNotice")
+            .style.display =
+            "none";
 
     }catch(error){
 
         console.error(
-            "Refunds load failed:",
+            "Refund loading error:",
             error
         );
 
-
-        refundRows = [];
-        filteredRows = [];
-
-
-        renderRows();
-
-
-        $("resultMeta").textContent =
-            "Refund table unavailable or blocked by RLS.";
-
-
-        showToast(
-            "Refund data could not be loaded. Check the final refunds schema and RLS policy.",
-            true
+        handleRefundTableError(
+            error
         );
-
 
     }finally{
 
-        setLoading(false);
+        setLoadingState(false);
     }
 }
 
 
-async function enrichRefundRows(){
+/* ============================================================
+   REFUND TABLE ERROR
+============================================================ */
+
+function handleRefundTableError(
+    error
+){
+
+    console.error(
+        "Refund data error:",
+        error
+    );
+
+    const message =
+        String(
+            error?.message || ""
+        );
+
+    const missingTable =
+        /relation .*refunds.* does not exist/i.test(
+            message
+        ) ||
+        /could not find the table/i.test(
+            message
+        ) ||
+        /schema cache/i.test(
+            message
+        );
+
+    $("databaseNotice")
+        .style.display =
+        "block";
+
+    $("refundWorkspace")
+        .style.display =
+        "none";
+
+    if(missingTable){
+
+        $("databaseNoticeTitle")
+            .textContent =
+            "Refund data layer is not installed";
+
+        $("databaseNoticeMessage")
+            .textContent =
+            "The current K-Tickets database migrations do not yet contain a dedicated refunds table. No refund records have been generated or fabricated by this page.";
+
+    }else{
+
+        $("databaseNoticeTitle")
+            .textContent =
+            "Refund records could not be loaded";
+
+        $("databaseNoticeMessage")
+            .textContent =
+            "The authenticated administrator could not securely read the refunds data. Check the refunds table, RLS policy and database permissions.";
+    }
+
+    refunds = [];
+    filteredRefunds = [];
+
+    updateStats();
+
+    renderRows();
+}
+
+
+/* ============================================================
+   ENRICH ALL REFUNDS
+============================================================ */
+
+async function enrichRefunds(){
+
+    eventsById = {};
+    profilesById = {};
+    ordersById = {};
+    paymentsById = {};
+
+    const orderIds =
+        [
+            ...new Set(
+                refunds
+                    .map(
+                        row => row.orderId
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+    const paymentIds =
+        [
+            ...new Set(
+                refunds
+                    .map(
+                        row => row.paymentId
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+    const userIds =
+        [
+            ...new Set(
+                refunds
+                    .map(
+                        row => row.userId
+                    )
+                    .filter(Boolean)
+            )
+        ];
 
     const eventIds =
         [
             ...new Set(
-                refundRows
+                refunds
                     .map(
-                        row =>
-                            row.eventId
+                        row => row.eventId
                     )
                     .filter(Boolean)
             )
         ];
 
+
+    /* --------------------------------------------------------
+       ORDERS
+    -------------------------------------------------------- */
+
+    if(orderIds.length){
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("orders")
+                .select(`
+                    id,
+                    order_number,
+                    user_id,
+                    event_id,
+                    status,
+                    subtotal,
+                    service_fee_percentage,
+                    service_fee,
+                    discount,
+                    total,
+                    currency,
+                    promotion_id,
+                    paid_at,
+                    created_at,
+                    updated_at
+                `)
+                .in(
+                    "id",
+                    orderIds
+                );
+
+        if(error){
+
+            console.warn(
+                "Orders enrichment unavailable:",
+                error.message
+            );
+
+        }else{
+
+            (data || [])
+                .forEach(
+                    row => {
+                        ordersById[row.id] =
+                            row;
+                    }
+                );
+        }
+    }
+
+
+    /* --------------------------------------------------------
+       PAYMENTS
+    -------------------------------------------------------- */
+
+    if(paymentIds.length){
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("payments")
+                .select(`
+                    id,
+                    order_id,
+                    user_id,
+                    event_id,
+                    method,
+                    provider,
+                    status,
+                    amount,
+                    currency,
+                    reference,
+                    transaction_id,
+                    receipt_number,
+                    provider_transaction_id,
+                    failure_reason,
+                    paid_at,
+                    created_at,
+                    updated_at
+                `)
+                .in(
+                    "id",
+                    paymentIds
+                );
+
+        if(error){
+
+            console.warn(
+                "Payments enrichment unavailable:",
+                error.message
+            );
+
+        }else{
+
+            (data || [])
+                .forEach(
+                    row => {
+                        paymentsById[row.id] =
+                            row;
+                    }
+                );
+        }
+    }
+
+
+    /* --------------------------------------------------------
+       PROFILES
+    -------------------------------------------------------- */
+
+    if(userIds.length){
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select(`
+                    id,
+                    full_name,
+                    phone,
+                    role,
+                    is_active
+                `)
+                .in(
+                    "id",
+                    userIds
+                );
+
+        if(error){
+
+            console.warn(
+                "Profiles enrichment unavailable:",
+                error.message
+            );
+
+        }else{
+
+            (data || [])
+                .forEach(
+                    row => {
+                        profilesById[row.id] =
+                            row;
+                    }
+                );
+        }
+    }
+
+
+    /* --------------------------------------------------------
+       EVENTS
+    -------------------------------------------------------- */
 
     if(eventIds.length){
 
-        try{
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .from("events")
-                    .select(`
-                        id,
-                        title,
-                        venue,
-                        city
-                    `)
-                    .in(
-                        "id",
-                        eventIds
-                    );
-
-
-            if(
-                !error &&
-                data
-            ){
-
-                const map =
-                    new Map(
-                        data.map(
-                            event => [
-                                event.id,
-                                event
-                            ]
-                        )
-                    );
-
-
-                refundRows.forEach(
-                    row => {
-
-                        const event =
-                            map.get(
-                                row.eventId
-                            );
-
-
-                        if(!event){
-                            return;
-                        }
-
-
-                        if(!row.eventTitle){
-
-                            row.eventTitle =
-                                event.title ||
-                                "";
-                        }
-
-
-                        if(!row.venue){
-
-                            row.venue =
-                                event.venue ||
-                                "";
-                        }
-
-                    }
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("events")
+                .select(`
+                    id,
+                    merchant_id,
+                    title,
+                    venue,
+                    city,
+                    start_at,
+                    end_at,
+                    status
+                `)
+                .in(
+                    "id",
+                    eventIds
                 );
-            }
 
-        }catch(error){
+        if(error){
 
             console.warn(
-                "Event enrichment unavailable:",
-                error
+                "Events enrichment unavailable:",
+                error.message
             );
+
+        }else{
+
+            (data || [])
+                .forEach(
+                    row => {
+                        eventsById[row.id] =
+                            row;
+                    }
+                );
         }
     }
 
 
-    const customerIds =
+    /* --------------------------------------------------------
+       MERGE PAYMENT / ORDER CONTEXT
+    -------------------------------------------------------- */
+
+    refunds =
+        refunds.map(
+            refund => {
+
+                const order =
+                    ordersById[
+                        refund.orderId
+                    ];
+
+                const payment =
+                    paymentsById[
+                        refund.paymentId
+                    ];
+
+                const profile =
+                    profilesById[
+                        refund.userId
+                    ];
+
+                const event =
+                    eventsById[
+                        refund.eventId
+                    ];
+
+
+                if(payment){
+
+                    refund.orderId =
+                        refund.orderId ||
+                        payment.order_id ||
+                        "";
+
+                    refund.userId =
+                        refund.userId ||
+                        payment.user_id ||
+                        "";
+
+                    refund.eventId =
+                        refund.eventId ||
+                        payment.event_id ||
+                        "";
+
+                    refund.method =
+                        refund.method ||
+                        payment.method ||
+                        payment.provider ||
+                        "";
+
+                    refund.currency =
+                        refund.currency ||
+                        payment.currency ||
+                        "KWD";
+
+                    refund.transactionId =
+                        refund.transactionId ||
+                        payment.transaction_id ||
+                        payment.provider_transaction_id ||
+                        "";
+
+                    refund.reference =
+                        refund.reference ||
+                        payment.reference ||
+                        "";
+
+                    refund.receiptNumber =
+                        refund.receiptNumber ||
+                        payment.receipt_number ||
+                        "";
+                }
+
+
+                if(order){
+
+                    refund.orderNumber =
+                        refund.orderNumber ||
+                        order.order_number ||
+                        "";
+
+                    refund.userId =
+                        refund.userId ||
+                        order.user_id ||
+                        "";
+
+                    refund.eventId =
+                        refund.eventId ||
+                        order.event_id ||
+                        "";
+
+                    refund.currency =
+                        refund.currency ||
+                        order.currency ||
+                        "KWD";
+                }
+
+
+                if(profile){
+
+                    refund.customerName =
+                        refund.customerName ||
+                        profile.full_name ||
+                        "";
+
+                    refund.customerPhone =
+                        refund.customerPhone ||
+                        profile.phone ||
+                        "";
+                }
+
+
+                if(event){
+
+                    refund.eventTitle =
+                        refund.eventTitle ||
+                        event.title ||
+                        "";
+                }
+
+
+                return refund;
+            }
+        );
+}
+
+
+/* ============================================================
+   FILTER OPTIONS
+============================================================ */
+
+function populateFilterOptions(){
+
+    const methodValues =
         [
             ...new Set(
-                refundRows
+                refunds
                     .map(
                         row =>
-                            row.customerId
+                            row.method
+                                ? String(row.method)
+                                : ""
                     )
                     .filter(Boolean)
             )
-        ];
-
-
-    if(customerIds.length){
-
-        try{
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .from("profiles")
-                    .select(`
-                        id,
-                        full_name,
-                        role
-                    `)
-                    .in(
-                        "id",
-                        customerIds
-                    );
-
-
-            if(
-                !error &&
-                data
-            ){
-
-                const map =
-                    new Map(
-                        data.map(
-                            profile => [
-                                profile.id,
-                                profile
-                            ]
-                        )
-                    );
-
-
-                refundRows.forEach(
-                    row => {
-
-                        const profile =
-                            map.get(
-                                row.customerId
-                            );
-
-
-                        if(
-                            profile &&
-                            !row.customerName
-                        ){
-
-                            row.customerName =
-                                profile.full_name ||
-                                "";
-                        }
-
-                    }
-                );
-            }
-
-        }catch(error){
-
-            console.warn(
-                "Customer enrichment unavailable:",
-                error
-            );
-        }
-    }
-}
-
-
-function populateEventFilter(){
-
-    const current =
-        eventFilter.value;
-
-
-    const events =
-        [
-            ...new Map(
-                refundRows
-                    .filter(
-                        row =>
-                            row.eventId ||
-                            row.eventTitle
-                    )
-                    .map(
-                        row => [
-                            row.eventId ||
-                            row.eventTitle,
-                            {
-                                id:
-                                    row.eventId ||
-                                    row.eventTitle,
-                                title:
-                                    row.eventTitle ||
-                                    row.eventId
-                            }
-                        ]
-                    )
-            ).values()
         ]
         .sort(
             (a,b) =>
-                String(a.title)
+                a.localeCompare(b)
+        );
+
+    $("methodFilter")
+        .innerHTML = `
+            <option value="">
+                All methods
+            </option>
+
+            ${
+                methodValues
+                    .map(
+                        method => `
+                            <option value="${escapeHTML(method)}">
+                                ${escapeHTML(method)}
+                            </option>
+                        `
+                    )
+                    .join("")
+            }
+        `;
+
+
+    const eventMap = {};
+
+    refunds.forEach(
+        row => {
+
+            if(
+                row.eventId &&
+                !eventMap[row.eventId]
+            ){
+
+                eventMap[row.eventId] =
+                    row.eventTitle ||
+                    eventsById[row.eventId]?.title ||
+                    row.eventId;
+            }
+        }
+    );
+
+    const events =
+        Object.entries(
+            eventMap
+        )
+        .sort(
+            (a,b) =>
+                String(a[1])
                     .localeCompare(
-                        String(b.title)
+                        String(b[1])
                     )
         );
 
+    $("eventFilter")
+        .innerHTML = `
 
-    eventFilter.innerHTML =
-        `<option value="">All events</option>` +
-        events
-            .map(
-                event => `
-                    <option
-                        value="${escapeHtml(event.id)}"
-                    >
-                        ${escapeHtml(event.title)}
-                    </option>
-                `
-            )
-            .join("");
+            <option value="">
+                All events
+            </option>
 
-
-    if(
-        events.some(
-            event =>
-                String(event.id) ===
-                String(current)
-        )
-    ){
-
-        eventFilter.value =
-            current;
-    }
-}
-
-
-function applyFilters(){
-
-    const search =
-        searchInput.value
-            .trim()
-            .toLowerCase();
-
-
-    const status =
-        statusFilter.value;
-
-
-    const method =
-        methodFilter.value;
-
-
-    const period =
-        periodFilter.value;
-
-
-    const eventId =
-        eventFilter.value;
-
-
-    filteredRows =
-        refundRows.filter(
-            row => {
-
-                if(status){
-
-                    if(
-                        normalizeStatus(
-                            row.status
-                        ) !== status
-                    ){
-
-                        return false;
-                    }
-                }
-
-
-                if(method){
-
-                    const normalized =
-                        normalizeMethod(
-                            row.method
-                        ).toLowerCase();
-
-
-                    if(
-                        normalized !==
-                        method.toLowerCase()
-                    ){
-
-                        return false;
-                    }
-                }
-
-
-                if(eventId){
-
-                    if(
-                        String(
-                            row.eventId
-                        ) !==
-                        String(eventId)
-                    ){
-
-                        return false;
-                    }
-                }
-
-
-                if(
-                    period !== "all"
-                ){
-
-                    const date =
-                        row.requestedAt
-                            ? new Date(
-                                row.requestedAt
-                            )
-                            : null;
-
-
-                    if(
-                        !date ||
-                        Number.isNaN(
-                            date.getTime()
-                        )
-                    ){
-
-                        return false;
-                    }
-
-
-                    const start =
-                        new Date();
-
-
-                    if(
-                        period === "today"
-                    ){
-
-                        start.setHours(
-                            0,
-                            0,
-                            0,
-                            0
-                        );
-
-                    }else{
-
-                        start.setDate(
-                            start.getDate() -
-                            Number(period)
-                        );
-                    }
-
-
-                    if(
-                        date.getTime() <
-                        start.getTime()
-                    ){
-
-                        return false;
-                    }
-                }
-
-
-                if(search){
-
-                    const haystack =
-                        [
-                            row.id,
-                            row.orderId,
-                            row.paymentId,
-                            row.customerId,
-                            row.customerName,
-                            row.eventId,
-                            row.eventTitle,
-                            row.venue,
-                            row.reference,
-                            row.method,
-                            row.status,
-                            row.reason,
-                            row.notes
-                        ]
-                            .filter(Boolean)
-                            .join(" ")
-                            .toLowerCase();
-
-
-                    if(
-                        !haystack.includes(
-                            search
-                        )
-                    ){
-
-                        return false;
-                    }
-                }
-
-
-                return true;
+            ${
+                events
+                    .map(
+                        ([id,title]) => `
+                            <option value="${escapeHTML(id)}">
+                                ${escapeHTML(title)}
+                            </option>
+                        `
+                    )
+                    .join("")
             }
-        );
-
-
-    renderRows();
-
-    updateStats();
+        `;
 }
 
 
-function renderRows(){
+/* ============================================================
+   STATUS BADGE
+============================================================ */
 
-    tableBody.innerHTML = "";
+function statusBadge(
+    status
+){
 
-    mobileList.innerHTML = "";
+    const value =
+        normalize(status);
 
+    let cls =
+        "neutral";
 
     if(
-        !filteredRows.length
+        [
+            "pending",
+            "requested",
+            "under_review",
+            "review"
+        ].includes(value)
     ){
-
-        emptyState.style.display =
-            "block";
-
-
-        emptyText.textContent =
-            refundRows.length
-                ? "No refund records match the current filters."
-                : "No refund records are available from the configured source.";
-
-
-        $("resultMeta").textContent =
-            "0 records";
-
-
-        return;
+        cls =
+            "pending";
     }
 
-
-    emptyState.style.display =
-        "none";
-
-
-    $("resultMeta").textContent =
-        `${filteredRows.length.toLocaleString()} of ${refundRows.length.toLocaleString()} records`;
-
-
-    filteredRows.forEach(
-        (
-            row,
-            index
-        ) => {
-
-            const tr =
-                document.createElement("tr");
-
-
-            tr.innerHTML = `
-
-                <td>
-
-                    <div class="reference">
-                        ${escapeHtml(
-                            safeValue(
-                                row.id,
-                                "—"
-                            )
-                        )}
-                    </div>
-
-                    <div class="secondary-text">
-                        ${escapeHtml(
-                            row.reference ||
-                            ""
-                        )}
-                    </div>
-
-                </td>
-
-
-                <td>
-
-                    <div class="primary-text">
-                        ${escapeHtml(
-                            safeValue(
-                                row.orderId
-                            )
-                        )}
-                    </div>
-
-                    <div class="secondary-text">
-                        ${escapeHtml(
-                            row.paymentId ||
-                            ""
-                        )}
-                    </div>
-
-                </td>
-
-
-                <td>
-
-                    <div class="primary-text">
-                        ${escapeHtml(
-                            safeValue(
-                                row.customerName,
-                                row.customerId ||
-                                "—"
-                            )
-                        )}
-                    </div>
-
-                    <div class="secondary-text">
-                        ${escapeHtml(
-                            row.customerId ||
-                            ""
-                        )}
-                    </div>
-
-                </td>
-
-
-                <td>
-
-                    <div class="primary-text">
-                        ${escapeHtml(
-                            safeValue(
-                                row.eventTitle,
-                                row.eventId ||
-                                "—"
-                            )
-                        )}
-                    </div>
-
-                    <div class="secondary-text">
-                        ${escapeHtml(
-                            row.venue ||
-                            ""
-                        )}
-                    </div>
-
-                </td>
-
-
-                <td>
-
-                    <div class="money">
-                        ${escapeHtml(
-                            formatMoney(
-                                row.refundedAmount ||
-                                row.approvedAmount ||
-                                row.requestedAmount,
-                                row.currency
-                            )
-                        )}
-                    </div>
-
-                </td>
-
-
-                <td>
-                    ${escapeHtml(
-                        normalizeMethod(
-                            row.method
-                        )
-                    )}
-                </td>
-
-
-                <td>
-
-                    <span
-                        class="badge ${statusClass(
-                            row.status
-                        )}"
-                    >
-                        ${escapeHtml(
-                            humanStatus(
-                                row.status
-                            )
-                        )}
-                    </span>
-
-                </td>
-
-
-                <td>
-                    ${escapeHtml(
-                        formatDate(
-                            row.requestedAt
-                        )
-                    )}
-                </td>
-
-
-                <td>
-
-                    <div class="row-actions">
-
-                        <button
-                            class="small-btn"
-                            data-index="${index}"
-                            data-action="view"
-                        >
-                            View
-                        </button>
-
-                    </div>
-
-                </td>
-
-            `;
-
-
-            tableBody.appendChild(
-                tr
-            );
-
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "refund-card";
-
-
-            card.innerHTML = `
-
-                <div class="refund-card-head">
-
-                    <div>
-
-                        <div class="reference">
-                            ${escapeHtml(
-                                safeValue(
-                                    row.id
-                                )
-                            )}
-                        </div>
-
-                        <div class="secondary-text">
-                            ${escapeHtml(
-                                safeValue(
-                                    row.eventTitle
-                                )
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <span
-                        class="badge ${statusClass(
-                            row.status
-                        )}"
-                    >
-                        ${escapeHtml(
-                            humanStatus(
-                                row.status
-                            )
-                        )}
-                    </span>
-
-                </div>
-
-
-                <div class="refund-card-grid">
-
-                    <div class="refund-mini">
-
-                        <label>
-                            Customer
-                        </label>
-
-                        <div>
-                            ${escapeHtml(
-                                safeValue(
-                                    row.customerName,
-                                    row.customerId ||
-                                    "—"
-                                )
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <div class="refund-mini">
-
-                        <label>
-                            Amount
-                        </label>
-
-                        <div>
-                            ${escapeHtml(
-                                formatMoney(
-                                    row.refundedAmount ||
-                                    row.approvedAmount ||
-                                    row.requestedAmount,
-                                    row.currency
-                                )
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <div class="refund-mini">
-
-                        <label>
-                            Method
-                        </label>
-
-                        <div>
-                            ${escapeHtml(
-                                normalizeMethod(
-                                    row.method
-                                )
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <div class="refund-mini">
-
-                        <label>
-                            Requested
-                        </label>
-
-                        <div>
-                            ${escapeHtml(
-                                formatDate(
-                                    row.requestedAt
-                                )
-                            )}
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="refund-card-actions">
-
-                    <button
-                        class="small-btn"
-                        data-index="${index}"
-                        data-action="view"
-                    >
-                        View details
-                    </button>
-
-                </div>
-
-            `;
-
-
-            mobileList.appendChild(
-                card
-            );
-
-        }
-    );
+    else if(
+        [
+            "approved",
+            "processing"
+        ].includes(value)
+    ){
+        cls =
+            value;
+    }
+
+    else if(
+        [
+            "refunded",
+            "completed",
+            "complete",
+            "success"
+        ].includes(value)
+    ){
+        cls =
+            value === "complete"
+                ? "completed"
+                : value;
+    }
+
+    else if(
+        [
+            "rejected",
+            "failed",
+            "cancelled",
+            "canceled",
+            "declined"
+        ].includes(value)
+    ){
+        cls =
+            value === "declined"
+                ? "rejected"
+                : value;
+    }
+
+    return `
+        <span class="badge ${cls}">
+            ${escapeHTML(
+                status || "Unknown"
+            )}
+        </span>
+    `;
 }
 
+
+/* ============================================================
+   STATS
+============================================================ */
 
 function updateStats(){
 
-    const total =
-        refundRows.length;
-
+    const rows =
+        refunds;
 
     const pending =
-        refundRows.filter(
+        rows.filter(
             row =>
-                normalizeStatus(
-                    row.status
-                ) === "pending"
+                [
+                    "pending",
+                    "requested",
+                    "under_review",
+                    "review"
+                ].includes(
+                    normalize(row.status)
+                )
         ).length;
 
-
     const approved =
-        refundRows.filter(
+        rows.filter(
             row =>
                 [
                     "approved",
                     "processing"
                 ].includes(
-                    normalizeStatus(
-                        row.status
-                    )
+                    normalize(row.status)
                 )
         ).length;
 
-
     const completed =
-        refundRows.filter(
+        rows.filter(
             row =>
                 [
                     "refunded",
-                    "completed"
+                    "completed",
+                    "complete",
+                    "success"
                 ].includes(
-                    normalizeStatus(
-                        row.status
-                    )
+                    normalize(row.status)
+                )
+        ).length;
+
+    const failed =
+        rows.filter(
+            row =>
+                [
+                    "rejected",
+                    "failed",
+                    "cancelled",
+                    "canceled",
+                    "declined"
+                ].includes(
+                    normalize(row.status)
                 )
         ).length;
 
 
-    $("totalRefunds").textContent =
-        total.toLocaleString();
+    $("statTotal")
+        .textContent =
+        rows.length.toLocaleString();
 
-
-    $("pendingRefunds").textContent =
+    $("statPending")
+        .textContent =
         pending.toLocaleString();
 
-
-    $("approvedRefunds").textContent =
+    $("statApproved")
+        .textContent =
         approved.toLocaleString();
 
-
-    $("completedRefunds").textContent =
+    $("statCompleted")
+        .textContent =
         completed.toLocaleString();
+
+    $("statFailed")
+        .textContent =
+        failed.toLocaleString();
 }
 
 
-function openDrawer(row){
+/* ============================================================
+   FILTERS
+============================================================ */
 
-    $("dRefundId").textContent =
-        safeValue(row.id);
+function applyFilters(){
+
+    const search =
+        $("searchInput")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const status =
+        normalize(
+            $("statusFilter").value
+        );
+
+    const method =
+        $("methodFilter").value;
+
+    const eventId =
+        $("eventFilter").value;
+
+    const period =
+        $("periodFilter").value;
 
 
-    $("dStatus").innerHTML = `
-        <span
-            class="badge ${statusClass(
-                row.status
-            )}"
-        >
-            ${escapeHtml(
-                humanStatus(
+    let rows =
+        [...refunds];
+
+
+    if(search){
+
+        rows =
+            rows.filter(
+                row => {
+
+                    const event =
+                        eventsById[
+                            row.eventId
+                        ];
+
+                    const order =
+                        ordersById[
+                            row.orderId
+                        ];
+
+                    const searchable =
+                        [
+                            row.id,
+                            row.orderId,
+                            row.orderNumber,
+                            row.paymentId,
+                            row.userId,
+                            row.customerName,
+                            row.customerEmail,
+                            row.customerPhone,
+                            row.eventTitle,
+                            row.method,
+                            row.reference,
+                            row.transactionId,
+                            row.receiptNumber,
+                            row.reason,
+                            row.status,
+                            event?.title,
+                            event?.venue,
+                            event?.city,
+                            order?.order_number
+                        ]
+                        .filter(
+                            Boolean
+                        )
+                        .join(" ")
+                        .toLowerCase();
+
+                    return searchable
+                        .includes(
+                            search
+                        );
+                }
+            );
+    }
+
+
+    if(status){
+
+        rows =
+            rows.filter(
+                row =>
+                    normalize(
+                        row.status
+                    ) === status
+            );
+    }
+
+
+    if(method){
+
+        rows =
+            rows.filter(
+                row =>
+                    String(
+                        row.method || ""
+                    ) === method
+            );
+    }
+
+
+    if(eventId){
+
+        rows =
+            rows.filter(
+                row =>
+                    String(
+                        row.eventId || ""
+                    ) === eventId
+            );
+    }
+
+
+    if(
+        period &&
+        period !== "all"
+    ){
+
+        const days =
+            Number(period);
+
+        const cutoff =
+            new Date();
+
+        cutoff.setDate(
+            cutoff.getDate() -
+            days
+        );
+
+        rows =
+            rows.filter(
+                row => {
+
+                    const date =
+                        new Date(
+                            row.requestedAt ||
+                            row.updatedAt
+                        );
+
+                    return (
+                        !Number.isNaN(
+                            date.getTime()
+                        ) &&
+                        date >= cutoff
+                    );
+                }
+            );
+    }
+
+
+    rows.sort(
+        (a,b) => {
+
+            const da =
+                new Date(
+                    a.requestedAt ||
+                    a.updatedAt ||
+                    0
+                ).getTime();
+
+            const db =
+                new Date(
+                    b.requestedAt ||
+                    b.updatedAt ||
+                    0
+                ).getTime();
+
+            return db - da;
+        }
+    );
+
+
+    filteredRefunds =
+        rows;
+
+    renderRows();
+}
+
+
+/* ============================================================
+   RENDER ROWS
+============================================================ */
+
+function renderRows(){
+
+    $("resultMeta")
+        .textContent =
+        `${filteredRefunds.length.toLocaleString()} record${
+            filteredRefunds.length === 1
+                ? ""
+                : "s"
+        }`;
+
+    $("tableBody")
+        .innerHTML =
+        filteredRefunds
+            .map(
+                renderDesktopRow
+            )
+            .join("");
+
+    $("mobileList")
+        .innerHTML =
+        filteredRefunds
+            .map(
+                renderMobileCard
+            )
+            .join("");
+
+    const empty =
+        filteredRefunds.length === 0;
+
+    $("emptyState")
+        .style.display =
+        empty
+            ? "block"
+            : "none";
+
+    $("emptyText")
+        .textContent =
+        refunds.length === 0
+            ? "No refund records are currently available."
+            : "No refund records match the current filters.";
+}
+
+
+/* ============================================================
+   DESKTOP ROW
+============================================================ */
+
+function renderDesktopRow(
+    row
+){
+
+    const event =
+        eventsById[
+            row.eventId
+        ];
+
+    const customer =
+        row.customerName ||
+        profilesById[
+            row.userId
+        ]?.full_name ||
+        "Customer record";
+
+    const eventName =
+        row.eventTitle ||
+        event?.title ||
+        "Event record";
+
+
+    return `
+
+        <tr>
+
+            <td>
+
+                <div class="primary-text">
+                    Refund
+                </div>
+
+                <div
+                    class="reference"
+                    title="${escapeHTML(row.id)}"
+                >
+                    ${escapeHTML(
+                        row.id || "—"
+                    )}
+                </div>
+
+                ${
+                    row.reference
+                        ? `
+                            <div class="secondary-text">
+                                Ref:
+                                ${escapeHTML(
+                                    row.reference
+                                )}
+                            </div>
+                        `
+                        : ""
+                }
+
+            </td>
+
+
+            <td>
+
+                <div class="primary-text">
+                    ${escapeHTML(customer)}
+                </div>
+
+                <div class="secondary-text">
+                    ${escapeHTML(
+                        row.customerPhone ||
+                        row.customerEmail ||
+                        row.userId ||
+                        "—"
+                    )}
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="primary-text">
+                    ${escapeHTML(
+                        row.orderNumber ||
+                        "Order"
+                    )}
+                </div>
+
+                <div class="secondary-text">
+                    ${escapeHTML(
+                        row.orderId ||
+                        "—"
+                    )}
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="primary-text">
+                    ${escapeHTML(
+                        eventName
+                    )}
+                </div>
+
+                <div class="secondary-text">
+                    ${escapeHTML(
+                        event?.venue ||
+                        event?.city ||
+                        ""
+                    )}
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="money">
+                    ${formatMoney(
+                        row.refundedAmount ||
+                        row.approvedAmount ||
+                        row.amount,
+                        row.currency
+                    )}
+                </div>
+
+                ${
+                    row.amount &&
+                    row.refundedAmount &&
+                    Number(row.refundedAmount) !==
+                    Number(row.amount)
+                        ? `
+                            <div class="secondary-text">
+                                Requested:
+                                ${formatMoney(
+                                    row.amount,
+                                    row.currency
+                                )}
+                            </div>
+                        `
+                        : ""
+                }
+
+            </td>
+
+
+            <td>
+                ${escapeHTML(
+                    row.method ||
+                    "—"
+                )}
+            </td>
+
+
+            <td>
+                ${statusBadge(
                     row.status
-                )
-            )}
-        </span>
+                )}
+            </td>
+
+
+            <td>
+                ${escapeHTML(
+                    formatDate(
+                        row.requestedAt
+                    )
+                )}
+            </td>
+
+
+            <td>
+
+                <div class="row-actions">
+
+                    <button
+                        class="small-btn"
+                        data-action="view"
+                        data-id="${escapeHTML(
+                            row.id
+                        )}"
+                    >
+                        View
+                    </button>
+
+                    <button
+                        class="small-btn"
+                        data-action="details"
+                        data-id="${escapeHTML(
+                            row.id
+                        )}"
+                    >
+                        Details
+                    </button>
+
+                </div>
+
+            </td>
+
+        </tr>
     `;
-
-
-    $("dOrderId").textContent =
-        safeValue(
-            row.orderId
-        );
-
-
-    $("dPaymentId").textContent =
-        safeValue(
-            row.paymentId
-        );
-
-
-    $("dCustomer").textContent =
-        safeValue(
-            row.customerName,
-            row.customerId ||
-            "—"
-        );
-
-
-    $("dCustomerId").textContent =
-        safeValue(
-            row.customerId
-        );
-
-
-    $("dEvent").textContent =
-        safeValue(
-            row.eventTitle,
-            row.eventId ||
-            "—"
-        );
-
-
-    $("dRequestedAmount").textContent =
-        formatMoney(
-            row.requestedAmount,
-            row.currency
-        );
-
-
-    $("dApprovedAmount").textContent =
-        formatMoney(
-            row.approvedAmount,
-            row.currency
-        );
-
-
-    $("dRefundedAmount").textContent =
-        formatMoney(
-            row.refundedAmount,
-            row.currency
-        );
-
-
-    $("dCurrency").textContent =
-        safeValue(
-            row.currency
-        );
-
-
-    $("dMethod").textContent =
-        normalizeMethod(
-            row.method
-        );
-
-
-    $("dReference").textContent =
-        safeValue(
-            row.reference
-        );
-
-
-    $("dRequestedAt").textContent =
-        formatDate(
-            row.requestedAt
-        );
-
-
-    $("dProcessedAt").textContent =
-        formatDate(
-            row.processedAt
-        );
-
-
-    $("dProcessedBy").textContent =
-        safeValue(
-            row.processedBy,
-            row.processedById ||
-            "—"
-        );
-
-
-    $("dReason").textContent =
-        safeValue(
-            row.reason
-        );
-
-
-    $("dNotes").textContent =
-        safeValue(
-            row.notes
-        );
-
-
-    $("drawerSubtitle").textContent =
-        row.orderId
-            ? `Refund for order ${row.orderId}`
-            : "Refund record";
-
-
-    drawerBackdrop.style.display =
-        "block";
 }
 
+
+/* ============================================================
+   MOBILE CARD
+============================================================ */
+
+function renderMobileCard(
+    row
+){
+
+    const event =
+        eventsById[
+            row.eventId
+        ];
+
+    const customer =
+        row.customerName ||
+        profilesById[
+            row.userId
+        ]?.full_name ||
+        "Customer record";
+
+    const eventName =
+        row.eventTitle ||
+        event?.title ||
+        "Event record";
+
+
+    return `
+
+        <article class="refund-card">
+
+            <div class="refund-card-head">
+
+                <div>
+
+                    <div class="primary-text">
+                        Refund
+                    </div>
+
+                    <div class="secondary-text">
+                        ${escapeHTML(
+                            row.id || "—"
+                        )}
+                    </div>
+
+                </div>
+
+                ${statusBadge(
+                    row.status
+                )}
+
+            </div>
+
+
+            <div class="refund-card-grid">
+
+                <div>
+
+                    <span class="mini-label">
+                        Customer
+                    </span>
+
+                    <div class="mini-value">
+                        ${escapeHTML(
+                            customer
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="mini-label">
+                        Amount
+                    </span>
+
+                    <div class="mini-value money">
+                        ${formatMoney(
+                            row.refundedAmount ||
+                            row.approvedAmount ||
+                            row.amount,
+                            row.currency
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="mini-label">
+                        Order
+                    </span>
+
+                    <div class="mini-value">
+                        ${escapeHTML(
+                            row.orderNumber ||
+                            row.orderId ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="mini-label">
+                        Method
+                    </span>
+
+                    <div class="mini-value">
+                        ${escapeHTML(
+                            row.method ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="mini-label">
+                        Event
+                    </span>
+
+                    <div class="mini-value">
+                        ${escapeHTML(
+                            eventName
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="mini-label">
+                        Requested
+                    </span>
+
+                    <div class="mini-value">
+                        ${escapeHTML(
+                            formatDate(
+                                row.requestedAt
+                            )
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="mobile-actions">
+
+                <button
+                    class="small-btn"
+                    data-action="view"
+                    data-id="${escapeHTML(
+                        row.id
+                    )}"
+                >
+                    View
+                </button>
+
+                <button
+                    class="small-btn"
+                    data-action="details"
+                    data-id="${escapeHTML(
+                        row.id
+                    )}"
+                >
+                    Details
+                </button>
+
+            </div>
+
+        </article>
+    `;
+}
+
+
+/* ============================================================
+   FIND REFUND
+============================================================ */
+
+function findRefund(
+    id
+){
+
+    return refunds.find(
+        row =>
+            String(row.id) ===
+            String(id)
+    );
+}
+
+
+/* ============================================================
+   OPEN DETAILS
+============================================================ */
+
+function openRefundDetails(
+    id
+){
+
+    if(!id){
+        return;
+    }
+
+    window.location.href =
+        `./refund-details.html?id=${encodeURIComponent(id)}`;
+}
+
+
+/* ============================================================
+   OPEN DRAWER
+============================================================ */
+
+function openDrawer(
+    id
+){
+
+    const row =
+        findRefund(id);
+
+    if(!row){
+
+        showToast(
+            "Refund record is no longer available.",
+            true
+        );
+
+        return;
+    }
+
+    const order =
+        ordersById[
+            row.orderId
+        ];
+
+    const payment =
+        paymentsById[
+            row.paymentId
+        ];
+
+    const profile =
+        profilesById[
+            row.userId
+        ];
+
+    const event =
+        eventsById[
+            row.eventId
+        ];
+
+
+    $("drawerSubtitle")
+        .textContent =
+        row.id ||
+        "Refund record";
+
+
+    $("drawerDetails")
+        .innerHTML = `
+
+            <div class="detail">
+
+                <label>
+                    Refund ID
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.id ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Status
+                </label>
+
+                <div>
+                    ${statusBadge(
+                        row.status
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Requested Amount
+                </label>
+
+                <div>
+                    ${formatMoney(
+                        row.amount,
+                        row.currency
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Refunded Amount
+                </label>
+
+                <div>
+                    ${formatMoney(
+                        row.refundedAmount ||
+                        row.approvedAmount,
+                        row.currency
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Customer
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.customerName ||
+                        profile?.full_name ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Phone
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.customerPhone ||
+                        profile?.phone ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Order Number
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.orderNumber ||
+                        order?.order_number ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Payment Method
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.method ||
+                        payment?.method ||
+                        payment?.provider ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail full">
+
+                <label>
+                    Event
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.eventTitle ||
+                        event?.title ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Payment ID
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.paymentId ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Transaction ID
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.transactionId ||
+                        payment?.transaction_id ||
+                        payment?.provider_transaction_id ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail full">
+
+                <label>
+                    Reference
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.reference ||
+                        payment?.reference ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail full">
+
+                <label>
+                    Reason
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.reason ||
+                        "No reason recorded."
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail full">
+
+                <label>
+                    Admin Notes
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        row.notes ||
+                        "No internal notes recorded."
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Requested
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        formatDate(
+                            row.requestedAt
+                        )
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Updated
+                </label>
+
+                <div>
+                    ${escapeHTML(
+                        formatDate(
+                            row.updatedAt
+                        )
+                    )}
+                </div>
+
+            </div>
+        `;
+
+
+    $("drawerBackdrop")
+        .style.display =
+        "block";
+
+    document.body.style.overflow =
+        "hidden";
+}
+
+
+/* ============================================================
+   CLOSE DRAWER
+============================================================ */
 
 function closeDrawer(){
 
-    drawerBackdrop.style.display =
+    $("drawerBackdrop")
+        .style.display =
         "none";
+
+    document.body.style.overflow =
+        "";
 }
 
 
-function exportCsv(){
+/* ============================================================
+   EXPORT CSV
+============================================================ */
 
-    if(
-        !filteredRows.length
-    ){
+function csvEscape(
+    value
+){
+
+    const string =
+        String(
+            value ?? ""
+        );
+
+    return `"${string.replace(
+        /"/g,
+        '""'
+    )}"`;
+}
+
+
+function exportCSV(){
+
+    if(!filteredRefunds.length){
 
         showToast(
             "There are no refund records to export.",
@@ -3990,343 +4576,475 @@ function exportCsv(){
 
 
     const headers = [
-
         "Refund ID",
-        "Order ID",
-        "Payment ID",
-        "Customer",
         "Customer ID",
+        "Customer Name",
+        "Order ID",
+        "Order Number",
         "Event ID",
         "Event",
-        "Venue",
+        "Payment ID",
+        "Method",
+        "Currency",
         "Requested Amount",
         "Approved Amount",
         "Refunded Amount",
-        "Currency",
-        "Payment Method",
         "Status",
-        "Refund Reference",
-        "Requested At",
-        "Processed At",
-        "Processed By",
+        "Reference",
+        "Transaction ID",
+        "Receipt Number",
         "Reason",
-        "Admin Notes"
-
+        "Requested At",
+        "Approved At",
+        "Processed At",
+        "Completed At",
+        "Updated At"
     ];
 
 
-    const rows =
-        filteredRows.map(
-            row => [
-
-                row.id,
-                row.orderId,
-                row.paymentId,
-                row.customerName,
-                row.customerId,
-                row.eventId,
-                row.eventTitle,
-                row.venue,
-                row.requestedAmount,
-                row.approvedAmount,
-                row.refundedAmount,
-                row.currency,
-                normalizeMethod(
-                    row.method
-                ),
-                row.status,
-                row.reference,
-                row.requestedAt,
-                row.processedAt,
-                row.processedBy,
-                row.reason,
-                row.notes
-
-            ]
-        );
+    const lines = [
+        headers.map(csvEscape).join(",")
+    ];
 
 
-    const csv =
-        [
-            headers,
-            ...rows
-        ]
-            .map(
-                row =>
-                    row
-                        .map(
-                            value =>
-                                `"${String(
-                                    value ?? ""
-                                ).replace(
-                                    /"/g,
-                                    '""'
-                                )}"`
-                        )
-                        .join(",")
-            )
-            .join("\n");
+    filteredRefunds.forEach(
+        row => {
+
+            lines.push(
+                [
+                    row.id,
+                    row.userId,
+                    row.customerName,
+                    row.orderId,
+                    row.orderNumber,
+                    row.eventId,
+                    row.eventTitle,
+                    row.paymentId,
+                    row.method,
+                    row.currency,
+                    row.amount,
+                    row.approvedAmount,
+                    row.refundedAmount,
+                    row.status,
+                    row.reference,
+                    row.transactionId,
+                    row.receiptNumber,
+                    row.reason,
+                    row.requestedAt,
+                    row.approvedAt,
+                    row.processedAt,
+                    row.completedAt,
+                    row.updatedAt
+                ]
+                .map(csvEscape)
+                .join(",")
+            );
+        }
+    );
 
 
     const blob =
         new Blob(
-            [csv],
+            [
+                "\uFEFF" +
+                lines.join("\n")
+            ],
             {
-                type:
-                    "text/csv;charset=utf-8;"
+                type:"text/csv;charset=utf-8;"
             }
         );
-
 
     const url =
         URL.createObjectURL(
             blob
         );
 
+    const anchor =
+        document.createElement("a");
 
-    const link =
-        document.createElement(
-            "a"
-        );
-
-
-    link.href =
+    anchor.href =
         url;
 
-
-    link.download =
-        `k-tickets-refunds-${
-            new Date()
-                .toISOString()
-                .slice(0,10)
+    anchor.download =
+        `k-tickets-refunds-${new Date()
+            .toISOString()
+            .slice(0,10)
         }.csv`;
 
-
     document.body.appendChild(
-        link
+        anchor
     );
 
+    anchor.click();
 
-    link.click();
-
-
-    link.remove();
-
+    anchor.remove();
 
     URL.revokeObjectURL(
         url
     );
-}
 
-
-function setLoading(
-    isLoading
-){
-
-    document.body.classList.toggle(
-        "loading",
-        isLoading
+    showToast(
+        `Exported ${filteredRefunds.length} refund record(s).`
     );
 }
 
 
-/* -------------------------------------------------------------
+/* ============================================================
+   NOTIFICATIONS
+============================================================ */
+
+async function loadNotifications(){
+
+    if(!currentUser){
+        return;
+    }
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select(`
+                    id,
+                    user_id,
+                    title,
+                    message,
+                    type,
+                    data,
+                    is_read,
+                    created_at,
+                    read_at
+                `)
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .eq(
+                    "is_read",
+                    false
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                )
+                .limit(100);
+
+        if(error){
+
+            console.warn(
+                "Notifications unavailable:",
+                error.message
+            );
+
+            notifications = [];
+
+            $("notificationDot")
+                .style.display =
+                "none";
+
+            return;
+        }
+
+        notifications =
+            data || [];
+
+        $("notificationDot")
+            .style.display =
+            notifications.length
+                ? "block"
+                : "none";
+
+    }catch(error){
+
+        console.warn(
+            "Notification load failed:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   LOADING STATE
+============================================================ */
+
+function setLoadingState(
+    loading
+){
+
+    const workspace =
+        $("refundWorkspace");
+
+    if(loading){
+
+        workspace.classList.add(
+            "loading"
+        );
+
+    }else{
+
+        workspace.classList.remove(
+            "loading"
+        );
+    }
+}
+
+
+/* ============================================================
    EVENTS
--------------------------------------------------------------- */
+============================================================ */
+
+$("searchInput")
+    .addEventListener(
+        "input",
+        applyFilters
+    );
+
+
+$("statusFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("methodFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("eventFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("periodFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("clearFilters")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("searchInput")
+                .value =
+                "";
+
+            $("statusFilter")
+                .value =
+                "";
+
+            $("methodFilter")
+                .value =
+                "";
+
+            $("eventFilter")
+                .value =
+                "";
+
+            $("periodFilter")
+                .value =
+                "all";
+
+            applyFilters();
+        }
+    );
+
+
+$("exportButton")
+    .addEventListener(
+        "click",
+        exportCSV
+    );
+
+
+$("printButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            if(!refunds.length){
+
+                showToast(
+                    "There are no refund records to print.",
+                    true
+                );
+
+                return;
+            }
+
+            window.print();
+        }
+    );
+
+
+$("refreshButton")
+    .addEventListener(
+        "click",
+        async () => {
+
+            await loadRefunds();
+            await loadNotifications();
+
+            showToast(
+                "Refund records refreshed."
+            );
+        }
+    );
+
+
+$("refreshButton2")
+    .addEventListener(
+        "click",
+        async () => {
+
+            await loadRefunds();
+            await loadNotifications();
+
+            showToast(
+                "Refund records refreshed."
+            );
+        }
+    );
+
+
+$("notificationButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            if(notifications.length){
+
+                showToast(
+                    `${notifications.length} unread notification record(s).`
+                );
+
+            }else{
+
+                showToast(
+                    "No unread notification records."
+                );
+            }
+        }
+    );
+
+
+$("mobileMenu")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("sidebar")
+                .classList
+                .toggle("open");
+        }
+    );
+
+
+$("drawerClose")
+    .addEventListener(
+        "click",
+        closeDrawer
+    );
+
+
+$("drawerBackdrop")
+    .addEventListener(
+        "click",
+        event => {
+
+            if(
+                event.target ===
+                $("drawerBackdrop")
+            ){
+
+                closeDrawer();
+            }
+        }
+    );
+
+
+/* ============================================================
+   TABLE / CARD ACTIONS
+============================================================ */
 
 document.addEventListener(
     "click",
     event => {
 
-        const target =
+        const button =
             event.target.closest(
                 "[data-action]"
             );
 
-
-        if(!target){
+        if(!button){
             return;
         }
 
+        const action =
+            button.dataset.action;
+
+        const id =
+            button.dataset.id;
 
         if(
-            target.dataset.action ===
-            "view"
+            action === "view"
         ){
 
-            const index =
-                Number(
-                    target.dataset.index
-                );
-
-
-            const row =
-                filteredRows[index];
-
-
-            if(row){
-
-                openDrawer(
-                    row
-                );
-            }
+            openDrawer(id);
         }
 
-    }
-);
-
-
-searchInput.addEventListener(
-    "input",
-    applyFilters
-);
-
-
-statusFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-
-methodFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-
-periodFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-
-eventFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-
-$("clearFilters").addEventListener(
-    "click",
-    () => {
-
-        searchInput.value =
-            "";
-
-        statusFilter.value =
-            "";
-
-        methodFilter.value =
-            "";
-
-        periodFilter.value =
-            "all";
-
-        eventFilter.value =
-            "";
-
-        applyFilters();
-    }
-);
-
-
-$("exportButton").addEventListener(
-    "click",
-    exportCsv
-);
-
-
-$("refreshButton").addEventListener(
-    "click",
-    async () => {
-
-        await loadRefunds();
-
-        await loadNotifications();
-    }
-);
-
-
-$("refreshButton2").addEventListener(
-    "click",
-    async () => {
-
-        await loadRefunds();
-
-        await loadNotifications();
-    }
-);
-
-
-$("drawerClose").addEventListener(
-    "click",
-    closeDrawer
-);
-
-
-drawerBackdrop.addEventListener(
-    "click",
-    event => {
-
         if(
-            event.target ===
-            drawerBackdrop
+            action === "details"
         ){
 
-            closeDrawer();
+            openRefundDetails(id);
         }
     }
 );
 
 
-$("mobileMenu").addEventListener(
-    "click",
-    () => {
+/* ============================================================
+   SECURITY LOGIN BUTTON
+============================================================ */
 
-        $("sidebar")
-            .classList
-            .toggle(
-                "open"
-            );
-    }
-);
+$("securityLoginButton")
+    .addEventListener(
+        "click",
+        () => {
 
-
-$("notificationButton").addEventListener(
-    "click",
-    () => {
-
-        if(
-            notifications.length
-        ){
-
-            showToast(
-                `${notifications.length} notification record(s) available.`
-            );
-
-        }else{
-
-            showToast(
-                "No notification records available."
+            redirectLogin(
+                "admin_session_required"
             );
         }
-    }
-);
+    );
 
 
-/* -------------------------------------------------------------
+/* ============================================================
    BOOT
--------------------------------------------------------------- */
+============================================================ */
 
 async function boot(){
 
     try{
 
-        const authenticated =
-            await loadAdmin();
+        const allowed =
+            await verifyAdmin();
 
-
-        if(!authenticated){
+        if(!allowed){
             return;
         }
 
@@ -4337,7 +5055,13 @@ async function boot(){
         ]);
 
 
-        openApp();
+        $("securityGate")
+            .style.display =
+            "none";
+
+        $("app")
+            .style.display =
+            "block";
 
 
     }catch(error){
@@ -4347,18 +5071,13 @@ async function boot(){
             error
         );
 
-
         setSecurityMessage(
-            "Unable to verify this administrator session."
+            "The administrator area could not be securely initialized. Please sign in again."
         );
 
-
-        setTimeout(
-            () => {
-                redirectLogin();
-            },
-            1500
-        );
+        $("securityLoginButton")
+            .style.display =
+            "inline-flex";
     }
 }
 

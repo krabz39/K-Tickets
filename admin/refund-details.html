@@ -6,7 +6,7 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1, viewport-fit=cover"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
     <meta
@@ -39,7 +39,6 @@
             --warning:#9a6811;
             --danger:#a72c35;
             --blue:#315b85;
-            --purple:#66518f;
 
             --shadow:0 18px 50px rgba(15,61,58,.07);
             --radius:18px;
@@ -56,6 +55,9 @@
         }
 
         body{
+            min-height:100vh;
+            background:#f7f5f2;
+            color:var(--ink);
             font-family:
                 Inter,
                 ui-sans-serif,
@@ -64,10 +66,6 @@
                 BlinkMacSystemFont,
                 "Segoe UI",
                 sans-serif;
-
-            background:#f7f5f2;
-            color:var(--ink);
-            min-height:100vh;
         }
 
         button,
@@ -87,23 +85,73 @@
         }
 
         /* =====================================================
+           SECURITY GATE
+        ===================================================== */
+
+        .security-gate{
+            position:fixed;
+            inset:0;
+            z-index:99999;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            background:var(--green);
+            color:#fff;
+        }
+
+        .security-card{
+            width:min(430px,calc(100% - 32px));
+            padding:32px;
+            border:1px solid rgba(255,255,255,.12);
+            border-radius:24px;
+            background:rgba(255,255,255,.06);
+            text-align:center;
+        }
+
+        .security-mark{
+            width:58px;
+            height:58px;
+            margin:0 auto 18px;
+
+            display:grid;
+            place-items:center;
+
+            border-radius:17px;
+            background:var(--cream);
+            color:var(--bordo);
+
+            font-weight:900;
+            font-size:21px;
+        }
+
+        .security-card h2{
+            font-size:21px;
+            margin-bottom:8px;
+        }
+
+        .security-card p{
+            color:rgba(255,255,255,.68);
+            font-size:12px;
+            line-height:1.65;
+        }
+
+        /* =====================================================
            APP
         ===================================================== */
 
         .app{
+            display:none;
             min-height:100vh;
-            display:flex;
         }
 
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
-
         .sidebar{
-            width:270px;
             position:fixed;
             inset:0 auto 0 0;
             z-index:100;
+
+            width:270px;
 
             background:var(--green);
             color:#fff;
@@ -122,17 +170,17 @@
         .brand-mark{
             width:42px;
             height:42px;
+            margin-bottom:13px;
+
+            display:grid;
+            place-items:center;
+
             border-radius:13px;
 
             background:var(--cream);
             color:var(--green);
 
-            display:grid;
-            place-items:center;
-
             font-weight:900;
-
-            margin-bottom:13px;
         }
 
         .brand h1{
@@ -142,9 +190,9 @@
         }
 
         .brand p{
+            margin-top:5px;
             color:rgba(255,255,255,.56);
             font-size:10px;
-            margin-top:5px;
             letter-spacing:.08em;
             text-transform:uppercase;
         }
@@ -155,12 +203,14 @@
         }
 
         .nav-label{
+            padding:12px 12px 8px;
+
             color:rgba(255,255,255,.38);
+
             font-size:10px;
             font-weight:800;
             letter-spacing:.14em;
             text-transform:uppercase;
-            padding:12px 12px 8px;
         }
 
         .nav a{
@@ -188,14 +238,12 @@
             background:var(--bordo);
             color:#fff;
             box-shadow:
-                0 8px 22px
-                rgba(108,21,30,.25);
+                0 8px 22px rgba(108,21,30,.25);
         }
 
         .nav-icon{
             width:19px;
             text-align:center;
-            opacity:.9;
         }
 
         .sidebar-footer{
@@ -218,38 +266,37 @@
         .avatar{
             width:35px;
             height:35px;
-            border-radius:50%;
+            flex:none;
 
             display:grid;
             place-items:center;
+
+            border-radius:50%;
 
             background:var(--cream);
             color:var(--green);
 
             font-weight:900;
             font-size:12px;
-
-            flex:none;
         }
 
         .admin-mini strong{
             display:block;
-            font-size:12px;
+            max-width:170px;
 
-            white-space:nowrap;
             overflow:hidden;
             text-overflow:ellipsis;
+            white-space:nowrap;
 
-            max-width:170px;
+            font-size:12px;
         }
 
         .admin-mini span{
             display:block;
+            margin-top:2px;
 
             color:rgba(255,255,255,.48);
-
             font-size:10px;
-            margin-top:2px;
         }
 
         /* =====================================================
@@ -265,8 +312,9 @@
         .topbar{
             min-height:78px;
 
-            background:#fff;
-            border-bottom:1px solid var(--line);
+            position:sticky;
+            top:0;
+            z-index:60;
 
             display:flex;
             align-items:center;
@@ -276,10 +324,9 @@
 
             padding:15px 28px;
 
-            position:sticky;
-            top:0;
-
-            z-index:60;
+            background:rgba(255,255,255,.96);
+            border-bottom:1px solid var(--line);
+            backdrop-filter:blur(14px);
         }
 
         .topbar-left{
@@ -296,20 +343,20 @@
             height:42px;
 
             border:1px solid var(--line);
-            background:#fff;
             border-radius:11px;
+
+            background:#fff;
         }
 
         .eyebrow{
+            margin-bottom:4px;
+
             color:var(--bordo);
 
             font-size:10px;
             font-weight:900;
-
-            text-transform:uppercase;
             letter-spacing:.14em;
-
-            margin-bottom:4px;
+            text-transform:uppercase;
         }
 
         .topbar h2{
@@ -340,12 +387,11 @@
         .page{
             max-width:1600px;
             margin:auto;
-
             padding:28px;
         }
 
         /* =====================================================
-           PAGE HEADER
+           HEADER
         ===================================================== */
 
         .page-header{
@@ -354,7 +400,6 @@
             justify-content:space-between;
 
             gap:20px;
-
             margin-bottom:22px;
         }
 
@@ -363,12 +408,12 @@
             align-items:center;
             gap:7px;
 
+            margin-bottom:10px;
+
             color:var(--green);
 
             font-size:11px;
             font-weight:900;
-
-            margin-bottom:10px;
         }
 
         .back-link:hover{
@@ -376,19 +421,18 @@
         }
 
         .page-header h3{
-            font-size:23px;
             margin-bottom:6px;
-
+            font-size:23px;
             word-break:break-word;
         }
 
         .page-header p{
+            max-width:760px;
+
             color:var(--muted);
 
             font-size:11px;
             line-height:1.6;
-
-            max-width:750px;
         }
 
         .header-actions{
@@ -397,23 +441,18 @@
             flex-wrap:wrap;
         }
 
-        /* =====================================================
-           BUTTONS
-        ===================================================== */
-
         .btn{
             min-height:40px;
-
-            border:0;
-            border-radius:10px;
-
-            padding:0 14px;
 
             display:inline-flex;
             align-items:center;
             justify-content:center;
-
             gap:7px;
+
+            padding:0 14px;
+
+            border:0;
+            border-radius:10px;
 
             font-size:11px;
             font-weight:900;
@@ -426,46 +465,40 @@
             color:#fff;
         }
 
-        .btn-primary:hover{
-            transform:translateY(-1px);
-        }
-
         .btn-soft{
             background:#eeeae5;
             color:var(--green);
         }
 
-        .btn-danger{
-            background:#f8e6e8;
-            color:var(--danger);
+        .btn:hover:not(:disabled){
+            transform:translateY(-1px);
         }
 
         .btn:disabled{
             opacity:.55;
             cursor:not-allowed;
-            transform:none;
         }
 
         /* =====================================================
-           STATUS HERO
+           STATUS
         ===================================================== */
 
         .status-card{
-            background:#fff;
-            border:1px solid var(--line);
-            border-radius:var(--radius);
-
-            box-shadow:var(--shadow);
-
-            padding:21px;
-
-            margin-bottom:18px;
-
             display:flex;
             align-items:center;
             justify-content:space-between;
 
             gap:20px;
+
+            margin-bottom:18px;
+            padding:21px;
+
+            background:#fff;
+
+            border:1px solid var(--line);
+            border-radius:var(--radius);
+
+            box-shadow:var(--shadow);
         }
 
         .status-left{
@@ -479,45 +512,42 @@
         .status-icon{
             width:54px;
             height:54px;
-
-            border-radius:15px;
+            flex:none;
 
             display:grid;
             place-items:center;
 
-            font-size:21px;
-            font-weight:900;
+            border-radius:15px;
 
             background:#f3eee9;
             color:var(--green);
 
-            flex:none;
+            font-size:21px;
+            font-weight:900;
         }
 
         .status-card h4{
-            font-size:15px;
             margin-bottom:4px;
+            font-size:15px;
         }
 
         .status-card p{
             color:var(--muted);
             font-size:10px;
-
-            word-break:break-word;
+            line-height:1.55;
         }
 
         .status-right{
-            text-align:right;
             flex:none;
+            text-align:right;
         }
 
         .status-right small{
             display:block;
+            margin-top:5px;
 
             color:var(--muted);
-
             font-size:9px;
-            margin-top:5px;
         }
 
         .badge{
@@ -526,14 +556,12 @@
             justify-content:center;
 
             min-height:25px;
-
             padding:0 9px;
 
             border-radius:999px;
 
             font-size:9px;
             font-weight:900;
-
             white-space:nowrap;
         }
 
@@ -562,24 +590,14 @@
             color:var(--blue);
         }
 
-        .badge-purple{
-            background:#eeeaf7;
-            color:var(--purple);
-        }
-
         /* =====================================================
-           GRID
+           CONTENT
         ===================================================== */
 
         .content-grid{
             display:grid;
-
-            grid-template-columns:
-                minmax(0,1.65fr)
-                minmax(320px,.95fr);
-
+            grid-template-columns:minmax(0,1.65fr) minmax(320px,.95fr);
             gap:18px;
-
             align-items:start;
         }
 
@@ -589,10 +607,6 @@
             gap:18px;
             min-width:0;
         }
-
-        /* =====================================================
-           PANEL
-        ===================================================== */
 
         .panel{
             background:#fff;
@@ -606,15 +620,15 @@
         }
 
         .panel-header{
-            padding:17px 20px;
-
-            border-bottom:1px solid var(--line);
-
             display:flex;
             align-items:center;
             justify-content:space-between;
 
             gap:15px;
+
+            padding:17px 20px;
+
+            border-bottom:1px solid var(--line);
         }
 
         .panel-title{
@@ -623,12 +637,11 @@
         }
 
         .panel-subtitle{
+            margin-top:4px;
+
             color:var(--muted);
 
             font-size:10px;
-
-            margin-top:4px;
-
             line-height:1.5;
         }
 
@@ -642,46 +655,38 @@
 
         .detail-grid{
             display:grid;
-
-            grid-template-columns:
-                repeat(2,minmax(0,1fr));
-
-            border:1px solid var(--line);
-
-            border-radius:13px;
+            grid-template-columns:repeat(2,minmax(0,1fr));
 
             overflow:hidden;
+
+            border:1px solid var(--line);
+            border-radius:13px;
         }
 
         .detail-item{
+            min-width:0;
+
             padding:13px;
 
             border-right:1px solid var(--line);
             border-bottom:1px solid var(--line);
-
-            min-width:0;
         }
 
         .detail-item:nth-child(2n){
             border-right:0;
         }
 
-        .detail-item:nth-last-child(-n+2){
-            border-bottom:0;
-        }
-
         .detail-label{
             display:block;
+            margin-bottom:5px;
 
             color:var(--muted);
 
             font-size:8px;
             font-weight:900;
 
-            text-transform:uppercase;
             letter-spacing:.07em;
-
-            margin-bottom:5px;
+            text-transform:uppercase;
         }
 
         .detail-value{
@@ -693,10 +698,6 @@
             font-weight:800;
 
             word-break:break-word;
-        }
-
-        .detail-value.muted{
-            color:var(--muted);
         }
 
         .mono{
@@ -713,35 +714,19 @@
         }
 
         /* =====================================================
-           MONEY
-        ===================================================== */
-
-        .money{
-            font-size:18px;
-            font-weight:900;
-        }
-
-        .money small{
-            color:var(--muted);
-            font-size:9px;
-            font-weight:800;
-        }
-
-        /* =====================================================
-           SUMMARY
+           FINANCIAL
         ===================================================== */
 
         .summary-box{
-            background:var(--soft);
-
-            border:1px solid var(--line);
-
-            border-radius:13px;
+            display:grid;
+            gap:10px;
 
             padding:15px;
 
-            display:grid;
-            gap:10px;
+            background:var(--soft);
+
+            border:1px solid var(--line);
+            border-radius:13px;
         }
 
         .summary-row{
@@ -760,20 +745,21 @@
 
         .summary-row strong{
             text-align:right;
-            word-break:break-word;
         }
 
         .summary-row.total{
             padding-top:10px;
-
             border-top:1px dashed #d9d2ca;
-
-            font-size:13px;
         }
 
         .summary-row.total strong{
             color:var(--bordo);
             font-size:17px;
+        }
+
+        .money{
+            font-size:18px;
+            font-weight:900;
         }
 
         /* =====================================================
@@ -787,7 +773,7 @@
             gap:18px;
         }
 
-        .timeline:before{
+        .timeline::before{
             content:"";
 
             position:absolute;
@@ -805,7 +791,6 @@
             position:relative;
 
             display:grid;
-
             grid-template-columns:21px 1fr;
 
             gap:12px;
@@ -815,13 +800,12 @@
             width:21px;
             height:21px;
 
+            z-index:1;
+
+            border:5px solid var(--green);
             border-radius:50%;
 
             background:#fff;
-
-            border:5px solid var(--green);
-
-            z-index:1;
         }
 
         .timeline-dot.warning{
@@ -836,56 +820,105 @@
             border-color:var(--success);
         }
 
-        .timeline-content{
-            padding-bottom:3px;
-        }
-
         .timeline-content strong{
             display:block;
-
             font-size:11px;
         }
 
         .timeline-content span{
             display:block;
+            margin-top:3px;
 
             color:var(--muted);
-
             font-size:9px;
-
-            margin-top:3px;
         }
 
         .timeline-content p{
+            margin-top:5px;
+
             color:#68716e;
 
             font-size:10px;
-
             line-height:1.55;
-
-            margin-top:5px;
         }
 
         /* =====================================================
-           SECURITY NOTICE
+           NOTES
         ===================================================== */
 
-        .notice{
-            border-radius:13px;
+        .notes{
+            min-height:65px;
 
             padding:14px;
 
-            font-size:9px;
+            white-space:pre-wrap;
 
+            color:#5d6864;
+
+            background:#fbfaf8;
+
+            border:1px solid var(--line);
+            border-radius:12px;
+
+            font-size:10px;
+            line-height:1.65;
+        }
+
+        /* =====================================================
+           REFERENCES
+        ===================================================== */
+
+        .reference-list{
+            display:grid;
+            gap:9px;
+        }
+
+        .reference{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+
+            gap:12px;
+
+            padding:11px 12px;
+
+            border:1px solid var(--line);
+            border-radius:10px;
+
+            background:#fff;
+        }
+
+        .reference span{
+            color:var(--muted);
+            font-size:9px;
+        }
+
+        .reference strong{
+            max-width:65%;
+
+            text-align:right;
+            word-break:break-all;
+
+            font-size:9px;
+        }
+
+        /* =====================================================
+           NOTICES
+        ===================================================== */
+
+        .notice{
+            padding:14px;
+
+            border-radius:13px;
+
+            font-size:9px;
             line-height:1.6;
         }
 
         .notice strong{
             display:block;
-
-            font-size:10px;
-
             margin-bottom:4px;
+            font-size:10px;
         }
 
         .notice.info{
@@ -907,112 +940,49 @@
         }
 
         /* =====================================================
-           RAW / REFERENCES
-        ===================================================== */
-
-        .reference-list{
-            display:grid;
-            gap:9px;
-        }
-
-        .reference{
-            display:flex;
-
-            align-items:center;
-            justify-content:space-between;
-
-            gap:12px;
-
-            padding:11px 12px;
-
-            border:1px solid var(--line);
-
-            border-radius:10px;
-
-            background:#fff;
-        }
-
-        .reference span{
-            color:var(--muted);
-            font-size:9px;
-        }
-
-        .reference strong{
-            font-size:9px;
-
-            text-align:right;
-
-            word-break:break-all;
-        }
-
-        /* =====================================================
-           NOTES
-        ===================================================== */
-
-        .notes{
-            white-space:pre-wrap;
-
-            color:#5d6864;
-
-            background:#fbfaf8;
-
-            border:1px solid var(--line);
-
-            border-radius:12px;
-
-            padding:14px;
-
-            font-size:10px;
-
-            line-height:1.65;
-
-            min-height:65px;
-        }
-
-        /* =====================================================
-           ERROR / MISSING
+           EMPTY
         ===================================================== */
 
         .empty{
-            min-height:300px;
+            min-height:330px;
 
             display:grid;
             place-items:center;
 
-            text-align:center;
-
             padding:35px;
+
+            text-align:center;
         }
 
         .empty-icon{
-            width:52px;
-            height:52px;
-
-            margin:0 auto 12px;
-
-            border-radius:15px;
-
-            background:#f0ede8;
-
-            color:var(--green);
+            width:54px;
+            height:54px;
+            margin:0 auto 13px;
 
             display:grid;
             place-items:center;
 
+            border-radius:16px;
+
+            background:#f0ede8;
+            color:var(--green);
+
+            font-size:21px;
             font-weight:900;
-            font-size:20px;
         }
 
         .empty h4{
-            font-size:14px;
-            margin-bottom:5px;
+            margin-bottom:7px;
+            font-size:16px;
         }
 
         .empty p{
+            max-width:620px;
+
             color:var(--muted);
-            font-size:10px;
-            line-height:1.6;
-            max-width:500px;
+
+            font-size:11px;
+            line-height:1.7;
         }
 
         /* =====================================================
@@ -1020,54 +990,8 @@
         ===================================================== */
 
         .loading{
-            position:fixed;
-            inset:0;
-
-            z-index:999;
-
-            background:rgba(247,245,242,.92);
-
-            display:grid;
-            place-items:center;
-        }
-
-        .loading.hidden{
-            display:none;
-        }
-
-        .loading-box{
-            background:#fff;
-
-            border:1px solid var(--line);
-
-            border-radius:15px;
-
-            padding:21px 27px;
-
-            box-shadow:var(--shadow);
-
-            text-align:center;
-        }
-
-        .spinner{
-            width:29px;
-            height:29px;
-
-            border:3px solid #e5e0da;
-
-            border-top-color:var(--green);
-
-            border-radius:50%;
-
-            animation:spin .8s linear infinite;
-
-            margin:0 auto 10px;
-        }
-
-        @keyframes spin{
-            to{
-                transform:rotate(360deg);
-            }
+            opacity:.65;
+            pointer-events:none;
         }
 
         /* =====================================================
@@ -1076,36 +1000,25 @@
 
         .toast{
             position:fixed;
-
             right:20px;
             bottom:20px;
+            z-index:500;
 
-            z-index:1000;
+            display:none;
 
-            max-width:360px;
+            max-width:390px;
+
+            padding:13px 15px;
+
+            border-radius:12px;
 
             background:var(--green);
             color:#fff;
 
-            padding:12px 15px;
-
-            border-radius:11px;
+            box-shadow:var(--shadow);
 
             font-size:11px;
-            font-weight:800;
-
-            opacity:0;
-
-            transform:translateY(12px);
-
-            pointer-events:none;
-
-            transition:.2s ease;
-        }
-
-        .toast.show{
-            opacity:1;
-            transform:translateY(0);
+            line-height:1.5;
         }
 
         .toast.error{
@@ -1123,12 +1036,11 @@
             }
 
             .right-column{
-                grid-template-columns:
-                    repeat(2,minmax(0,1fr));
+                grid-template-columns:repeat(2,minmax(0,1fr));
             }
         }
 
-        @media(max-width:900px){
+        @media(max-width:850px){
 
             .sidebar{
                 transform:translateX(-100%);
@@ -1145,20 +1057,15 @@
             }
 
             .menu-btn{
-                display:grid;
-                place-items:center;
+                display:block;
             }
 
             .topbar{
-                padding:13px 16px;
+                padding:14px 18px;
             }
 
             .page{
-                padding:18px 14px;
-            }
-
-            .admin-greeting{
-                display:none;
+                padding:20px 18px;
             }
         }
 
@@ -1195,14 +1102,20 @@
             }
 
             .detail-item,
-            .detail-item:nth-child(2n),
-            .detail-item:nth-last-child(-n+2){
+            .detail-item:nth-child(2n){
                 border-right:0;
-                border-bottom:1px solid var(--line);
             }
 
             .detail-item:last-child{
                 border-bottom:0;
+            }
+
+            .topbar-right{
+                gap:7px;
+            }
+
+            .admin-greeting{
+                display:none;
             }
         }
 
@@ -1223,28 +1136,80 @@
             .status-card{
                 padding:16px;
             }
+
+            .page{
+                padding:16px 12px;
+            }
+        }
+
+        @media print{
+
+            .sidebar,
+            .topbar,
+            .header-actions,
+            .back-link{
+                display:none !important;
+            }
+
+            .main{
+                width:100%;
+                margin:0;
+            }
+
+            .page{
+                max-width:none;
+                padding:0;
+            }
+
+            .panel,
+            .status-card{
+                box-shadow:none;
+                break-inside:avoid;
+            }
+
+            body{
+                background:#fff;
+            }
         }
     </style>
 </head>
 
 <body>
 
+<!-- =========================================================
+     SECURITY GATE
+========================================================= -->
+
 <div
-    class="loading"
-    id="loading"
+    class="security-gate"
+    id="securityGate"
 >
-    <div class="loading-box">
+    <div class="security-card">
 
-        <div class="spinner"></div>
+        <div class="security-mark">
+            KT
+        </div>
 
-        <strong>
-            Securing admin session…
-        </strong>
+        <h2>
+            Securing Admin Area
+        </h2>
+
+        <p id="securityMessage">
+            Verifying your K-Tickets administrator session…
+        </p>
 
     </div>
 </div>
 
-<div class="app">
+
+<!-- =========================================================
+     APP
+========================================================= -->
+
+<div
+    class="app"
+    id="app"
+>
 
     <!-- =====================================================
          SIDEBAR
@@ -1297,18 +1262,13 @@
             </a>
 
             <a href="./merchants.html">
-                <span class="nav-icon">♙</span>
+                <span class="nav-icon">♟</span>
                 Merchants
             </a>
 
             <a href="./customers.html">
-                <span class="nav-icon">♧</span>
+                <span class="nav-icon">♙</span>
                 Customers
-            </a>
-
-            <a href="./users.html">
-                <span class="nav-icon">◎</span>
-                Users
             </a>
 
             <a href="./orders.html">
@@ -1317,16 +1277,12 @@
             </a>
 
             <a href="./tickets.html">
-                <span class="nav-icon">🎟</span>
+                <span class="nav-icon">▧</span>
                 Tickets
             </a>
 
-            <div class="nav-label">
-                Finance
-            </div>
-
             <a href="./payments.html">
-                <span class="nav-icon">¤</span>
+                <span class="nav-icon">◆</span>
                 Payments
             </a>
 
@@ -1336,23 +1292,14 @@
             </a>
 
             <a href="./wamd.html">
-                <span class="nav-icon">W</span>
+                <span class="nav-icon">↔</span>
                 WAMD
             </a>
 
             <a href="./withdrawals.html">
-                <span class="nav-icon">↗</span>
+                <span class="nav-icon">↓</span>
                 Withdrawals
             </a>
-
-            <a href="./refunds.html" class="active">
-                <span class="nav-icon">↩</span>
-                Refunds
-            </a>
-
-            <div class="nav-label">
-                Platform
-            </div>
 
             <a href="./fees.html">
                 <span class="nav-icon">%</span>
@@ -1360,7 +1307,7 @@
             </a>
 
             <a href="./promotions.html">
-                <span class="nav-icon">✦</span>
+                <span class="nav-icon">★</span>
                 Promotions
             </a>
 
@@ -1369,9 +1316,26 @@
                 QR Scans
             </a>
 
+            <a
+                href="./refunds.html"
+                class="active"
+            >
+                <span class="nav-icon">↩</span>
+                Refunds
+            </a>
+
+            <div class="nav-label">
+                Security
+            </div>
+
             <a href="./audit-logs.html">
-                <span class="nav-icon">◷</span>
+                <span class="nav-icon">◉</span>
                 Audit Logs
+            </a>
+
+            <a href="./notifications.html">
+                <span class="nav-icon">◇</span>
+                Notifications
             </a>
 
             <a href="./settings.html">
@@ -1387,19 +1351,19 @@
 
                 <div
                     class="avatar"
-                    id="sideAvatar"
+                    id="sidebarAvatar"
                 >
                     A
                 </div>
 
                 <div>
 
-                    <strong id="sideName">
+                    <strong id="sidebarName">
                         Administrator
                     </strong>
 
                     <span>
-                        Administrator
+                        Platform Administrator
                     </span>
 
                 </div>
@@ -1409,6 +1373,7 @@
         </div>
 
     </aside>
+
 
     <!-- =====================================================
          MAIN
@@ -1455,7 +1420,7 @@
                         Administrator
                     </strong>
 
-                    <span id="greeting">
+                    <span>
                         Admin control centre
                     </span>
 
@@ -1471,6 +1436,7 @@
             </div>
 
         </header>
+
 
         <section class="page">
 
@@ -1525,6 +1491,7 @@
 
             </div>
 
+
             <!-- =================================================
                  STATUS
             ================================================== -->
@@ -1547,11 +1514,11 @@
                     <div>
 
                         <h4 id="statusHeading">
-                            Refund Status
+                            Refund status
                         </h4>
 
                         <p id="statusDescription">
-                            —
+                            Current refund status.
                         </p>
 
                     </div>
@@ -1561,16 +1528,52 @@
                 <div class="status-right">
 
                     <div id="statusBadge">
-                        —
+                        <span class="badge badge-neutral">
+                            Unknown
+                        </span>
                     </div>
 
                     <small id="statusDate">
-                        —
+                        No timestamp available
                     </small>
 
                 </div>
 
             </div>
+
+
+            <!-- =================================================
+                 ERROR / EMPTY
+            ================================================== -->
+
+            <div
+                class="panel"
+                id="emptyPanel"
+                style="display:none;"
+            >
+
+                <div class="empty">
+
+                    <div>
+
+                        <div class="empty-icon">
+                            ↩
+                        </div>
+
+                        <h4 id="emptyTitle">
+                            Refund not found
+                        </h4>
+
+                        <p id="emptyMessage">
+                            The requested refund could not be found.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
 
             <!-- =================================================
                  CONTENT
@@ -1597,7 +1600,7 @@
                                 </div>
 
                                 <div class="panel-subtitle">
-                                    Core refund request and settlement details.
+                                    Actual refund record values.
                                 </div>
 
                             </div>
@@ -1615,6 +1618,7 @@
 
                     </section>
 
+
                     <!-- CUSTOMER -->
 
                     <section class="panel">
@@ -1628,7 +1632,8 @@
                                 </div>
 
                                 <div class="panel-subtitle">
-                                    Customer information associated with the refund.
+                                    Customer information associated
+                                    with the refund.
                                 </div>
 
                             </div>
@@ -1646,6 +1651,7 @@
 
                     </section>
 
+
                     <!-- ORDER -->
 
                     <section class="panel">
@@ -1655,11 +1661,11 @@
                             <div>
 
                                 <div class="panel-title">
-                                    Original Order
+                                    Order & Event
                                 </div>
 
                                 <div class="panel-subtitle">
-                                    Order and event context connected to this refund.
+                                    Order and event context.
                                 </div>
 
                             </div>
@@ -1677,6 +1683,7 @@
 
                     </section>
 
+
                     <!-- PAYMENT -->
 
                     <section class="panel">
@@ -1690,7 +1697,8 @@
                                 </div>
 
                                 <div class="panel-subtitle">
-                                    Payment channel and transaction references.
+                                    Payment references connected
+                                    to the refund.
                                 </div>
 
                             </div>
@@ -1708,6 +1716,7 @@
 
                     </section>
 
+
                     <!-- REASON -->
 
                     <section class="panel">
@@ -1717,11 +1726,12 @@
                             <div>
 
                                 <div class="panel-title">
-                                    Refund Reason & Notes
+                                    Reason & Notes
                                 </div>
 
                                 <div class="panel-subtitle">
-                                    Customer-facing reason and internal processing notes where available.
+                                    Recorded refund explanation
+                                    and internal notes.
                                 </div>
 
                             </div>
@@ -1730,48 +1740,12 @@
 
                         <div class="panel-body">
 
-                            <div
-                                id="reasonDetails"
-                            ></div>
+                            <div id="reasonDetails"></div>
 
                         </div>
 
                     </section>
 
-                </div>
-
-                <div class="right-column">
-
-                    <!-- FINANCIAL SUMMARY -->
-
-                    <section class="panel">
-
-                        <div class="panel-header">
-
-                            <div>
-
-                                <div class="panel-title">
-                                    Financial Summary
-                                </div>
-
-                                <div class="panel-subtitle">
-                                    Amount requested and refund settlement.
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="panel-body">
-
-                            <div
-                                class="summary-box"
-                                id="financialSummary"
-                            ></div>
-
-                        </div>
-
-                    </section>
 
                     <!-- TIMELINE -->
 
@@ -1786,7 +1760,8 @@
                                 </div>
 
                                 <div class="panel-subtitle">
-                                    Chronological refund activity available in the database.
+                                    Timeline derived from actual
+                                    refund timestamps.
                                 </div>
 
                             </div>
@@ -1804,6 +1779,44 @@
 
                     </section>
 
+                </div>
+
+
+                <div class="right-column">
+
+                    <!-- FINANCIAL -->
+
+                    <section class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-title">
+                                    Financial Summary
+                                </div>
+
+                                <div class="panel-subtitle">
+                                    No currency conversion is
+                                    performed on this page.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div
+                                class="summary-box"
+                                id="financialSummary"
+                            ></div>
+
+                        </div>
+
+                    </section>
+
+
                     <!-- REFERENCES -->
 
                     <section class="panel">
@@ -1817,7 +1830,8 @@
                                 </div>
 
                                 <div class="panel-subtitle">
-                                    Identifiers used to trace this transaction.
+                                    System identifiers and
+                                    transaction references.
                                 </div>
 
                             </div>
@@ -1828,12 +1842,13 @@
 
                             <div
                                 class="reference-list"
-                                id="references"
+                                id="referenceList"
                             ></div>
 
                         </div>
 
                     </section>
+
 
                     <!-- SECURITY -->
 
@@ -1863,23 +1878,27 @@
                                     Read-only review
                                 </strong>
 
-                                This page is designed for secure refund
-                                investigation and review. It does not execute
-                                refunds directly from the browser.
+                                This page is designed for secure
+                                refund investigation and review.
+                                It does not execute refunds directly
+                                from the browser.
 
                             </div>
 
-                            <div class="notice warning">
+                            <div
+                                class="notice warning"
+                                style="margin-top:10px;"
+                            >
 
                                 <strong>
                                     Protected processing required
                                 </strong>
 
-                                Approve, reject and execute-refund operations
-                                should be implemented through a protected
-                                Supabase RPC or Edge Function with server-side
-                                authorization, transaction validation and
-                                audit logging.
+                                Approve, reject and execute-refund
+                                operations should use a protected
+                                Supabase RPC or Edge Function with
+                                server-side authorization, transaction
+                                validation and audit logging.
 
                             </div>
 
@@ -1891,67 +1910,67 @@
 
             </div>
 
-            <!-- =================================================
-                 EMPTY / ERROR
-            ================================================== -->
-
-            <div
-                class="panel"
-                id="emptyPanel"
-                style="display:none;"
-            >
-
-                <div class="empty">
-
-                    <div class="empty-icon">
-                        ↩
-                    </div>
-
-                    <div>
-
-                        <h4 id="emptyTitle">
-                            Refund not found
-                        </h4>
-
-                        <p id="emptyMessage">
-                            The requested refund could not be found,
-                            or the current admin session does not have
-                            permission to read it.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
         </section>
 
     </main>
 
 </div>
 
+
 <div
     class="toast"
     id="toast"
 ></div>
 
+
 <script>
+"use strict";
+
 /* ============================================================
    K-TICKETS ADMIN — REFUND DETAILS
-   Secure-by-design, read-only refund investigation page.
-   ============================================================ */
+
+   IMPORTANT:
+   - No fake refund records.
+   - No fake customers.
+   - No fake payment references.
+   - No service-role key.
+   - Read-only.
+   - Refund data must come from the database.
+   - Refund mutations belong in protected RPC/Edge Functions.
+
+   URL:
+       /admin/refund-details.html?id=<refund_uuid>
+
+   The established K-Tickets migrations currently define:
+       profiles
+       events
+       orders
+       payments
+
+   A dedicated `refunds` table has not yet been established
+   in the migrations already completed.
+
+   This page therefore attempts to read `refunds` safely.
+   If that table does not exist yet, the UI explicitly explains
+   that the refund data layer has not been installed instead of
+   inventing data.
+============================================================ */
+
+
+/* ============================================================
+   SUPABASE CONFIG
+============================================================ */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
-        SUPABASE_ANON_KEY,
+        SUPABASE_PUBLISHABLE_KEY,
         {
             auth:{
                 persistSession:true,
@@ -1961,34 +1980,33 @@ const supabaseClient =
         }
     );
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    STATE
------------------------------------------------------------- */
+============================================================ */
 
 let currentUser = null;
-let adminProfile = null;
+let currentProfile = null;
 let refundRecord = null;
 
-/* ------------------------------------------------------------
-   DOM
------------------------------------------------------------- */
 
-const loading =
-    document.getElementById("loading");
+/* ============================================================
+   DOM HELPERS
+============================================================ */
 
-const toast =
-    document.getElementById("toast");
+const $ = id =>
+    document.getElementById(id);
 
-const sidebar =
-    document.getElementById("sidebar");
 
-/* ------------------------------------------------------------
-   HELPERS
------------------------------------------------------------- */
+/* ============================================================
+   GENERAL HELPERS
+============================================================ */
 
 function escapeHTML(value){
 
-    return String(value ?? "")
+    return String(
+        value ?? ""
+    )
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;")
@@ -1996,77 +2014,23 @@ function escapeHTML(value){
         .replace(/'/g,"&#039;");
 }
 
-function showToast(
-    message,
-    isError=false
+
+function safeValue(
+    value,
+    fallback="—"
 ){
 
-    toast.textContent =
-        message;
-
-    toast.classList.toggle(
-        "error",
-        isError
-    );
-
-    toast.classList.add("show");
-
-    clearTimeout(
-        showToast.timer
-    );
-
-    showToast.timer =
-        setTimeout(()=>{
-            toast.classList.remove("show");
-        },3500);
-}
-
-function hideLoading(){
-
-    loading.classList.add(
-        "hidden"
-    );
-}
-
-function initials(name){
-
-    if(!name){
-        return "A";
+    if(
+        value === null ||
+        value === undefined ||
+        value === ""
+    ){
+        return fallback;
     }
 
-    return name
-        .trim()
-        .split(/\s+/)
-        .slice(0,2)
-        .map(part=>part[0])
-        .join("")
-        .toUpperCase();
+    return String(value);
 }
 
-function salutation(){
-
-    const hour =
-        new Date().getHours();
-
-    if(hour < 12){
-        return "Good morning";
-    }
-
-    if(hour < 17){
-        return "Good afternoon";
-    }
-
-    return "Good evening";
-}
-
-function normalize(value){
-
-    return String(value ?? "")
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g,"_")
-        .replace(/-/g,"_");
-}
 
 function firstValue(
     object,
@@ -2074,21 +2038,38 @@ function firstValue(
     fallback=""
 ){
 
+    if(!object){
+        return fallback;
+    }
+
     for(const key of keys){
 
-        if(
-            object &&
-            object[key] !== undefined &&
-            object[key] !== null &&
-            object[key] !== ""
-        ){
+        const value =
+            object[key];
 
-            return object[key];
+        if(
+            value !== null &&
+            value !== undefined &&
+            value !== ""
+        ){
+            return value;
         }
     }
 
     return fallback;
 }
+
+
+function normalize(value){
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toLowerCase()
+        .replace(/[\s-]+/g,"_");
+}
+
 
 function formatDate(value){
 
@@ -2099,10 +2080,12 @@ function formatDate(value){
     const date =
         new Date(value);
 
-    if(Number.isNaN(
-        date.getTime()
-    )){
-        return "—";
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+        return String(value);
     }
 
     return new Intl.DateTimeFormat(
@@ -2114,6 +2097,7 @@ function formatDate(value){
     ).format(date);
 }
 
+
 function formatMoney(
     amount,
     currency="KWD"
@@ -2124,20 +2108,25 @@ function formatMoney(
         amount === undefined ||
         amount === ""
     ){
-
         return "—";
     }
 
     const number =
         Number(amount);
 
-    if(Number.isNaN(number)){
-        return `${escapeHTML(
-            currency
-        )} ${escapeHTML(
-            amount
-        )}`;
+    if(
+        Number.isNaN(number)
+    ){
+        return escapeHTML(
+            String(amount)
+        );
     }
+
+    const currencyCode =
+        String(
+            currency || "KWD"
+        )
+            .toUpperCase();
 
     try{
 
@@ -2145,54 +2134,189 @@ function formatMoney(
             undefined,
             {
                 style:"currency",
-                currency:
-                    String(currency || "KWD")
-                        .toUpperCase(),
+                currency:currencyCode,
                 minimumFractionDigits:3,
                 maximumFractionDigits:3
             }
         ).format(number);
 
-    }catch(error){
+    }catch{
 
-        return `${escapeHTML(
-            currency || "KWD"
-        )} ${number.toFixed(3)}`;
+        return `${currencyCode} ${
+            number.toLocaleString(
+                undefined,
+                {
+                    minimumFractionDigits:3,
+                    maximumFractionDigits:3
+                }
+            )
+        }`;
     }
 }
 
-function badgeForStatus(status){
 
-    const normalized =
+function initials(name){
+
+    const value =
+        String(
+            name || "Administrator"
+        )
+            .trim();
+
+    if(!value){
+        return "A";
+    }
+
+    const parts =
+        value
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if(parts.length === 1){
+
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+}
+
+
+function detailItem(
+    label,
+    value,
+    options={}
+){
+
+    const classes =
+        options.mono
+            ? "detail-value mono"
+            : "detail-value";
+
+    return `
+        <div class="detail-item">
+
+            <span class="detail-label">
+                ${escapeHTML(label)}
+            </span>
+
+            <span class="${classes}">
+                ${value || "—"}
+            </span>
+
+        </div>
+    `;
+}
+
+
+function showToast(
+    message,
+    error=false
+){
+
+    const toast =
+        $("toast");
+
+    toast.textContent =
+        message;
+
+    toast.classList.toggle(
+        "error",
+        error
+    );
+
+    toast.style.display =
+        "block";
+
+    clearTimeout(
+        showToast.timer
+    );
+
+    showToast.timer =
+        setTimeout(
+            ()=>{
+                toast.style.display =
+                    "none";
+            },
+            4000
+        );
+}
+
+
+function redirectLogin(
+    reason="admin_session_required"
+){
+
+    window.location.replace(
+        `/login.html?error=${encodeURIComponent(reason)}`
+    );
+}
+
+
+/* ============================================================
+   STATUS BADGE
+============================================================ */
+
+function badgeForStatus(
+    status
+){
+
+    const value =
         normalize(status);
 
-    let cls =
-        "badge-neutral";
+    if(
+        [
+            "refunded",
+            "completed",
+            "complete"
+        ].includes(value)
+    ){
+
+        return `
+            <span class="badge badge-success">
+                ${escapeHTML(
+                    status || "Refunded"
+                )}
+            </span>
+        `;
+    }
 
     if(
         [
             "approved",
-            "completed",
-            "complete",
-            "refunded",
-            "success",
-            "successful",
-            "paid"
-        ].includes(normalized)
+            "processing"
+        ].includes(value)
     ){
-        cls = "badge-success";
+
+        return `
+            <span class="badge badge-blue">
+                ${escapeHTML(
+                    status || "Processing"
+                )}
+            </span>
+        `;
     }
 
     if(
         [
             "pending",
             "requested",
-            "processing",
             "under_review",
             "review"
-        ].includes(normalized)
+        ].includes(value)
     ){
-        cls = "badge-warning";
+
+        return `
+            <span class="badge badge-warning">
+                ${escapeHTML(
+                    status || "Pending"
+                )}
+            </span>
+        `;
     }
 
     if(
@@ -2202,23 +2326,20 @@ function badgeForStatus(status){
             "cancelled",
             "canceled",
             "declined"
-        ].includes(normalized)
+        ].includes(value)
     ){
-        cls = "badge-danger";
-    }
 
-    if(
-        [
-            "initiated",
-            "submitted",
-            "verified"
-        ].includes(normalized)
-    ){
-        cls = "badge-blue";
+        return `
+            <span class="badge badge-danger">
+                ${escapeHTML(
+                    status || "Failed"
+                )}
+            </span>
+        `;
     }
 
     return `
-        <span class="badge ${cls}">
+        <span class="badge badge-neutral">
             ${escapeHTML(
                 status || "Unknown"
             )}
@@ -2226,63 +2347,40 @@ function badgeForStatus(status){
     `;
 }
 
-function detailItem(
-    label,
-    value,
-    options={}
-){
 
-    const classes =
-        [
-            "detail-value",
-            options.muted ? "muted" : "",
-            options.mono ? "mono" : ""
-        ]
-        .filter(Boolean)
-        .join(" ");
+/* ============================================================
+   ADMIN SECURITY
+============================================================ */
 
-    return `
-        <div class="detail-item">
+async function verifyAdmin(){
 
-            <span class="detail-label">
-                ${escapeHTML(label)}
-            </span>
-
-            <strong class="${classes}">
-                ${value ?? "—"}
-            </strong>
-
-        </div>
-    `;
-}
-
-/* ------------------------------------------------------------
-   AUTH / ADMIN GATE
------------------------------------------------------------- */
-
-async function requireAdmin(){
+    $("securityMessage").textContent =
+        "Checking authenticated administrator…";
 
     const {
-        data:{
-            session
-        },
+        data,
         error
     } =
         await supabaseClient.auth.getSession();
 
+    if(error){
+        throw error;
+    }
+
     if(
-        error ||
-        !session
+        !data?.session?.user
     ){
 
-        window.location.href =
-            "../auth/login.html?error=unauthorized";
+        redirectLogin();
 
         return false;
     }
 
     currentUser =
-        session.user;
+        data.session.user;
+
+    $("securityMessage").textContent =
+        "Verifying administrator permissions…";
 
     const {
         data:profile,
@@ -2294,7 +2392,8 @@ async function requireAdmin(){
                 id,
                 full_name,
                 phone,
-                role
+                role,
+                is_active
             `)
             .eq(
                 "id",
@@ -2302,64 +2401,82 @@ async function requireAdmin(){
             )
             .maybeSingle();
 
+    if(profileError){
+        throw profileError;
+    }
+
     if(
-        profileError ||
         !profile ||
-        normalize(profile.role) !== "admin"
+        String(profile.role || "")
+            .toLowerCase() !== "admin" ||
+        profile.is_active !== true
     ){
 
         await supabaseClient.auth.signOut();
 
-        window.location.href =
-            "../auth/login.html?error=unauthorized";
+        redirectLogin(
+            "unauthorized"
+        );
 
         return false;
     }
 
-    adminProfile =
+    currentProfile =
         profile;
 
-    applyAdminIdentity();
+    updateAdminIdentity();
+
+    supabaseClient.auth.onAuthStateChange(
+        (
+            event,
+            session
+        ) => {
+
+            if(
+                event === "SIGNED_OUT" ||
+                !session?.user
+            ){
+
+                redirectLogin(
+                    "session_expired"
+                );
+            }
+        }
+    );
 
     return true;
 }
 
-function applyAdminIdentity(){
+
+function updateAdminIdentity(){
 
     const name =
-        adminProfile?.full_name ||
-        currentUser?.email?.split("@")[0] ||
+        currentProfile?.full_name ||
+        currentUser?.user_metadata?.full_name ||
+        currentUser?.email ||
         "Administrator";
 
-    document.getElementById(
-        "adminName"
-    ).textContent =
+    $("adminName")
+        .textContent =
         name;
 
-    document.getElementById(
-        "sideName"
-    ).textContent =
+    $("sidebarName")
+        .textContent =
         name;
 
-    document.getElementById(
-        "topAvatar"
-    ).textContent =
+    $("topAvatar")
+        .textContent =
         initials(name);
 
-    document.getElementById(
-        "sideAvatar"
-    ).textContent =
+    $("sidebarAvatar")
+        .textContent =
         initials(name);
-
-    document.getElementById(
-        "greeting"
-    ).textContent =
-        `${salutation()}, ${name.split(/\s+/)[0]}`;
 }
 
-/* ------------------------------------------------------------
-   GET REFUND ID
------------------------------------------------------------- */
+
+/* ============================================================
+   URL / REFUND ID
+============================================================ */
 
 function getRefundId(){
 
@@ -2371,14 +2488,268 @@ function getRefundId(){
     return (
         params.get("id") ||
         params.get("refund_id") ||
-        params.get("refundId") ||
         ""
     ).trim();
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
+   NORMALIZE REFUND
+
+   We intentionally normalize the row after selecting `*`.
+   This avoids selecting guessed columns that may not exist.
+
+   The database remains the source of truth.
+============================================================ */
+
+function normalizeRefund(
+    row
+){
+
+    return {
+
+        raw:row,
+
+        id:firstValue(
+            row,
+            [
+                "id",
+                "refund_id",
+                "request_id"
+            ]
+        ),
+
+        orderId:firstValue(
+            row,
+            [
+                "order_id"
+            ]
+        ),
+
+        paymentId:firstValue(
+            row,
+            [
+                "payment_id",
+                "original_payment_id"
+            ]
+        ),
+
+        userId:firstValue(
+            row,
+            [
+                "user_id",
+                "customer_id"
+            ]
+        ),
+
+        eventId:firstValue(
+            row,
+            [
+                "event_id"
+            ]
+        ),
+
+        customerName:firstValue(
+            row,
+            [
+                "customer_name",
+                "full_name",
+                "customer_full_name"
+            ]
+        ),
+
+        customerEmail:firstValue(
+            row,
+            [
+                "customer_email",
+                "email"
+            ]
+        ),
+
+        customerPhone:firstValue(
+            row,
+            [
+                "customer_phone",
+                "phone"
+            ]
+        ),
+
+        eventTitle:firstValue(
+            row,
+            [
+                "event_title",
+                "event_name"
+            ]
+        ),
+
+        venue:firstValue(
+            row,
+            [
+                "venue"
+            ]
+        ),
+
+        amount:firstValue(
+            row,
+            [
+                "refund_amount",
+                "requested_amount",
+                "amount"
+            ]
+        ),
+
+        approvedAmount:firstValue(
+            row,
+            [
+                "approved_amount"
+            ]
+        ),
+
+        refundedAmount:firstValue(
+            row,
+            [
+                "refunded_amount",
+                "completed_amount"
+            ]
+        ),
+
+        originalAmount:firstValue(
+            row,
+            [
+                "original_amount",
+                "payment_amount",
+                "paid_amount"
+            ]
+        ),
+
+        currency:firstValue(
+            row,
+            [
+                "currency"
+            ],
+            "KWD"
+        ),
+
+        status:firstValue(
+            row,
+            [
+                "status",
+                "refund_status",
+                "state"
+            ],
+            "unknown"
+        ),
+
+        method:firstValue(
+            row,
+            [
+                "payment_method",
+                "method",
+                "channel",
+                "provider",
+                "gateway"
+            ]
+        ),
+
+        reference:firstValue(
+            row,
+            [
+                "refund_reference",
+                "reference",
+                "refund_code"
+            ]
+        ),
+
+        transactionId:firstValue(
+            row,
+            [
+                "transaction_id",
+                "transaction_code"
+            ]
+        ),
+
+        receiptNumber:firstValue(
+            row,
+            [
+                "receipt_number"
+            ]
+        ),
+
+        reason:firstValue(
+            row,
+            [
+                "reason",
+                "refund_reason",
+                "request_reason"
+            ]
+        ),
+
+        notes:firstValue(
+            row,
+            [
+                "admin_notes",
+                "notes",
+                "internal_note"
+            ]
+        ),
+
+        requestedAt:firstValue(
+            row,
+            [
+                "requested_at",
+                "created_at"
+            ],
+            null
+        ),
+
+        approvedAt:firstValue(
+            row,
+            [
+                "approved_at"
+            ],
+            null
+        ),
+
+        processedAt:firstValue(
+            row,
+            [
+                "processed_at"
+            ],
+            null
+        ),
+
+        completedAt:firstValue(
+            row,
+            [
+                "completed_at",
+                "refunded_at"
+            ],
+            null
+        ),
+
+        updatedAt:firstValue(
+            row,
+            [
+                "updated_at"
+            ],
+            null
+        ),
+
+        processedBy:firstValue(
+            row,
+            [
+                "processed_by_name",
+                "approved_by_name",
+                "processed_by"
+            ]
+        )
+    };
+}
+
+
+/* ============================================================
    LOAD REFUND
------------------------------------------------------------- */
+============================================================ */
 
 async function loadRefund(){
 
@@ -2388,51 +2759,37 @@ async function loadRefund(){
     if(!refundId){
 
         showEmpty(
-            "Refund ID required",
-            "Open this page from the Refunds management screen or provide a valid refund ID in the URL."
+            "Refund ID is missing",
+            "Open this page from the Refunds admin page using a real refund record ID."
         );
 
         return;
     }
 
-    /*
-      First try relational enrichment.
+    $("contentGrid")
+        .style.display =
+        "none";
 
-      This assumes the common structure:
+    $("emptyPanel")
+        .style.display =
+        "none";
 
-      refunds
-        -> orders
+    try{
 
-      If the exact schema differs, the fallback query still
-      loads the refund record without pretending missing data.
-    */
+        /*
+         * We intentionally use select("*").
+         *
+         * Reason:
+         * The dedicated refunds schema has not yet been locked
+         * into the completed K-Tickets migrations. Selecting
+         * guessed columns here would cause Supabase to reject
+         * the entire request when one column does not exist.
+         */
 
-    let result =
-        await supabaseClient
-            .from("refunds")
-            .select(`
-                *,
-                orders(
-                    id,
-                    user_id,
-                    event_id,
-                    currency
-                )
-            `)
-            .eq(
-                "id",
-                refundId
-            )
-            .maybeSingle();
-
-    if(result.error){
-
-        console.warn(
-            "Relational refund query failed:",
-            result.error
-        );
-
-        result =
+        const {
+            data,
+            error
+        } =
             await supabaseClient
                 .from("refunds")
                 .select("*")
@@ -2441,362 +2798,89 @@ async function loadRefund(){
                     refundId
                 )
                 .maybeSingle();
-    }
 
-    if(result.error){
+        if(error){
+
+            /*
+             * PostgreSQL/Supabase will return an error when the
+             * refunds relation does not exist. Do not turn that
+             * into a fake "refund not found" message.
+             */
+
+            throw error;
+        }
+
+        if(!data){
+
+            showEmpty(
+                "Refund not found",
+                "No refund record with this ID is visible to the current administrator."
+            );
+
+            return;
+        }
+
+        refundRecord =
+            normalizeRefund(data);
+
+        await enrichRefund();
+
+        renderRefund();
+
+        $("contentGrid")
+            .style.display =
+            "grid";
+
+        $("statusCard")
+            .style.display =
+            "flex";
+
+    }catch(error){
 
         console.error(
-            "Refund detail query failed:",
-            result.error
+            "Refund load error:",
+            error
         );
 
-        showEmpty(
-            "Unable to load refund",
-            result.error.message ||
-            "The refund could not be loaded. Check the refunds table and admin RLS policy."
-        );
+        const message =
+            String(
+                error?.message || ""
+            );
 
-        return;
+        const missingTable =
+            /relation .*refunds.* does not exist/i.test(
+                message
+            ) ||
+            /could not find the table/i.test(
+                message
+            ) ||
+            /schema cache/i.test(
+                message
+            );
+
+        if(missingTable){
+
+            showEmpty(
+                "Refund data layer is not installed",
+                "The current K-Tickets database migrations do not yet contain a dedicated refunds table. This page will not invent refund records or display fake refund data."
+            );
+
+        }else{
+
+            showEmpty(
+                "Unable to load refund",
+                "The refund record could not be securely loaded. Check the administrator session and database permissions."
+            );
+        }
+
+        throw error;
     }
-
-    if(!result.data){
-
-        showEmpty(
-            "Refund not found",
-            "No refund record matching this ID was returned by the database."
-        );
-
-        return;
-    }
-
-    refundRecord =
-        normalizeRefund(
-            result.data
-        );
-
-    /*
-      Enrich only when identifiers are available and the
-      corresponding records can be read under RLS.
-    */
-
-    await enrichRefund();
-
-    renderRefund();
-
-    document.getElementById(
-        "contentGrid"
-    ).style.display =
-        "grid";
-
-    document.getElementById(
-        "statusCard"
-    ).style.display =
-        "flex";
 }
 
-/* ------------------------------------------------------------
-   NORMALIZE REFUND
------------------------------------------------------------- */
 
-function normalizeRefund(row){
-
-    const order =
-        row.orders ||
-        row.order ||
-        null;
-
-    return {
-
-        raw:row,
-
-        id:
-            firstValue(
-                row,
-                [
-                    "id",
-                    "refund_id",
-                    "request_id"
-                ],
-                ""
-            ),
-
-        orderId:
-            firstValue(
-                row,
-                [
-                    "order_id"
-                ],
-                order?.id || ""
-            ),
-
-        paymentId:
-            firstValue(
-                row,
-                [
-                    "payment_id",
-                    "original_payment_id"
-                ],
-                ""
-            ),
-
-        userId:
-            firstValue(
-                row,
-                [
-                    "user_id",
-                    "customer_id"
-                ],
-                order?.user_id || ""
-            ),
-
-        eventId:
-            firstValue(
-                row,
-                [
-                    "event_id"
-                ],
-                order?.event_id || ""
-            ),
-
-        customerName:
-            firstValue(
-                row,
-                [
-                    "customer_name",
-                    "full_name",
-                    "customer_full_name"
-                ],
-                ""
-            ),
-
-        customerEmail:
-            firstValue(
-                row,
-                [
-                    "customer_email",
-                    "email"
-                ],
-                ""
-            ),
-
-        customerPhone:
-            firstValue(
-                row,
-                [
-                    "customer_phone",
-                    "phone"
-                ],
-                ""
-            ),
-
-        eventTitle:
-            firstValue(
-                row,
-                [
-                    "event_title",
-                    "title"
-                ],
-                ""
-            ),
-
-        venue:
-            firstValue(
-                row,
-                [
-                    "venue"
-                ],
-                ""
-            ),
-
-        amount:
-            firstValue(
-                row,
-                [
-                    "refund_amount",
-                    "requested_amount",
-                    "amount"
-                ],
-                ""
-            ),
-
-        approvedAmount:
-            firstValue(
-                row,
-                [
-                    "approved_amount"
-                ],
-                ""
-            ),
-
-        refundedAmount:
-            firstValue(
-                row,
-                [
-                    "refunded_amount",
-                    "completed_amount"
-                ],
-                ""
-            ),
-
-        originalAmount:
-            firstValue(
-                row,
-                [
-                    "original_amount",
-                    "payment_amount",
-                    "paid_amount"
-                ],
-                ""
-            ),
-
-        currency:
-            firstValue(
-                row,
-                [
-                    "currency"
-                ],
-                order?.currency || "KWD"
-            ),
-
-        status:
-            firstValue(
-                row,
-                [
-                    "status",
-                    "refund_status",
-                    "state"
-                ],
-                "unknown"
-            ),
-
-        method:
-            firstValue(
-                row,
-                [
-                    "payment_method",
-                    "method",
-                    "channel",
-                    "provider",
-                    "gateway"
-                ],
-                ""
-            ),
-
-        reference:
-            firstValue(
-                row,
-                [
-                    "refund_reference",
-                    "reference",
-                    "refund_code"
-                ],
-                ""
-            ),
-
-        transactionId:
-            firstValue(
-                row,
-                [
-                    "transaction_id",
-                    "transaction_code"
-                ],
-                ""
-            ),
-
-        receiptNumber:
-            firstValue(
-                row,
-                [
-                    "receipt_number"
-                ],
-                ""
-            ),
-
-        reason:
-            firstValue(
-                row,
-                [
-                    "reason",
-                    "refund_reason",
-                    "request_reason"
-                ],
-                ""
-            ),
-
-        notes:
-            firstValue(
-                row,
-                [
-                    "admin_notes",
-                    "notes",
-                    "internal_note"
-                ],
-                ""
-            ),
-
-        requestedAt:
-            firstValue(
-                row,
-                [
-                    "requested_at",
-                    "created_at"
-                ],
-                null
-            ),
-
-        approvedAt:
-            firstValue(
-                row,
-                [
-                    "approved_at"
-                ],
-                null
-            ),
-
-        processedAt:
-            firstValue(
-                row,
-                [
-                    "processed_at"
-                ],
-                null
-            ),
-
-        completedAt:
-            firstValue(
-                row,
-                [
-                    "completed_at",
-                    "refunded_at"
-                ],
-                null
-            ),
-
-        updatedAt:
-            firstValue(
-                row,
-                [
-                    "updated_at"
-                ],
-                null
-            ),
-
-        processedBy:
-            firstValue(
-                row,
-                [
-                    "processed_by_name",
-                    "approved_by_name",
-                    "processed_by"
-                ],
-                ""
-            )
-    };
-}
-
-/* ------------------------------------------------------------
-   ENRICH
------------------------------------------------------------- */
+/* ============================================================
+   ENRICH REFUND
+============================================================ */
 
 async function enrichRefund(){
 
@@ -2804,59 +2888,233 @@ async function enrichRefund(){
         return;
     }
 
-    const userId =
-        refundRecord.userId;
+
+    /* --------------------------------------------------------
+       PAYMENT
+    -------------------------------------------------------- */
 
     if(
-        userId &&
-        (
-            !refundRecord.customerName ||
-            !refundRecord.customerPhone
-        )
+        refundRecord.paymentId
     ){
 
         const {
-            data:profile
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("payments")
+                .select(`
+                    id,
+                    order_id,
+                    user_id,
+                    event_id,
+                    method,
+                    provider,
+                    status,
+                    amount,
+                    currency,
+                    reference,
+                    transaction_id,
+                    receipt_number,
+                    provider_transaction_id,
+                    failure_reason,
+                    paid_at,
+                    created_at,
+                    updated_at
+                `)
+                .eq(
+                    "id",
+                    refundRecord.paymentId
+                )
+                .maybeSingle();
+
+        if(error){
+
+            console.warn(
+                "Payment enrichment unavailable:",
+                error.message
+            );
+
+        }else if(data){
+
+            refundRecord.orderId =
+                refundRecord.orderId ||
+                data.order_id ||
+                "";
+
+            refundRecord.userId =
+                refundRecord.userId ||
+                data.user_id ||
+                "";
+
+            refundRecord.eventId =
+                refundRecord.eventId ||
+                data.event_id ||
+                "";
+
+            refundRecord.method =
+                refundRecord.method ||
+                data.method ||
+                data.provider ||
+                "";
+
+            refundRecord.originalAmount =
+                refundRecord.originalAmount !== ""
+                    ? refundRecord.originalAmount
+                    : data.amount;
+
+            refundRecord.currency =
+                refundRecord.currency ||
+                data.currency ||
+                "KWD";
+
+            refundRecord.transactionId =
+                refundRecord.transactionId ||
+                data.transaction_id ||
+                data.provider_transaction_id ||
+                "";
+
+            refundRecord.reference =
+                refundRecord.reference ||
+                data.reference ||
+                "";
+
+            refundRecord.receiptNumber =
+                refundRecord.receiptNumber ||
+                data.receipt_number ||
+                "";
+        }
+    }
+
+
+    /* --------------------------------------------------------
+       ORDER
+    -------------------------------------------------------- */
+
+    if(
+        refundRecord.orderId
+    ){
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("orders")
+                .select(`
+                    id,
+                    order_number,
+                    user_id,
+                    event_id,
+                    status,
+                    subtotal,
+                    service_fee_percentage,
+                    service_fee,
+                    discount,
+                    total,
+                    currency,
+                    promotion_id,
+                    paid_at,
+                    created_at,
+                    updated_at
+                `)
+                .eq(
+                    "id",
+                    refundRecord.orderId
+                )
+                .maybeSingle();
+
+        if(error){
+
+            console.warn(
+                "Order enrichment unavailable:",
+                error.message
+            );
+
+        }else if(data){
+
+            refundRecord.orderNumber =
+                data.order_number ||
+                "";
+
+            refundRecord.userId =
+                refundRecord.userId ||
+                data.user_id ||
+                "";
+
+            refundRecord.eventId =
+                refundRecord.eventId ||
+                data.event_id ||
+                "";
+
+            refundRecord.currency =
+                refundRecord.currency ||
+                data.currency ||
+                "KWD";
+        }
+    }
+
+
+    /* --------------------------------------------------------
+       CUSTOMER PROFILE
+    -------------------------------------------------------- */
+
+    if(
+        refundRecord.userId
+    ){
+
+        const {
+            data,
+            error
         } =
             await supabaseClient
                 .from("profiles")
                 .select(`
                     id,
                     full_name,
-                    phone
+                    phone,
+                    role,
+                    is_active
                 `)
                 .eq(
                     "id",
-                    userId
+                    refundRecord.userId
                 )
                 .maybeSingle();
 
-        if(profile){
+        if(error){
 
-            if(!refundRecord.customerName){
-                refundRecord.customerName =
-                    profile.full_name || "";
-            }
+            console.warn(
+                "Customer profile unavailable:",
+                error.message
+            );
 
-            if(!refundRecord.customerPhone){
-                refundRecord.customerPhone =
-                    profile.phone || "";
-            }
+        }else if(data){
+
+            refundRecord.customerName =
+                refundRecord.customerName ||
+                data.full_name ||
+                "";
+
+            refundRecord.customerPhone =
+                refundRecord.customerPhone ||
+                data.phone ||
+                "";
         }
     }
 
-    /*
-      Event enrichment is deliberately best-effort.
-      Missing event information is displayed as unavailable.
-    */
+
+    /* --------------------------------------------------------
+       EVENT
+    -------------------------------------------------------- */
 
     if(
-        refundRecord.eventId &&
-        !refundRecord.eventTitle
+        refundRecord.eventId
     ){
 
         const {
-            data:event
+            data,
+            error
         } =
             await supabaseClient
                 .from("events")
@@ -2865,7 +3123,9 @@ async function enrichRefund(){
                     title,
                     venue,
                     city,
-                    start_at
+                    start_at,
+                    end_at,
+                    status
                 `)
                 .eq(
                     "id",
@@ -2873,36 +3133,57 @@ async function enrichRefund(){
                 )
                 .maybeSingle();
 
-        if(event){
+        if(error){
+
+            console.warn(
+                "Event enrichment unavailable:",
+                error.message
+            );
+
+        }else if(data){
 
             refundRecord.eventTitle =
-                event.title || "";
+                refundRecord.eventTitle ||
+                data.title ||
+                "";
 
             refundRecord.venue =
-                event.venue || "";
+                refundRecord.venue ||
+                data.venue ||
+                "";
+
+            refundRecord.city =
+                data.city ||
+                "";
+
+            refundRecord.eventStart =
+                data.start_at ||
+                null;
         }
     }
 }
 
-/* ------------------------------------------------------------
-   RENDER
------------------------------------------------------------- */
+
+/* ============================================================
+   RENDER REFUND
+============================================================ */
 
 function renderRefund(){
 
     const r =
         refundRecord;
 
-    document.getElementById(
-        "pageTitle"
-    ).textContent =
+    $("pageTitle")
+        .textContent =
         `Refund ${r.id || "Details"}`;
 
-    document.getElementById(
-        "pageDescription"
-    ).textContent =
+    $("pageDescription")
+        .textContent =
         r.orderId
-            ? `Refund request connected to order ${r.orderId}.`
+            ? `Refund request connected to order ${
+                r.orderNumber ||
+                r.orderId
+            }.`
             : "Refund request details and processing context.";
 
     renderStatus(r);
@@ -2916,46 +3197,24 @@ function renderRefund(){
     renderReferences(r);
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    STATUS
------------------------------------------------------------- */
+============================================================ */
 
 function renderStatus(r){
 
     const normalized =
         normalize(r.status);
 
-    const heading =
-        document.getElementById(
-            "statusHeading"
-        );
-
-    const description =
-        document.getElementById(
-            "statusDescription"
-        );
-
-    const icon =
-        document.getElementById(
-            "statusIcon"
-        );
-
-    const badge =
-        document.getElementById(
-            "statusBadge"
-        );
-
-    const date =
-        document.getElementById(
-            "statusDate"
-        );
-
-    badge.innerHTML =
+    $("statusBadge")
+        .innerHTML =
         badgeForStatus(
             r.status
         );
 
-    date.textContent =
+    $("statusDate")
+        .textContent =
         r.updatedAt
             ? `Updated ${formatDate(r.updatedAt)}`
             : r.requestedAt
@@ -2970,31 +3229,36 @@ function renderStatus(r){
         ].includes(normalized)
     ){
 
-        icon.textContent =
+        $("statusIcon")
+            .textContent =
             "✓";
 
-        heading.textContent =
+        $("statusHeading")
+            .textContent =
             "Refund completed";
 
-        description.textContent =
+        $("statusDescription")
+            .textContent =
             "The refund record indicates that the requested refund has been completed.";
 
         return;
     }
 
     if(
-        [
-            "approved"
-        ].includes(normalized)
+        normalized ===
+        "approved"
     ){
 
-        icon.textContent =
+        $("statusIcon")
+            .textContent =
             "✓";
 
-        heading.textContent =
+        $("statusHeading")
+            .textContent =
             "Refund approved";
 
-        description.textContent =
+        $("statusDescription")
+            .textContent =
             "The refund has been approved and is awaiting or undergoing settlement.";
 
         return;
@@ -3010,13 +3274,16 @@ function renderStatus(r){
         ].includes(normalized)
     ){
 
-        icon.textContent =
+        $("statusIcon")
+            .textContent =
             "…";
 
-        heading.textContent =
+        $("statusHeading")
+            .textContent =
             "Refund under review";
 
-        description.textContent =
+        $("statusDescription")
+            .textContent =
             "This refund remains in a review or processing state.";
 
         return;
@@ -3032,37 +3299,43 @@ function renderStatus(r){
         ].includes(normalized)
     ){
 
-        icon.textContent =
+        $("statusIcon")
+            .textContent =
             "!";
 
-        heading.textContent =
+        $("statusHeading")
+            .textContent =
             "Refund not completed";
 
-        description.textContent =
+        $("statusDescription")
+            .textContent =
             "The refund record indicates that the request was rejected, cancelled or failed.";
 
         return;
     }
 
-    icon.textContent =
+    $("statusIcon")
+        .textContent =
         "↩";
 
-    heading.textContent =
+    $("statusHeading")
+        .textContent =
         "Refund status";
 
-    description.textContent =
+    $("statusDescription")
+        .textContent =
         "Current status is taken directly from the refund record.";
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    REFUND DETAILS
------------------------------------------------------------- */
+============================================================ */
 
 function renderRefundDetails(r){
 
-    document.getElementById(
-        "refundDetails"
-    ).innerHTML =
+    $("refundDetails")
+        .innerHTML =
 
         detailItem(
             "Refund ID",
@@ -3088,10 +3361,14 @@ function renderRefundDetails(r){
         detailItem(
             "Requested Amount",
             r.amount !== ""
-                ? `<span class="money">${formatMoney(
-                    r.amount,
-                    r.currency
-                )}</span>`
+                ? `
+                    <span class="money">
+                        ${formatMoney(
+                            r.amount,
+                            r.currency
+                        )}
+                    </span>
+                `
                 : "—"
         )
 
@@ -3100,10 +3377,14 @@ function renderRefundDetails(r){
         detailItem(
             "Approved Amount",
             r.approvedAmount !== ""
-                ? `<span class="money">${formatMoney(
-                    r.approvedAmount,
-                    r.currency
-                )}</span>`
+                ? `
+                    <span class="money">
+                        ${formatMoney(
+                            r.approvedAmount,
+                            r.currency
+                        )}
+                    </span>
+                `
                 : "—"
         )
 
@@ -3112,10 +3393,14 @@ function renderRefundDetails(r){
         detailItem(
             "Refunded Amount",
             r.refundedAmount !== ""
-                ? `<span class="money">${formatMoney(
-                    r.refundedAmount,
-                    r.currency
-                )}</span>`
+                ? `
+                    <span class="money">
+                        ${formatMoney(
+                            r.refundedAmount,
+                            r.currency
+                        )}
+                    </span>
+                `
                 : "—"
         )
 
@@ -3169,15 +3454,15 @@ function renderRefundDetails(r){
         );
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    CUSTOMER
------------------------------------------------------------- */
+============================================================ */
 
 function renderCustomerDetails(r){
 
-    document.getElementById(
-        "customerDetails"
-    ).innerHTML =
+    $("customerDetails")
+        .innerHTML =
 
         detailItem(
             "Customer Name",
@@ -3217,15 +3502,15 @@ function renderCustomerDetails(r){
         );
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    ORDER
------------------------------------------------------------- */
+============================================================ */
 
 function renderOrderDetails(r){
 
-    document.getElementById(
-        "orderDetails"
-    ).innerHTML =
+    $("orderDetails")
+        .innerHTML =
 
         detailItem(
             "Order ID",
@@ -3235,6 +3520,15 @@ function renderOrderDetails(r){
             {
                 mono:true
             }
+        )
+
+        +
+
+        detailItem(
+            "Order Number",
+            escapeHTML(
+                r.orderNumber || "—"
+            )
         )
 
         +
@@ -3265,18 +3559,27 @@ function renderOrderDetails(r){
             escapeHTML(
                 r.venue || "—"
             )
+        )
+
+        +
+
+        detailItem(
+            "City",
+            escapeHTML(
+                r.city || "—"
+            )
         );
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    PAYMENT
------------------------------------------------------------- */
+============================================================ */
 
 function renderPaymentDetails(r){
 
-    document.getElementById(
-        "paymentDetails"
-    ).innerHTML =
+    $("paymentDetails")
+        .innerHTML =
 
         detailItem(
             "Payment ID",
@@ -3338,139 +3641,153 @@ function renderPaymentDetails(r){
         detailItem(
             "Original Payment",
             r.originalAmount !== ""
-                ? `<span class="money">${formatMoney(
-                    r.originalAmount,
-                    r.currency
-                )}</span>`
+                ? `
+                    <span class="money">
+                        ${formatMoney(
+                            r.originalAmount,
+                            r.currency
+                        )}
+                    </span>
+                `
                 : "—"
         );
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    REASON / NOTES
------------------------------------------------------------- */
+============================================================ */
 
 function renderReasonDetails(r){
 
-    const container =
-        document.getElementById(
-            "reasonDetails"
-        );
+    $("reasonDetails")
+        .innerHTML = `
 
-    container.innerHTML = `
+            <div style="margin-bottom:12px;">
 
-        <div style="margin-bottom:12px;">
+                <div class="detail-label">
+                    Refund Reason
+                </div>
 
-            <div class="detail-label">
-                Refund Reason
+                <div class="notes">
+                    ${escapeHTML(
+                        r.reason ||
+                        "No refund reason was recorded."
+                    )}
+                </div>
+
             </div>
 
-            <div class="notes">
-                ${escapeHTML(
-                    r.reason ||
-                    "No refund reason was recorded."
-                )}
+            <div>
+
+                <div class="detail-label">
+                    Internal Notes
+                </div>
+
+                <div class="notes">
+                    ${escapeHTML(
+                        r.notes ||
+                        "No internal notes were recorded."
+                    )}
+                </div>
+
             </div>
-
-        </div>
-
-        <div>
-
-            <div class="detail-label">
-                Internal Notes
-            </div>
-
-            <div class="notes">
-                ${escapeHTML(
-                    r.notes ||
-                    "No internal notes were recorded."
-                )}
-            </div>
-
-        </div>
-    `;
+        `;
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    FINANCIAL SUMMARY
------------------------------------------------------------- */
+============================================================ */
 
 function renderFinancialSummary(r){
 
-    const requested =
-        Number(r.amount);
-
-    const approved =
-        Number(r.approvedAmount);
-
-    const refunded =
-        Number(r.refundedAmount);
-
-    const original =
-        Number(r.originalAmount);
-
     const rows = [];
 
-    if(!Number.isNaN(original)){
+    if(
+        r.originalAmount !== ""
+    ){
+
         rows.push(`
             <div class="summary-row">
+
                 <span>
                     Original payment
                 </span>
+
                 <strong>
                     ${formatMoney(
-                        original,
+                        r.originalAmount,
                         r.currency
                     )}
                 </strong>
+
             </div>
         `);
     }
 
-    if(!Number.isNaN(requested)){
+    if(
+        r.amount !== ""
+    ){
+
         rows.push(`
             <div class="summary-row">
+
                 <span>
                     Requested refund
                 </span>
+
                 <strong>
                     ${formatMoney(
-                        requested,
+                        r.amount,
                         r.currency
                     )}
                 </strong>
+
             </div>
         `);
     }
 
-    if(!Number.isNaN(approved)){
+    if(
+        r.approvedAmount !== ""
+    ){
+
         rows.push(`
             <div class="summary-row">
+
                 <span>
                     Approved amount
                 </span>
+
                 <strong>
                     ${formatMoney(
-                        approved,
+                        r.approvedAmount,
                         r.currency
                     )}
                 </strong>
+
             </div>
         `);
     }
 
-    if(!Number.isNaN(refunded)){
+    if(
+        r.refundedAmount !== ""
+    ){
+
         rows.push(`
             <div class="summary-row total">
+
                 <span>
                     Refunded
                 </span>
+
                 <strong>
                     ${formatMoney(
-                        refunded,
+                        r.refundedAmount,
                         r.currency
                     )}
                 </strong>
+
             </div>
         `);
     }
@@ -3479,31 +3796,34 @@ function renderFinancialSummary(r){
 
         rows.push(`
             <div class="summary-row">
+
                 <span>
                     Financial data
                 </span>
+
                 <strong>
                     Not available
                 </strong>
+
             </div>
         `);
     }
 
-    document.getElementById(
-        "financialSummary"
-    ).innerHTML =
+    $("financialSummary")
+        .innerHTML =
         rows.join("");
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    TIMELINE
------------------------------------------------------------- */
+============================================================ */
 
 function timelineItem(
     title,
     date,
     description,
-    tone=""
+    type="default"
 ){
 
     if(!date){
@@ -3511,9 +3831,10 @@ function timelineItem(
     }
 
     return `
+
         <div class="timeline-item">
 
-            <div class="timeline-dot ${tone}">
+            <div class="timeline-dot ${type}">
             </div>
 
             <div class="timeline-content">
@@ -3530,9 +3851,13 @@ function timelineItem(
 
                 ${
                     description
-                        ? `<p>${escapeHTML(
-                            description
-                        )}</p>`
+                        ? `
+                            <p>
+                                ${escapeHTML(
+                                    description
+                                )}
+                            </p>
+                        `
                         : ""
                 }
 
@@ -3542,417 +3867,365 @@ function timelineItem(
     `;
 }
 
+
 function renderTimeline(r){
 
-    const normalized =
-        normalize(r.status);
+    const items = [];
 
-    let html = "";
+    if(r.requestedAt){
 
-    html +=
-        timelineItem(
-            "Refund requested",
-            r.requestedAt,
-            r.reason
-                ? `Reason: ${r.reason}`
-                : "Refund request recorded.",
-            "warning"
+        items.push(
+            timelineItem(
+                "Refund requested",
+                r.requestedAt,
+                "Refund request entered the platform.",
+                "default"
+            )
         );
+    }
 
-    html +=
-        timelineItem(
-            "Refund approved",
-            r.approvedAt,
-            r.processedBy
-                ? `Processed by ${r.processedBy}.`
-                : "Approval timestamp recorded.",
-            "success"
+    if(r.approvedAt){
+
+        items.push(
+            timelineItem(
+                "Refund approved",
+                r.approvedAt,
+                "The refund request was approved.",
+                "success"
+            )
         );
+    }
 
-    html +=
-        timelineItem(
-            "Refund processing",
-            r.processedAt,
-            "Refund processing timestamp recorded.",
-            ""
+    if(r.processedAt){
+
+        items.push(
+            timelineItem(
+                "Refund processing",
+                r.processedAt,
+                "Refund processing activity was recorded.",
+                "warning"
+            )
         );
+    }
 
-    html +=
-        timelineItem(
-            "Refund completed",
-            r.completedAt,
-            "Refund settlement timestamp recorded.",
-            "success"
+    if(r.completedAt){
+
+        items.push(
+            timelineItem(
+                "Refund completed",
+                r.completedAt,
+                "The refund completion timestamp was recorded.",
+                "success"
+            )
         );
+    }
 
-    if(
-        [
-            "rejected",
-            "failed",
-            "cancelled",
-            "canceled",
-            "declined"
-        ].includes(normalized)
-    ){
+    if(!items.length){
 
-        if(
-            !r.approvedAt &&
-            !r.completedAt
-        ){
+        $("timeline")
+            .innerHTML = `
 
-            html += `
-                <div class="timeline-item">
+                <div class="notice info">
 
-                    <div class="timeline-dot danger">
-                    </div>
+                    <strong>
+                        No timeline timestamps available
+                    </strong>
 
-                    <div class="timeline-content">
-
-                        <strong>
-                            Refund not completed
-                        </strong>
-
-                        <span>
-                            Current status
-                        </span>
-
-                        <p>
-                            The current refund status is
-                            ${escapeHTML(
-                                r.status
-                            )}.
-                        </p>
-
-                    </div>
+                    The refund record does not currently contain
+                    timestamp fields that can be displayed here.
 
                 </div>
             `;
-        }
-    }
-
-    if(!html){
-
-        html = `
-
-            <div class="timeline-item">
-
-                <div class="timeline-dot">
-                </div>
-
-                <div class="timeline-content">
-
-                    <strong>
-                        No timeline available
-                    </strong>
-
-                    <span>
-                        No timestamp fields were available.
-                    </span>
-
-                    <p>
-                        The refund record exists, but no
-                        processing timeline has been recorded
-                        in the fields available to this page.
-                    </p>
-
-                </div>
-
-            </div>
-        `;
-    }
-
-    document.getElementById(
-        "timeline"
-    ).innerHTML =
-        html;
-}
-
-/* ------------------------------------------------------------
-   REFERENCES
------------------------------------------------------------- */
-
-function renderReferences(r){
-
-    const refs = [
-
-        [
-            "Refund ID",
-            r.id
-        ],
-
-        [
-            "Order ID",
-            r.orderId
-        ],
-
-        [
-            "Payment ID",
-            r.paymentId
-        ],
-
-        [
-            "Customer ID",
-            r.userId
-        ],
-
-        [
-            "Event ID",
-            r.eventId
-        ],
-
-        [
-            "Transaction ID",
-            r.transactionId
-        ],
-
-        [
-            "Refund Reference",
-            r.reference
-        ],
-
-        [
-            "Receipt Number",
-            r.receiptNumber
-        ]
-
-    ].filter(
-        item =>
-            item[1] !== null &&
-            item[1] !== undefined &&
-            item[1] !== ""
-    );
-
-    if(!refs.length){
-
-        document.getElementById(
-            "references"
-        ).innerHTML = `
-
-            <div class="notice info">
-                No external references were recorded
-                on this refund.
-            </div>
-
-        `;
 
         return;
     }
 
-    document.getElementById(
-        "references"
-    ).innerHTML =
-        refs
-            .map(
-                ([label,value])=>`
-
-                    <div class="reference">
-
-                        <span>
-                            ${escapeHTML(label)}
-                        </span>
-
-                        <strong>
-                            ${escapeHTML(value)}
-                        </strong>
-
-                    </div>
-                `
-            )
-            .join("");
+    $("timeline")
+        .innerHTML =
+        items.join("");
 }
 
-/* ------------------------------------------------------------
-   EMPTY STATE
------------------------------------------------------------- */
+
+/* ============================================================
+   REFERENCES
+============================================================ */
+
+function referenceItem(
+    label,
+    value
+){
+
+    return `
+
+        <div class="reference">
+
+            <span>
+                ${escapeHTML(label)}
+            </span>
+
+            <strong>
+                ${escapeHTML(
+                    value || "—"
+                )}
+            </strong>
+
+        </div>
+    `;
+}
+
+
+function renderReferences(r){
+
+    const rows = [
+
+        referenceItem(
+            "Refund ID",
+            r.id
+        ),
+
+        referenceItem(
+            "Order ID",
+            r.orderId
+        ),
+
+        referenceItem(
+            "Payment ID",
+            r.paymentId
+        ),
+
+        referenceItem(
+            "Transaction ID",
+            r.transactionId
+        ),
+
+        referenceItem(
+            "Payment Reference",
+            r.reference
+        ),
+
+        referenceItem(
+            "Receipt Number",
+            r.receiptNumber
+        ),
+
+        referenceItem(
+            "Customer ID",
+            r.userId
+        ),
+
+        referenceItem(
+            "Event ID",
+            r.eventId
+        )
+
+    ];
+
+    $("referenceList")
+        .innerHTML =
+        rows.join("");
+}
+
+
+/* ============================================================
+   EMPTY / ERROR
+============================================================ */
 
 function showEmpty(
     title,
     message
 ){
 
-    document.getElementById(
-        "contentGrid"
-    ).style.display =
+    $("contentGrid")
+        .style.display =
         "none";
 
-    document.getElementById(
-        "statusCard"
-    ).style.display =
+    $("statusCard")
+        .style.display =
         "none";
 
-    document.getElementById(
-        "emptyPanel"
-    ).style.display =
+    $("emptyPanel")
+        .style.display =
         "block";
 
-    document.getElementById(
-        "emptyTitle"
-    ).textContent =
+    $("emptyTitle")
+        .textContent =
         title;
 
-    document.getElementById(
-        "emptyMessage"
-    ).textContent =
+    $("emptyMessage")
+        .textContent =
         message;
 }
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    REFRESH
------------------------------------------------------------- */
+============================================================ */
 
-document.getElementById(
-    "refreshBtn"
-).addEventListener(
-    "click",
-    async ()=>{
+async function refreshRefund(){
 
-        const button =
-            document.getElementById(
-                "refreshBtn"
-            );
+    const button =
+        $("refreshBtn");
 
-        button.disabled = true;
+    button.disabled =
+        true;
 
-        button.textContent =
-            "↻ Loading…";
-
-        try{
-
-            await loadRefund();
-
-            showToast(
-                "Refund details refreshed."
-            );
-
-        }catch(error){
-
-            console.error(error);
-
-            showToast(
-                "Unable to refresh refund details.",
-                true
-            );
-
-        }finally{
-
-            button.disabled = false;
-
-            button.textContent =
-                "↻ Refresh";
-        }
-    }
-);
-
-/* ------------------------------------------------------------
-   PRINT
------------------------------------------------------------- */
-
-document.getElementById(
-    "printBtn"
-).addEventListener(
-    "click",
-    ()=>{
-
-        if(!refundRecord){
-
-            showToast(
-                "No refund details are available to print.",
-                true
-            );
-
-            return;
-        }
-
-        window.print();
-    }
-);
-
-/* ------------------------------------------------------------
-   MOBILE MENU
------------------------------------------------------------- */
-
-document.getElementById(
-    "menuBtn"
-).addEventListener(
-    "click",
-    ()=>{
-        sidebar.classList.toggle(
-            "open"
-        );
-    }
-);
-
-/* ------------------------------------------------------------
-   AUTH STATE
------------------------------------------------------------- */
-
-supabaseClient.auth.onAuthStateChange(
-    (event,session)=>{
-
-        if(
-            event === "SIGNED_OUT" ||
-            !session
-        ){
-
-            window.location.href =
-                "../auth/login.html?error=session_expired";
-        }
-    }
-);
-
-/* ------------------------------------------------------------
-   INIT
------------------------------------------------------------- */
-
-async function init(){
+    button.textContent =
+        "↻ Loading…";
 
     try{
 
-        if(
-            !SUPABASE_URL ||
-            !SUPABASE_ANON_KEY
-        ){
-
-            throw new Error(
-                "Supabase configuration is missing."
-            );
-        }
-
-        const isAdmin =
-            await requireAdmin();
-
-        if(!isAdmin){
-            return;
-        }
-
         await loadRefund();
+
+        showToast(
+            "Refund details refreshed."
+        );
 
     }catch(error){
 
         console.error(
-            "Refund details initialization error:",
             error
         );
 
-        showEmpty(
-            "Unable to initialize",
-            error.message ||
-            "The refund details page could not be initialized."
-        );
-
         showToast(
-            error.message ||
-            "Unable to initialize refund details.",
+            "Unable to refresh refund details.",
             true
         );
 
     }finally{
 
-        hideLoading();
+        button.disabled =
+            false;
+
+        button.textContent =
+            "↻ Refresh";
     }
 }
 
-init();
+
+/* ============================================================
+   PRINT
+============================================================ */
+
+$("printBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if(!refundRecord){
+
+                showToast(
+                    "No refund details are available to print.",
+                    true
+                );
+
+                return;
+            }
+
+            window.print();
+        }
+    );
+
+
+/* ============================================================
+   REFRESH
+============================================================ */
+
+$("refreshBtn")
+    .addEventListener(
+        "click",
+        refreshRefund
+    );
+
+
+/* ============================================================
+   MOBILE MENU
+============================================================ */
+
+$("menuBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("sidebar")
+                .classList.toggle(
+                    "open"
+                );
+        }
+    );
+
+
+/* ============================================================
+   BOOT
+============================================================ */
+
+async function boot(){
+
+    try{
+
+        const allowed =
+            await verifyAdmin();
+
+        if(!allowed){
+            return;
+        }
+
+        await loadRefund();
+
+        $("securityGate")
+            .style.display =
+            "none";
+
+        $("app")
+            .style.display =
+            "block";
+
+    }catch(error){
+
+        console.error(
+            "Refund details boot error:",
+            error
+        );
+
+        /*
+         * Do not expose raw database errors on the security gate.
+         * The page already handles the known missing-refunds-table
+         * condition. Other failures get a safe message.
+         */
+
+        if(
+            $("emptyPanel")
+                .style.display !==
+            "block"
+        ){
+
+            $("securityMessage")
+                .textContent =
+                "The administrator area could not be securely initialized. Please sign in again.";
+
+            setTimeout(
+                () => {
+                    redirectLogin(
+                        "admin_session_error"
+                    );
+                },
+                1800
+            );
+
+            return;
+        }
+
+        $("securityGate")
+            .style.display =
+            "none";
+
+        $("app")
+            .style.display =
+            "block";
+    }
+}
+
+
+boot();
 </script>
 
 </body>

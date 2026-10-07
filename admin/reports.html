@@ -9,8 +9,15 @@
         content="width=device-width, initial-scale=1, viewport-fit=cover"
     >
 
-    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
-    <meta name="referrer" content="same-origin">
+    <meta
+        name="robots"
+        content="noindex,nofollow,noarchive,nosnippet"
+    >
+
+    <meta
+        name="referrer"
+        content="same-origin"
+    >
 
     <title>K-Tickets Admin — Reports</title>
 
@@ -21,15 +28,19 @@
             --bordo:#6C151E;
             --green:#0F3D3A;
             --cream:#F5DABF;
-            --white:#ffffff;
+
+            --white:#fff;
             --ink:#18211f;
             --muted:#6d7774;
-            --line:#e8e3dc;
+            --line:#e7e2dc;
             --soft:#f8f5f1;
+
             --success:#176b4d;
             --warning:#9a6811;
             --danger:#a72c35;
-            --shadow:0 18px 50px rgba(15,61,58,.08);
+            --blue:#315f83;
+
+            --shadow:0 18px 50px rgba(15,61,58,.07);
             --radius:18px;
         }
 
@@ -44,10 +55,19 @@
         }
 
         body{
-            font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            min-height:100vh;
+
             background:#f7f5f2;
             color:var(--ink);
-            min-height:100vh;
+
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
         }
 
         button,
@@ -60,83 +80,192 @@
             cursor:pointer;
         }
 
+        button:disabled{
+            opacity:.55;
+            cursor:not-allowed;
+        }
+
         a{
             color:inherit;
             text-decoration:none;
         }
 
-        .app{
-            min-height:100vh;
-            display:flex;
-        }
+        /* =====================================================
+           SECURITY GATE
+        ====================================================== */
 
-        /* SIDEBAR */
-        .sidebar{
-            width:270px;
+        .security-gate{
+            position:fixed;
+            inset:0;
+            z-index:99999;
+
+            display:grid;
+            place-items:center;
+
             background:var(--green);
             color:#fff;
+        }
+
+        .security-box{
+            width:min(440px,calc(100% - 30px));
+
+            padding:32px;
+
+            border:1px solid rgba(255,255,255,.12);
+            border-radius:22px;
+
+            background:rgba(255,255,255,.06);
+
+            text-align:center;
+        }
+
+        .security-icon{
+            width:58px;
+            height:58px;
+
+            margin:0 auto 17px;
+
+            display:grid;
+            place-items:center;
+
+            border-radius:17px;
+
+            background:var(--cream);
+            color:var(--green);
+
+            font-size:20px;
+            font-weight:900;
+        }
+
+        .security-box h2{
+            font-size:21px;
+        }
+
+        .security-box p{
+            margin-top:8px;
+
+            color:rgba(255,255,255,.68);
+
+            font-size:12px;
+            line-height:1.7;
+        }
+
+        .security-button{
+            margin-top:20px;
+
+            min-height:42px;
+
+            padding:0 16px;
+
+            border:0;
+            border-radius:10px;
+
+            background:var(--cream);
+            color:var(--green);
+
+            font-size:11px;
+            font-weight:900;
+        }
+
+        /* =====================================================
+           APP
+        ====================================================== */
+
+        .app{
+            display:none;
+            min-height:100vh;
+        }
+
+        /* =====================================================
+           SIDEBAR
+        ====================================================== */
+
+        .sidebar{
             position:fixed;
             inset:0 auto 0 0;
             z-index:100;
+
+            width:270px;
+
             display:flex;
             flex-direction:column;
+
             overflow-y:auto;
+
+            background:var(--green);
+            color:#fff;
+
+            transition:.25s ease;
         }
 
         .brand{
             padding:27px 23px 23px;
+
             border-bottom:1px solid rgba(255,255,255,.10);
         }
 
         .brand-mark{
             width:42px;
             height:42px;
-            border-radius:13px;
-            background:var(--cream);
-            color:var(--green);
+
+            margin-bottom:13px;
+
             display:grid;
             place-items:center;
+
+            border-radius:13px;
+
+            background:var(--cream);
+            color:var(--green);
+
             font-weight:900;
-            margin-bottom:13px;
         }
 
         .brand h1{
             font-size:17px;
             letter-spacing:.08em;
-            font-weight:900;
         }
 
         .brand p{
-            color:rgba(255,255,255,.58);
-            font-size:11px;
             margin-top:5px;
+
+            color:rgba(255,255,255,.55);
+
+            font-size:10px;
             letter-spacing:.08em;
             text-transform:uppercase;
         }
 
         .nav{
-            padding:17px 12px;
             flex:1;
+            padding:17px 12px;
         }
 
         .nav-label{
+            padding:12px 12px 8px;
+
             color:rgba(255,255,255,.38);
+
             font-size:10px;
-            font-weight:800;
+            font-weight:900;
             letter-spacing:.14em;
             text-transform:uppercase;
-            padding:12px 12px 8px;
         }
 
         .nav a{
             display:flex;
             align-items:center;
             gap:11px;
-            padding:11px 12px;
-            border-radius:11px;
+
             margin-bottom:3px;
+            padding:11px 12px;
+
+            border-radius:11px;
+
             color:rgba(255,255,255,.72);
+
             font-size:13px;
+
             transition:.18s ease;
         }
 
@@ -148,17 +277,20 @@
         .nav a.active{
             background:var(--bordo);
             color:#fff;
-            box-shadow:0 8px 22px rgba(108,21,30,.25);
+
+            box-shadow:
+                0 8px 22px rgba(108,21,30,.25);
         }
 
         .nav-icon{
             width:19px;
+            flex:none;
             text-align:center;
-            opacity:.9;
         }
 
         .sidebar-footer{
             padding:15px;
+
             border-top:1px solid rgba(255,255,255,.10);
         }
 
@@ -166,72 +298,115 @@
             display:flex;
             align-items:center;
             gap:10px;
+
             padding:9px;
+
             border-radius:12px;
+
             background:rgba(255,255,255,.055);
         }
 
         .avatar{
             width:35px;
             height:35px;
-            border-radius:50%;
+            flex:none;
+
             display:grid;
             place-items:center;
+
+            border-radius:50%;
+
             background:var(--cream);
             color:var(--green);
-            font-weight:900;
+
             font-size:12px;
-            flex:none;
+            font-weight:900;
         }
 
         .admin-mini strong{
             display:block;
-            font-size:12px;
-            white-space:nowrap;
+
+            max-width:170px;
+
             overflow:hidden;
             text-overflow:ellipsis;
-            max-width:170px;
+            white-space:nowrap;
+
+            font-size:12px;
         }
 
         .admin-mini span{
             display:block;
-            color:rgba(255,255,255,.48);
-            font-size:10px;
+
             margin-top:2px;
+
+            color:rgba(255,255,255,.48);
+
+            font-size:10px;
         }
 
-        /* MAIN */
+        /* =====================================================
+           MAIN
+        ====================================================== */
+
         .main{
             width:calc(100% - 270px);
             margin-left:270px;
+
             min-width:0;
         }
 
         .topbar{
-            min-height:78px;
-            background:#fff;
-            border-bottom:1px solid var(--line);
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:18px;
-            padding:15px 28px;
             position:sticky;
             top:0;
             z-index:60;
+
+            min-height:78px;
+
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+
+            gap:18px;
+
+            padding:15px 28px;
+
+            border-bottom:1px solid var(--line);
+
+            background:rgba(255,255,255,.96);
+
+            backdrop-filter:blur(14px);
         }
 
         .topbar-left{
             min-width:0;
+
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .menu-btn{
+            display:none;
+
+            width:42px;
+            height:42px;
+
+            border:1px solid var(--line);
+            border-radius:11px;
+
+            background:#fff;
         }
 
         .eyebrow{
+            margin-bottom:4px;
+
             color:var(--bordo);
+
             font-size:10px;
             font-weight:900;
-            text-transform:uppercase;
             letter-spacing:.14em;
-            margin-bottom:4px;
+            text-transform:uppercase;
         }
 
         .topbar h2{
@@ -245,15 +420,6 @@
             gap:10px;
         }
 
-        .menu-btn{
-            display:none;
-            width:42px;
-            height:42px;
-            border:1px solid var(--line);
-            background:#fff;
-            border-radius:11px;
-        }
-
         .admin-greeting{
             text-align:right;
         }
@@ -264,66 +430,95 @@
         }
 
         .admin-greeting span{
+            display:block;
+
+            margin-top:2px;
+
             color:var(--muted);
+
             font-size:10px;
         }
 
+        /* =====================================================
+           CONTENT
+        ====================================================== */
+
         .page{
-            padding:28px;
             max-width:1700px;
             margin:auto;
+
+            padding:28px;
         }
 
-        /* TOOLBAR */
+        /* =====================================================
+           TOOLBAR
+        ====================================================== */
+
         .toolbar{
-            background:#fff;
+            display:flex;
+            align-items:end;
+            flex-wrap:wrap;
+
+            gap:11px;
+
+            margin-bottom:20px;
+            padding:17px;
+
             border:1px solid var(--line);
             border-radius:var(--radius);
-            padding:17px;
-            display:flex;
-            flex-wrap:wrap;
-            align-items:end;
-            gap:12px;
+
+            background:#fff;
+
             box-shadow:var(--shadow);
-            margin-bottom:20px;
         }
 
         .field{
-            min-width:150px;
             flex:1;
+            min-width:145px;
         }
 
-        .field.search-field{
+        .field.search{
+            flex:1.6;
             min-width:230px;
-            flex:1.5;
         }
 
         .field label{
             display:block;
-            font-size:10px;
-            font-weight:900;
-            text-transform:uppercase;
-            letter-spacing:.09em;
-            color:var(--muted);
+
             margin-bottom:7px;
+
+            color:var(--muted);
+
+            font-size:9px;
+            font-weight:900;
+            letter-spacing:.09em;
+            text-transform:uppercase;
         }
 
         .field input,
         .field select{
             width:100%;
             height:42px;
-            border:1px solid #ddd8d0;
-            background:#fff;
-            border-radius:10px;
+
             padding:0 12px;
-            color:var(--ink);
+
+            border:1px solid #ddd8d0;
+            border-radius:10px;
+
             outline:none;
+
+            background:#fff;
+            color:var(--ink);
+
+            font-size:11px;
         }
 
         .field input:focus,
         .field select:focus{
             border-color:var(--green);
-            box-shadow:0 0 0 3px rgba(15,61,58,.08);
+
+            box-shadow:
+                0 0 0 3px rgba(15,61,58,.08);
         }
 
         .actions{
@@ -332,17 +527,20 @@
         }
 
         .btn{
-            border:0;
             min-height:42px;
-            padding:0 15px;
-            border-radius:10px;
-            font-weight:800;
-            font-size:12px;
+
             display:inline-flex;
             align-items:center;
             justify-content:center;
             gap:7px;
-            transition:.18s ease;
+
+            padding:0 15px;
+
+            border:0;
+            border-radius:10px;
+
+            font-size:11px;
+            font-weight:900;
         }
 
         .btn-primary{
@@ -350,197 +548,267 @@
             color:#fff;
         }
 
-        .btn-primary:hover{
-            transform:translateY(-1px);
-        }
-
         .btn-soft{
-            background:#f1eeea;
+            background:#efebe6;
             color:var(--green);
         }
 
-        .btn-danger{
-            background:#f9e9e9;
-            color:var(--danger);
-        }
+        /* =====================================================
+           STATS
+        ====================================================== */
 
-        /* KPI */
         .stats{
             display:grid;
             grid-template-columns:repeat(5,minmax(0,1fr));
             gap:14px;
+
             margin-bottom:20px;
         }
 
         .stat{
-            background:#fff;
+            min-width:0;
+
+            padding:18px;
+
             border:1px solid var(--line);
             border-radius:var(--radius);
-            padding:18px;
+
+            background:#fff;
+
             box-shadow:var(--shadow);
-            min-width:0;
         }
 
         .stat-top{
             display:flex;
-            justify-content:space-between;
-            gap:10px;
             align-items:center;
+            justify-content:space-between;
+
+            gap:10px;
         }
 
         .stat-label{
             color:var(--muted);
-            font-size:11px;
-            font-weight:800;
-            text-transform:uppercase;
+
+            font-size:9px;
+            font-weight:900;
+
             letter-spacing:.08em;
+            text-transform:uppercase;
         }
 
         .stat-icon{
             width:34px;
             height:34px;
-            border-radius:10px;
+
             display:grid;
             place-items:center;
+
+            border-radius:10px;
+
             background:#f4ebe6;
             color:var(--bordo);
-            font-size:14px;
+
+            font-size:13px;
         }
 
-        .stat strong{
-            display:block;
-            font-size:25px;
+        .stat-value{
             margin-top:13px;
+
+            font-size:25px;
+            font-weight:900;
+
             letter-spacing:-.04em;
+
+            word-break:break-word;
         }
 
-        .stat small{
-            display:block;
-            color:var(--muted);
+        .stat-note{
             margin-top:4px;
-            font-size:10px;
+
+            color:var(--muted);
+
+            font-size:9px;
         }
 
-        /* REPORT GRID */
+        /* =====================================================
+           PANELS
+        ====================================================== */
+
         .report-grid{
             display:grid;
             grid-template-columns:1.2fr .8fr;
+
             gap:20px;
+
             margin-bottom:20px;
         }
 
         .panel{
-            background:#fff;
+            min-width:0;
+
             border:1px solid var(--line);
             border-radius:var(--radius);
+
+            background:#fff;
+
             box-shadow:var(--shadow);
-            min-width:0;
+
+            overflow:hidden;
         }
 
         .panel-header{
-            padding:19px 20px;
-            border-bottom:1px solid var(--line);
             display:flex;
             align-items:center;
             justify-content:space-between;
+
             gap:15px;
+
+            padding:18px 20px;
+
+            border-bottom:1px solid var(--line);
         }
 
         .panel-title{
-            font-size:14px;
+            font-size:13px;
             font-weight:900;
         }
 
         .panel-subtitle{
-            color:var(--muted);
-            font-size:10px;
             margin-top:4px;
+
+            color:var(--muted);
+
+            font-size:9px;
+            line-height:1.5;
         }
 
         .panel-body{
             padding:20px;
         }
 
+        .pill{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+
+            min-height:24px;
+
+            padding:0 8px;
+
+            border-radius:999px;
+
+            background:#efebe6;
+            color:#5d6663;
+
+            font-size:8px;
+            font-weight:900;
+
+            white-space:nowrap;
+        }
+
+        /* =====================================================
+           SALES CHART
+        ====================================================== */
+
         .chart{
-            min-height:280px;
-            display:flex;
-            flex-direction:column;
-            justify-content:flex-end;
+            min-height:260px;
         }
 
         .bars{
             height:215px;
+
             display:flex;
             align-items:flex-end;
-            gap:9px;
+
+            gap:8px;
+
+            padding:0 4px;
+
             border-bottom:1px solid var(--line);
-            padding:0 5px;
         }
 
         .bar-item{
+            position:relative;
+
             flex:1;
             height:100%;
+
             min-width:0;
+
             display:flex;
             align-items:flex-end;
             justify-content:center;
-            position:relative;
         }
 
         .bar{
-            width:72%;
-            max-width:48px;
+            width:min(70%,46px);
             min-height:3px;
-            background:var(--green);
+
             border-radius:7px 7px 0 0;
-            transition:height .3s ease;
+
+            background:var(--green);
+
+            transition:height .25s ease;
         }
 
         .bar-label{
             position:absolute;
-            bottom:-24px;
+            bottom:-23px;
+
             color:var(--muted);
-            font-size:9px;
+
+            font-size:8px;
+
             white-space:nowrap;
         }
 
         .bar-value{
             position:absolute;
-            bottom:calc(var(--bar-height) + 5px);
-            font-size:8px;
-            font-weight:800;
+            bottom:calc(var(--height) + 5px);
+
             color:var(--green);
+
+            font-size:7px;
+            font-weight:900;
+
             white-space:nowrap;
         }
 
         .empty-chart{
-            min-height:215px;
+            width:100%;
+            height:215px;
+
             display:grid;
             place-items:center;
+
             color:var(--muted);
-            font-size:12px;
-            border-bottom:1px solid var(--line);
+
+            font-size:10px;
         }
 
+        /* =====================================================
+           PAYMENT BREAKDOWN
+        ====================================================== */
+
         .breakdown{
-            display:flex;
-            flex-direction:column;
-            gap:13px;
+            display:grid;
+            gap:15px;
         }
 
         .breakdown-row{
             display:grid;
             grid-template-columns:minmax(100px,1fr) auto;
-            gap:15px;
-            align-items:center;
+
+            gap:12px;
         }
 
         .breakdown-name{
-            font-size:12px;
-            font-weight:800;
             overflow:hidden;
             text-overflow:ellipsis;
             white-space:nowrap;
+
+            font-size:11px;
+            font-weight:800;
         }
 
         .breakdown-right{
@@ -549,67 +817,90 @@
 
         .breakdown-right strong{
             display:block;
-            font-size:12px;
+            font-size:11px;
         }
 
         .breakdown-right span{
             display:block;
-            color:var(--muted);
-            font-size:9px;
+
             margin-top:2px;
+
+            color:var(--muted);
+
+            font-size:8px;
         }
 
         .progress{
             grid-column:1 / -1;
+
             height:6px;
-            border-radius:999px;
-            background:#eeeae5;
+
+            margin-top:-5px;
+
             overflow:hidden;
-            margin-top:-6px;
+
+            border-radius:999px;
+
+            background:#eeeae5;
         }
 
         .progress span{
             display:block;
+
             height:100%;
-            width:0;
-            background:var(--bordo);
+
             border-radius:inherit;
+
+            background:var(--bordo);
         }
 
-        /* TABLE */
-        .table-panel{
-            overflow:hidden;
-        }
+        /* =====================================================
+           TABLE
+        ====================================================== */
 
         .table-wrap{
-            overflow-x:auto;
             width:100%;
+            overflow-x:auto;
         }
 
         table{
             width:100%;
+            min-width:950px;
+
             border-collapse:collapse;
-            min-width:900px;
         }
 
         th{
-            text-align:left;
-            background:#fbfaf8;
-            color:var(--muted);
-            font-size:9px;
-            font-weight:900;
-            text-transform:uppercase;
-            letter-spacing:.09em;
             padding:12px 18px;
+
             border-bottom:1px solid var(--line);
+
+            background:#fbfaf8;
+
+            color:var(--muted);
+
+            font-size:8px;
+            font-weight:900;
+
+            letter-spacing:.09em;
+            text-align:left;
+            text-transform:uppercase;
+
             white-space:nowrap;
         }
 
         td{
             padding:14px 18px;
+
             border-bottom:1px solid #efebe6;
-            font-size:12px;
+
+            font-size:11px;
+
             vertical-align:middle;
+        }
+
+        tbody tr{
+            cursor:pointer;
         }
 
         tbody tr:hover{
@@ -619,73 +910,71 @@
         .event-cell strong,
         .merchant-cell strong{
             display:block;
-            font-size:12px;
+
+            font-size:11px;
         }
 
         .event-cell span,
         .merchant-cell span{
             display:block;
-            color:var(--muted);
-            font-size:9px;
+
             margin-top:3px;
+
+            color:var(--muted);
+
+            font-size:8px;
         }
 
         .amount{
             font-weight:900;
         }
 
-        .pill{
+        .status{
             display:inline-flex;
             align-items:center;
-            padding:5px 8px;
+
+            min-height:23px;
+
+            padding:0 8px;
+
             border-radius:999px;
-            font-size:9px;
+
+            font-size:8px;
             font-weight:900;
-            text-transform:uppercase;
-            letter-spacing:.04em;
-            white-space:nowrap;
         }
 
-        .pill.success{
-            background:#e5f3ec;
+        .status.paid{
+            background:#e6f3ec;
             color:var(--success);
         }
 
-        .pill.pending{
+        .status.pending{
             background:#f9efd7;
             color:var(--warning);
         }
 
-        .pill.failed{
-            background:#f9e4e6;
+        .status.failed,
+        .status.cancelled{
+            background:#f8e5e7;
             color:var(--danger);
         }
 
-        .pill.neutral{
+        .status.neutral{
             background:#eeeae5;
-            color:#59615f;
+            color:#5e6764;
         }
 
-        .empty{
-            padding:45px 20px;
-            text-align:center;
-            color:var(--muted);
-            font-size:12px;
-        }
+        /* =====================================================
+           MOBILE CARDS
+        ====================================================== */
 
-        .empty strong{
-            display:block;
-            color:var(--ink);
-            margin-bottom:5px;
-        }
-
-        /* MOBILE CARDS */
         .mobile-list{
             display:none;
         }
 
         .report-card{
             padding:16px;
+
             border-bottom:1px solid var(--line);
         }
 
@@ -695,57 +984,101 @@
 
         .report-card-top{
             display:flex;
+            align-items:flex-start;
             justify-content:space-between;
+
             gap:10px;
         }
 
         .report-card strong{
-            font-size:13px;
+            font-size:12px;
         }
 
         .report-card small{
-            color:var(--muted);
             display:block;
-            font-size:10px;
+
             margin-top:3px;
+
+            color:var(--muted);
+
+            font-size:9px;
         }
 
         .report-card-grid{
             display:grid;
             grid-template-columns:1fr 1fr;
-            gap:11px;
-            margin-top:14px;
+
+            gap:9px;
+
+            margin-top:13px;
         }
 
         .mini-stat{
-            background:#faf8f5;
-            border-radius:10px;
             padding:10px;
+
+            border-radius:10px;
+
+            background:#faf8f5;
         }
 
         .mini-stat span{
             display:block;
+
             color:var(--muted);
-            font-size:9px;
+
+            font-size:8px;
+            font-weight:900;
             text-transform:uppercase;
-            font-weight:800;
         }
 
         .mini-stat strong{
             display:block;
-            font-size:12px;
+
             margin-top:4px;
+
+            font-size:11px;
         }
 
-        /* DRAWER */
+        /* =====================================================
+           EMPTY
+        ====================================================== */
+
+        .empty{
+            padding:45px 20px;
+
+            text-align:center;
+
+            color:var(--muted);
+
+            font-size:10px;
+            line-height:1.6;
+        }
+
+        .empty strong{
+            display:block;
+
+            margin-bottom:5px;
+
+            color:var(--ink);
+
+            font-size:12px;
+        }
+
+        /* =====================================================
+           DRAWER
+        ====================================================== */
+
         .drawer-overlay{
             position:fixed;
             inset:0;
+            z-index:200;
+
             background:rgba(0,0,0,.35);
+
             opacity:0;
             pointer-events:none;
+
             transition:.2s;
-            z-index:200;
         }
 
         .drawer-overlay.open{
@@ -757,15 +1090,21 @@
             position:fixed;
             top:0;
             right:0;
+            z-index:201;
+
             width:min(500px,100%);
             height:100vh;
-            background:#fff;
-            z-index:201;
-            transform:translateX(100%);
-            transition:.25s ease;
+
             display:flex;
             flex-direction:column;
+
+            background:#fff;
+
             box-shadow:-20px 0 60px rgba(0,0,0,.15);
+
+            transform:translateX(100%);
+
+            transition:.25s ease;
         }
 
         .drawer.open{
@@ -773,12 +1112,15 @@
         }
 
         .drawer-header{
-            padding:20px;
-            border-bottom:1px solid var(--line);
             display:flex;
             align-items:center;
             justify-content:space-between;
+
             gap:15px;
+
+            padding:20px;
+
+            border-bottom:1px solid var(--line);
         }
 
         .drawer-header h3{
@@ -788,134 +1130,135 @@
         .drawer-close{
             width:36px;
             height:36px;
+
             border:1px solid var(--line);
-            background:#fff;
             border-radius:10px;
+
+            background:#fff;
         }
 
         .drawer-body{
-            padding:20px;
-            overflow-y:auto;
             flex:1;
+
+            padding:20px;
+
+            overflow-y:auto;
         }
 
         .detail-list{
-            display:flex;
-            flex-direction:column;
+            display:grid;
             gap:12px;
         }
 
         .detail{
             display:grid;
-            grid-template-columns:135px 1fr;
+            grid-template-columns:140px 1fr;
+
             gap:12px;
+
             padding-bottom:11px;
+
             border-bottom:1px solid #efebe6;
         }
 
         .detail label{
             color:var(--muted);
-            font-size:10px;
-            font-weight:800;
+
+            font-size:9px;
+            font-weight:900;
+            text-transform:uppercase;
         }
 
         .detail span{
-            font-size:11px;
+            font-size:10px;
+
             word-break:break-word;
         }
 
-        /* SECURITY */
+        /* =====================================================
+           SECURITY NOTICE
+        ====================================================== */
+
         .security{
-            margin-top:20px;
-            background:#edf5f2;
-            border:1px solid #d7e8e3;
-            border-radius:var(--radius);
-            padding:15px 17px;
             display:flex;
             align-items:flex-start;
+
             gap:12px;
+
+            margin-top:20px;
+            padding:15px 17px;
+
+            border:1px solid #d7e8e3;
+            border-radius:var(--radius);
+
+            background:#edf5f2;
         }
 
         .security-icon{
             width:30px;
             height:30px;
-            border-radius:9px;
-            background:var(--green);
-            color:#fff;
+            flex:none;
+
             display:grid;
             place-items:center;
-            flex:none;
+
+            border-radius:9px;
+
+            background:var(--green);
+            color:#fff;
+
             font-size:12px;
         }
 
         .security strong{
             display:block;
-            font-size:11px;
+
+            font-size:10px;
         }
 
         .security p{
-            color:#53615e;
-            font-size:10px;
-            line-height:1.55;
             margin-top:3px;
+
+            color:#53615e;
+
+            font-size:9px;
+            line-height:1.6;
         }
 
-        .loading{
-            position:fixed;
-            inset:0;
-            z-index:999;
-            background:rgba(247,245,242,.88);
-            display:grid;
-            place-items:center;
-        }
-
-        .loading.hidden{
-            display:none;
-        }
-
-        .loading-box{
-            background:#fff;
-            border:1px solid var(--line);
-            border-radius:15px;
-            padding:20px 25px;
-            box-shadow:var(--shadow);
-            text-align:center;
-        }
-
-        .spinner{
-            width:28px;
-            height:28px;
-            border:3px solid #e5e0da;
-            border-top-color:var(--green);
-            border-radius:50%;
-            animation:spin .8s linear infinite;
-            margin:0 auto 10px;
-        }
-
-        @keyframes spin{
-            to{transform:rotate(360deg)}
-        }
+        /* =====================================================
+           TOAST
+        ====================================================== */
 
         .toast{
             position:fixed;
             right:20px;
             bottom:20px;
+            z-index:1000;
+
+            max-width:360px;
+
+            padding:12px 15px;
+
+            border-radius:11px;
+
             background:var(--green);
             color:#fff;
-            padding:12px 15px;
-            border-radius:11px;
-            font-size:11px;
+
+            font-size:10px;
             font-weight:800;
+
             opacity:0;
-            transform:translateY(12px);
             pointer-events:none;
+
+            transform:translateY(12px);
+
             transition:.2s;
-            z-index:1000;
-            max-width:340px;
         }
 
         .toast.show{
             opacity:1;
+            pointer-events:auto;
+
             transform:translateY(0);
         }
 
@@ -923,10 +1266,15 @@
             background:var(--danger);
         }
 
-        /* RESPONSIVE */
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
         @media(max-width:1200px){
+
             .stats{
-                grid-template-columns:repeat(3,minmax(0,1fr));
+                grid-template-columns:
+                    repeat(3,minmax(0,1fr));
             }
 
             .report-grid{
@@ -935,9 +1283,9 @@
         }
 
         @media(max-width:900px){
+
             .sidebar{
                 transform:translateX(-100%);
-                transition:.25s ease;
             }
 
             .sidebar.open{
@@ -958,16 +1306,17 @@
                 padding:13px 16px;
             }
 
-            .page{
-                padding:18px 14px;
-            }
-
             .admin-greeting{
                 display:none;
+            }
+
+            .page{
+                padding:18px 14px;
             }
         }
 
         @media(max-width:700px){
+
             .stats{
                 grid-template-columns:1fr 1fr;
             }
@@ -977,7 +1326,7 @@
             }
 
             .field,
-            .field.search-field{
+            .field.search{
                 min-width:100%;
             }
 
@@ -997,32 +1346,13 @@
                 display:block;
             }
 
-            .panel-header{
-                padding:16px;
-            }
-
             .panel-body{
                 padding:16px;
-            }
-
-            .chart{
-                min-height:250px;
-            }
-
-            .bars{
-                height:190px;
-            }
-
-            .stat{
-                padding:15px;
-            }
-
-            .stat strong{
-                font-size:21px;
             }
         }
 
         @media(max-width:430px){
+
             .stats{
                 grid-template-columns:1fr;
             }
@@ -1035,9 +1365,32 @@
                 grid-template-columns:1fr;
                 gap:4px;
             }
+        }
 
-            .security{
-                padding:13px;
+        @media print{
+
+            .sidebar,
+            .topbar,
+            .toolbar,
+            .security,
+            .drawer,
+            .drawer-overlay,
+            .toast{
+                display:none !important;
+            }
+
+            .main{
+                width:100%;
+                margin:0;
+            }
+
+            .page{
+                padding:0;
+            }
+
+            .panel,
+            .stat{
+                box-shadow:none;
             }
         }
     </style>
@@ -1045,39 +1398,100 @@
 
 <body>
 
-<div class="loading" id="loading">
-    <div class="loading-box">
-        <div class="spinner"></div>
-        <strong>Securing admin session…</strong>
+<!-- =========================================================
+     SECURITY GATE
+========================================================== -->
+
+<div
+    class="security-gate"
+    id="securityGate"
+>
+
+    <div class="security-box">
+
+        <div class="security-icon">
+            K
+        </div>
+
+        <h2>
+            Securing Admin Session
+        </h2>
+
+        <p id="securityMessage">
+            Verifying authentication and administrator privileges…
+        </p>
+
+        <button
+            class="security-button"
+            id="loginButton"
+            style="display:none;"
+        >
+            Return to Login
+        </button>
+
     </div>
+
 </div>
 
-<div class="app">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
+<!-- =========================================================
+     APP
+========================================================== -->
+
+<div
+    class="app"
+    id="app"
+>
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
 
         <div class="brand">
-            <div class="brand-mark">K</div>
-            <h1>K-TICKETS</h1>
-            <p>Administration CMS</p>
+
+            <div class="brand-mark">
+                K
+            </div>
+
+            <h1>
+                K-TICKETS
+            </h1>
+
+            <p>
+                Administration CMS
+            </p>
+
         </div>
+
 
         <nav class="nav">
 
-            <div class="nav-label">Overview</div>
+            <div class="nav-label">
+                Overview
+            </div>
 
             <a href="./dashboard.html">
                 <span class="nav-icon">⌂</span>
                 Dashboard
             </a>
 
-            <a href="./reports.html" class="active">
+            <a
+                href="./reports.html"
+                class="active"
+            >
                 <span class="nav-icon">▥</span>
                 Reports
             </a>
 
-            <div class="nav-label">Management</div>
+
+            <div class="nav-label">
+                Management
+            </div>
 
             <a href="./events.html">
                 <span class="nav-icon">◫</span>
@@ -1099,7 +1513,15 @@
                 Orders
             </a>
 
-            <div class="nav-label">Finance</div>
+            <a href="./tickets.html">
+                <span class="nav-icon">▧</span>
+                Tickets
+            </a>
+
+
+            <div class="nav-label">
+                Finance
+            </div>
 
             <a href="./payments.html">
                 <span class="nav-icon">¤</span>
@@ -1126,8 +1548,6 @@
                 Refunds
             </a>
 
-            <div class="nav-label">Platform</div>
-
             <a href="./fees.html">
                 <span class="nav-icon">%</span>
                 Fees
@@ -1143,9 +1563,19 @@
                 QR Scans
             </a>
 
+
+            <div class="nav-label">
+                Security
+            </div>
+
             <a href="./audit-logs.html">
                 <span class="nav-icon">◷</span>
                 Audit Logs
+            </a>
+
+            <a href="./notifications.html">
+                <span class="nav-icon">◇</span>
+                Notifications
             </a>
 
             <a href="./settings.html">
@@ -1155,24 +1585,47 @@
 
         </nav>
 
+
         <div class="sidebar-footer">
+
             <div class="admin-mini">
-                <div class="avatar" id="sideAvatar">A</div>
-                <div>
-                    <strong id="sideName">Administrator</strong>
-                    <span>Administrator</span>
+
+                <div
+                    class="avatar"
+                    id="sideAvatar"
+                >
+                    A
                 </div>
+
+                <div>
+
+                    <strong id="sideName">
+                        Administrator
+                    </strong>
+
+                    <span>
+                        Platform Administrator
+                    </span>
+
+                </div>
+
             </div>
+
         </div>
 
     </aside>
 
-    <!-- MAIN -->
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
     <main class="main">
 
         <header class="topbar">
 
             <div class="topbar-left">
+
                 <button
                     class="menu-btn"
                     id="menuBtn"
@@ -1181,157 +1634,394 @@
                     ☰
                 </button>
 
-                <div style="display:inline-block;margin-left:10px;">
-                    <div class="eyebrow">K-Tickets Intelligence</div>
-                    <h2>Reports</h2>
+                <div>
+
+                    <div class="eyebrow">
+                        K-Tickets Intelligence
+                    </div>
+
+                    <h2>
+                        Reports
+                    </h2>
+
                 </div>
+
             </div>
 
+
             <div class="topbar-right">
+
                 <div class="admin-greeting">
-                    <strong id="adminName">Administrator</strong>
-                    <span id="greeting">Admin control centre</span>
+
+                    <strong id="adminName">
+                        Administrator
+                    </strong>
+
+                    <span id="greeting">
+                        Admin control centre
+                    </span>
+
                 </div>
 
-                <div class="avatar" id="topAvatar">A</div>
+                <div
+                    class="avatar"
+                    id="topAvatar"
+                >
+                    A
+                </div>
+
             </div>
 
         </header>
 
+
         <section class="page">
 
-            <!-- FILTERS -->
+            <!-- =================================================
+                 FILTERS
+            ================================================== -->
+
             <div class="toolbar">
 
-                <div class="field search-field">
-                    <label>Search</label>
+                <div class="field search">
+
+                    <label>
+                        Search
+                    </label>
+
                     <input
                         type="search"
                         id="search"
-                        placeholder="Search event, merchant or venue..."
+                        placeholder="Search event, merchant, venue or order…"
+                        autocomplete="off"
                     >
+
                 </div>
 
+
                 <div class="field">
-                    <label>Period</label>
+
+                    <label>
+                        Period
+                    </label>
+
                     <select id="period">
-                        <option value="all">All time</option>
-                        <option value="today">Today</option>
-                        <option value="7">Last 7 days</option>
-                        <option value="30" selected>Last 30 days</option>
-                        <option value="90">Last 90 days</option>
-                        <option value="365">Last 12 months</option>
+
+                        <option value="all">
+                            All time
+                        </option>
+
+                        <option value="today">
+                            Today
+                        </option>
+
+                        <option value="7">
+                            Last 7 days
+                        </option>
+
+                        <option
+                            value="30"
+                            selected
+                        >
+                            Last 30 days
+                        </option>
+
+                        <option value="90">
+                            Last 90 days
+                        </option>
+
+                        <option value="365">
+                            Last 12 months
+                        </option>
+
                     </select>
+
                 </div>
 
+
                 <div class="field">
-                    <label>Status</label>
+
+                    <label>
+                        Order Status
+                    </label>
+
                     <select id="status">
-                        <option value="all">All statuses</option>
-                        <option value="paid">Paid / Completed</option>
-                        <option value="pending">Pending</option>
-                        <option value="failed">Failed</option>
-                        <option value="cancelled">Cancelled</option>
-                        <option value="refunded">Refunded</option>
+
+                        <option value="all">
+                            All statuses
+                        </option>
+
+                        <option value="paid">
+                            Paid
+                        </option>
+
+                        <option value="pending">
+                            Pending
+                        </option>
+
+                        <option value="failed">
+                            Failed
+                        </option>
+
+                        <option value="cancelled">
+                            Cancelled
+                        </option>
+
+                        <option value="refunded">
+                            Refunded
+                        </option>
+
                     </select>
+
                 </div>
 
+
                 <div class="field">
-                    <label>Payment</label>
+
+                    <label>
+                        Payment Method
+                    </label>
+
                     <select id="paymentMethod">
-                        <option value="all">All methods</option>
-                        <option value="mpesa">M-Pesa</option>
-                        <option value="wamd">WAMD</option>
-                        <option value="other">Other</option>
+
+                        <option value="all">
+                            All methods
+                        </option>
+
+                        <option value="mpesa">
+                            M-Pesa
+                        </option>
+
+                        <option value="wamd">
+                            WAMD
+                        </option>
+
+                        <option value="other">
+                            Other / Unspecified
+                        </option>
+
                     </select>
+
                 </div>
+
 
                 <div class="actions">
-                    <button class="btn btn-primary" id="refreshBtn">
+
+                    <button
+                        class="btn btn-primary"
+                        id="refreshBtn"
+                    >
                         ↻ Refresh
                     </button>
 
-                    <button class="btn btn-soft" id="csvBtn">
+                    <button
+                        class="btn btn-soft"
+                        id="csvBtn"
+                    >
                         ↓ CSV
                     </button>
+
                 </div>
 
             </div>
 
-            <!-- KPI -->
+
+            <!-- =================================================
+                 KPI
+            ================================================== -->
+
             <div class="stats">
 
-                <div class="stat">
-                    <div class="stat-top">
-                        <span class="stat-label">Orders</span>
-                        <span class="stat-icon">▤</span>
-                    </div>
-                    <strong id="ordersCount">0</strong>
-                    <small id="ordersSub">No report data</small>
-                </div>
+                <article class="stat">
 
-                <div class="stat">
                     <div class="stat-top">
-                        <span class="stat-label">Tickets</span>
-                        <span class="stat-icon">🎟</span>
-                    </div>
-                    <strong id="ticketsCount">0</strong>
-                    <small>Successful ticket sales</small>
-                </div>
 
-                <div class="stat">
-                    <div class="stat-top">
-                        <span class="stat-label">Gross Revenue</span>
-                        <span class="stat-icon">¤</span>
-                    </div>
-                    <strong id="grossRevenue">0.00</strong>
-                    <small id="revenueCurrency">Currency from DB</small>
-                </div>
+                        <span class="stat-label">
+                            Orders
+                        </span>
 
-                <div class="stat">
-                    <div class="stat-top">
-                        <span class="stat-label">Service Fees</span>
-                        <span class="stat-icon">%</span>
-                    </div>
-                    <strong id="serviceFees">0.00</strong>
-                    <small>Platform service fees</small>
-                </div>
+                        <span class="stat-icon">
+                            ▤
+                        </span>
 
-                <div class="stat">
-                    <div class="stat-top">
-                        <span class="stat-label">Net Merchant</span>
-                        <span class="stat-icon">↗</span>
                     </div>
-                    <strong id="netRevenue">0.00</strong>
-                    <small>Gross less platform fees</small>
-                </div>
+
+                    <div
+                        class="stat-value"
+                        id="ordersCount"
+                    >
+                        0
+                    </div>
+
+                    <div
+                        class="stat-note"
+                        id="ordersSub"
+                    >
+                        No report data
+                    </div>
+
+                </article>
+
+
+                <article class="stat">
+
+                    <div class="stat-top">
+
+                        <span class="stat-label">
+                            Tickets
+                        </span>
+
+                        <span class="stat-icon">
+                            🎟
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="ticketsCount"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-note">
+                        From successful order items
+                    </div>
+
+                </article>
+
+
+                <article class="stat">
+
+                    <div class="stat-top">
+
+                        <span class="stat-label">
+                            Gross Revenue
+                        </span>
+
+                        <span class="stat-icon">
+                            ¤
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="grossRevenue"
+                    >
+                        —
+                    </div>
+
+                    <div
+                        class="stat-note"
+                        id="revenueCurrency"
+                    >
+                        No paid sales
+                    </div>
+
+                </article>
+
+
+                <article class="stat">
+
+                    <div class="stat-top">
+
+                        <span class="stat-label">
+                            Service Fees
+                        </span>
+
+                        <span class="stat-icon">
+                            %
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="serviceFees"
+                    >
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        Snapshot from paid orders
+                    </div>
+
+                </article>
+
+
+                <article class="stat">
+
+                    <div class="stat-top">
+
+                        <span class="stat-label">
+                            Net Merchant
+                        </span>
+
+                        <span class="stat-icon">
+                            ↗
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="netRevenue"
+                    >
+                        —
+                    </div>
+
+                    <div class="stat-note">
+                        Gross less service fees
+                    </div>
+
+                </article>
 
             </div>
 
-            <!-- REPORT VISUALS -->
+
+            <!-- =================================================
+                 REPORT VISUALS
+            ================================================== -->
+
             <div class="report-grid">
 
                 <!-- SALES TREND -->
+
                 <section class="panel">
 
                     <div class="panel-header">
+
                         <div>
-                            <div class="panel-title">Sales Trend</div>
-                            <div class="panel-subtitle">
-                                Revenue movement across the selected reporting period
+
+                            <div class="panel-title">
+                                Sales Trend
                             </div>
+
+                            <div class="panel-subtitle">
+                                Paid order revenue across the selected period
+                            </div>
+
                         </div>
 
-                        <span class="pill neutral" id="trendRange">
+                        <span
+                            class="pill"
+                            id="trendRange"
+                        >
                             Last 30 days
                         </span>
+
                     </div>
 
                     <div class="panel-body">
 
                         <div class="chart">
 
-                            <div id="bars" class="bars"></div>
+                            <div
+                                class="bars"
+                                id="bars"
+                            >
+                            </div>
 
                         </div>
 
@@ -1339,33 +2029,33 @@
 
                 </section>
 
+
                 <!-- PAYMENT BREAKDOWN -->
+
                 <section class="panel">
 
                     <div class="panel-header">
+
                         <div>
-                            <div class="panel-title">Payment Breakdown</div>
-                            <div class="panel-subtitle">
-                                Successful, pending and failed payment activity
+
+                            <div class="panel-title">
+                                Payment Breakdown
                             </div>
+
+                            <div class="panel-subtitle">
+                                Orders grouped by payment state
+                            </div>
+
                         </div>
+
                     </div>
 
                     <div class="panel-body">
 
-                        <div class="breakdown" id="paymentBreakdown">
-
-                            <div class="breakdown-row">
-                                <div class="breakdown-name">Loading…</div>
-                                <div class="breakdown-right">
-                                    <strong>—</strong>
-                                    <span>—</span>
-                                </div>
-                                <div class="progress">
-                                    <span></span>
-                                </div>
-                            </div>
-
+                        <div
+                            class="breakdown"
+                            id="paymentBreakdown"
+                        >
                         </div>
 
                     </div>
@@ -1374,65 +2064,122 @@
 
             </div>
 
-            <!-- EVENT PERFORMANCE -->
-            <section class="panel table-panel">
+
+            <!-- =================================================
+                 EVENT PERFORMANCE
+            ================================================== -->
+
+            <section class="panel">
 
                 <div class="panel-header">
 
                     <div>
-                        <div class="panel-title">Event Performance</div>
-                        <div class="panel-subtitle">
-                            Sales and revenue grouped by event
+
+                        <div class="panel-title">
+                            Event Performance
                         </div>
+
+                        <div class="panel-subtitle">
+                            Sales, tickets and revenue grouped by event
+                        </div>
+
                     </div>
 
-                    <span class="pill neutral" id="eventCount">
+                    <span
+                        class="pill"
+                        id="eventCount"
+                    >
                         0 events
                     </span>
 
                 </div>
 
+
                 <div class="table-wrap">
 
                     <table>
+
                         <thead>
+
                             <tr>
-                                <th>Event</th>
-                                <th>Merchant</th>
-                                <th>Orders</th>
-                                <th>Tickets</th>
-                                <th>Gross</th>
-                                <th>Fees</th>
-                                <th>Net</th>
-                                <th>Status</th>
+
+                                <th>
+                                    Event
+                                </th>
+
+                                <th>
+                                    Merchant
+                                </th>
+
+                                <th>
+                                    Orders
+                                </th>
+
+                                <th>
+                                    Tickets
+                                </th>
+
+                                <th>
+                                    Gross
+                                </th>
+
+                                <th>
+                                    Fees
+                                </th>
+
+                                <th>
+                                    Net
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
                             </tr>
+
                         </thead>
 
-                        <tbody id="eventTableBody"></tbody>
+                        <tbody id="eventTableBody">
+                        </tbody>
+
                     </table>
 
                 </div>
 
-                <div class="mobile-list" id="eventMobileList"></div>
+
+                <div
+                    class="mobile-list"
+                    id="eventMobileList"
+                >
+                </div>
 
             </section>
 
-            <!-- SECURITY -->
+
+            <!-- =================================================
+                 SECURITY NOTICE
+            ================================================== -->
+
             <div class="security">
 
-                <div class="security-icon">✓</div>
+                <div class="security-icon">
+                    ✓
+                </div>
 
                 <div>
-                    <strong>Admin reporting is read-only</strong>
+
+                    <strong>
+                        Admin reporting is read-only
+                    </strong>
 
                     <p>
-                        This report page reads reporting data from Supabase using the
-                        authenticated admin session. It does not expose service-role
-                        credentials and does not perform financial mutations from the
-                        browser. Refunds, withdrawals, payment verification, fee changes
-                        and other privileged actions should remain protected by RLS,
-                        server-side RPCs or Edge Functions.
+                        This page reads real K-Tickets data from Supabase.
+                        It does not create reports, payments, tickets or
+                        financial records. Privileged payment, refund,
+                        withdrawal and fee actions remain protected by
+                        Supabase RLS, RPCs or Edge Functions.
                     </p>
+
                 </div>
 
             </div>
@@ -1443,45 +2190,95 @@
 
 </div>
 
-<!-- DRAWER -->
-<div class="drawer-overlay" id="drawerOverlay"></div>
 
-<aside class="drawer" id="drawer">
+<!-- =========================================================
+     DRAWER
+========================================================== -->
+
+<div
+    class="drawer-overlay"
+    id="drawerOverlay"
+></div>
+
+
+<aside
+    class="drawer"
+    id="drawer"
+>
 
     <div class="drawer-header">
-        <h3 id="drawerTitle">Report Details</h3>
 
-        <button class="drawer-close" id="drawerClose">
-            ✕
+        <h3 id="drawerTitle">
+            Event Details
+        </h3>
+
+        <button
+            class="drawer-close"
+            id="drawerClose"
+            aria-label="Close"
+        >
+            ×
         </button>
+
     </div>
+
 
     <div class="drawer-body">
 
-        <div class="detail-list" id="drawerContent"></div>
+        <div
+            class="detail-list"
+            id="drawerContent"
+        >
+        </div>
 
     </div>
 
 </aside>
 
-<div class="toast" id="toast"></div>
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
 
 <script>
+"use strict";
+
 /* ============================================================
    K-TICKETS ADMIN REPORTS
-   Secure-by-design frontend
-   ============================================================ */
+
+   REAL DATABASE SOURCES
+   ------------------------------------------------------------
+   orders
+   order_items
+   payments
+   events
+   profiles
+
+   IMPORTANT:
+   No fake business records are generated here.
+
+   The browser receives only the public/publishable Supabase key.
+   Service-role keys, payment secrets and database passwords must
+   never be placed in this file.
+============================================================ */
+
+
+/* ============================================================
+   SUPABASE CONFIG
+============================================================ */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
-        SUPABASE_ANON_KEY,
+        SUPABASE_PUBLISHABLE_KEY,
         {
             auth:{
                 persistSession:true,
@@ -1491,66 +2288,44 @@ const supabaseClient =
         }
     );
 
-/* ------------------------------------------------------------
+
+/* ============================================================
    STATE
------------------------------------------------------------- */
+============================================================ */
 
 let currentUser = null;
 let adminProfile = null;
-let rawOrders = [];
+
+let orders = [];
 let filteredOrders = [];
-let eventMap = new Map();
-let merchantMap = new Map();
 
-/* ------------------------------------------------------------
+let orderItems = [];
+let payments = [];
+
+let eventsById = {};
+let merchantsById = {};
+
+let orderItemsByOrderId = {};
+let paymentsByOrderId = {};
+
+
+/* ============================================================
    DOM
------------------------------------------------------------- */
+============================================================ */
 
-const loading =
-    document.getElementById("loading");
+const $ = id =>
+    document.getElementById(id);
 
-const sidebar =
-    document.getElementById("sidebar");
 
-const menuBtn =
-    document.getElementById("menuBtn");
-
-const searchInput =
-    document.getElementById("search");
-
-const periodSelect =
-    document.getElementById("period");
-
-const statusSelect =
-    document.getElementById("status");
-
-const paymentMethodSelect =
-    document.getElementById("paymentMethod");
-
-const refreshBtn =
-    document.getElementById("refreshBtn");
-
-const csvBtn =
-    document.getElementById("csvBtn");
-
-const toast =
-    document.getElementById("toast");
-
-const drawer =
-    document.getElementById("drawer");
-
-const drawerOverlay =
-    document.getElementById("drawerOverlay");
-
-const drawerClose =
-    document.getElementById("drawerClose");
-
-/* ------------------------------------------------------------
+/* ============================================================
    HELPERS
------------------------------------------------------------- */
+============================================================ */
 
 function escapeHTML(value){
-    return String(value ?? "")
+
+    return String(
+        value ?? ""
+    )
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;")
@@ -1558,197 +2333,47 @@ function escapeHTML(value){
         .replace(/'/g,"&#039;");
 }
 
-function showToast(message,isError=false){
 
-    toast.textContent = message;
+function normalize(value){
 
-    toast.classList.toggle("error",isError);
-    toast.classList.add("show");
-
-    clearTimeout(showToast.timer);
-
-    showToast.timer =
-        setTimeout(()=>{
-            toast.classList.remove("show");
-        },3200);
-}
-
-function hideLoading(){
-    loading.classList.add("hidden");
-}
-
-function initials(name){
-
-    if(!name){
-        return "A";
-    }
-
-    return name
+    return String(
+        value || ""
+    )
         .trim()
-        .split(/\s+/)
-        .slice(0,2)
-        .map(part=>part[0])
-        .join("")
-        .toUpperCase();
+        .toLowerCase()
+        .replace(/[\s-]+/g,"_");
 }
 
-function salutation(){
 
-    const hour = new Date().getHours();
+function firstValue(
+    object,
+    keys,
+    fallback=""
+){
 
-    if(hour < 12) return "Good morning";
-    if(hour < 17) return "Good afternoon";
+    if(!object){
+        return fallback;
+    }
 
-    return "Good evening";
-}
+    for(
+        const key of keys
+    ){
 
-function money(value){
+        const value =
+            object[key];
 
-    const amount =
-        Number(value || 0);
-
-    return amount.toLocaleString(
-        undefined,
-        {
-            minimumFractionDigits:2,
-            maximumFractionDigits:2
+        if(
+            value !== null &&
+            value !== undefined &&
+            value !== ""
+        ){
+            return value;
         }
-    );
-}
-
-function normalizeStatus(value){
-
-    const status =
-        String(value || "")
-            .trim()
-            .toLowerCase();
-
-    if(
-        [
-            "paid",
-            "success",
-            "successful",
-            "completed",
-            "confirmed",
-            "succeeded"
-        ].includes(status)
-    ){
-        return "paid";
     }
 
-    if(
-        [
-            "pending",
-            "processing",
-            "awaiting",
-            "unpaid"
-        ].includes(status)
-    ){
-        return "pending";
-    }
-
-    if(
-        [
-            "failed",
-            "failure",
-            "declined",
-            "rejected"
-        ].includes(status)
-    ){
-        return "failed";
-    }
-
-    if(
-        [
-            "cancelled",
-            "canceled"
-        ].includes(status)
-    ){
-        return "cancelled";
-    }
-
-    if(
-        [
-            "refunded",
-            "refund"
-        ].includes(status)
-    ){
-        return "refunded";
-    }
-
-    return status || "unknown";
+    return fallback;
 }
 
-function normalizePaymentMethod(order){
-
-    const raw = String(
-        order.payment_method ||
-        order.paymentMethod ||
-        order.method ||
-        order.channel ||
-        order.provider ||
-        ""
-    ).toLowerCase();
-
-    if(raw.includes("mpesa") || raw.includes("m-pesa")){
-        return "mpesa";
-    }
-
-    if(raw.includes("wamd")){
-        return "wamd";
-    }
-
-    return raw || "other";
-}
-
-function getOrderStatus(order){
-
-    return normalizeStatus(
-        order.payment_status ||
-        order.paymentStatus ||
-        order.status ||
-        order.order_status ||
-        order.state
-    );
-}
-
-function getAmount(order){
-
-    const value =
-        order.total ??
-        order.total_amount ??
-        order.amount ??
-        order.paid_amount ??
-        order.payment_amount ??
-        0;
-
-    return Number(value || 0);
-}
-
-function getFee(order){
-
-    const value =
-        order.service_fee ??
-        order.serviceFee ??
-        order.platform_fee ??
-        order.platformFee ??
-        order.fee ??
-        0;
-
-    return Number(value || 0);
-}
-
-function getDate(order){
-
-    return (
-        order.created_at ||
-        order.createdAt ||
-        order.order_date ||
-        order.paid_at ||
-        order.payment_date ||
-        null
-    );
-}
 
 function formatDate(value){
 
@@ -1756,9 +2381,14 @@ function formatDate(value){
         return "—";
     }
 
-    const date = new Date(value);
+    const date =
+        new Date(value);
 
-    if(Number.isNaN(date.getTime())){
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
         return "—";
     }
 
@@ -1772,45 +2402,285 @@ function formatDate(value){
     );
 }
 
+
 function formatDateTime(value){
 
     if(!value){
         return "—";
     }
 
-    const date = new Date(value);
+    const date =
+        new Date(value);
 
-    if(Number.isNaN(date.getTime())){
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
         return "—";
     }
 
     return date.toLocaleString(
         undefined,
         {
-            day:"2-digit",
-            month:"short",
-            year:"numeric",
-            hour:"2-digit",
-            minute:"2-digit"
+            dateStyle:"medium",
+            timeStyle:"short"
         }
     );
 }
 
-function statusClass(status){
 
-    if(status === "paid") return "success";
-    if(status === "pending") return "pending";
+function initials(name){
+
+    const value =
+        String(
+            name || "A"
+        ).trim();
+
+    if(!value){
+        return "A";
+    }
+
+    const parts =
+        value
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if(parts.length === 1){
+
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+}
+
+
+function salutation(){
+
+    const hour =
+        new Date().getHours();
+
+    if(hour < 12){
+        return "Good morning";
+    }
+
+    if(hour < 17){
+        return "Good afternoon";
+    }
+
+    return "Good evening";
+}
+
+
+function showToast(
+    message,
+    error=false
+){
+
+    $("toast")
+        .textContent =
+        message;
+
+    $("toast")
+        .classList
+        .toggle(
+            "error",
+            error
+        );
+
+    $("toast")
+        .classList
+        .add("show");
+
+    clearTimeout(
+        showToast.timer
+    );
+
+    showToast.timer =
+        setTimeout(
+            () => {
+
+                $("toast")
+                    .classList
+                    .remove("show");
+
+            },
+            3500
+        );
+}
+
+
+function money(
+    amount,
+    currency="KWD"
+){
+
+    const value =
+        Number(amount);
+
+    if(
+        !Number.isFinite(value)
+    ){
+        return "—";
+    }
+
+    const code =
+        String(
+            currency || "KWD"
+        ).toUpperCase();
+
+    try{
+
+        return new Intl.NumberFormat(
+            undefined,
+            {
+                style:"currency",
+                currency:code,
+                minimumFractionDigits:3,
+                maximumFractionDigits:3
+            }
+        ).format(value);
+
+    }catch{
+
+        return `${code} ${value.toFixed(3)}`;
+    }
+}
+
+
+function compactMoney(
+    amount,
+    currency
+){
+
+    const value =
+        Number(amount);
+
+    if(
+        !Number.isFinite(value)
+    ){
+        return "—";
+    }
+
+    return `${String(
+        currency || "KWD"
+    ).toUpperCase()} ${value.toLocaleString(
+        undefined,
+        {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    )}`;
+}
+
+
+/* ============================================================
+   ORDER STATUS
+============================================================ */
+
+function orderStatus(
+    order
+){
+
+    const value =
+        normalize(
+            firstValue(
+                order,
+                [
+                    "status"
+                ],
+                ""
+            )
+        );
+
+    if(
+        [
+            "paid",
+            "completed",
+            "complete",
+            "confirmed",
+            "success",
+            "successful",
+            "succeeded"
+        ].includes(value)
+    ){
+        return "paid";
+    }
+
+    if(
+        [
+            "awaiting_payment",
+            "pending",
+            "processing",
+            "unpaid"
+        ].includes(value)
+    ){
+        return "pending";
+    }
+
+    if(
+        [
+            "failed",
+            "declined",
+            "rejected"
+        ].includes(value)
+    ){
+        return "failed";
+    }
+
+    if(
+        [
+            "cancelled",
+            "canceled"
+        ].includes(value)
+    ){
+        return "cancelled";
+    }
+
+    if(
+        [
+            "refunded",
+            "refund"
+        ].includes(value)
+    ){
+        return "refunded";
+    }
+
+    return value || "unknown";
+}
+
+
+function statusClass(
+    status
+){
+
+    if(status === "paid"){
+        return "paid";
+    }
+
+    if(status === "pending"){
+        return "pending";
+    }
+
     if(
         status === "failed" ||
         status === "cancelled"
     ){
-        return "failed";
+        return status;
     }
 
     return "neutral";
 }
 
-function statusLabel(status){
+
+function statusLabel(
+    status
+){
 
     const labels = {
         paid:"Paid",
@@ -1821,123 +2691,307 @@ function statusLabel(status){
         unknown:"Unknown"
     };
 
-    return labels[status] || status;
+    return labels[status] ||
+        status;
 }
 
-function getTicketQuantity(order){
 
-    const value =
-        order.ticket_quantity ??
-        order.ticket_count ??
-        order.quantity ??
-        order.tickets_count ??
-        order.tickets_sold;
+/* ============================================================
+   PAYMENT METHOD
 
-    if(value !== undefined && value !== null){
-        const parsed = Number(value);
+   Payment method belongs to payments, not orders.
+============================================================ */
 
-        if(Number.isFinite(parsed)){
-            return parsed;
-        }
+function paymentMethod(
+    payment
+){
+
+    if(!payment){
+        return "other";
     }
 
-    /*
-      Until an order_items schema exists, one successful order
-      is treated as one sale unit for reporting rather than
-      inventing ticket quantities.
-    */
+    const values = [
+        payment.method,
+        payment.provider
+    ]
+        .filter(Boolean)
+        .map(
+            value =>
+                normalize(value)
+        );
 
-    return getOrderStatus(order) === "paid" ? 1 : 0;
+    if(
+        values.some(
+            value =>
+                value.includes("mpesa") ||
+                value.includes("m_pesa") ||
+                value === "stk"
+        )
+    ){
+        return "mpesa";
+    }
+
+    if(
+        values.some(
+            value =>
+                value.includes("wamd")
+        )
+    ){
+        return "wamd";
+    }
+
+    return "other";
 }
 
-function getEventId(order){
 
-    return (
-        order.event_id ||
-        order.events?.id ||
-        null
+function paymentMethodLabel(
+    value
+){
+
+    if(value === "mpesa"){
+        return "M-Pesa";
+    }
+
+    if(value === "wamd"){
+        return "WAMD";
+    }
+
+    return "Other / Unspecified";
+}
+
+
+/* ============================================================
+   ORDER ITEM QUANTITY
+
+   Uses real order_items rows.
+
+   We do not invent ticket quantities when order_items are
+   unavailable.
+============================================================ */
+
+function itemQuantity(
+    item
+){
+
+    const value =
+        firstValue(
+            item,
+            [
+                "quantity",
+                "qty"
+            ],
+            0
+        );
+
+    const number =
+        Number(value);
+
+    return Number.isFinite(number)
+        ? number
+        : 0;
+}
+
+
+function ticketsForOrder(
+    orderId
+){
+
+    const items =
+        orderItemsByOrderId[
+            orderId
+        ] || [];
+
+    return items.reduce(
+        (
+            total,
+            item
+        ) =>
+            total +
+            itemQuantity(item),
+        0
     );
 }
 
-function getEventTitle(order){
 
-    return (
-        order.event_title ||
-        order.event_name ||
-        order.events?.title ||
-        "Unknown event"
+/* ============================================================
+   CURRENCY AGGREGATION
+============================================================ */
+
+function aggregateMoney(
+    rows,
+    valueGetter
+){
+
+    const totals = {};
+
+    rows.forEach(
+        row => {
+
+            const currency =
+                String(
+                    row.currency ||
+                    "KWD"
+                ).toUpperCase();
+
+            const value =
+                Number(
+                    valueGetter(row) || 0
+                );
+
+            if(
+                !Number.isFinite(value)
+            ){
+                return;
+            }
+
+            totals[currency] =
+                (
+                    totals[currency] ||
+                    0
+                ) +
+                value;
+        }
     );
+
+    return totals;
 }
 
-function getMerchantId(order){
 
-    return (
-        order.merchant_id ||
-        order.events?.merchant_id ||
-        null
-    );
+function moneySummary(
+    totals
+){
+
+    const entries =
+        Object.entries(totals);
+
+    if(!entries.length){
+        return "—";
+    }
+
+    return entries
+        .map(
+            ([currency,value]) =>
+                compactMoney(
+                    value,
+                    currency
+                )
+        )
+        .join(" • ");
 }
 
-function getMerchantName(order){
 
-    return (
-        order.merchant_name ||
-        order.events?.merchant_name ||
-        "Unknown merchant"
-    );
+function currencySummary(
+    totals
+){
+
+    const currencies =
+        Object.keys(totals);
+
+    if(!currencies.length){
+        return "No paid sales";
+    }
+
+    if(currencies.length === 1){
+        return currencies[0];
+    }
+
+    return `${currencies.length} currencies`;
 }
+
+
+/* ============================================================
+   PERIOD
+============================================================ */
 
 function periodStart(){
 
-    const selected =
-        periodSelect.value;
+    const value =
+        $("period").value;
 
-    if(selected === "all"){
+    if(value === "all"){
         return null;
     }
 
-    const now =
+    const date =
         new Date();
 
-    if(selected === "today"){
-        now.setHours(0,0,0,0);
-        return now;
+    if(value === "today"){
+
+        date.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        return date;
     }
 
     const days =
-        Number(selected);
+        Number(value);
 
-    now.setDate(
-        now.getDate() - days
+    if(
+        !Number.isFinite(days)
+    ){
+        return null;
+    }
+
+    date.setDate(
+        date.getDate() -
+        days
     );
 
-    return now;
+    return date;
 }
 
-/* ------------------------------------------------------------
-   AUTH
------------------------------------------------------------- */
 
-async function requireAdmin(){
+/* ============================================================
+   ADMIN AUTH
+============================================================ */
+
+async function verifyAdmin(){
+
+    $("securityMessage")
+        .textContent =
+        "Checking authenticated administrator…";
+
 
     const {
-        data:{
-            session
-        },
+        data,
         error
     } =
         await supabaseClient.auth.getSession();
 
-    if(error || !session){
 
-        window.location.href =
-            "../auth/login.html?error=unauthorized";
+    if(error){
+        throw error;
+    }
+
+
+    const session =
+        data?.session;
+
+
+    if(
+        !session?.user
+    ){
+
+        redirectLogin(
+            "login_required"
+        );
 
         return false;
     }
 
+
     currentUser =
         session.user;
+
+
+    $("securityMessage")
+        .textContent =
+        "Verifying administrator privileges…";
+
 
     const {
         data:profile,
@@ -1949,67 +3003,108 @@ async function requireAdmin(){
                 id,
                 full_name,
                 phone,
-                role
+                role,
+                is_active
             `)
-            .eq("id",currentUser.id)
+            .eq(
+                "id",
+                currentUser.id
+            )
             .maybeSingle();
 
+
+    if(profileError){
+        throw profileError;
+    }
+
+
     if(
-        profileError ||
         !profile ||
-        profile.role !== "admin"
+        profile.role !== "admin" ||
+        profile.is_active !== true
     ){
 
         await supabaseClient.auth.signOut();
 
-        window.location.href =
-            "../auth/login.html?error=unauthorized";
+        redirectLogin(
+            "unauthorized"
+        );
 
         return false;
     }
 
+
     adminProfile =
         profile;
 
-    applyAdminIdentity();
+
+    const name =
+        profile.full_name ||
+        currentUser.email ||
+        "Administrator";
+
+
+    $("adminName")
+        .textContent =
+        name;
+
+    $("sideName")
+        .textContent =
+        name;
+
+    $("topAvatar")
+        .textContent =
+        initials(name);
+
+    $("sideAvatar")
+        .textContent =
+        initials(name);
+
+    $("greeting")
+        .textContent =
+        `${salutation()}, ${name.split(/\s+/)[0]}`;
+
+
+    supabaseClient.auth.onAuthStateChange(
+        (
+            event,
+            session
+        ) => {
+
+            if(
+                event === "SIGNED_OUT" ||
+                !session?.user
+            ){
+
+                redirectLogin(
+                    "session_expired"
+                );
+            }
+        }
+    );
+
 
     return true;
 }
 
-function applyAdminIdentity(){
 
-    const name =
-        adminProfile?.full_name ||
-        currentUser?.email?.split("@")[0] ||
-        "Administrator";
+function redirectLogin(
+    reason
+){
 
-    const shortName =
-        name.split(/\s+/)[0];
-
-    document.getElementById("adminName")
-        .textContent = name;
-
-    document.getElementById("sideName")
-        .textContent = name;
-
-    document.getElementById("topAvatar")
-        .textContent = initials(name);
-
-    document.getElementById("sideAvatar")
-        .textContent = initials(name);
-
-    document.getElementById("greeting")
-        .textContent =
-        `${salutation()}, ${shortName}`;
+    window.location.replace(
+        `/login.html?error=${encodeURIComponent(
+            reason || "unauthorized"
+        )}`
+    );
 }
 
-/* ------------------------------------------------------------
-   LOAD LOOKUPS
------------------------------------------------------------- */
 
-async function loadEventLookup(){
+/* ============================================================
+   LOAD EVENTS
+============================================================ */
 
-    eventMap = new Map();
+async function loadEvents(){
 
     const {
         data,
@@ -2019,35 +3114,42 @@ async function loadEventLookup(){
             .from("events")
             .select(`
                 id,
+                merchant_id,
                 title,
                 venue,
                 city,
-                merchant_id,
+                start_at,
+                end_at,
                 status
             `)
             .limit(5000);
 
+
     if(error){
-
-        console.warn(
-            "Event lookup unavailable:",
-            error
-        );
-
-        return;
+        throw error;
     }
 
-    (data || []).forEach(event=>{
-        eventMap.set(
-            String(event.id),
-            event
+
+    eventsById = {};
+
+
+    (data || [])
+        .forEach(
+            event => {
+
+                eventsById[
+                    event.id
+                ] = event;
+            }
         );
-    });
 }
 
-async function loadMerchantLookup(){
 
-    merchantMap = new Map();
+/* ============================================================
+   LOAD MERCHANTS
+============================================================ */
+
+async function loadMerchants(){
 
     const {
         data,
@@ -2058,951 +3160,1788 @@ async function loadMerchantLookup(){
             .select(`
                 id,
                 full_name,
-                role
+                role,
+                is_active
             `)
-            .eq("role","merchant")
+            .eq(
+                "role",
+                "merchant"
+            )
             .limit(5000);
+
+
+    if(error){
+        throw error;
+    }
+
+
+    merchantsById = {};
+
+
+    (data || [])
+        .forEach(
+            merchant => {
+
+                merchantsById[
+                    merchant.id
+                ] = merchant;
+            }
+        );
+}
+
+
+/* ============================================================
+   LOAD ORDERS
+============================================================ */
+
+async function loadOrders(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("orders")
+            .select(`
+                id,
+                order_number,
+                user_id,
+                event_id,
+                status,
+                subtotal,
+                service_fee_percentage,
+                service_fee,
+                discount,
+                total,
+                currency,
+                promotion_id,
+                paid_at,
+                created_at,
+                updated_at
+            `)
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
+            .limit(10000);
+
+
+    if(error){
+        throw error;
+    }
+
+
+    orders =
+        data || [];
+}
+
+
+/* ============================================================
+   LOAD ORDER ITEMS
+============================================================ */
+
+async function loadOrderItems(){
+
+    /*
+     * order_items schema is intentionally read with select("*")
+     * because the completed migration established the table but
+     * the exact final auxiliary column set is not needed here.
+     *
+     * We only normalize the real quantity field.
+     */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("order_items")
+            .select("*")
+            .limit(20000);
+
 
     if(error){
 
         console.warn(
-            "Merchant lookup unavailable:",
-            error
+            "Order items could not be loaded:",
+            error.message
         );
+
+        orderItems = [];
 
         return;
     }
 
-    (data || []).forEach(merchant=>{
-        merchantMap.set(
-            String(merchant.id),
-            merchant
-        );
-    });
+
+    orderItems =
+        data || [];
+
+
+    orderItemsByOrderId = {};
+
+
+    orderItems.forEach(
+        item => {
+
+            const orderId =
+                item.order_id;
+
+            if(!orderId){
+                return;
+            }
+
+            if(
+                !orderItemsByOrderId[
+                    orderId
+                ]
+            ){
+
+                orderItemsByOrderId[
+                    orderId
+                ] = [];
+            }
+
+            orderItemsByOrderId[
+                orderId
+            ].push(item);
+        }
+    );
 }
 
-/* ------------------------------------------------------------
-   LOAD ORDERS
------------------------------------------------------------- */
 
-async function loadOrders(){
+/* ============================================================
+   LOAD PAYMENTS
+============================================================ */
 
-    rawOrders = [];
+async function loadPayments(){
 
-    /*
-      The reports page deliberately reads the orders table.
-      No synthetic report records are created.
-    */
-
-    let response =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
-            .from("orders")
+            .from("payments")
             .select(`
-                *,
-                events(
-                    id,
-                    title,
-                    venue,
-                    city,
-                    merchant_id
-                )
+                id,
+                order_id,
+                user_id,
+                event_id,
+                method,
+                provider,
+                status,
+                amount,
+                currency,
+                reference,
+                transaction_id,
+                receipt_number,
+                provider_transaction_id,
+                failure_reason,
+                paid_at,
+                created_at,
+                updated_at
             `)
-            .order("created_at",{ascending:false})
-            .limit(10000);
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
+            .limit(20000);
+
+
+    if(error){
+        throw error;
+    }
+
+
+    payments =
+        data || [];
+
+
+    paymentsByOrderId = {};
+
+
+    payments.forEach(
+        payment => {
+
+            if(!payment.order_id){
+                return;
+            }
+
+            if(
+                !paymentsByOrderId[
+                    payment.order_id
+                ]
+            ){
+
+                paymentsByOrderId[
+                    payment.order_id
+                ] = [];
+            }
+
+            paymentsByOrderId[
+                payment.order_id
+            ].push(payment);
+        }
+    );
+}
+
+
+/* ============================================================
+   FILTER / NORMALIZE ORDER
+============================================================ */
+
+function prepareOrder(
+    order
+){
+
+    const event =
+        eventsById[
+            order.event_id
+        ] || null;
+
+
+    const merchant =
+        event?.merchant_id
+            ? merchantsById[
+                event.merchant_id
+            ]
+            : null;
+
+
+    const orderPayments =
+        paymentsByOrderId[
+            order.id
+        ] || [];
+
 
     /*
-      Some installations may not have the events relationship
-      exposed through PostgREST. Fall back to a flat query.
-    */
+     * Prefer a paid payment when the order is paid.
+     * Otherwise use the latest payment attempt.
+     */
 
-    if(response.error){
+    const payment =
+        orderPayments.find(
+            row =>
+                normalize(
+                    row.status
+                ) === "paid"
+        ) ||
+        orderPayments[0] ||
+        null;
 
-        console.warn(
-            "Relational order query failed. Falling back:",
-            response.error
+
+    const status =
+        orderStatus(order);
+
+
+    const currency =
+        String(
+            order.currency ||
+            payment?.currency ||
+            "KWD"
+        ).toUpperCase();
+
+
+    const amount =
+        Number(
+            order.total || 0
         );
 
-        response =
-            await supabaseClient
-                .from("orders")
-                .select("*")
-                .order("created_at",{ascending:false})
-                .limit(10000);
-    }
 
-    if(response.error){
+    const fee =
+        Number(
+            order.service_fee || 0
+        );
 
-        throw response.error;
-    }
 
-    rawOrders =
-        Array.isArray(response.data)
-            ? response.data
-            : [];
+    return {
+        ...order,
 
-    enrichOrders();
+        __event:event,
 
-    applyFilters();
+        __eventTitle:
+            event?.title ||
+            "Unknown event",
+
+        __merchant:
+            merchant,
+
+        __merchantName:
+            merchant?.full_name ||
+            "Unknown merchant",
+
+        __status:
+            status,
+
+        __payment:
+            payment,
+
+        __method:
+            paymentMethod(payment),
+
+        __methodLabel:
+            paymentMethodLabel(
+                paymentMethod(payment)
+            ),
+
+        __currency:
+            currency,
+
+        __amount:
+            Number.isFinite(amount)
+                ? amount
+                : 0,
+
+        __fee:
+            Number.isFinite(fee)
+                ? fee
+                : 0,
+
+        __tickets:
+            ticketsForOrder(
+                order.id
+            ),
+
+        __date:
+            order.created_at ||
+            null
+    };
 }
 
-function enrichOrders(){
 
-    rawOrders =
-        rawOrders.map(order=>{
+function prepareAllOrders(){
 
-            const eventId =
-                getEventId(order);
-
-            const event =
-                eventId
-                    ? eventMap.get(String(eventId))
-                    : null;
-
-            const merchantId =
-                getMerchantId(order);
-
-            const merchant =
-                merchantId
-                    ? merchantMap.get(String(merchantId))
-                    : null;
-
-            return {
-                ...order,
-
-                __event:
-                    event ||
-                    order.events ||
-                    null,
-
-                __merchant:
-                    merchant ||
-                    null,
-
-                __eventTitle:
-                    getEventTitle(order) !== "Unknown event"
-                        ? getEventTitle(order)
-                        : event?.title || "Unknown event",
-
-                __merchantName:
-                    getMerchantName(order) !== "Unknown merchant"
-                        ? getMerchantName(order)
-                        : merchant?.full_name || "Unknown merchant",
-
-                __status:
-                    getOrderStatus(order),
-
-                __method:
-                    normalizePaymentMethod(order),
-
-                __amount:
-                    getAmount(order),
-
-                __fee:
-                    getFee(order),
-
-                __tickets:
-                    getTicketQuantity(order),
-
-                __date:
-                    getDate(order)
-            };
-        });
+    orders =
+        orders.map(
+            prepareOrder
+        );
 }
 
-/* ------------------------------------------------------------
-   FILTERS
------------------------------------------------------------- */
+
+/* ============================================================
+   APPLY FILTERS
+============================================================ */
 
 function applyFilters(){
 
     const query =
-        searchInput.value
+        $("search")
+            .value
             .trim()
             .toLowerCase();
 
+
     const selectedStatus =
-        statusSelect.value;
+        $("status").value;
+
 
     const selectedMethod =
-        paymentMethodSelect.value;
+        $("paymentMethod").value;
+
 
     const start =
         periodStart();
 
+
     filteredOrders =
-        rawOrders.filter(order=>{
-
-            if(start){
-
-                const date =
-                    new Date(order.__date);
+        orders.filter(
+            order => {
 
                 if(
-                    Number.isNaN(date.getTime()) ||
-                    date < start
+                    start
                 ){
+
+                    const date =
+                        new Date(
+                            order.__date
+                        );
+
+                    if(
+                        Number.isNaN(
+                            date.getTime()
+                        ) ||
+                        date < start
+                    ){
+
+                        return false;
+                    }
+                }
+
+
+                if(
+                    selectedStatus !== "all" &&
+                    order.__status !==
+                    selectedStatus
+                ){
+
                     return false;
                 }
-            }
 
-            if(
-                selectedStatus !== "all" &&
-                order.__status !== selectedStatus
-            ){
-                return false;
-            }
 
-            if(
-                selectedMethod !== "all" &&
-                order.__method !== selectedMethod
-            ){
-                return false;
-            }
+                if(
+                    selectedMethod !== "all" &&
+                    order.__method !==
+                    selectedMethod
+                ){
 
-            if(query){
-
-                const haystack =
-                    [
-                        order.__eventTitle,
-                        order.__merchantName,
-                        order.__event?.venue,
-                        order.__event?.city,
-                        order.id,
-                        order.order_number,
-                        order.reference
-                    ]
-                    .filter(Boolean)
-                    .join(" ")
-                    .toLowerCase();
-
-                if(!haystack.includes(query)){
                     return false;
                 }
-            }
 
-            return true;
-        });
+
+                if(query){
+
+                    const searchable =
+                        [
+                            order.id,
+                            order.order_number,
+                            order.__eventTitle,
+                            order.__merchantName,
+                            order.__event?.venue,
+                            order.__event?.city,
+                            order.__methodLabel,
+                            order.__payment?.reference,
+                            order.__payment?.transaction_id,
+                            order.__payment?.receipt_number
+                        ]
+                            .filter(Boolean)
+                            .join(" ")
+                            .toLowerCase();
+
+
+                    if(
+                        !searchable.includes(
+                            query
+                        )
+                    ){
+
+                        return false;
+                    }
+                }
+
+
+                return true;
+            }
+        );
+
 
     renderAll();
 }
 
-/* ------------------------------------------------------------
-   RENDER
------------------------------------------------------------- */
+
+/* ============================================================
+   RENDER ALL
+============================================================ */
 
 function renderAll(){
 
     renderStats();
+
     renderTrend();
+
     renderPaymentBreakdown();
+
     renderEventPerformance();
+
     updateRangeLabel();
 }
 
+
+/* ============================================================
+   STATS
+============================================================ */
+
 function renderStats(){
 
-    const successful =
+    const paid =
         filteredOrders.filter(
-            order=>order.__status === "paid"
+            order =>
+                order.__status === "paid"
         );
 
-    const orders =
-        filteredOrders.length;
 
-    const tickets =
-        successful.reduce(
-            (sum,order)=>sum + order.__tickets,
+    const totalTickets =
+        paid.reduce(
+            (
+                total,
+                order
+            ) =>
+                total +
+                order.__tickets,
             0
         );
+
 
     const gross =
-        successful.reduce(
-            (sum,order)=>sum + order.__amount,
-            0
+        aggregateMoney(
+            paid,
+            order =>
+                order.__amount
         );
+
 
     const fees =
-        successful.reduce(
-            (sum,order)=>sum + order.__fee,
-            0
+        aggregateMoney(
+            paid,
+            order =>
+                order.__fee
         );
 
-    const net =
-        gross - fees;
 
-    document.getElementById("ordersCount")
-        .textContent =
-        orders.toLocaleString();
+    const net = {};
 
-    document.getElementById("ticketsCount")
-        .textContent =
-        tickets.toLocaleString();
 
-    document.getElementById("grossRevenue")
-        .textContent =
-        money(gross);
+    Object.keys(gross)
+        .forEach(
+            currency => {
 
-    document.getElementById("serviceFees")
-        .textContent =
-        money(fees);
+                net[currency] =
+                    (
+                        gross[currency] ||
+                        0
+                    ) -
+                    (
+                        fees[currency] ||
+                        0
+                    );
+            }
+        );
 
-    document.getElementById("netRevenue")
-        .textContent =
-        money(net);
 
-    document.getElementById("ordersSub")
+    $("ordersCount")
         .textContent =
-        `${successful.length.toLocaleString()} successful`;
+        filteredOrders
+            .length
+            .toLocaleString();
+
+
+    $("ticketsCount")
+        .textContent =
+        totalTickets
+            .toLocaleString();
+
+
+    $("grossRevenue")
+        .textContent =
+        moneySummary(
+            gross
+        );
+
+
+    $("serviceFees")
+        .textContent =
+        moneySummary(
+            fees
+        );
+
+
+    $("netRevenue")
+        .textContent =
+        moneySummary(
+            net
+        );
+
+
+    $("revenueCurrency")
+        .textContent =
+        currencySummary(
+            gross
+        );
+
+
+    $("ordersSub")
+        .textContent =
+        `${paid.length.toLocaleString()} paid`;
 }
+
+
+/* ============================================================
+   TREND
+============================================================ */
 
 function renderTrend(){
 
     const bars =
-        document.getElementById("bars");
+        $("bars");
 
-    const successful =
+
+    const paid =
         filteredOrders.filter(
-            order=>order.__status === "paid"
+            order =>
+                order.__status === "paid"
         );
 
-    if(!successful.length){
 
-        bars.innerHTML =
-            `<div class="empty-chart">No successful sales in this period</div>`;
+    if(!paid.length){
 
-        return;
-    }
-
-    const selected =
-        periodSelect.value;
-
-    const days =
-        selected === "today"
-            ? 1
-            : selected === "7"
-                ? 7
-                : selected === "30"
-                    ? 30
-                    : selected === "90"
-                        ? 12
-                        : selected === "365"
-                            ? 12
-                            : 12;
-
-    const buckets = [];
-
-    if(
-        selected === "today"
-    ){
-
-        buckets.push({
-            key:new Date().toISOString().slice(0,10),
-            label:"Today",
-            amount:0
-        });
-
-    }else{
-
-        const bucketCount =
-            days <= 12
-                ? days
-                : 12;
-
-        const now =
-            new Date();
-
-        for(
-            let i=bucketCount-1;
-            i>=0;
-            i--
-        ){
-
-            const d =
-                new Date(now);
-
-            if(days <= 12){
-
-                d.setDate(
-                    d.getDate() - i
-                );
-
-                buckets.push({
-                    key:d.toISOString().slice(0,10),
-                    label:d.toLocaleDateString(
-                        undefined,
-                        {
-                            day:"numeric",
-                            month:"short"
-                        }
-                    ),
-                    amount:0
-                });
-
-            }else{
-
-                const end =
-                    new Date(now);
-
-                const start =
-                    new Date(now);
-
-                const span =
-                    Math.ceil(days / bucketCount);
-
-                start.setDate(
-                    start.getDate() - ((i + 1) * span)
-                );
-
-                end.setDate(
-                    end.getDate() - (i * span)
-                );
-
-                buckets.push({
-                    start,
-                    end,
-                    label:
-                        start.toLocaleDateString(
-                            undefined,
-                            {
-                                day:"numeric",
-                                month:"short"
-                            }
-                        ),
-                    amount:0
-                });
-            }
-        }
-    }
-
-    successful.forEach(order=>{
-
-        const date =
-            new Date(order.__date);
-
-        if(Number.isNaN(date.getTime())){
-            return;
-        }
-
-        if(
-            days <= 12 ||
-            selected === "today"
-        ){
-
-            const key =
-                date.toISOString().slice(0,10);
-
-            const bucket =
-                buckets.find(
-                    item=>item.key === key
-                );
-
-            if(bucket){
-                bucket.amount += order.__amount;
-            }
-
-        }else{
-
-            const bucket =
-                buckets.find(
-                    item =>
-                        date >= item.start &&
-                        date < item.end
-                );
-
-            if(bucket){
-                bucket.amount += order.__amount;
-            }
-        }
-    });
-
-    const max =
-        Math.max(
-            ...buckets.map(
-                bucket=>bucket.amount
-            ),
-            1
-        );
-
-    bars.innerHTML =
-        buckets.map(bucket=>{
-
-            const percent =
-                Math.max(
-                    2,
-                    (bucket.amount / max) * 100
-                );
-
-            const height =
-                `${percent}%`;
-
-            return `
-                <div class="bar-item">
-                    <span
-                        class="bar-value"
-                        style="--bar-height:${percent * 2.15}px"
-                    >
-                        ${money(bucket.amount)}
-                    </span>
-
-                    <div
-                        class="bar"
-                        style="height:${height}"
-                    ></div>
-
-                    <span class="bar-label">
-                        ${escapeHTML(bucket.label)}
-                    </span>
-                </div>
-            `;
-        })
-        .join("");
-}
-
-function renderPaymentBreakdown(){
-
-    const container =
-        document.getElementById(
-            "paymentBreakdown"
-        );
-
-    const total =
-        filteredOrders.length || 1;
-
-    const groups = [
-        {
-            name:"Successful",
-            statuses:["paid"],
-            className:"success"
-        },
-        {
-            name:"Pending",
-            statuses:["pending"],
-            className:"pending"
-        },
-        {
-            name:"Failed",
-            statuses:["failed"],
-            className:"failed"
-        },
-        {
-            name:"Cancelled / Refunded",
-            statuses:["cancelled","refunded"],
-            className:"neutral"
-        }
-    ];
-
-    container.innerHTML =
-        groups.map(group=>{
-
-            const count =
-                filteredOrders.filter(
-                    order =>
-                        group.statuses.includes(
-                            order.__status
-                        )
-                ).length;
-
-            const percentage =
-                (count / total) * 100;
-
-            return `
-                <div class="breakdown-row">
-
-                    <div class="breakdown-name">
-                        ${group.name}
-                    </div>
-
-                    <div class="breakdown-right">
-                        <strong>
-                            ${count.toLocaleString()}
-                        </strong>
-
-                        <span>
-                            ${percentage.toFixed(1)}%
-                        </span>
-                    </div>
-
-                    <div class="progress">
-                        <span
-                            style="width:${percentage}%"
-                        ></span>
-                    </div>
-
-                </div>
-            `;
-        })
-        .join("");
-}
-
-function renderEventPerformance(){
-
-    const groups =
-        new Map();
-
-    filteredOrders.forEach(order=>{
-
-        const eventId =
-            getEventId(order) ||
-            `unknown-${order.id}`;
-
-        if(!groups.has(eventId)){
-
-            groups.set(eventId,{
-                id:eventId,
-                title:order.__eventTitle,
-                merchant:order.__merchantName,
-                orders:0,
-                tickets:0,
-                gross:0,
-                fees:0,
-                paid:0
-            });
-        }
-
-        const group =
-            groups.get(eventId);
-
-        group.orders++;
-
-        if(order.__status === "paid"){
-
-            group.paid++;
-
-            group.tickets +=
-                order.__tickets;
-
-            group.gross +=
-                order.__amount;
-
-            group.fees +=
-                order.__fee;
-        }
-    });
-
-    const rows =
-        Array.from(groups.values())
-            .sort(
-                (a,b)=>b.gross-a.gross
-            );
-
-    document.getElementById("eventCount")
-        .textContent =
-        `${rows.length} event${rows.length === 1 ? "" : "s"}`;
-
-    const tbody =
-        document.getElementById(
-            "eventTableBody"
-        );
-
-    const mobile =
-        document.getElementById(
-            "eventMobileList"
-        );
-
-    if(!rows.length){
-
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="8">
-                    <div class="empty">
-                        <strong>No report records found</strong>
-                        Adjust your filters or wait for real orders to appear.
-                    </div>
-                </td>
-            </tr>
-        `;
-
-        mobile.innerHTML = `
-            <div class="empty">
-                <strong>No report records found</strong>
-                Adjust your filters or wait for real orders to appear.
+        bars.innerHTML = `
+            <div class="empty-chart">
+                No paid sales in this period
             </div>
         `;
 
         return;
     }
 
-    tbody.innerHTML =
-        rows.map((row,index)=>{
 
-            const net =
-                row.gross - row.fees;
+    const selected =
+        $("period").value;
 
-            return `
-                <tr
-                    data-event-index="${index}"
-                    style="cursor:pointer"
-                >
 
-                    <td>
-                        <div class="event-cell">
-                            <strong>
-                                ${escapeHTML(row.title)}
-                            </strong>
-                            <span>
-                                Event performance
-                            </span>
-                        </div>
-                    </td>
+    const bucketCount =
+        selected === "today"
+            ? 1
+            : selected === "7"
+                ? 7
+                : selected === "30"
+                    ? 10
+                    : selected === "90"
+                        ? 12
+                        : selected === "365"
+                            ? 12
+                            : 12;
 
-                    <td>
-                        <div class="merchant-cell">
-                            <strong>
-                                ${escapeHTML(row.merchant)}
-                            </strong>
-                            <span>
-                                Merchant
-                            </span>
-                        </div>
-                    </td>
 
-                    <td>
-                        ${row.orders.toLocaleString()}
-                    </td>
+    const now =
+        new Date();
 
-                    <td>
-                        ${row.tickets.toLocaleString()}
-                    </td>
 
-                    <td class="amount">
-                        ${money(row.gross)}
-                    </td>
+    const buckets = [];
 
-                    <td>
-                        ${money(row.fees)}
-                    </td>
 
-                    <td class="amount">
-                        ${money(net)}
-                    </td>
+    if(selected === "today"){
 
-                    <td>
-                        <span class="pill ${row.paid ? "success" : "neutral"}">
-                            ${row.paid ? "Active sales" : "No paid sales"}
-                        </span>
-                    </td>
-
-                </tr>
-            `;
-        })
-        .join("");
-
-    mobile.innerHTML =
-        rows.map((row,index)=>{
-
-            const net =
-                row.gross - row.fees;
-
-            return `
-                <div
-                    class="report-card"
-                    data-event-index="${index}"
-                >
-
-                    <div class="report-card-top">
-
-                        <div>
-                            <strong>
-                                ${escapeHTML(row.title)}
-                            </strong>
-
-                            <small>
-                                ${escapeHTML(row.merchant)}
-                            </small>
-                        </div>
-
-                        <span class="pill ${row.paid ? "success" : "neutral"}">
-                            ${row.paid ? "Sales" : "No sales"}
-                        </span>
-
-                    </div>
-
-                    <div class="report-card-grid">
-
-                        <div class="mini-stat">
-                            <span>Orders</span>
-                            <strong>
-                                ${row.orders.toLocaleString()}
-                            </strong>
-                        </div>
-
-                        <div class="mini-stat">
-                            <span>Tickets</span>
-                            <strong>
-                                ${row.tickets.toLocaleString()}
-                            </strong>
-                        </div>
-
-                        <div class="mini-stat">
-                            <span>Gross</span>
-                            <strong>
-                                ${money(row.gross)}
-                            </strong>
-                        </div>
-
-                        <div class="mini-stat">
-                            <span>Net</span>
-                            <strong>
-                                ${money(net)}
-                            </strong>
-                        </div>
-
-                    </div>
-
-                </div>
-            `;
-        })
-        .join("");
-
-    /*
-      Event performance details are derived from the currently
-      filtered real order dataset.
-    */
-
-    tbody.querySelectorAll("tr[data-event-index]")
-        .forEach(row=>{
-
-            row.addEventListener(
-                "click",
-                ()=>{
-                    const index =
-                        Number(
-                            row.dataset.eventIndex
-                        );
-
-                    openEventDetails(
-                        rows[index]
-                    );
-                }
-            );
+        buckets.push({
+            key:now.toISOString().slice(0,10),
+            label:"Today",
+            totals:{}
         });
 
-    mobile.querySelectorAll(
-        ".report-card[data-event-index]"
-    ).forEach(card=>{
+    }else{
 
-        card.addEventListener(
-            "click",
-            ()=>{
-                const index =
-                    Number(
-                        card.dataset.eventIndex
+        const totalDays =
+            selected === "all"
+                ? 30
+                : Number(selected);
+
+
+        const span =
+            Math.max(
+                1,
+                Math.ceil(
+                    totalDays /
+                    bucketCount
+                )
+            );
+
+
+        for(
+            let index =
+                bucketCount - 1;
+            index >= 0;
+            index--
+        ){
+
+            const end =
+                new Date(now);
+
+            const start =
+                new Date(now);
+
+
+            start.setDate(
+                start.getDate() -
+                (
+                    (index + 1) *
+                    span
+                )
+            );
+
+
+            end.setDate(
+                end.getDate() -
+                (
+                    index *
+                    span
+                )
+            );
+
+
+            buckets.push({
+                start,
+                end,
+
+                label:
+                    start.toLocaleDateString(
+                        undefined,
+                        {
+                            day:"numeric",
+                            month:"short"
+                        }
+                    ),
+
+                totals:{}
+            });
+        }
+    }
+
+
+    paid.forEach(
+        order => {
+
+            const date =
+                new Date(
+                    order.__date
+                );
+
+
+            if(
+                Number.isNaN(
+                    date.getTime()
+                )
+            ){
+
+                return;
+            }
+
+
+            let bucket = null;
+
+
+            if(
+                selected === "today"
+            ){
+
+                const key =
+                    date
+                        .toISOString()
+                        .slice(0,10);
+
+
+                bucket =
+                    buckets.find(
+                        row =>
+                            row.key ===
+                            key
                     );
 
-                openEventDetails(
-                    rows[index]
+            }else{
+
+                bucket =
+                    buckets.find(
+                        row =>
+                            date >= row.start &&
+                            date < row.end
+                    );
+            }
+
+
+            if(!bucket){
+                return;
+            }
+
+
+            const currency =
+                order.__currency;
+
+
+            bucket.totals[
+                currency
+            ] =
+                (
+                    bucket.totals[
+                        currency
+                    ] || 0
+                ) +
+                order.__amount;
+        }
+    );
+
+
+    /*
+     * A chart cannot meaningfully add KWD + KES.
+     *
+     * If multiple currencies exist, the chart displays the
+     * first currency and clearly labels it.
+     */
+
+    const currencySet =
+        [
+            ...new Set(
+                paid.map(
+                    order =>
+                        order.__currency
+                )
+            )
+        ];
+
+
+    const chartCurrency =
+        currencySet[0] ||
+        "KWD";
+
+
+    const amounts =
+        buckets.map(
+            bucket =>
+                bucket.totals[
+                    chartCurrency
+                ] || 0
+        );
+
+
+    const max =
+        Math.max(
+            ...amounts,
+            1
+        );
+
+
+    bars.innerHTML =
+        buckets.map(
+            (
+                bucket,
+                index
+            ) => {
+
+                const amount =
+                    amounts[index];
+
+
+                const percent =
+                    Math.max(
+                        amount > 0
+                            ? 3
+                            : 0,
+                        (
+                            amount /
+                            max
+                        ) * 100
+                    );
+
+
+                return `
+                    <div class="bar-item">
+
+                        ${
+                            amount > 0
+                                ? `
+                                    <span
+                                        class="bar-value"
+                                        style="--height:${percent * 2.1}px"
+                                    >
+                                        ${escapeHTML(
+                                            compactMoney(
+                                                amount,
+                                                chartCurrency
+                                            )
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
+
+                        <div
+                            class="bar"
+                            style="height:${percent}%"
+                        ></div>
+
+                        <span class="bar-label">
+                            ${escapeHTML(
+                                bucket.label
+                            )}
+                        </span>
+
+                    </div>
+                `;
+            }
+        )
+        .join("");
+
+
+    if(
+        currencySet.length > 1
+    ){
+
+        $("trendRange")
+            .title =
+            `Chart displayed for ${chartCurrency}; other currencies are not combined.`;
+    }
+}
+
+
+/* ============================================================
+   PAYMENT BREAKDOWN
+============================================================ */
+
+function renderPaymentBreakdown(){
+
+    const container =
+        $("paymentBreakdown");
+
+
+    const total =
+        filteredOrders.length;
+
+
+    if(!total){
+
+        container.innerHTML = `
+            <div class="empty">
+                No orders match the current filters.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    const groups = [
+        {
+            name:"Paid",
+            statuses:["paid"]
+        },
+        {
+            name:"Pending",
+            statuses:["pending"]
+        },
+        {
+            name:"Failed",
+            statuses:["failed"]
+        },
+        {
+            name:"Cancelled",
+            statuses:["cancelled"]
+        },
+        {
+            name:"Refunded",
+            statuses:["refunded"]
+        }
+    ];
+
+
+    container.innerHTML =
+        groups.map(
+            group => {
+
+                const count =
+                    filteredOrders
+                        .filter(
+                            order =>
+                                group.statuses
+                                    .includes(
+                                        order.__status
+                                    )
+                        )
+                        .length;
+
+
+                const percentage =
+                    (
+                        count /
+                        total
+                    ) *
+                    100;
+
+
+                return `
+                    <div class="breakdown-row">
+
+                        <div class="breakdown-name">
+                            ${group.name}
+                        </div>
+
+                        <div class="breakdown-right">
+
+                            <strong>
+                                ${count.toLocaleString()}
+                            </strong>
+
+                            <span>
+                                ${percentage.toFixed(1)}%
+                            </span>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <span
+                                style="width:${percentage}%"
+                            ></span>
+
+                        </div>
+
+                    </div>
+                `;
+            }
+        )
+        .join("");
+}
+
+
+/* ============================================================
+   EVENT PERFORMANCE
+============================================================ */
+
+function renderEventPerformance(){
+
+    const groups =
+        new Map();
+
+
+    filteredOrders.forEach(
+        order => {
+
+            const eventId =
+                order.event_id ||
+                `unknown-${order.id}`;
+
+
+            if(
+                !groups.has(
+                    eventId
+                )
+            ){
+
+                groups.set(
+                    eventId,
+                    {
+                        id:eventId,
+
+                        title:
+                            order.__eventTitle,
+
+                        merchant:
+                            order.__merchantName,
+
+                        orders:0,
+                        paidOrders:0,
+                        tickets:0,
+
+                        gross:{},
+                        fees:{}
+                    }
+                );
+            }
+
+
+            const group =
+                groups.get(
+                    eventId
+                );
+
+
+            group.orders++;
+
+
+            if(
+                order.__status !==
+                "paid"
+            ){
+
+                return;
+            }
+
+
+            group.paidOrders++;
+
+            group.tickets +=
+                order.__tickets;
+
+
+            const currency =
+                order.__currency;
+
+
+            group.gross[
+                currency
+            ] =
+                (
+                    group.gross[
+                        currency
+                    ] || 0
+                ) +
+                order.__amount;
+
+
+            group.fees[
+                currency
+            ] =
+                (
+                    group.fees[
+                        currency
+                    ] || 0
+                ) +
+                order.__fee;
+        }
+    );
+
+
+    const rows =
+        Array.from(
+            groups.values()
+        )
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                Object.values(b.gross)
+                    .reduce(
+                        (x,y) =>
+                            x + y,
+                        0
+                    ) -
+                Object.values(a.gross)
+                    .reduce(
+                        (x,y) =>
+                            x + y,
+                        0
+                    )
+        );
+
+
+    $("eventCount")
+        .textContent =
+        `${rows.length} event${
+            rows.length === 1
+                ? ""
+                : "s"
+        }`;
+
+
+    if(!rows.length){
+
+        $("eventTableBody")
+            .innerHTML = `
+                <tr>
+                    <td colspan="8">
+                        <div class="empty">
+                            <strong>
+                                No report records found
+                            </strong>
+
+                            Adjust the filters or wait for
+                            real orders to appear.
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+
+        $("eventMobileList")
+            .innerHTML = `
+                <div class="empty">
+                    <strong>
+                        No report records found
+                    </strong>
+
+                    Adjust the filters or wait for
+                    real orders to appear.
+                </div>
+            `;
+
+        return;
+    }
+
+
+    $("eventTableBody")
+        .innerHTML =
+        rows.map(
+            (
+                row,
+                index
+            ) => {
+
+                const currencies =
+                    [
+                        ...new Set(
+                            [
+                                ...Object.keys(
+                                    row.gross
+                                ),
+                                ...Object.keys(
+                                    row.fees
+                                )
+                            ]
+                        )
+                    ];
+
+
+                const gross =
+                    currencies
+                        .map(
+                            currency =>
+                                compactMoney(
+                                    row.gross[
+                                        currency
+                                    ] || 0,
+                                    currency
+                                )
+                        )
+                        .join(" • ");
+
+
+                const fees =
+                    currencies
+                        .map(
+                            currency =>
+                                compactMoney(
+                                    row.fees[
+                                        currency
+                                    ] || 0,
+                                    currency
+                                )
+                        )
+                        .join(" • ");
+
+
+                const net =
+                    currencies
+                        .map(
+                            currency =>
+                                compactMoney(
+                                    (
+                                        row.gross[
+                                            currency
+                                        ] || 0
+                                    ) -
+                                    (
+                                        row.fees[
+                                            currency
+                                        ] || 0
+                                    ),
+                                    currency
+                                )
+                        )
+                        .join(" • ");
+
+
+                return `
+                    <tr
+                        data-event-index="${index}"
+                    >
+
+                        <td>
+
+                            <div class="event-cell">
+
+                                <strong>
+                                    ${escapeHTML(
+                                        row.title
+                                    )}
+                                </strong>
+
+                                <span>
+                                    ${row.paidOrders}
+                                    paid order${
+                                        row.paidOrders === 1
+                                            ? ""
+                                            : "s"
+                                    }
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="merchant-cell">
+
+                                <strong>
+                                    ${escapeHTML(
+                                        row.merchant
+                                    )}
+                                </strong>
+
+                                <span>
+                                    Merchant
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            ${row.orders.toLocaleString()}
+                        </td>
+
+
+                        <td>
+                            ${row.tickets.toLocaleString()}
+                        </td>
+
+
+                        <td class="amount">
+                            ${escapeHTML(gross || "—")}
+                        </td>
+
+
+                        <td>
+                            ${escapeHTML(fees || "—")}
+                        </td>
+
+
+                        <td class="amount">
+                            ${escapeHTML(net || "—")}
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="status ${
+                                    row.paidOrders
+                                        ? "paid"
+                                        : "neutral"
+                                }"
+                            >
+                                ${
+                                    row.paidOrders
+                                        ? "Sales"
+                                        : "No paid sales"
+                                }
+                            </span>
+
+                        </td>
+
+                    </tr>
+                `;
+            }
+        )
+        .join("");
+
+
+    $("eventMobileList")
+        .innerHTML =
+        rows.map(
+            (
+                row,
+                index
+            ) => {
+
+                const gross =
+                    moneySummary(
+                        row.gross
+                    );
+
+
+                const net = {};
+
+
+                Object.keys(
+                    row.gross
+                )
+                .forEach(
+                    currency => {
+
+                        net[currency] =
+                            (
+                                row.gross[
+                                    currency
+                                ] || 0
+                            ) -
+                            (
+                                row.fees[
+                                    currency
+                                ] || 0
+                            );
+                    }
+                );
+
+
+                return `
+                    <div
+                        class="report-card"
+                        data-event-index="${index}"
+                    >
+
+                        <div class="report-card-top">
+
+                            <div>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        row.title
+                                    )}
+                                </strong>
+
+                                <small>
+                                    ${escapeHTML(
+                                        row.merchant
+                                    )}
+                                </small>
+
+                            </div>
+
+                            <span
+                                class="status ${
+                                    row.paidOrders
+                                        ? "paid"
+                                        : "neutral"
+                                }"
+                            >
+                                ${
+                                    row.paidOrders
+                                        ? "Sales"
+                                        : "No sales"
+                                }
+                            </span>
+
+                        </div>
+
+
+                        <div class="report-card-grid">
+
+                            <div class="mini-stat">
+
+                                <span>
+                                    Orders
+                                </span>
+
+                                <strong>
+                                    ${row.orders.toLocaleString()}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="mini-stat">
+
+                                <span>
+                                    Tickets
+                                </span>
+
+                                <strong>
+                                    ${row.tickets.toLocaleString()}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="mini-stat">
+
+                                <span>
+                                    Gross
+                                </span>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        gross
+                                    )}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="mini-stat">
+
+                                <span>
+                                    Net
+                                </span>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        moneySummary(
+                                            net
+                                        )
+                                    )}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+            }
+        )
+        .join("");
+
+
+    document
+        .querySelectorAll(
+            "[data-event-index]"
+        )
+        .forEach(
+            element => {
+
+                element.addEventListener(
+                    "click",
+                    () => {
+
+                        const index =
+                            Number(
+                                element.dataset
+                                    .eventIndex
+                            );
+
+                        openEventDetails(
+                            rows[index]
+                        );
+                    }
                 );
             }
         );
-    });
 }
+
+
+/* ============================================================
+   RANGE LABEL
+============================================================ */
 
 function updateRangeLabel(){
 
+    const select =
+        $("period");
+
+
     const label =
-        document.getElementById(
-            "trendRange"
-        );
+        select.options[
+            select.selectedIndex
+        ]?.text ||
+        "Selected period";
 
-    const text =
-        periodSelect.options[
-            periodSelect.selectedIndex
-        ].text;
 
-    label.textContent =
-        text;
+    $("trendRange")
+        .textContent =
+        label;
 }
 
-/* ------------------------------------------------------------
-   EVENT DETAILS
------------------------------------------------------------- */
 
-function openEventDetails(event){
+/* ============================================================
+   EVENT DRAWER
+============================================================ */
 
-    document.getElementById(
-        "drawerTitle"
-    ).textContent =
+function openEventDetails(
+    event
+){
+
+    const currencies =
+        [
+            ...new Set(
+                [
+                    ...Object.keys(
+                        event.gross
+                    ),
+                    ...Object.keys(
+                        event.fees
+                    )
+                ]
+            )
+        ];
+
+
+    const gross =
+        currencies
+            .map(
+                currency =>
+                    compactMoney(
+                        event.gross[
+                            currency
+                        ] || 0,
+                        currency
+                    )
+            )
+            .join(" • ");
+
+
+    const fees =
+        currencies
+            .map(
+                currency =>
+                    compactMoney(
+                        event.fees[
+                            currency
+                        ] || 0,
+                        currency
+                    )
+            )
+            .join(" • ");
+
+
+    const net = {};
+
+
+    currencies.forEach(
+        currency => {
+
+            net[currency] =
+                (
+                    event.gross[
+                        currency
+                    ] || 0
+                ) -
+                (
+                    event.fees[
+                        currency
+                    ] || 0
+                );
+        }
+    );
+
+
+    $("drawerTitle")
+        .textContent =
         event.title;
 
-    const net =
-        event.gross - event.fees;
 
-    document.getElementById(
-        "drawerContent"
-    ).innerHTML = `
+    $("drawerContent")
+        .innerHTML = `
 
-        <div class="detail">
-            <label>Event</label>
-            <span>${escapeHTML(event.title)}</span>
-        </div>
+            <div class="detail">
 
-        <div class="detail">
-            <label>Merchant</label>
-            <span>${escapeHTML(event.merchant)}</span>
-        </div>
+                <label>
+                    Event
+                </label>
 
-        <div class="detail">
-            <label>Orders</label>
-            <span>${event.orders.toLocaleString()}</span>
-        </div>
+                <span>
+                    ${escapeHTML(
+                        event.title
+                    )}
+                </span>
 
-        <div class="detail">
-            <label>Tickets</label>
-            <span>${event.tickets.toLocaleString()}</span>
-        </div>
+            </div>
 
-        <div class="detail">
-            <label>Gross revenue</label>
-            <span>${money(event.gross)}</span>
-        </div>
 
-        <div class="detail">
-            <label>Service fees</label>
-            <span>${money(event.fees)}</span>
-        </div>
+            <div class="detail">
 
-        <div class="detail">
-            <label>Net merchant revenue</label>
-            <span>${money(net)}</span>
-        </div>
+                <label>
+                    Merchant
+                </label>
 
-        <div class="detail">
-            <label>Paid orders</label>
-            <span>${event.paid.toLocaleString()}</span>
-        </div>
+                <span>
+                    ${escapeHTML(
+                        event.merchant
+                    )}
+                </span>
 
-    `;
+            </div>
 
-    drawer.classList.add("open");
-    drawerOverlay.classList.add("open");
+
+            <div class="detail">
+
+                <label>
+                    Orders
+                </label>
+
+                <span>
+                    ${event.orders.toLocaleString()}
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Paid Orders
+                </label>
+
+                <span>
+                    ${event.paidOrders.toLocaleString()}
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Tickets
+                </label>
+
+                <span>
+                    ${event.tickets.toLocaleString()}
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Gross Revenue
+                </label>
+
+                <span>
+                    ${escapeHTML(
+                        gross || "—"
+                    )}
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Service Fees
+                </label>
+
+                <span>
+                    ${escapeHTML(
+                        fees || "—"
+                    )}
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>
+                    Net Merchant
+                </label>
+
+                <span>
+                    ${escapeHTML(
+                        moneySummary(
+                            net
+                        )
+                    )}
+                </span>
+
+            </div>
+
+        `;
+
+
+    $("drawer")
+        .classList
+        .add("open");
+
+    $("drawerOverlay")
+        .classList
+        .add("open");
 }
 
-function closeDrawer(){
 
-    drawer.classList.remove("open");
-    drawerOverlay.classList.remove("open");
-}
-
-/* ------------------------------------------------------------
+/* ============================================================
    CSV
------------------------------------------------------------- */
+============================================================ */
 
-function csvEscape(value){
+function csvEscape(
+    value
+){
 
     const text =
-        String(value ?? "");
+        String(
+            value ?? ""
+        );
 
-    if(
-        text.includes(",") ||
-        text.includes('"') ||
-        text.includes("\n")
-    ){
 
-        return `"${text.replace(/"/g,'""')}"`;
-    }
-
-    return text;
+    return `"${text.replace(
+        /"/g,
+        '""'
+    )}"`;
 }
+
 
 function exportCSV(){
 
@@ -3016,238 +4955,381 @@ function exportCSV(){
         return;
     }
 
+
     const rows = [
+
         [
             "Order ID",
+            "Order Number",
             "Event",
             "Merchant",
             "Status",
             "Payment Method",
-            "Amount",
+            "Currency",
+            "Gross",
             "Service Fee",
             "Net",
             "Tickets",
-            "Created At"
+            "Created At",
+            "Paid At"
         ]
+
     ];
 
-    filteredOrders.forEach(order=>{
 
-        rows.push([
-            order.id || "",
-            order.__eventTitle,
-            order.__merchantName,
-            order.__status,
-            order.__method,
-            order.__amount,
-            order.__fee,
-            order.__amount - order.__fee,
-            order.__tickets,
-            order.__date || ""
-        ]);
-    });
+    filteredOrders.forEach(
+        order => {
+
+            rows.push(
+                [
+
+                    order.id,
+
+                    order.order_number,
+
+                    order.__eventTitle,
+
+                    order.__merchantName,
+
+                    order.__status,
+
+                    order.__methodLabel,
+
+                    order.__currency,
+
+                    order.__amount,
+
+                    order.__fee,
+
+                    order.__amount -
+                    order.__fee,
+
+                    order.__tickets,
+
+                    order.created_at,
+
+                    order.paid_at
+
+                ]
+            );
+        }
+    );
+
 
     const csv =
         rows
-            .map(row =>
-                row.map(csvEscape).join(",")
+            .map(
+                row =>
+                    row
+                        .map(csvEscape)
+                        .join(",")
             )
             .join("\n");
 
+
     const blob =
         new Blob(
-            [csv],
+            [
+                "\uFEFF" +
+                csv
+            ],
             {
-                type:"text/csv;charset=utf-8;"
+                type:
+                    "text/csv;charset=utf-8;"
             }
         );
 
+
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
+
 
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
-    link.href = url;
+
+    link.href =
+        url;
+
 
     link.download =
         `k-tickets-report-${new Date()
             .toISOString()
-            .slice(0,10)}.csv`;
+            .slice(0,10)
+        }.csv`;
 
-    document.body.appendChild(link);
+
+    document.body.appendChild(
+        link
+    );
+
 
     link.click();
 
+
     link.remove();
 
-    URL.revokeObjectURL(url);
 
-    showToast("Report CSV exported.");
+    URL.revokeObjectURL(
+        url
+    );
+
+
+    showToast(
+        `Exported ${filteredOrders.length} report order(s).`
+    );
 }
 
-/* ------------------------------------------------------------
-   EVENTS
------------------------------------------------------------- */
 
-searchInput.addEventListener(
-    "input",
-    applyFilters
-);
+/* ============================================================
+   LOAD EVERYTHING
+============================================================ */
 
-periodSelect.addEventListener(
-    "change",
-    applyFilters
-);
+async function loadReportData(){
 
-statusSelect.addEventListener(
-    "change",
-    applyFilters
-);
+    const button =
+        $("refreshBtn");
 
-paymentMethodSelect.addEventListener(
-    "change",
-    applyFilters
-);
 
-refreshBtn.addEventListener(
-    "click",
-    async ()=>{
+    button.disabled =
+        true;
 
-        refreshBtn.disabled = true;
 
-        refreshBtn.textContent =
-            "↻ Loading…";
+    button.textContent =
+        "↻ Loading…";
 
-        try{
-
-            await loadEventLookup();
-            await loadMerchantLookup();
-            await loadOrders();
-
-            showToast(
-                "Reports refreshed from Supabase."
-            );
-
-        }catch(error){
-
-            console.error(error);
-
-            showToast(
-                "Unable to load report data. Check your Supabase table/RLS configuration.",
-                true
-            );
-
-        }finally{
-
-            refreshBtn.disabled = false;
-
-            refreshBtn.textContent =
-                "↻ Refresh";
-        }
-    }
-);
-
-csvBtn.addEventListener(
-    "click",
-    exportCSV
-);
-
-menuBtn.addEventListener(
-    "click",
-    ()=>{
-        sidebar.classList.toggle("open");
-    }
-);
-
-drawerClose.addEventListener(
-    "click",
-    closeDrawer
-);
-
-drawerOverlay.addEventListener(
-    "click",
-    closeDrawer
-);
-
-document.addEventListener(
-    "keydown",
-    event=>{
-
-        if(event.key === "Escape"){
-            closeDrawer();
-        }
-    }
-);
-
-/* ------------------------------------------------------------
-   AUTH STATE
------------------------------------------------------------- */
-
-supabaseClient.auth.onAuthStateChange(
-    (event,session)=>{
-
-        if(
-            event === "SIGNED_OUT" ||
-            !session
-        ){
-
-            window.location.href =
-                "../auth/login.html?error=session_expired";
-        }
-    }
-);
-
-/* ------------------------------------------------------------
-   INIT
------------------------------------------------------------- */
-
-async function init(){
 
     try{
 
-        if(
-            !SUPABASE_URL ||
-            !SUPABASE_ANON_KEY
-        ){
+        await Promise.all([
+            loadEvents(),
+            loadMerchants(),
+            loadOrders(),
+            loadOrderItems(),
+            loadPayments()
+        ]);
 
-            throw new Error(
-                "Supabase configuration is missing."
-            );
-        }
 
-        const isAdmin =
-            await requireAdmin();
+        prepareAllOrders();
 
-        if(!isAdmin){
-            return;
-        }
+        applyFilters();
 
-        await loadEventLookup();
-        await loadMerchantLookup();
-        await loadOrders();
+
+        showToast(
+            "Reports refreshed from Supabase."
+        );
+
 
     }catch(error){
 
         console.error(
-            "Reports initialization error:",
+            "Reports data error:",
             error
         );
 
+
         showToast(
-            error.message ||
-            "Unable to initialize reports.",
+            "Unable to load report data. Check Supabase RLS and database configuration.",
             true
         );
 
+
+        orders = [];
+        filteredOrders = [];
+
+        renderAll();
+
+
     }finally{
 
-        hideLoading();
+        button.disabled =
+            false;
+
+        button.textContent =
+            "↻ Refresh";
     }
 }
 
-init();
 
+/* ============================================================
+   EVENTS
+============================================================ */
+
+$("search")
+    .addEventListener(
+        "input",
+        applyFilters
+    );
+
+
+$("period")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("status")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("paymentMethod")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("refreshBtn")
+    .addEventListener(
+        "click",
+        loadReportData
+    );
+
+
+$("csvBtn")
+    .addEventListener(
+        "click",
+        exportCSV
+    );
+
+
+$("menuBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("sidebar")
+                .classList
+                .toggle("open");
+        }
+    );
+
+
+$("drawerClose")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("drawer")
+                .classList
+                .remove("open");
+
+            $("drawerOverlay")
+                .classList
+                .remove("open");
+        }
+    );
+
+
+$("drawerOverlay")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("drawer")
+                .classList
+                .remove("open");
+
+            $("drawerOverlay")
+                .classList
+                .remove("open");
+        }
+    );
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key ===
+            "Escape"
+        ){
+
+            $("drawer")
+                .classList
+                .remove("open");
+
+            $("drawerOverlay")
+                .classList
+                .remove("open");
+        }
+    }
+);
+
+
+/* ============================================================
+   BOOT
+============================================================ */
+
+async function boot(){
+
+    try{
+
+        const allowed =
+            await verifyAdmin();
+
+
+        if(!allowed){
+            return;
+        }
+
+
+        await loadReportData();
+
+
+        $("securityGate")
+            .style
+            .display =
+            "none";
+
+
+        $("app")
+            .style
+            .display =
+            "block";
+
+
+    }catch(error){
+
+        console.error(
+            "K-Tickets reports boot error:",
+            error
+        );
+
+
+        $("securityMessage")
+            .textContent =
+            "The administrator area could not be securely initialized.";
+
+
+        $("loginButton")
+            .style
+            .display =
+            "inline-flex";
+    }
+}
+
+
+$("loginButton")
+    .addEventListener(
+        "click",
+        () =>
+            redirectLogin(
+                "admin_session_required"
+            )
+    );
+
+
+boot();
 </script>
 
 </body>

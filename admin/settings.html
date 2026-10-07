@@ -2,843 +2,901 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1, viewport-fit=cover"
-    >
-
-    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
-    <meta name="referrer" content="same-origin">
-
-    <title>K-Tickets Admin — Settings</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root{
-            --bordo:#6C151E;
-            --green:#0F3D3A;
-            --cream:#F5DABF;
-            --white:#fff;
-            --ink:#18211f;
-            --muted:#6d7774;
-            --line:#e8e3dc;
-            --soft:#f8f5f1;
-            --success:#176b4d;
-            --warning:#9a6811;
-            --danger:#a72c35;
-            --shadow:0 18px 50px rgba(15,61,58,.08);
-            --radius:18px;
-        }
-
-        *{
-            box-sizing:border-box;
-            margin:0;
-            padding:0;
-        }
-
-        html{
-            scroll-behavior:smooth;
-        }
-
-        body{
-            font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-            background:#f7f5f2;
-            color:var(--ink);
-            min-height:100vh;
-        }
-
-        button,
-        input,
-        select,
-        textarea{
-            font:inherit;
-        }
-
-        button{
-            cursor:pointer;
-        }
-
-        a{
-            color:inherit;
-            text-decoration:none;
-        }
-
-        .app{
-            min-height:100vh;
-            display:flex;
-        }
-
-        /* SIDEBAR */
-        .sidebar{
-            width:270px;
-            background:var(--green);
-            color:#fff;
-            position:fixed;
-            inset:0 auto 0 0;
-            z-index:100;
-            display:flex;
-            flex-direction:column;
-            overflow-y:auto;
-        }
-
-        .brand{
-            padding:27px 23px 23px;
-            border-bottom:1px solid rgba(255,255,255,.10);
-        }
-
-        .brand-mark{
-            width:42px;
-            height:42px;
-            border-radius:13px;
-            background:var(--cream);
-            color:var(--green);
-            display:grid;
-            place-items:center;
-            font-weight:900;
-            margin-bottom:13px;
-        }
-
-        .brand h1{
-            font-size:17px;
-            letter-spacing:.08em;
-            font-weight:900;
-        }
-
-        .brand p{
-            color:rgba(255,255,255,.58);
-            font-size:11px;
-            margin-top:5px;
-            letter-spacing:.08em;
-            text-transform:uppercase;
-        }
-
-        .nav{
-            padding:17px 12px;
-            flex:1;
-        }
-
-        .nav-label{
-            color:rgba(255,255,255,.38);
-            font-size:10px;
-            font-weight:800;
-            letter-spacing:.14em;
-            text-transform:uppercase;
-            padding:12px 12px 8px;
-        }
-
-        .nav a{
-            display:flex;
-            align-items:center;
-            gap:11px;
-            padding:11px 12px;
-            border-radius:11px;
-            margin-bottom:3px;
-            color:rgba(255,255,255,.72);
-            font-size:13px;
-            transition:.18s ease;
-        }
-
-        .nav a:hover{
-            background:rgba(255,255,255,.07);
-            color:#fff;
-        }
-
-        .nav a.active{
-            background:var(--bordo);
-            color:#fff;
-            box-shadow:0 8px 22px rgba(108,21,30,.25);
-        }
-
-        .nav-icon{
-            width:19px;
-            text-align:center;
-            opacity:.9;
-        }
-
-        .sidebar-footer{
-            padding:15px;
-            border-top:1px solid rgba(255,255,255,.10);
-        }
-
-        .admin-mini{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            padding:9px;
-            border-radius:12px;
-            background:rgba(255,255,255,.055);
-        }
-
-        .avatar{
-            width:35px;
-            height:35px;
-            border-radius:50%;
-            display:grid;
-            place-items:center;
-            background:var(--cream);
-            color:var(--green);
-            font-weight:900;
-            font-size:12px;
-            flex:none;
-        }
-
-        .admin-mini strong{
-            display:block;
-            font-size:12px;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
-            max-width:170px;
-        }
-
-        .admin-mini span{
-            display:block;
-            color:rgba(255,255,255,.48);
-            font-size:10px;
-            margin-top:2px;
-        }
-
-        /* MAIN */
-        .main{
-            width:calc(100% - 270px);
-            margin-left:270px;
-            min-width:0;
-        }
-
-        .topbar{
-            min-height:78px;
-            background:#fff;
-            border-bottom:1px solid var(--line);
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:18px;
-            padding:15px 28px;
-            position:sticky;
-            top:0;
-            z-index:60;
-        }
-
-        .topbar-left{
-            min-width:0;
-        }
-
-        .eyebrow{
-            color:var(--bordo);
-            font-size:10px;
-            font-weight:900;
-            text-transform:uppercase;
-            letter-spacing:.14em;
-            margin-bottom:4px;
-        }
-
-        .topbar h2{
-            font-size:22px;
-            line-height:1.1;
-        }
-
-        .topbar-right{
-            display:flex;
-            align-items:center;
-            gap:10px;
-        }
-
-        .menu-btn{
-            display:none;
-            width:42px;
-            height:42px;
-            border:1px solid var(--line);
-            background:#fff;
-            border-radius:11px;
-        }
-
-        .admin-greeting{
-            text-align:right;
-        }
-
-        .admin-greeting strong{
-            display:block;
-            font-size:12px;
-        }
-
-        .admin-greeting span{
-            color:var(--muted);
-            font-size:10px;
-        }
-
-        .page{
-            padding:28px;
-            max-width:1500px;
-            margin:auto;
-        }
-
-        /* PAGE GRID */
-        .settings-layout{
-            display:grid;
-            grid-template-columns:230px minmax(0,1fr);
-            gap:20px;
-            align-items:start;
-        }
-
-        .settings-nav{
-            background:#fff;
-            border:1px solid var(--line);
-            border-radius:var(--radius);
-            padding:10px;
-            box-shadow:var(--shadow);
-            position:sticky;
-            top:100px;
-        }
-
-        .settings-nav button{
-            width:100%;
-            text-align:left;
-            border:0;
-            background:transparent;
-            color:var(--muted);
-            border-radius:11px;
-            padding:11px 12px;
-            font-size:12px;
-            font-weight:800;
-            margin-bottom:3px;
-        }
-
-        .settings-nav button:hover{
-            background:#f5f2ee;
-            color:var(--green);
-        }
-
-        .settings-nav button.active{
-            background:var(--green);
-            color:#fff;
-        }
-
-        .settings-content{
-            min-width:0;
-        }
-
-        .settings-section{
-            display:none;
-        }
-
-        .settings-section.active{
-            display:block;
-        }
-
-        /* PANEL */
-        .panel{
-            background:#fff;
-            border:1px solid var(--line);
-            border-radius:var(--radius);
-            box-shadow:var(--shadow);
-            margin-bottom:20px;
-            overflow:hidden;
-        }
-
-        .panel-header{
-            padding:20px;
-            border-bottom:1px solid var(--line);
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:15px;
-        }
-
-        .panel-title{
-            font-size:14px;
-            font-weight:900;
-        }
-
-        .panel-subtitle{
-            color:var(--muted);
-            font-size:10px;
-            line-height:1.5;
-            margin-top:4px;
-        }
-
-        .panel-body{
-            padding:20px;
-        }
-
-        .section-title{
-            font-size:12px;
-            font-weight:900;
-            margin-bottom:14px;
-        }
-
-        /* FORM */
-        .form-grid{
-            display:grid;
-            grid-template-columns:repeat(2,minmax(0,1fr));
-            gap:15px;
-        }
-
-        .form-group{
-            min-width:0;
-        }
-
-        .form-group.full{
-            grid-column:1 / -1;
-        }
-
-        .form-group label{
-            display:block;
-            color:#4e5956;
-            font-size:10px;
-            font-weight:900;
-            text-transform:uppercase;
-            letter-spacing:.08em;
-            margin-bottom:7px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea{
-            width:100%;
-            border:1px solid #ddd8d0;
-            background:#fff;
-            border-radius:10px;
-            padding:11px 12px;
-            outline:none;
-            color:var(--ink);
-        }
-
-        .form-group input,
-        .form-group select{
-            height:43px;
-        }
-
-        .form-group textarea{
-            min-height:105px;
-            resize:vertical;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus{
-            border-color:var(--green);
-            box-shadow:0 0 0 3px rgba(15,61,58,.08);
-        }
-
-        .help{
-            color:var(--muted);
-            font-size:9px;
-            line-height:1.5;
-            margin-top:5px;
-        }
-
-        .form-actions{
-            margin-top:20px;
-            padding-top:17px;
-            border-top:1px solid var(--line);
-            display:flex;
-            justify-content:flex-end;
-            gap:9px;
-        }
-
-        .btn{
-            border:0;
-            min-height:42px;
-            padding:0 15px;
-            border-radius:10px;
-            font-weight:800;
-            font-size:12px;
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            gap:7px;
-            transition:.18s ease;
-        }
-
-        .btn-primary{
-            background:var(--green);
-            color:#fff;
-        }
-
-        .btn-primary:hover{
-            transform:translateY(-1px);
-        }
-
-        .btn-soft{
-            background:#f1eeea;
-            color:var(--green);
-        }
-
-        .btn-danger{
-            background:#f9e8e9;
-            color:var(--danger);
-        }
-
-        .btn:disabled{
-            opacity:.55;
-            cursor:not-allowed;
-            transform:none;
-        }
-
-        /* TOGGLE */
-        .setting-list{
-            display:flex;
-            flex-direction:column;
-        }
-
-        .setting-row{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:18px;
-            padding:15px 0;
-            border-bottom:1px solid #efebe6;
-        }
-
-        .setting-row:last-child{
-            border-bottom:0;
-        }
-
-        .setting-copy{
-            min-width:0;
-        }
-
-        .setting-copy strong{
-            display:block;
-            font-size:12px;
-        }
-
-        .setting-copy p{
-            color:var(--muted);
-            font-size:10px;
-            line-height:1.5;
-            margin-top:4px;
-            max-width:680px;
-        }
-
-        .switch{
-            width:48px;
-            height:27px;
-            border:0;
-            border-radius:999px;
-            background:#d8d6d1;
-            position:relative;
-            flex:none;
-            transition:.2s;
-        }
-
-        .switch::after{
-            content:"";
-            position:absolute;
-            width:21px;
-            height:21px;
-            background:#fff;
-            border-radius:50%;
-            top:3px;
-            left:3px;
-            box-shadow:0 2px 6px rgba(0,0,0,.15);
-            transition:.2s;
-        }
-
-        .switch.active{
-            background:var(--green);
-        }
-
-        .switch.active::after{
-            left:24px;
-        }
-
-        /* STATUS */
-        .status-box{
-            display:flex;
-            align-items:flex-start;
-            gap:12px;
-            padding:14px;
-            border-radius:12px;
-            background:#edf5f2;
-            border:1px solid #d7e8e3;
-            margin-bottom:17px;
-        }
-
-        .status-icon{
-            width:32px;
-            height:32px;
-            border-radius:9px;
-            display:grid;
-            place-items:center;
-            background:var(--green);
-            color:#fff;
-            flex:none;
-        }
-
-        .status-box strong{
-            display:block;
-            font-size:11px;
-        }
-
-        .status-box p{
-            color:#53615e;
-            font-size:10px;
-            line-height:1.55;
-            margin-top:3px;
-        }
-
-        /* ACCOUNT */
-        .identity{
-            display:flex;
-            align-items:center;
-            gap:13px;
-            margin-bottom:20px;
-        }
-
-        .large-avatar{
-            width:58px;
-            height:58px;
-            border-radius:17px;
-            background:var(--cream);
-            color:var(--green);
-            display:grid;
-            place-items:center;
-            font-size:17px;
-            font-weight:900;
-            flex:none;
-        }
-
-        .identity strong{
-            display:block;
-            font-size:15px;
-        }
-
-        .identity span{
-            display:block;
-            color:var(--muted);
-            font-size:10px;
-            margin-top:4px;
-        }
-
-        /* DANGER */
-        .danger-box{
-            border:1px solid #efd3d5;
-            background:#fff8f8;
-            border-radius:14px;
-            padding:16px;
-        }
-
-        .danger-box strong{
-            display:block;
-            color:var(--danger);
-            font-size:12px;
-        }
-
-        .danger-box p{
-            color:#76595b;
-            font-size:10px;
-            line-height:1.55;
-            margin:5px 0 13px;
-        }
-
-        /* SECURITY */
-        .security{
-            background:#edf5f2;
-            border:1px solid #d7e8e3;
-            border-radius:var(--radius);
-            padding:15px 17px;
-            display:flex;
-            align-items:flex-start;
-            gap:12px;
-            margin-top:20px;
-        }
-
-        .security-icon{
-            width:30px;
-            height:30px;
-            border-radius:9px;
-            background:var(--green);
-            color:#fff;
-            display:grid;
-            place-items:center;
-            flex:none;
-            font-size:12px;
-        }
-
-        .security strong{
-            display:block;
-            font-size:11px;
-        }
-
-        .security p{
-            color:#53615e;
-            font-size:10px;
-            line-height:1.55;
-            margin-top:3px;
-        }
-
-        /* TOAST / LOADING */
-        .loading{
-            position:fixed;
-            inset:0;
-            z-index:999;
-            background:rgba(247,245,242,.88);
-            display:grid;
-            place-items:center;
-        }
-
-        .loading.hidden{
-            display:none;
-        }
-
-        .loading-box{
-            background:#fff;
-            border:1px solid var(--line);
-            border-radius:15px;
-            padding:20px 25px;
-            box-shadow:var(--shadow);
-            text-align:center;
-        }
-
-        .spinner{
-            width:28px;
-            height:28px;
-            border:3px solid #e5e0da;
-            border-top-color:var(--green);
-            border-radius:50%;
-            animation:spin .8s linear infinite;
-            margin:0 auto 10px;
-        }
-
-        @keyframes spin{
-            to{
-                transform:rotate(360deg);
-            }
-        }
-
-        .toast{
-            position:fixed;
-            right:20px;
-            bottom:20px;
-            background:var(--green);
-            color:#fff;
-            padding:12px 15px;
-            border-radius:11px;
-            font-size:11px;
-            font-weight:800;
-            opacity:0;
-            transform:translateY(12px);
-            pointer-events:none;
-            transition:.2s;
-            z-index:1000;
-            max-width:360px;
-        }
-
-        .toast.show{
-            opacity:1;
-            transform:translateY(0);
-        }
-
-        .toast.error{
-            background:var(--danger);
-        }
-
-        /* MOBILE */
-        @media(max-width:1100px){
-            .settings-layout{
-                grid-template-columns:190px minmax(0,1fr);
-            }
-        }
-
-        @media(max-width:900px){
-
-            .sidebar{
-                transform:translateX(-100%);
-                transition:.25s ease;
-            }
-
-            .sidebar.open{
-                transform:translateX(0);
-            }
-
-            .main{
-                width:100%;
-                margin-left:0;
-            }
-
-            .menu-btn{
-                display:grid;
-                place-items:center;
-            }
-
-            .topbar{
-                padding:13px 16px;
-            }
-
-            .page{
-                padding:18px 14px;
-            }
-
-            .admin-greeting{
-                display:none;
-            }
-
-            .settings-layout{
-                grid-template-columns:1fr;
-            }
-
-            .settings-nav{
-                position:static;
-                display:flex;
-                overflow-x:auto;
-                gap:5px;
-                padding:7px;
-            }
-
-            .settings-nav button{
-                width:auto;
-                flex:none;
-                white-space:nowrap;
-            }
-        }
-
-        @media(max-width:650px){
-
-            .form-grid{
-                grid-template-columns:1fr;
-            }
-
-            .form-group.full{
-                grid-column:auto;
-            }
-
-            .panel-header,
-            .panel-body{
-                padding:16px;
-            }
-
-            .setting-row{
-                align-items:flex-start;
-            }
-
-            .form-actions{
-                flex-direction:column-reverse;
-            }
-
-            .form-actions .btn{
-                width:100%;
-            }
-
-            .security{
-                padding:13px;
-            }
-        }
-
-        @media(max-width:430px){
-
-            .topbar h2{
-                font-size:19px;
-            }
-
-            .identity{
-                align-items:flex-start;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="referrer" content="same-origin">
+
+<title>K-Tickets Admin — Settings</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+    --bordo:#6C151E;
+    --green:#0F3D3A;
+    --cream:#F5DABF;
+    --white:#fff;
+    --ink:#18211f;
+    --muted:#6d7774;
+    --line:#e8e3dc;
+    --soft:#f8f5f1;
+    --success:#176b4d;
+    --warning:#9a6811;
+    --danger:#a72c35;
+    --shadow:0 18px 50px rgba(15,61,58,.08);
+    --radius:18px;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:#f7f5f2;
+    color:var(--ink);
+    min-height:100vh;
+}
+
+button,input,select,textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+button:disabled{
+    cursor:not-allowed;
+}
+
+a{
+    color:inherit;
+    text-decoration:none;
+}
+
+.app{
+    min-height:100vh;
+    display:flex;
+}
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+
+.sidebar{
+    width:270px;
+    background:var(--green);
+    color:#fff;
+    position:fixed;
+    inset:0 auto 0 0;
+    z-index:100;
+    display:flex;
+    flex-direction:column;
+    overflow-y:auto;
+}
+
+.brand{
+    padding:27px 23px 23px;
+    border-bottom:1px solid rgba(255,255,255,.10);
+}
+
+.brand-mark{
+    width:42px;
+    height:42px;
+    border-radius:13px;
+    background:var(--cream);
+    color:var(--green);
+    display:grid;
+    place-items:center;
+    font-weight:900;
+    margin-bottom:13px;
+}
+
+.brand h1{
+    font-size:17px;
+    letter-spacing:.08em;
+    font-weight:900;
+}
+
+.brand p{
+    color:rgba(255,255,255,.58);
+    font-size:11px;
+    margin-top:5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+
+.nav{
+    padding:17px 12px;
+    flex:1;
+}
+
+.nav-label{
+    color:rgba(255,255,255,.38);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    padding:12px 12px 8px;
+}
+
+.nav a{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:11px 12px;
+    border-radius:11px;
+    margin-bottom:3px;
+    color:rgba(255,255,255,.72);
+    font-size:13px;
+    transition:.18s ease;
+}
+
+.nav a:hover{
+    background:rgba(255,255,255,.07);
+    color:#fff;
+}
+
+.nav a.active{
+    background:var(--bordo);
+    color:#fff;
+    box-shadow:0 8px 22px rgba(108,21,30,.25);
+}
+
+.nav-icon{
+    width:19px;
+    text-align:center;
+    opacity:.9;
+}
+
+.sidebar-footer{
+    padding:15px;
+    border-top:1px solid rgba(255,255,255,.10);
+}
+
+.admin-mini{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px;
+    border-radius:12px;
+    background:rgba(255,255,255,.055);
+}
+
+.avatar{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:var(--cream);
+    color:var(--green);
+    font-weight:900;
+    font-size:12px;
+    flex:none;
+}
+
+.admin-mini strong{
+    display:block;
+    font-size:12px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:170px;
+}
+
+.admin-mini span{
+    display:block;
+    color:rgba(255,255,255,.48);
+    font-size:10px;
+    margin-top:2px;
+}
+
+/* ============================================================
+   MAIN
+============================================================ */
+
+.main{
+    width:calc(100% - 270px);
+    margin-left:270px;
+    min-width:0;
+}
+
+.topbar{
+    min-height:78px;
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+    padding:15px 28px;
+    position:sticky;
+    top:0;
+    z-index:60;
+}
+
+.topbar-left{
+    min-width:0;
+}
+
+.eyebrow{
+    color:var(--bordo);
+    font-size:10px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    margin-bottom:4px;
+}
+
+.topbar h2{
+    font-size:22px;
+    line-height:1.1;
+}
+
+.topbar-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.menu-btn{
+    display:none;
+    width:42px;
+    height:42px;
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius:11px;
+}
+
+.admin-greeting{
+    text-align:right;
+}
+
+.admin-greeting strong{
+    display:block;
+    font-size:12px;
+}
+
+.admin-greeting span{
+    color:var(--muted);
+    font-size:10px;
+}
+
+.page{
+    padding:28px;
+    max-width:1500px;
+    margin:auto;
+}
+
+/* ============================================================
+   SETTINGS NAV
+============================================================ */
+
+.settings-layout{
+    display:grid;
+    grid-template-columns:230px minmax(0,1fr);
+    gap:20px;
+    align-items:start;
+}
+
+.settings-nav{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:10px;
+    box-shadow:var(--shadow);
+    position:sticky;
+    top:100px;
+}
+
+.settings-nav button{
+    width:100%;
+    text-align:left;
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    border-radius:11px;
+    padding:11px 12px;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:3px;
+}
+
+.settings-nav button:hover{
+    background:#f5f2ee;
+    color:var(--green);
+}
+
+.settings-nav button.active{
+    background:var(--green);
+    color:#fff;
+}
+
+.settings-content{
+    min-width:0;
+}
+
+.settings-section{
+    display:none;
+}
+
+.settings-section.active{
+    display:block;
+}
+
+/* ============================================================
+   PANELS
+============================================================ */
+
+.panel{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    margin-bottom:20px;
+    overflow:hidden;
+}
+
+.panel-header{
+    padding:20px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.panel-title{
+    font-size:14px;
+    font-weight:900;
+}
+
+.panel-subtitle{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.5;
+    margin-top:4px;
+}
+
+.panel-body{
+    padding:20px;
+}
+
+/* ============================================================
+   FORMS
+============================================================ */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:15px;
+}
+
+.form-group{
+    min-width:0;
+}
+
+.form-group.full{
+    grid-column:1 / -1;
+}
+
+.form-group label{
+    display:block;
+    color:#4e5956;
+    font-size:10px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    margin-bottom:7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+    width:100%;
+    border:1px solid #ddd8d0;
+    background:#fff;
+    border-radius:10px;
+    padding:11px 12px;
+    outline:none;
+    color:var(--ink);
+}
+
+.form-group input,
+.form-group select{
+    height:43px;
+}
+
+.form-group textarea{
+    min-height:105px;
+    resize:vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+    border-color:var(--green);
+    box-shadow:0 0 0 3px rgba(15,61,58,.08);
+}
+
+.form-group input[readonly]{
+    background:#f5f2ee;
+    color:var(--muted);
+}
+
+.help{
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.5;
+    margin-top:5px;
+}
+
+.form-actions{
+    margin-top:20px;
+    padding-top:17px;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:flex-end;
+    gap:9px;
+}
+
+.btn{
+    border:0;
+    min-height:42px;
+    padding:0 15px;
+    border-radius:10px;
+    font-weight:800;
+    font-size:12px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    transition:.18s ease;
+}
+
+.btn-primary{
+    background:var(--green);
+    color:#fff;
+}
+
+.btn-primary:hover{
+    transform:translateY(-1px);
+}
+
+.btn-soft{
+    background:#f1eeea;
+    color:var(--green);
+}
+
+.btn-danger{
+    background:#f9e8e9;
+    color:var(--danger);
+}
+
+.btn-warning{
+    background:#fff4dc;
+    color:var(--warning);
+}
+
+.btn:disabled{
+    opacity:.55;
+    transform:none;
+}
+
+/* ============================================================
+   SETTINGS ROWS
+============================================================ */
+
+.setting-list{
+    display:flex;
+    flex-direction:column;
+}
+
+.setting-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:18px;
+    padding:15px 0;
+    border-bottom:1px solid #efebe6;
+}
+
+.setting-row:last-child{
+    border-bottom:0;
+}
+
+.setting-copy{
+    min-width:0;
+}
+
+.setting-copy strong{
+    display:block;
+    font-size:12px;
+}
+
+.setting-copy p{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.5;
+    margin-top:4px;
+    max-width:680px;
+}
+
+/* ============================================================
+   SWITCH
+============================================================ */
+
+.switch{
+    width:48px;
+    height:27px;
+    border:0;
+    border-radius:999px;
+    background:#d8d6d1;
+    position:relative;
+    flex:none;
+    transition:.2s;
+}
+
+.switch::after{
+    content:"";
+    position:absolute;
+    width:21px;
+    height:21px;
+    background:#fff;
+    border-radius:50%;
+    top:3px;
+    left:3px;
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+    transition:.2s;
+}
+
+.switch.active{
+    background:var(--green);
+}
+
+.switch.active::after{
+    left:24px;
+}
+
+/* ============================================================
+   STATUS
+============================================================ */
+
+.status-box{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px;
+    border-radius:12px;
+    background:#edf5f2;
+    border:1px solid #d7e8e3;
+    margin-bottom:17px;
+}
+
+.status-box.warning{
+    background:#fff7e8;
+    border-color:#f0dfb8;
+}
+
+.status-box.error{
+    background:#fff2f3;
+    border-color:#efd3d5;
+}
+
+.status-icon{
+    width:32px;
+    height:32px;
+    border-radius:9px;
+    display:grid;
+    place-items:center;
+    background:var(--green);
+    color:#fff;
+    flex:none;
+}
+
+.status-box.warning .status-icon{
+    background:var(--warning);
+}
+
+.status-box.error .status-icon{
+    background:var(--danger);
+}
+
+.status-box strong{
+    display:block;
+    font-size:11px;
+}
+
+.status-box p{
+    color:#53615e;
+    font-size:10px;
+    line-height:1.55;
+    margin-top:3px;
+}
+
+/* ============================================================
+   ACCOUNT
+============================================================ */
+
+.identity{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    margin-bottom:20px;
+}
+
+.large-avatar{
+    width:58px;
+    height:58px;
+    border-radius:17px;
+    background:var(--cream);
+    color:var(--green);
+    display:grid;
+    place-items:center;
+    font-size:17px;
+    font-weight:900;
+    flex:none;
+}
+
+.identity strong{
+    display:block;
+    font-size:15px;
+}
+
+.identity span{
+    display:block;
+    color:var(--muted);
+    font-size:10px;
+    margin-top:4px;
+}
+
+/* ============================================================
+   DANGER
+============================================================ */
+
+.danger-box{
+    border:1px solid #efd3d5;
+    background:#fff8f8;
+    border-radius:14px;
+    padding:16px;
+}
+
+.danger-box strong{
+    display:block;
+    color:var(--danger);
+    font-size:12px;
+}
+
+.danger-box p{
+    color:#76595b;
+    font-size:10px;
+    line-height:1.55;
+    margin:5px 0 13px;
+}
+
+/* ============================================================
+   SECURITY
+============================================================ */
+
+.security{
+    background:#edf5f2;
+    border:1px solid #d7e8e3;
+    border-radius:var(--radius);
+    padding:15px 17px;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    margin-top:20px;
+}
+
+.security-icon{
+    width:30px;
+    height:30px;
+    border-radius:9px;
+    background:var(--green);
+    color:#fff;
+    display:grid;
+    place-items:center;
+    flex:none;
+    font-size:12px;
+}
+
+.security strong{
+    display:block;
+    font-size:11px;
+}
+
+.security p{
+    color:#53615e;
+    font-size:10px;
+    line-height:1.55;
+    margin-top:3px;
+}
+
+/* ============================================================
+   LOAD / TOAST
+============================================================ */
+
+.loading{
+    position:fixed;
+    inset:0;
+    z-index:999;
+    background:rgba(247,245,242,.90);
+    display:grid;
+    place-items:center;
+}
+
+.loading.hidden{
+    display:none;
+}
+
+.loading-box{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:15px;
+    padding:20px 25px;
+    box-shadow:var(--shadow);
+    text-align:center;
+}
+
+.spinner{
+    width:28px;
+    height:28px;
+    border:3px solid #e5e0da;
+    border-top-color:var(--green);
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+    margin:0 auto 10px;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.toast{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    background:var(--green);
+    color:#fff;
+    padding:12px 15px;
+    border-radius:11px;
+    font-size:11px;
+    font-weight:800;
+    opacity:0;
+    transform:translateY(12px);
+    pointer-events:none;
+    transition:.2s;
+    z-index:1000;
+    max-width:380px;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.toast.error{
+    background:var(--danger);
+}
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media(max-width:1100px){
+
+    .settings-layout{
+        grid-template-columns:190px minmax(0,1fr);
+    }
+}
+
+@media(max-width:900px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.25s ease;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        width:100%;
+        margin-left:0;
+    }
+
+    .menu-btn{
+        display:grid;
+        place-items:center;
+    }
+
+    .topbar{
+        padding:13px 16px;
+    }
+
+    .page{
+        padding:18px 14px;
+    }
+
+    .admin-greeting{
+        display:none;
+    }
+
+    .settings-layout{
+        grid-template-columns:1fr;
+    }
+
+    .settings-nav{
+        position:static;
+        display:flex;
+        overflow-x:auto;
+        gap:5px;
+        padding:7px;
+    }
+
+    .settings-nav button{
+        width:auto;
+        flex:none;
+        white-space:nowrap;
+    }
+}
+
+@media(max-width:650px){
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full{
+        grid-column:auto;
+    }
+
+    .panel-header,
+    .panel-body{
+        padding:16px;
+    }
+
+    .setting-row{
+        align-items:flex-start;
+    }
+
+    .form-actions{
+        flex-direction:column-reverse;
+    }
+
+    .form-actions .btn{
+        width:100%;
+    }
+
+    .security{
+        padding:13px;
+    }
+}
+
+@media(max-width:430px){
+
+    .topbar h2{
+        font-size:19px;
+    }
+
+    .identity{
+        align-items:flex-start;
+    }
+}
+</style>
 </head>
 
 <body>
@@ -846,1043 +904,1032 @@
 <div class="loading" id="loading">
     <div class="loading-box">
         <div class="spinner"></div>
-        <strong>Securing admin session…</strong>
+        <strong id="loadingText">Securing admin session…</strong>
     </div>
 </div>
 
 <div class="app">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar">
 
-        <div class="brand">
-            <div class="brand-mark">K</div>
-            <h1>K-TICKETS</h1>
-            <p>Administration CMS</p>
+    <div class="brand">
+        <div class="brand-mark">K</div>
+        <h1>K-TICKETS</h1>
+        <p>Administration CMS</p>
+    </div>
+
+    <nav class="nav">
+
+        <div class="nav-label">Overview</div>
+
+        <a href="./dashboard.html">
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
+
+        <a href="./reports.html">
+            <span class="nav-icon">▥</span>
+            Reports
+        </a>
+
+        <div class="nav-label">Management</div>
+
+        <a href="./events.html">
+            <span class="nav-icon">◫</span>
+            Events
+        </a>
+
+        <a href="./merchants.html">
+            <span class="nav-icon">♙</span>
+            Merchants
+        </a>
+
+        <a href="./customers.html">
+            <span class="nav-icon">♧</span>
+            Customers
+        </a>
+
+        <a href="./orders.html">
+            <span class="nav-icon">▤</span>
+            Orders
+        </a>
+
+        <div class="nav-label">Finance</div>
+
+        <a href="./payments.html">
+            <span class="nav-icon">¤</span>
+            Payments
+        </a>
+
+        <a href="./mpesa.html">
+            <span class="nav-icon">M</span>
+            M-Pesa
+        </a>
+
+        <a href="./wamd.html">
+            <span class="nav-icon">W</span>
+            WAMD
+        </a>
+
+        <a href="./withdrawals.html">
+            <span class="nav-icon">↗</span>
+            Withdrawals
+        </a>
+
+        <a href="./refunds.html">
+            <span class="nav-icon">↩</span>
+            Refunds
+        </a>
+
+        <div class="nav-label">Platform</div>
+
+        <a href="./fees.html">
+            <span class="nav-icon">%</span>
+            Fees
+        </a>
+
+        <a href="./promotions.html">
+            <span class="nav-icon">✦</span>
+            Promotions
+        </a>
+
+        <a href="./qr-scans.html">
+            <span class="nav-icon">▦</span>
+            QR Scans
+        </a>
+
+        <a href="./audit-logs.html">
+            <span class="nav-icon">◷</span>
+            Audit Logs
+        </a>
+
+        <a href="./settings.html" class="active">
+            <span class="nav-icon">⚙</span>
+            Settings
+        </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="admin-mini">
+
+            <div class="avatar" id="sideAvatar">A</div>
+
+            <div>
+                <strong id="sideName">Administrator</strong>
+                <span>Administrator</span>
+            </div>
+
+        </div>
+    </div>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+
+    <div class="topbar-left">
+
+        <button
+            class="menu-btn"
+            id="menuBtn"
+            aria-label="Open navigation"
+        >
+            ☰
+        </button>
+
+        <div style="display:inline-block;margin-left:10px;">
+
+            <div class="eyebrow">
+                K-Tickets Control Centre
+            </div>
+
+            <h2>Settings</h2>
+
         </div>
 
-        <nav class="nav">
+    </div>
 
-            <div class="nav-label">Overview</div>
+    <div class="topbar-right">
 
-            <a href="./dashboard.html">
-                <span class="nav-icon">⌂</span>
-                Dashboard
-            </a>
+        <div class="admin-greeting">
 
-            <a href="./reports.html">
-                <span class="nav-icon">▥</span>
-                Reports
-            </a>
+            <strong id="adminName">
+                Administrator
+            </strong>
 
-            <div class="nav-label">Management</div>
+            <span id="greeting">
+                Admin control centre
+            </span>
 
-            <a href="./events.html">
-                <span class="nav-icon">◫</span>
-                Events
-            </a>
+        </div>
 
-            <a href="./merchants.html">
-                <span class="nav-icon">♙</span>
-                Merchants
-            </a>
+        <div class="avatar" id="topAvatar">
+            A
+        </div>
 
-            <a href="./customers.html">
-                <span class="nav-icon">♧</span>
-                Customers
-            </a>
+    </div>
 
-            <a href="./orders.html">
-                <span class="nav-icon">▤</span>
-                Orders
-            </a>
+</header>
 
-            <div class="nav-label">Finance</div>
+<section class="page">
 
-            <a href="./payments.html">
-                <span class="nav-icon">¤</span>
-                Payments
-            </a>
+<div class="settings-layout">
 
-            <a href="./mpesa.html">
-                <span class="nav-icon">M</span>
-                M-Pesa
-            </a>
+<aside class="settings-nav">
 
-            <a href="./wamd.html">
-                <span class="nav-icon">W</span>
-                WAMD
-            </a>
+    <button class="active" data-section="general">
+        General
+    </button>
 
-            <a href="./withdrawals.html">
-                <span class="nav-icon">↗</span>
-                Withdrawals
-            </a>
+    <button data-section="operations">
+        Operations
+    </button>
 
-            <a href="./refunds.html">
-                <span class="nav-icon">↩</span>
-                Refunds
-            </a>
+    <button data-section="notifications">
+        Notifications
+    </button>
 
-            <div class="nav-label">Platform</div>
+    <button data-section="security">
+        Security
+    </button>
 
-            <a href="./fees.html">
-                <span class="nav-icon">%</span>
-                Fees
-            </a>
+    <button data-section="account">
+        My Account
+    </button>
 
-            <a href="./promotions.html">
-                <span class="nav-icon">✦</span>
-                Promotions
-            </a>
+</aside>
 
-            <a href="./qr-scans.html">
-                <span class="nav-icon">▦</span>
-                QR Scans
-            </a>
+<div class="settings-content">
 
-            <a href="./audit-logs.html">
-                <span class="nav-icon">◷</span>
-                Audit Logs
-            </a>
+<!-- ==========================================================
+     GENERAL
+========================================================== -->
 
-            <a href="./settings.html" class="active">
-                <span class="nav-icon">⚙</span>
-                Settings
-            </a>
+<section class="settings-section active" id="section-general">
 
-        </nav>
+    <div class="panel">
 
-        <div class="sidebar-footer">
-            <div class="admin-mini">
+        <div class="panel-header">
 
-                <div class="avatar" id="sideAvatar">
+            <div>
+                <div class="panel-title">
+                    Platform Information
+                </div>
+
+                <div class="panel-subtitle">
+                    Public-facing configuration for K-Tickets.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-body">
+
+            <div class="status-box" id="settingsStatusBox">
+
+                <div class="status-icon" id="settingsStatusIcon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <strong id="settingsStatusTitle">
+                        Checking platform settings…
+                    </strong>
+
+                    <p id="settingsStatusText">
+                        The page is checking whether the platform settings
+                        data layer is available.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="platformName">
+                        Platform Name
+                    </label>
+
+                    <input
+                        id="platformName"
+                        type="text"
+                        autocomplete="organization"
+                        placeholder="Platform name"
+                    >
+
+                    <div class="help">
+                        Stored only if the platform settings data layer exists
+                        and your admin session has permission to update it.
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="supportEmail">
+                        Support Email
+                    </label>
+
+                    <input
+                        id="supportEmail"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="Support email"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="supportPhone">
+                        Support Phone
+                    </label>
+
+                    <input
+                        id="supportPhone"
+                        type="tel"
+                        autocomplete="tel"
+                        placeholder="Support phone"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="defaultCurrency">
+                        Default Currency
+                    </label>
+
+                    <input
+                        id="defaultCurrency"
+                        type="text"
+                        maxlength="10"
+                        placeholder="Currency code"
+                    >
+
+                    <div class="help">
+                        This value is informational until payment/order
+                        logic explicitly consumes the platform setting.
+                    </div>
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label for="platformDescription">
+                        Platform Description
+                    </label>
+
+                    <textarea
+                        id="platformDescription"
+                        placeholder="Platform description"
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    class="btn btn-soft"
+                    id="generalReset"
+                    type="button"
+                >
+                    Reset
+                </button>
+
+                <button
+                    class="btn btn-primary"
+                    id="generalSave"
+                    type="button"
+                >
+                    Save General Settings
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ==========================================================
+     OPERATIONS
+========================================================== -->
+
+<section class="settings-section" id="section-operations">
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <div class="panel-title">
+                    Platform Operations
+                </div>
+
+                <div class="panel-subtitle">
+                    Operational switches stored as platform settings.
+                    Enforcement must also exist in protected backend logic.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-body">
+
+            <div class="setting-list">
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>New Event Publishing</strong>
+
+                        <p>
+                            Controls whether merchants are allowed to publish
+                            new events. UI state alone does not enforce this.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="allow_event_publishing"
+                        aria-pressed="false"
+                        aria-label="Toggle new event publishing"
+                        type="button"
+                    ></button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>Customer Ticket Sales</strong>
+
+                        <p>
+                            Controls whether new customer ticket purchases
+                            are permitted.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="allow_ticket_sales"
+                        aria-pressed="false"
+                        aria-label="Toggle customer ticket sales"
+                        type="button"
+                    ></button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>Merchant Withdrawals</strong>
+
+                        <p>
+                            Controls whether merchants can submit new
+                            withdrawal claims.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="allow_withdrawals"
+                        aria-pressed="false"
+                        aria-label="Toggle merchant withdrawals"
+                        type="button"
+                    ></button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>WAMD Payments</strong>
+
+                        <p>
+                            Controls availability of WAMD manual payment
+                            submissions. Verification remains protected.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="allow_wamd"
+                        aria-pressed="false"
+                        aria-label="Toggle WAMD payments"
+                        type="button"
+                    ></button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>M-Pesa Payments</strong>
+
+                        <p>
+                            Controls availability of M-Pesa payment initiation.
+                            Gateway credentials are never stored here.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="allow_mpesa"
+                        aria-pressed="false"
+                        aria-label="Toggle M-Pesa payments"
+                        type="button"
+                    ></button>
+
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    class="btn btn-primary"
+                    id="operationsSave"
+                    type="button"
+                >
+                    Save Operational Settings
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ==========================================================
+     NOTIFICATIONS
+========================================================== -->
+
+<section class="settings-section" id="section-notifications">
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <div class="panel-title">
+                    Notification Preferences
+                </div>
+
+                <div class="panel-subtitle">
+                    Configure administrative notification behaviour.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-body">
+
+            <div class="setting-list">
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>New Order Alerts</strong>
+
+                        <p>
+                            Notify the configured administration channel
+                            when a new order is created.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="notify_new_orders"
+                        aria-pressed="false"
+                        type="button"
+                    ></button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>Payment Alerts</strong>
+
+                        <p>
+                            Notify administrators about payment status changes.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="notify_payments"
+                        aria-pressed="false"
+                        type="button"
+                    ></button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>WAMD Verification Alerts</strong>
+
+                        <p>
+                            Notify administrators when a WAMD transaction
+                            requires review.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="notify_wamd"
+                        aria-pressed="false"
+                        type="button"
+                    ></button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>Withdrawal Alerts</strong>
+
+                        <p>
+                            Notify administrators when a merchant submits
+                            a withdrawal claim.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="notify_withdrawals"
+                        aria-pressed="false"
+                        type="button"
+                    ></button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+                        <strong>Refund Alerts</strong>
+
+                        <p>
+                            Notify administrators when refund infrastructure
+                            creates or processes a refund request.
+                        </p>
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="notify_refunds"
+                        aria-pressed="false"
+                        type="button"
+                    ></button>
+
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    class="btn btn-primary"
+                    id="notificationsSave"
+                    type="button"
+                >
+                    Save Notification Settings
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ==========================================================
+     SECURITY
+========================================================== -->
+
+<section class="settings-section" id="section-security">
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <div class="panel-title">
+                    Security Controls
+                </div>
+
+                <div class="panel-subtitle">
+                    Administrative security preferences.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-body">
+
+            <div class="setting-list">
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+
+                        <strong>
+                            Require MFA for Admins
+                        </strong>
+
+                        <p>
+                            Records the desired platform preference.
+                            Actual MFA enforcement must be configured
+                            through the authentication provider.
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="require_admin_mfa"
+                        aria-pressed="false"
+                        type="button"
+                    ></button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-copy">
+
+                        <strong>
+                            Security Audit Logging
+                        </strong>
+
+                        <p>
+                            Records the desired audit logging preference.
+                            Privileged actions should continue to use the
+                            protected audit system.
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="switch"
+                        data-setting="security_audit_logging"
+                        aria-pressed="false"
+                        type="button"
+                    ></button>
+
+                </div>
+
+            </div>
+
+            <div class="status-box warning" style="margin-top:18px;">
+
+                <div class="status-icon">
+                    !
+                </div>
+
+                <div>
+
+                    <strong>
+                        Sensitive credentials are never editable here
+                    </strong>
+
+                    <p>
+                        Supabase service-role keys, database passwords,
+                        M-Pesa credentials, WAMD credentials, SMTP
+                        passwords and webhook secrets must remain in
+                        server-side environment variables or secret storage.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    class="btn btn-primary"
+                    id="securitySave"
+                    type="button"
+                >
+                    Save Security Settings
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <div class="panel-title">
+                    Session
+                </div>
+
+                <div class="panel-subtitle">
+                    End this browser's authenticated administrator session.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-body">
+
+            <button
+                class="btn btn-danger"
+                id="logoutBtn"
+                type="button"
+            >
+                Sign Out
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ==========================================================
+     ACCOUNT
+========================================================== -->
+
+<section class="settings-section" id="section-account">
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <div class="panel-title">
+                    Administrator Account
+                </div>
+
+                <div class="panel-subtitle">
+                    Your authenticated K-Tickets administrator profile.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-body">
+
+            <div class="identity">
+
+                <div
+                    class="large-avatar"
+                    id="largeAvatar"
+                >
                     A
                 </div>
 
                 <div>
-                    <strong id="sideName">
+
+                    <strong id="accountName">
                         Administrator
                     </strong>
 
-                    <span>
-                        Administrator
+                    <span id="accountEmail">
+                        —
                     </span>
+
                 </div>
 
             </div>
-        </div>
 
-    </aside>
+            <div class="form-grid">
 
-    <!-- MAIN -->
-    <main class="main">
+                <div class="form-group">
 
-        <header class="topbar">
+                    <label for="accountFullName">
+                        Full Name
+                    </label>
 
-            <div class="topbar-left">
+                    <input
+                        id="accountFullName"
+                        type="text"
+                        autocomplete="name"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="accountPhone">
+                        Phone
+                    </label>
+
+                    <input
+                        id="accountPhone"
+                        type="tel"
+                        autocomplete="tel"
+                    >
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label for="accountRole">
+                        Role
+                    </label>
+
+                    <input
+                        id="accountRole"
+                        type="text"
+                        readonly
+                    >
+
+                    <div class="help">
+                        Administrator role cannot be changed from this
+                        browser page.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="form-actions">
 
                 <button
-                    class="menu-btn"
-                    id="menuBtn"
-                    aria-label="Open navigation"
+                    class="btn btn-primary"
+                    id="accountSave"
+                    type="button"
                 >
-                    ☰
+                    Save Profile
                 </button>
 
-                <div style="display:inline-block;margin-left:10px;">
-                    <div class="eyebrow">
-                        K-Tickets Control Centre
-                    </div>
+            </div>
 
-                    <h2>Settings</h2>
+        </div>
+
+    </div>
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <div class="panel-title">
+                    Password
                 </div>
+
+                <div class="panel-subtitle">
+                    Request a password reset email through Supabase Auth.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-body">
+
+            <button
+                class="btn btn-soft"
+                id="resetPasswordBtn"
+                type="button"
+            >
+                Send Password Reset Email
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <div class="panel-title">
+                    High-Risk Account Actions
+                </div>
+
+                <div class="panel-subtitle">
+                    Destructive identity changes are deliberately
+                    not exposed from this page.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-body">
+
+            <div class="danger-box">
+
+                <strong>
+                    Account deletion / role changes
+                </strong>
+
+                <p>
+                    Do not perform privileged account deletion,
+                    role elevation, ownership transfer or similar
+                    actions directly from client-side JavaScript.
+                    These operations require a protected backend
+                    workflow with explicit authorization and audit logging.
+                </p>
+
+                <button
+                    class="btn btn-danger"
+                    id="requestSecurityReview"
+                    type="button"
+                >
+                    Request Security Review
+                </button>
 
             </div>
 
-            <div class="topbar-right">
+        </div>
 
-                <div class="admin-greeting">
+    </div>
 
-                    <strong id="adminName">
-                        Administrator
-                    </strong>
+</section>
 
-                    <span id="greeting">
-                        Admin control centre
-                    </span>
+<div class="security">
 
-                </div>
+    <div class="security-icon">
+        ✓
+    </div>
 
-                <div class="avatar" id="topAvatar">
-                    A
-                </div>
+    <div>
 
-            </div>
+        <strong>
+            K-Tickets settings are secure-by-design
+        </strong>
 
-        </header>
+        <p>
+            This page uses only the public Supabase client key and the
+            authenticated administrator session. Sensitive credentials
+            are never exposed here. Important operational controls must
+            ultimately be enforced by PostgreSQL RLS, protected RPCs or
+            Edge Functions, with audit logging for privileged changes.
+        </p>
 
-        <section class="page">
+    </div>
 
-            <div class="settings-layout">
+</div>
 
-                <!-- SETTINGS NAV -->
-                <aside class="settings-nav">
+</div>
+</div>
 
-                    <button
-                        class="active"
-                        data-section="general"
-                    >
-                        General
-                    </button>
+</section>
 
-                    <button
-                        data-section="operations"
-                    >
-                        Operations
-                    </button>
-
-                    <button
-                        data-section="notifications"
-                    >
-                        Notifications
-                    </button>
-
-                    <button
-                        data-section="security"
-                    >
-                        Security
-                    </button>
-
-                    <button
-                        data-section="account"
-                    >
-                        My Account
-                    </button>
-
-                </aside>
-
-                <div class="settings-content">
-
-                    <!-- GENERAL -->
-                    <section
-                        class="settings-section active"
-                        id="section-general"
-                    >
-
-                        <div class="panel">
-
-                            <div class="panel-header">
-                                <div>
-                                    <div class="panel-title">
-                                        Platform Information
-                                    </div>
-
-                                    <div class="panel-subtitle">
-                                        Public-facing configuration for K-Tickets.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="panel-body">
-
-                                <div class="status-box">
-
-                                    <div class="status-icon">
-                                        ✓
-                                    </div>
-
-                                    <div>
-                                        <strong>
-                                            Configuration is loaded from Supabase
-                                        </strong>
-
-                                        <p>
-                                            Values displayed here are loaded from the
-                                            platform settings table when available.
-                                            Empty fields mean the corresponding setting
-                                            has not been configured.
-                                        </p>
-                                    </div>
-
-                                </div>
-
-                                <div class="form-grid">
-
-                                    <div class="form-group">
-                                        <label>
-                                            Platform Name
-                                        </label>
-
-                                        <input
-                                            id="platformName"
-                                            type="text"
-                                            placeholder="K-Tickets"
-                                        >
-
-                                        <div class="help">
-                                            The platform name used in administrative
-                                            and customer-facing communication.
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>
-                                            Support Email
-                                        </label>
-
-                                        <input
-                                            id="supportEmail"
-                                            type="email"
-                                            placeholder="Support email"
-                                        >
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>
-                                            Support Phone
-                                        </label>
-
-                                        <input
-                                            id="supportPhone"
-                                            type="tel"
-                                            placeholder="Support phone"
-                                        >
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>
-                                            Default Currency
-                                        </label>
-
-                                        <input
-                                            id="defaultCurrency"
-                                            type="text"
-                                            placeholder="Currency"
-                                            maxlength="10"
-                                        >
-
-                                        <div class="help">
-                                            Only change this if the application's
-                                            financial model is configured for the
-                                            selected currency.
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group full">
-                                        <label>
-                                            Platform Description
-                                        </label>
-
-                                        <textarea
-                                            id="platformDescription"
-                                            placeholder="Platform description"
-                                        ></textarea>
-                                    </div>
-
-                                </div>
-
-                                <div class="form-actions">
-
-                                    <button
-                                        class="btn btn-soft"
-                                        id="generalReset"
-                                    >
-                                        Reset
-                                    </button>
-
-                                    <button
-                                        class="btn btn-primary"
-                                        id="generalSave"
-                                    >
-                                        Save General Settings
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <!-- OPERATIONS -->
-                    <section
-                        class="settings-section"
-                        id="section-operations"
-                    >
-
-                        <div class="panel">
-
-                            <div class="panel-header">
-
-                                <div>
-                                    <div class="panel-title">
-                                        Platform Operations
-                                    </div>
-
-                                    <div class="panel-subtitle">
-                                        Operational switches affecting how the
-                                        platform behaves.
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="panel-body">
-
-                                <div class="setting-list">
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                New Event Publishing
-                                            </strong>
-
-                                            <p>
-                                                Allow merchants to publish new events.
-                                                Disabling this should be enforced
-                                                server-side as well as in the UI.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="allow_event_publishing"
-                                            aria-label="Toggle new event publishing"
-                                        ></button>
-
-                                    </div>
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                Customer Ticket Sales
-                                            </strong>
-
-                                            <p>
-                                                Controls whether new customer ticket
-                                                purchases are permitted.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="allow_ticket_sales"
-                                            aria-label="Toggle customer ticket sales"
-                                        ></button>
-
-                                    </div>
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                Merchant Withdrawals
-                                            </strong>
-
-                                            <p>
-                                                Controls whether merchants can submit
-                                                new withdrawal claims.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="allow_withdrawals"
-                                            aria-label="Toggle merchant withdrawals"
-                                        ></button>
-
-                                    </div>
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                WAMD Payments
-                                            </strong>
-
-                                            <p>
-                                                Controls availability of WAMD manual
-                                                payment submissions. Verification must
-                                                still happen through a protected admin
-                                                process.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="allow_wamd"
-                                            aria-label="Toggle WAMD payments"
-                                        ></button>
-
-                                    </div>
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                M-Pesa Payments
-                                            </strong>
-
-                                            <p>
-                                                Controls availability of M-Pesa
-                                                payment initiation. Gateway credentials
-                                                must never be stored in this page.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="allow_mpesa"
-                                            aria-label="Toggle M-Pesa payments"
-                                        ></button>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="form-actions">
-
-                                    <button
-                                        class="btn btn-primary"
-                                        id="operationsSave"
-                                    >
-                                        Save Operational Settings
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <!-- NOTIFICATIONS -->
-                    <section
-                        class="settings-section"
-                        id="section-notifications"
-                    >
-
-                        <div class="panel">
-
-                            <div class="panel-header">
-
-                                <div>
-                                    <div class="panel-title">
-                                        Notification Preferences
-                                    </div>
-
-                                    <div class="panel-subtitle">
-                                        Configure administrative notification behaviour.
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="panel-body">
-
-                                <div class="setting-list">
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                New Order Alerts
-                                            </strong>
-
-                                            <p>
-                                                Notify the configured administration
-                                                channel when a new order is created.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="notify_new_orders"
-                                            aria-label="Toggle new order alerts"
-                                        ></button>
-
-                                    </div>
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                Payment Alerts
-                                            </strong>
-
-                                            <p>
-                                                Notify administrators about payment
-                                                status changes.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="notify_payments"
-                                            aria-label="Toggle payment alerts"
-                                        ></button>
-
-                                    </div>
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                WAMD Verification Alerts
-                                            </strong>
-
-                                            <p>
-                                                Notify administrators when a WAMD
-                                                transaction requires review.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="notify_wamd"
-                                            aria-label="Toggle WAMD alerts"
-                                        ></button>
-
-                                    </div>
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                Withdrawal Alerts
-                                            </strong>
-
-                                            <p>
-                                                Notify administrators when a merchant
-                                                submits a withdrawal claim.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="notify_withdrawals"
-                                            aria-label="Toggle withdrawal alerts"
-                                        ></button>
-
-                                    </div>
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                Refund Alerts
-                                            </strong>
-
-                                            <p>
-                                                Notify administrators when a refund
-                                                request is created or processed.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="notify_refunds"
-                                            aria-label="Toggle refund alerts"
-                                        ></button>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="form-actions">
-
-                                    <button
-                                        class="btn btn-primary"
-                                        id="notificationsSave"
-                                    >
-                                        Save Notification Settings
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <!-- SECURITY -->
-                    <section
-                        class="settings-section"
-                        id="section-security"
-                    >
-
-                        <div class="panel">
-
-                            <div class="panel-header">
-
-                                <div>
-                                    <div class="panel-title">
-                                        Security Controls
-                                    </div>
-
-                                    <div class="panel-subtitle">
-                                        Administrative security preferences.
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="panel-body">
-
-                                <div class="setting-list">
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                Require MFA for Admins
-                                            </strong>
-
-                                            <p>
-                                                Recommended for production. MFA
-                                                enforcement should ultimately be
-                                                configured through your authentication
-                                                provider and server-side policies.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="require_admin_mfa"
-                                            aria-label="Toggle admin MFA"
-                                        ></button>
-
-                                    </div>
-
-                                    <div class="setting-row">
-
-                                        <div class="setting-copy">
-                                            <strong>
-                                                Security Audit Logging
-                                            </strong>
-
-                                            <p>
-                                                Keep administrative security actions
-                                                recorded in the audit system.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            class="switch"
-                                            data-setting="security_audit_logging"
-                                            aria-label="Toggle security audit logging"
-                                        ></button>
-
-                                    </div>
-
-                                </div>
-
-                                <div
-                                    class="status-box"
-                                    style="margin-top:18px;"
-                                >
-
-                                    <div class="status-icon">
-                                        !
-                                    </div>
-
-                                    <div>
-
-                                        <strong>
-                                            Sensitive credentials are not editable here
-                                        </strong>
-
-                                        <p>
-                                            Supabase service-role keys, database
-                                            passwords, M-Pesa credentials, WAMD
-                                            credentials, SMTP passwords and other
-                                            secrets must remain in server-side
-                                            environment variables or secret storage.
-                                            Never place them in HTML or browser
-                                            JavaScript.
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="form-actions">
-
-                                    <button
-                                        class="btn btn-primary"
-                                        id="securitySave"
-                                    >
-                                        Save Security Settings
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="panel">
-
-                            <div class="panel-header">
-
-                                <div>
-                                    <div class="panel-title">
-                                        Session
-                                    </div>
-
-                                    <div class="panel-subtitle">
-                                        End this browser's authenticated admin session.
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="panel-body">
-
-                                <button
-                                    class="btn btn-danger"
-                                    id="logoutBtn"
-                                >
-                                    Sign Out
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <!-- ACCOUNT -->
-                    <section
-                        class="settings-section"
-                        id="section-account"
-                    >
-
-                        <div class="panel">
-
-                            <div class="panel-header">
-
-                                <div>
-                                    <div class="panel-title">
-                                        Administrator Account
-                                    </div>
-
-                                    <div class="panel-subtitle">
-                                        Your authenticated K-Tickets administrator profile.
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="panel-body">
-
-                                <div class="identity">
-
-                                    <div
-                                        class="large-avatar"
-                                        id="largeAvatar"
-                                    >
-                                        A
-                                    </div>
-
-                                    <div>
-
-                                        <strong id="accountName">
-                                            Administrator
-                                        </strong>
-
-                                        <span id="accountEmail">
-                                            —
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="form-grid">
-
-                                    <div class="form-group">
-
-                                        <label>
-                                            Full Name
-                                        </label>
-
-                                        <input
-                                            id="accountFullName"
-                                            type="text"
-                                            autocomplete="name"
-                                        >
-
-                                    </div>
-
-                                    <div class="form-group">
-
-                                        <label>
-                                            Phone
-                                        </label>
-
-                                        <input
-                                            id="accountPhone"
-                                            type="tel"
-                                            autocomplete="tel"
-                                        >
-
-                                    </div>
-
-                                    <div class="form-group full">
-
-                                        <label>
-                                            Role
-                                        </label>
-
-                                        <input
-                                            id="accountRole"
-                                            type="text"
-                                            readonly
-                                        >
-
-                                        <div class="help">
-                                            Administrator role cannot be changed from
-                                            this browser page.
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="form-actions">
-
-                                    <button
-                                        class="btn btn-primary"
-                                        id="accountSave"
-                                    >
-                                        Save Profile
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="panel">
-
-                            <div class="panel-header">
-
-                                <div>
-                                    <div class="panel-title">
-                                        Password
-                                    </div>
-
-                                    <div class="panel-subtitle">
-                                        Request a password reset email through Supabase
-                                        Auth.
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="panel-body">
-
-                                <button
-                                    class="btn btn-soft"
-                                    id="resetPasswordBtn"
-                                >
-                                    Send Password Reset Email
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <div class="panel">
-
-                            <div class="panel-header">
-
-                                <div>
-                                    <div class="panel-title">
-                                        High-Risk Account Actions
-                                    </div>
-
-                                    <div class="panel-subtitle">
-                                        Destructive identity changes are deliberately
-                                        not exposed from this page.
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="panel-body">
-
-                                <div class="danger-box">
-
-                                    <strong>
-                                        Account deletion / role changes
-                                    </strong>
-
-                                    <p>
-                                        Do not perform privileged account deletion,
-                                        role elevation, ownership transfer or similar
-                                        actions directly from client-side JavaScript.
-                                        These operations require a protected backend
-                                        workflow with explicit authorization and audit
-                                        logging.
-                                    </p>
-
-                                    <button
-                                        class="btn btn-danger"
-                                        id="requestSecurityReview"
-                                    >
-                                        Request Security Review
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <!-- SECURITY NOTE -->
-                    <div class="security">
-
-                        <div class="security-icon">
-                            ✓
-                        </div>
-
-                        <div>
-
-                            <strong>
-                                K-Tickets settings are secure-by-design
-                            </strong>
-
-                            <p>
-                                The browser uses only the Supabase anon key and the
-                                authenticated administrator session. Sensitive
-                                credentials are never exposed here. Production
-                                deployments should enforce all important settings
-                                through PostgreSQL RLS, protected RPCs or Edge
-                                Functions, with audit logging for privileged changes.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
+</main>
 
 </div>
 
@@ -1891,19 +1938,19 @@
 <script>
 /* ============================================================
    K-TICKETS ADMIN SETTINGS
-   Secure-by-design settings interface
+   Production-oriented client page
    ============================================================ */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
-        SUPABASE_ANON_KEY,
+        SUPABASE_PUBLISHABLE_KEY,
         {
             auth:{
                 persistSession:true,
@@ -1913,22 +1960,28 @@ const supabaseClient =
         }
     );
 
-/* ------------------------------------------------------------
+/* ============================================================
    STATE
------------------------------------------------------------- */
+============================================================ */
 
 let currentUser = null;
 let adminProfile = null;
 
-let settingsTableAvailable = true;
+let settingsTableAvailable = false;
+let settingsSchema = null;
 let loadedSettings = {};
 
-/* ------------------------------------------------------------
+let pendingSwitchChanges = new Map();
+
+/* ============================================================
    DOM
------------------------------------------------------------- */
+============================================================ */
 
 const loading =
     document.getElementById("loading");
+
+const loadingText =
+    document.getElementById("loadingText");
 
 const sidebar =
     document.getElementById("sidebar");
@@ -1939,57 +1992,52 @@ const menuBtn =
 const toast =
     document.getElementById("toast");
 
-/* ------------------------------------------------------------
+/* ============================================================
    HELPERS
------------------------------------------------------------- */
-
-function escapeHTML(value){
-
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
+============================================================ */
 
 function showToast(message,isError=false){
 
     toast.textContent =
-        message;
+        String(message || "");
 
     toast.classList.toggle(
         "error",
-        isError
+        Boolean(isError)
     );
 
     toast.classList.add("show");
 
-    clearTimeout(
-        showToast.timer
-    );
+    clearTimeout(showToast.timer);
 
     showToast.timer =
         setTimeout(()=>{
             toast.classList.remove("show");
-        },3500);
+        },4000);
 }
 
 function hideLoading(){
     loading.classList.add("hidden");
 }
 
+function setLoading(message){
+    loadingText.textContent =
+        message || "Loading…";
+}
+
 function initials(name){
 
-    if(!name){
+    const clean =
+        String(name || "").trim();
+
+    if(!clean){
         return "A";
     }
 
-    return name
-        .trim()
+    return clean
         .split(/\s+/)
         .slice(0,2)
-        .map(part=>part[0])
+        .map(part=>part.charAt(0))
         .join("")
         .toUpperCase();
 }
@@ -2010,7 +2058,69 @@ function salutation(){
     return "Good evening";
 }
 
-function getSettingValue(key, fallback=null){
+function asBoolean(value){
+
+    if(value === true){
+        return true;
+    }
+
+    if(value === 1){
+        return true;
+    }
+
+    if(typeof value === "string"){
+
+        return [
+            "true",
+            "1",
+            "yes",
+            "on"
+        ].includes(
+            value.trim().toLowerCase()
+        );
+    }
+
+    return false;
+}
+
+function parseStoredValue(value){
+
+    if(typeof value !== "string"){
+        return value;
+    }
+
+    const trimmed =
+        value.trim();
+
+    if(
+        trimmed === "true" ||
+        trimmed === "false"
+    ){
+        return trimmed === "true";
+    }
+
+    if(
+        (
+            trimmed.startsWith("{") &&
+            trimmed.endsWith("}")
+        ) ||
+        (
+            trimmed.startsWith("[") &&
+            trimmed.endsWith("]")
+        )
+    ){
+
+        try{
+            return JSON.parse(trimmed);
+        }catch{
+            return value;
+        }
+    }
+
+    return value;
+}
+
+function getSettingValue(key,fallback=null){
 
     if(
         Object.prototype.hasOwnProperty.call(
@@ -2024,45 +2134,39 @@ function getSettingValue(key, fallback=null){
     return fallback;
 }
 
-function asBoolean(value){
+function redirectToLogin(){
 
-    if(
-        value === true ||
-        value === 1 ||
-        value === "1" ||
-        value === "true" ||
-        value === "TRUE" ||
-        value === "yes" ||
-        value === "on"
-    ){
-        return true;
-    }
-
-    return false;
+    window.location.href =
+        "../login.html?error=unauthorized";
 }
 
-/* ------------------------------------------------------------
-   AUTH
------------------------------------------------------------- */
+/* ============================================================
+   AUTHORIZATION
+============================================================ */
 
 async function requireAdmin(){
 
     const {
-        data:{
-            session
-        },
+        data,
         error
     } =
         await supabaseClient.auth.getSession();
 
-    if(
-        error ||
-        !session
-    ){
+    if(error){
+        console.error(
+            "Session error:",
+            error
+        );
 
-        window.location.href =
-            "../auth/login.html?error=unauthorized";
+        redirectToLogin();
+        return false;
+    }
 
+    const session =
+        data?.session;
+
+    if(!session){
+        redirectToLogin();
         return false;
     }
 
@@ -2079,21 +2183,42 @@ async function requireAdmin(){
                 id,
                 full_name,
                 phone,
-                role
+                role,
+                is_active
             `)
-            .eq("id",currentUser.id)
+            .eq(
+                "id",
+                currentUser.id
+            )
             .maybeSingle();
 
+    if(profileError){
+
+        console.error(
+            "Admin profile query failed:",
+            profileError
+        );
+
+        showToast(
+            "Unable to verify your administrator profile: " +
+            profileError.message,
+            true
+        );
+
+        hideLoading();
+
+        return false;
+    }
+
     if(
-        profileError ||
         !profile ||
-        profile.role !== "admin"
+        profile.role !== "admin" ||
+        profile.is_active !== true
     ){
 
         await supabaseClient.auth.signOut();
 
-        window.location.href =
-            "../auth/login.html?error=unauthorized";
+        redirectToLogin();
 
         return false;
     }
@@ -2106,6 +2231,10 @@ async function requireAdmin(){
     return true;
 }
 
+/* ============================================================
+   IDENTITY
+============================================================ */
+
 function applyIdentity(){
 
     const name =
@@ -2113,13 +2242,21 @@ function applyIdentity(){
         currentUser?.email?.split("@")[0] ||
         "Administrator";
 
+    const firstName =
+        name
+            .trim()
+            .split(/\s+/)[0] ||
+            "Administrator";
+
     document.getElementById(
         "adminName"
-    ).textContent = name;
+    ).textContent =
+        name;
 
     document.getElementById(
         "sideName"
-    ).textContent = name;
+    ).textContent =
+        name;
 
     document.getElementById(
         "topAvatar"
@@ -2139,7 +2276,7 @@ function applyIdentity(){
     document.getElementById(
         "greeting"
     ).textContent =
-        `${salutation()}, ${name.split(/\s+/)[0]}`;
+        `${salutation()}, ${firstName}`;
 
     document.getElementById(
         "accountName"
@@ -2164,39 +2301,104 @@ function applyIdentity(){
     document.getElementById(
         "accountRole"
     ).value =
-        adminProfile?.role || "admin";
+        adminProfile?.role || "";
 }
 
+/* ============================================================
+   SETTINGS STATUS
+============================================================ */
+
+function updateSettingsStatus(
+    mode,
+    title,
+    text
+){
+
+    const box =
+        document.getElementById(
+            "settingsStatusBox"
+        );
+
+    const icon =
+        document.getElementById(
+            "settingsStatusIcon"
+        );
+
+    const titleEl =
+        document.getElementById(
+            "settingsStatusTitle"
+        );
+
+    const textEl =
+        document.getElementById(
+            "settingsStatusText"
+        );
+
+    box.classList.remove(
+        "warning",
+        "error"
+    );
+
+    if(mode){
+        box.classList.add(mode);
+    }
+
+    icon.textContent =
+        mode === "error"
+            ? "!"
+            : mode === "warning"
+                ? "!"
+                : "✓";
+
+    titleEl.textContent =
+        title;
+
+    textEl.textContent =
+        text;
+}
+
+/* ============================================================
+   SETTINGS DATA LAYER
+============================================================ */
+
+/*
+   K-Tickets migrations already establish:
+   - profiles
+   - service_fees
+   - orders
+   - payments
+   - withdrawals
+   - notifications
+   - audit_logs
+
+   A dedicated site_settings table has NOT been established
+   in the completed migrations currently available.
+
+   Therefore this page never invents settings rows.
+
+   If site_settings exists in the database, the page supports
+   either:
+
+       key / value
+
+   or:
+
+       setting_key / setting_value
+
+   The page detects the available schema from actual rows.
+*/
+
 /* ------------------------------------------------------------
-   SETTINGS TABLE
-   ------------------------------------------------------------
-
-   Supported flexible schemas:
-
-   Option A:
-   site_settings
-   - key
-   - value
-
-   Option B:
-   site_settings
-   - setting_key
-   - setting_value
-
-   The page first tries key/value, then setting_key/
-   setting_value.
-
-   If the table does not exist yet, the UI remains usable but
-   does not pretend that settings were persisted.
+   LOAD
 ------------------------------------------------------------ */
 
 async function loadSettings(){
 
     loadedSettings = {};
+    settingsTableAvailable = false;
+    settingsSchema = null;
 
-    settingsTableAvailable = true;
-
-    let response =
+    const response =
         await supabaseClient
             .from("site_settings")
             .select("*")
@@ -2205,76 +2407,146 @@ async function loadSettings(){
     if(response.error){
 
         console.warn(
-            "site_settings query failed:",
+            "site_settings unavailable:",
             response.error
         );
 
-        settingsTableAvailable = false;
+        updateSettingsStatus(
+            "warning",
+            "Platform settings table is not available",
+            "No platform settings were loaded. The page will not pretend that values are persisted. Your administrator profile remains available."
+        );
 
         clearSettingsUI();
 
         return;
     }
 
+    settingsTableAvailable = true;
+
     const rows =
         Array.isArray(response.data)
             ? response.data
             : [];
 
-    rows.forEach(row=>{
+    if(rows.length){
 
-        const key =
-            row.key ??
-            row.setting_key ??
-            row.name;
-
-        let value =
-            row.value ??
-            row.setting_value ??
-            row.data;
+        const first =
+            rows[0];
 
         if(
-            typeof value === "string"
+            Object.prototype.hasOwnProperty.call(
+                first,
+                "key"
+            ) &&
+            Object.prototype.hasOwnProperty.call(
+                first,
+                "value"
+            )
+        ){
+            settingsSchema = "key_value";
+        }
+        else if(
+            Object.prototype.hasOwnProperty.call(
+                first,
+                "setting_key"
+            ) &&
+            Object.prototype.hasOwnProperty.call(
+                first,
+                "setting_value"
+            )
+        ){
+            settingsSchema = "setting_key_value";
+        }
+        else if(
+            Object.prototype.hasOwnProperty.call(
+                first,
+                "name"
+            ) &&
+            Object.prototype.hasOwnProperty.call(
+                first,
+                "value"
+            )
+        ){
+            settingsSchema = "name_value";
+        }
+    }
+
+    /*
+       Empty table:
+       We cannot infer a schema safely.
+       Do not fabricate a row or assume one.
+    */
+
+    if(!rows.length){
+
+        updateSettingsStatus(
+            "warning",
+            "Platform settings table is empty",
+            "No platform settings have been configured yet. Nothing has been fabricated or inserted automatically."
+        );
+
+        clearSettingsUI();
+
+        return;
+    }
+
+    rows.forEach(row=>{
+
+        let key = null;
+        let value = null;
+
+        if(settingsSchema === "key_value"){
+
+            key =
+                row.key;
+
+            value =
+                row.value;
+        }
+
+        else if(
+            settingsSchema === "setting_key_value"
         ){
 
-            const trimmed =
-                value.trim();
+            key =
+                row.setting_key;
 
-            if(
-                trimmed === "true" ||
-                trimmed === "false"
-            ){
-                value =
-                    trimmed === "true";
-            }
-            else if(
-                (
-                    trimmed.startsWith("{") &&
-                    trimmed.endsWith("}")
-                ) ||
-                (
-                    trimmed.startsWith("[") &&
-                    trimmed.endsWith("]")
-                )
-            ){
-
-                try{
-                    value =
-                        JSON.parse(trimmed);
-                }catch{
-                    /* Keep original string */
-                }
-            }
+            value =
+                row.setting_value;
         }
 
-        if(key){
-            loadedSettings[key] =
-                value;
+        else if(
+            settingsSchema === "name_value"
+        ){
+
+            key =
+                row.name;
+
+            value =
+                row.value;
         }
+
+        if(!key){
+            return;
+        }
+
+        loadedSettings[key] =
+            parseStoredValue(value);
     });
+
+    updateSettingsStatus(
+        "",
+        "Platform settings loaded from Supabase",
+        `${Object.keys(loadedSettings).length} configured setting${Object.keys(loadedSettings).length === 1 ? "" : "s"} loaded from the platform settings data layer.`
+    );
 
     applySettingsToUI();
 }
+
+/* ------------------------------------------------------------
+   CLEAR
+------------------------------------------------------------ */
 
 function clearSettingsUI(){
 
@@ -2301,9 +2573,21 @@ function clearSettingsUI(){
     document.querySelectorAll(
         ".switch"
     ).forEach(button=>{
-        button.classList.remove("active");
+
+        button.classList.remove(
+            "active"
+        );
+
+        button.setAttribute(
+            "aria-pressed",
+            "false"
+        );
     });
 }
+
+/* ------------------------------------------------------------
+   APPLY
+------------------------------------------------------------ */
 
 function applySettingsToUI(){
 
@@ -2369,82 +2653,102 @@ function applySettingsToUI(){
 
         button.setAttribute(
             "aria-pressed",
-            enabled ? "true" : "false"
+            enabled
+                ? "true"
+                : "false"
         );
     });
+
+    pendingSwitchChanges.clear();
 }
 
-/* ------------------------------------------------------------
+/* ============================================================
    SETTINGS SAVE
------------------------------------------------------------- */
+============================================================ */
+
+function serializeSettingValue(value){
+
+    if(typeof value === "string"){
+        return value;
+    }
+
+    return JSON.stringify(value);
+}
 
 async function saveSetting(
     key,
     value
 ){
 
-    /*
-      Do not silently claim success if the settings table is
-      unavailable.
-    */
-
     if(!settingsTableAvailable){
 
         throw new Error(
-            "The site_settings table is not available or cannot be accessed by this admin session."
+            "Platform settings cannot be saved because the site_settings table is unavailable."
         );
     }
 
-    /*
-      Try canonical key/value schema first.
-    */
+    if(!settingsSchema){
 
-    let response =
-        await supabaseClient
-            .from("site_settings")
-            .upsert(
-                {
-                    key,
-                    value:
-                        typeof value === "string"
-                            ? value
-                            : JSON.stringify(value)
-                },
-                {
-                    onConflict:"key"
-                }
-            );
-
-    if(!response.error){
-
-        loadedSettings[key] =
-            value;
-
-        return;
+        throw new Error(
+            "The site_settings table exists but its setting schema could not be safely determined from existing data."
+        );
     }
 
-    /*
-      Fallback for setting_key / setting_value schema.
-    */
+    let payload;
+    let conflictColumn;
 
-    response =
+    if(settingsSchema === "key_value"){
+
+        payload = {
+            key:key,
+            value:serializeSettingValue(value)
+        };
+
+        conflictColumn = "key";
+    }
+
+    else if(
+        settingsSchema === "setting_key_value"
+    ){
+
+        payload = {
+            setting_key:key,
+            setting_value:serializeSettingValue(value)
+        };
+
+        conflictColumn = "setting_key";
+    }
+
+    else if(
+        settingsSchema === "name_value"
+    ){
+
+        payload = {
+            name:key,
+            value:serializeSettingValue(value)
+        };
+
+        conflictColumn = "name";
+    }
+
+    else{
+
+        throw new Error(
+            "Unsupported site_settings schema."
+        );
+    }
+
+    const response =
         await supabaseClient
             .from("site_settings")
             .upsert(
+                payload,
                 {
-                    setting_key:key,
-                    setting_value:
-                        typeof value === "string"
-                            ? value
-                            : JSON.stringify(value)
-                },
-                {
-                    onConflict:"setting_key"
+                    onConflict:conflictColumn
                 }
             );
 
     if(response.error){
-
         throw response.error;
     }
 
@@ -2452,9 +2756,9 @@ async function saveSetting(
         value;
 }
 
-/* ------------------------------------------------------------
+/* ============================================================
    GENERAL SAVE
------------------------------------------------------------- */
+============================================================ */
 
 document.getElementById(
     "generalSave"
@@ -2509,12 +2813,15 @@ document.getElementById(
             );
 
             showToast(
-                "General settings saved."
+                "General settings saved to Supabase."
             );
 
         }catch(error){
 
-            console.error(error);
+            console.error(
+                "General settings save failed:",
+                error
+            );
 
             showToast(
                 error.message ||
@@ -2525,21 +2832,23 @@ document.getElementById(
         }finally{
 
             button.disabled = false;
+
             button.textContent =
                 "Save General Settings";
         }
     }
 );
 
-/* ------------------------------------------------------------
+/* ============================================================
    GENERAL RESET
------------------------------------------------------------- */
+============================================================ */
 
 document.getElementById(
     "generalReset"
 ).addEventListener(
     "click",
     ()=>{
+
         applySettingsToUI();
 
         showToast(
@@ -2548,9 +2857,9 @@ document.getElementById(
     }
 );
 
-/* ------------------------------------------------------------
-   TOGGLES
------------------------------------------------------------- */
+/* ============================================================
+   SWITCHES
+============================================================ */
 
 document.querySelectorAll(
     ".switch"
@@ -2560,6 +2869,9 @@ document.querySelectorAll(
         "click",
         ()=>{
 
+            const key =
+                button.dataset.setting;
+
             const active =
                 button.classList.toggle(
                     "active"
@@ -2567,15 +2879,27 @@ document.querySelectorAll(
 
             button.setAttribute(
                 "aria-pressed",
-                active ? "true" : "false"
+                active
+                    ? "true"
+                    : "false"
+            );
+
+            pendingSwitchChanges.set(
+                key,
+                active
             );
         }
     );
 });
 
+/* ============================================================
+   SAVE SWITCH GROUP
+============================================================ */
+
 async function saveSwitchGroup(
     buttonId,
-    keys
+    keys,
+    originalText
 ){
 
     const button =
@@ -2611,13 +2935,18 @@ async function saveSwitchGroup(
             );
         }
 
+        pendingSwitchChanges.clear();
+
         showToast(
-            "Settings saved."
+            "Settings saved to Supabase."
         );
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Switch settings save failed:",
+            error
+        );
 
         showToast(
             error.message ||
@@ -2629,24 +2958,21 @@ async function saveSwitchGroup(
 
         button.disabled = false;
 
-        if(
-            buttonId === "operationsSave"
-        ){
-            button.textContent =
-                "Save Operational Settings";
-        }
-        else{
-            button.textContent =
-                "Save Notification Settings";
-        }
+        button.textContent =
+            originalText;
     }
 }
+
+/* ============================================================
+   OPERATIONS SAVE
+============================================================ */
 
 document.getElementById(
     "operationsSave"
 ).addEventListener(
     "click",
     ()=>{
+
         saveSwitchGroup(
             "operationsSave",
             [
@@ -2655,16 +2981,22 @@ document.getElementById(
                 "allow_withdrawals",
                 "allow_wamd",
                 "allow_mpesa"
-            ]
+            ],
+            "Save Operational Settings"
         );
     }
 );
+
+/* ============================================================
+   NOTIFICATION SAVE
+============================================================ */
 
 document.getElementById(
     "notificationsSave"
 ).addEventListener(
     "click",
     ()=>{
+
         saveSwitchGroup(
             "notificationsSave",
             [
@@ -2673,29 +3005,36 @@ document.getElementById(
                 "notify_wamd",
                 "notify_withdrawals",
                 "notify_refunds"
-            ]
+            ],
+            "Save Notification Settings"
         );
     }
 );
+
+/* ============================================================
+   SECURITY SAVE
+============================================================ */
 
 document.getElementById(
     "securitySave"
 ).addEventListener(
     "click",
     ()=>{
+
         saveSwitchGroup(
             "securitySave",
             [
                 "require_admin_mfa",
                 "security_audit_logging"
-            ]
+            ],
+            "Save Security Settings"
         );
     }
 );
 
-/* ------------------------------------------------------------
+/* ============================================================
    ACCOUNT PROFILE
------------------------------------------------------------- */
+============================================================ */
 
 document.getElementById(
     "accountSave"
@@ -2728,6 +3067,16 @@ document.getElementById(
             return;
         }
 
+        if(!currentUser){
+
+            showToast(
+                "Authenticated administrator session is missing.",
+                true
+            );
+
+            return;
+        }
+
         button.disabled = true;
         button.textContent =
             "Saving…";
@@ -2741,7 +3090,8 @@ document.getElementById(
                     .from("profiles")
                     .update({
                         full_name:fullName,
-                        phone:phone || null
+                        phone:phone || null,
+                        updated_at:new Date().toISOString()
                     })
                     .eq(
                         "id",
@@ -2766,7 +3116,10 @@ document.getElementById(
 
         }catch(error){
 
-            console.error(error);
+            console.error(
+                "Profile update failed:",
+                error
+            );
 
             showToast(
                 error.message ||
@@ -2783,9 +3136,9 @@ document.getElementById(
     }
 );
 
-/* ------------------------------------------------------------
+/* ============================================================
    PASSWORD RESET
------------------------------------------------------------- */
+============================================================ */
 
 document.getElementById(
     "resetPasswordBtn"
@@ -2822,7 +3175,7 @@ document.getElementById(
                         currentUser.email,
                         {
                             redirectTo:
-                                `${window.location.origin}/auth/reset-password.html`
+                                `${window.location.origin}/reset-password.html`
                         }
                     );
 
@@ -2836,7 +3189,10 @@ document.getElementById(
 
         }catch(error){
 
-            console.error(error);
+            console.error(
+                "Password reset failed:",
+                error
+            );
 
             showToast(
                 error.message ||
@@ -2847,15 +3203,16 @@ document.getElementById(
         }finally{
 
             button.disabled = false;
+
             button.textContent =
                 "Send Password Reset Email";
         }
     }
 );
 
-/* ------------------------------------------------------------
+/* ============================================================
    LOGOUT
------------------------------------------------------------- */
+============================================================ */
 
 document.getElementById(
     "logoutBtn"
@@ -2863,21 +3220,37 @@ document.getElementById(
     "click",
     async ()=>{
 
+        const button =
+            document.getElementById(
+                "logoutBtn"
+            );
+
+        button.disabled = true;
+        button.textContent =
+            "Signing out…";
+
         try{
 
             await supabaseClient.auth.signOut();
 
+        }catch(error){
+
+            console.error(
+                "Sign out error:",
+                error
+            );
+
         }finally{
 
             window.location.href =
-                "../auth/login.html";
+                "../login.html";
         }
     }
 );
 
-/* ------------------------------------------------------------
+/* ============================================================
    SECURITY REVIEW
------------------------------------------------------------- */
+============================================================ */
 
 document.getElementById(
     "requestSecurityReview"
@@ -2886,14 +3259,14 @@ document.getElementById(
     ()=>{
 
         showToast(
-            "Security review requests should be routed through your protected admin workflow."
+            "No destructive account action was performed. A protected security workflow is required for role changes, deletion or ownership transfer."
         );
     }
 );
 
-/* ------------------------------------------------------------
-   SETTINGS NAV
------------------------------------------------------------- */
+/* ============================================================
+   SETTINGS NAVIGATION
+============================================================ */
 
 document.querySelectorAll(
     ".settings-nav button"
@@ -2903,7 +3276,7 @@ document.querySelectorAll(
         "click",
         ()=>{
 
-            const target =
+            const section =
                 button.dataset.section;
 
             document.querySelectorAll(
@@ -2917,106 +3290,119 @@ document.querySelectorAll(
 
             document.querySelectorAll(
                 ".settings-section"
-            ).forEach(section=>{
+            ).forEach(item=>{
 
-                section.classList.toggle(
+                item.classList.toggle(
                     "active",
-                    section.id ===
-                        `section-${target}`
+                    item.id ===
+                    `section-${section}`
                 );
             });
-
-            if(
-                window.innerWidth <= 900
-            ){
-                window.scrollTo({
-                    top:0,
-                    behavior:"smooth"
-                });
-            }
         }
     );
 });
 
-/* ------------------------------------------------------------
-   MOBILE MENU
------------------------------------------------------------- */
+/* ============================================================
+   MOBILE SIDEBAR
+============================================================ */
 
 menuBtn.addEventListener(
     "click",
     ()=>{
+
         sidebar.classList.toggle(
             "open"
         );
     }
 );
 
-/* ------------------------------------------------------------
+document.querySelectorAll(
+    ".nav a"
+).forEach(link=>{
+
+    link.addEventListener(
+        "click",
+        ()=>{
+
+            if(
+                window.innerWidth <= 900
+            ){
+                sidebar.classList.remove(
+                    "open"
+                );
+            }
+        }
+    );
+});
+
+/* ============================================================
    AUTH STATE
------------------------------------------------------------- */
+============================================================ */
 
 supabaseClient.auth.onAuthStateChange(
     (event,session)=>{
 
         if(
-            event === "SIGNED_OUT" ||
+            event === "SIGNED_OUT"
+        ){
+            window.location.href =
+                "../login.html";
+        }
+
+        if(
+            event === "TOKEN_REFRESHED" &&
             !session
         ){
-
             window.location.href =
-                "../auth/login.html?error=session_expired";
+                "../login.html";
         }
     }
 );
 
-/* ------------------------------------------------------------
-   INIT
------------------------------------------------------------- */
+/* ============================================================
+   INITIALIZATION
+============================================================ */
 
-async function init(){
+(async function init(){
 
     try{
 
-        if(
-            !SUPABASE_URL ||
-            !SUPABASE_ANON_KEY
-        ){
+        setLoading(
+            "Securing admin session…"
+        );
 
-            throw new Error(
-                "Supabase configuration is missing."
-            );
-        }
-
-        const isAdmin =
+        const authorized =
             await requireAdmin();
 
-        if(!isAdmin){
+        if(!authorized){
             return;
         }
 
+        setLoading(
+            "Loading platform settings…"
+        );
+
         await loadSettings();
+
+        hideLoading();
 
     }catch(error){
 
         console.error(
-            "Settings initialization error:",
+            "Settings initialization failed:",
             error
         );
 
+        hideLoading();
+
         showToast(
             error.message ||
-            "Unable to initialize settings.",
+            "Unable to initialize the settings page.",
             true
         );
-
-    }finally{
-
-        hideLoading();
     }
-}
 
-init();
-
+})();
 </script>
 
 </body>
