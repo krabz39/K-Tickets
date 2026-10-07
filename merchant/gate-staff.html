@@ -2,40 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
     <title>Gate Staff | K-Tickets Merchant</title>
+
+    <meta
+        name="description"
+        content="Manage merchant gate staff and event access for K-Tickets."
+    >
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
             --bordo: #6C151E;
+            --bordo-dark: #531018;
             --green: #0F3D3A;
+            --green-dark: #092c2a;
             --cream: #F5DABF;
 
-            --bg: #f7f8f7;
+            --bg: #f8f5f1;
             --surface: #ffffff;
-            --soft: #f1f3f2;
+            --surface-soft: #f5eee8;
 
-            --text: #17211f;
-            --muted: #69736f;
-            --border: #dfe5e2;
+            --text: #211d1a;
+            --muted: #766f69;
+            --border: #e8ded6;
 
-            --success: #19744d;
-            --success-bg: #e8f6ee;
+            --success: #287a59;
+            --success-bg: #e9f6ef;
 
-            --danger: #a32935;
-            --danger-bg: #fdebed;
+            --warning: #9a681d;
+            --warning-bg: #fff6e5;
 
-            --warning: #8a6417;
-            --warning-bg: #fff5dc;
+            --danger: #a52832;
+            --danger-bg: #fff0f1;
 
             --shadow:
-                0 12px 35px rgba(15, 61, 58, .07);
+                0 14px 40px rgba(38, 25, 19, .07);
 
             --radius: 18px;
             --sidebar-width: 265px;
@@ -52,6 +60,11 @@
         }
 
         body {
+            min-height: 100vh;
+
+            background: var(--bg);
+            color: var(--text);
+
             font-family:
                 Inter,
                 ui-sans-serif,
@@ -60,11 +73,6 @@
                 BlinkMacSystemFont,
                 "Segoe UI",
                 sans-serif;
-
-            background: var(--bg);
-            color: var(--text);
-
-            min-height: 100vh;
 
             overflow-x: hidden;
         }
@@ -94,44 +102,46 @@
 
             width: var(--sidebar-width);
 
-            background: var(--green);
-            color: #fff;
-
             z-index: 1000;
 
             display: flex;
             flex-direction: column;
 
-            transition: transform .25s ease;
+            background: var(--green);
+            color: white;
+
+            transition:
+                transform .25s ease;
         }
 
         .brand {
-            min-height: 88px;
-
-            padding: 22px;
+            padding: 23px 21px;
 
             display: flex;
             align-items: center;
 
-            gap: 12px;
+            gap: 11px;
 
             border-bottom:
-                1px solid rgba(255, 255, 255, .09);
+                1px solid rgba(255,255,255,.09);
         }
 
         .brand-mark {
             width: 42px;
             height: 42px;
 
-            border-radius: 13px;
-
-            background: var(--bordo);
-
             display: grid;
             place-items: center;
 
-            font-weight: 900;
+            flex: 0 0 auto;
+
+            border-radius: 13px;
+
+            background: var(--bordo);
+            color: white;
+
             font-size: 17px;
+            font-weight: 900;
         }
 
         .brand-copy strong {
@@ -146,12 +156,14 @@
 
             margin-top: 3px;
 
-            color: rgba(255,255,255,.58);
+            color:
+                rgba(255,255,255,.52);
 
-            font-size: 10px;
+            font-size: 9px;
+            font-weight: 700;
 
             text-transform: uppercase;
-            letter-spacing: .12em;
+            letter-spacing: .13em;
         }
 
         .sidebar-scroll {
@@ -159,19 +171,22 @@
 
             overflow-y: auto;
 
-            padding: 18px 13px;
+            padding: 17px 13px;
         }
 
         .nav-label {
-            padding: 9px 12px 7px;
+            padding:
+                10px 12px
+                7px;
 
-            color: rgba(255,255,255,.38);
+            color:
+                rgba(255,255,255,.34);
 
-            font-size: 10px;
-            font-weight: 800;
+            font-size: 9px;
+            font-weight: 850;
 
             text-transform: uppercase;
-            letter-spacing: .14em;
+            letter-spacing: .13em;
         }
 
         .nav {
@@ -182,49 +197,63 @@
         .nav a {
             min-height: 44px;
 
-            padding: 10px 12px;
-
-            border-radius: 12px;
-
             display: flex;
             align-items: center;
 
             gap: 11px;
 
-            color: rgba(255,255,255,.7);
+            padding: 10px 12px;
 
-            font-size: 13px;
+            border-radius: 11px;
+
+            color:
+                rgba(255,255,255,.68);
+
+            font-size: 12px;
             font-weight: 650;
 
-            transition: .2s ease;
+            transition:
+                background .2s ease,
+                color .2s ease,
+                transform .2s ease;
         }
 
         .nav a:hover {
-            color: #fff;
+            color: white;
 
             background:
                 rgba(255,255,255,.07);
+
+            transform:
+                translateX(1px);
         }
 
         .nav a.active {
-            color: #fff;
+            color: white;
 
             background: var(--bordo);
 
             box-shadow:
-                0 8px 20px rgba(0,0,0,.12);
+                0 8px 20px
+                rgba(0,0,0,.13);
         }
 
         .nav-icon {
-            width: 19px;
+            width: 20px;
+
+            flex: 0 0 auto;
+
             text-align: center;
+
+            font-size: 14px;
         }
 
         .sidebar-footer {
             padding: 14px;
 
             border-top:
-                1px solid rgba(255,255,255,.09);
+                1px solid
+                rgba(255,255,255,.09);
         }
 
         .merchant-mini {
@@ -233,9 +262,9 @@
             display: flex;
             align-items: center;
 
-            gap: 10px;
+            gap: 9px;
 
-            border-radius: 13px;
+            border-radius: 12px;
 
             background:
                 rgba(255,255,255,.05);
@@ -245,30 +274,30 @@
             width: 38px;
             height: 38px;
 
-            border-radius: 50%;
-
             display: grid;
             place-items: center;
 
             flex: 0 0 auto;
 
+            border-radius: 50%;
+
             background: var(--cream);
             color: var(--green);
 
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 900;
         }
 
         .merchant-mini strong {
             display: block;
 
-            max-width: 145px;
+            max-width: 150px;
 
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
 
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .merchant-mini span {
@@ -276,9 +305,10 @@
 
             margin-top: 2px;
 
-            color: rgba(255,255,255,.45);
+            color:
+                rgba(255,255,255,.42);
 
-            font-size: 10px;
+            font-size: 9px;
         }
 
         /* =====================================================
@@ -286,32 +316,34 @@
         ====================================================== */
 
         .main {
-            margin-left: var(--sidebar-width);
+            min-height: 100vh;
 
-            min-width: 0;
+            margin-left:
+                var(--sidebar-width);
         }
 
         .topbar {
+            height: 76px;
+
             position: sticky;
             top: 0;
 
-            height: 76px;
-
-            z-index: 900;
-
-            background:
-                rgba(255,255,255,.94);
-
-            backdrop-filter: blur(14px);
-
-            border-bottom:
-                1px solid var(--border);
+            z-index: 800;
 
             display: flex;
             align-items: center;
             justify-content: space-between;
 
-            padding: 0 28px;
+            padding: 0 29px;
+
+            background:
+                rgba(255,255,255,.94);
+
+            border-bottom:
+                1px solid var(--border);
+
+            backdrop-filter:
+                blur(14px);
         }
 
         .topbar-left {
@@ -332,7 +364,7 @@
 
             border-radius: 11px;
 
-            background: #fff;
+            background: white;
         }
 
         .breadcrumb {
@@ -345,52 +377,51 @@
             display: flex;
             align-items: center;
 
-            gap: 10px;
+            gap: 9px;
         }
 
         .icon-btn {
-            position: relative;
-
             width: 42px;
             height: 42px;
+
+            position: relative;
+
+            display: grid;
+            place-items: center;
 
             border:
                 1px solid var(--border);
 
             border-radius: 11px;
 
-            background: #fff;
+            background: white;
 
             color: var(--green);
-
-            display: grid;
-            place-items: center;
         }
 
         .notification-badge {
-            position: absolute;
-
-            top: -4px;
-            right: -4px;
-
             min-width: 17px;
             height: 17px;
 
-            padding: 0 4px;
-
-            border-radius: 20px;
-
-            background: var(--bordo);
-            color: #fff;
+            position: absolute;
+            top: -4px;
+            right: -4px;
 
             display: none;
             align-items: center;
             justify-content: center;
 
-            font-size: 9px;
-            font-weight: 800;
+            padding: 0 4px;
 
-            border: 2px solid #fff;
+            border-radius: 999px;
+
+            background: var(--bordo);
+            color: white;
+
+            border: 2px solid white;
+
+            font-size: 8px;
+            font-weight: 900;
         }
 
         .top-user {
@@ -399,74 +430,80 @@
 
             gap: 9px;
 
-            padding-left: 8px;
+            padding-left: 6px;
         }
 
         .top-user-name {
             max-width: 160px;
 
             overflow: hidden;
-            text-overflow: ellipsis;
             white-space: nowrap;
+            text-overflow: ellipsis;
 
-            font-size: 12px;
-            font-weight: 750;
+            font-size: 11px;
+            font-weight: 800;
         }
+
+        /* =====================================================
+           CONTENT
+        ====================================================== */
 
         .content {
             width: min(1500px, 100%);
 
             margin: 0 auto;
 
-            padding: 30px;
+            padding:
+                31px 30px 55px;
         }
 
-        /* =====================================================
-           HEADER
-        ====================================================== */
-
         .page-head {
+            margin-bottom: 25px;
+
             display: flex;
+            align-items: flex-end;
             justify-content: space-between;
-            align-items: flex-start;
 
             gap: 20px;
-
-            margin-bottom: 24px;
         }
 
         .eyebrow {
+            margin-bottom: 7px;
+
             color: var(--bordo);
 
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 900;
 
-            letter-spacing: .15em;
             text-transform: uppercase;
-
-            margin-bottom: 7px;
+            letter-spacing: .15em;
         }
 
-        h1 {
+        .page-head h1 {
             color: var(--green);
 
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
             font-size:
-                clamp(28px, 3vw, 38px);
+                clamp(31px, 4vw, 43px);
 
-            line-height: 1.05;
+            line-height: 1.04;
 
-            letter-spacing: -.045em;
+            letter-spacing: -.05em;
         }
 
         .page-head p {
             max-width: 700px;
 
-            margin-top: 8px;
+            margin-top: 9px;
 
             color: var(--muted);
 
-            font-size: 13px;
-            line-height: 1.6;
+            font-size: 12px;
+            line-height: 1.65;
         }
 
         /* =====================================================
@@ -476,69 +513,89 @@
         .btn {
             min-height: 42px;
 
-            padding: 0 15px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 11px;
-
-            background: #fff;
-            color: var(--green);
-
-            font-size: 11px;
-            font-weight: 750;
-
             display: inline-flex;
             align-items: center;
             justify-content: center;
 
             gap: 7px;
 
-            transition: .2s ease;
+            padding:
+                0 15px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 11px;
+
+            background: white;
+            color: var(--green);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            transition:
+                transform .2s ease,
+                border-color .2s ease,
+                background .2s ease;
         }
 
         .btn:hover {
-            transform: translateY(-1px);
+            transform:
+                translateY(-1px);
 
             border-color:
                 var(--green);
         }
 
         .btn-primary {
-            background: var(--green);
-            color: #fff;
+            background:
+                var(--bordo);
 
             border-color:
-                var(--green);
+                var(--bordo);
+
+            color: white;
+
+            box-shadow:
+                0 8px 22px
+                rgba(108,21,30,.13);
         }
 
         .btn-primary:hover {
-            background: #092f2d;
+            background:
+                var(--bordo-dark);
+
+            border-color:
+                var(--bordo-dark);
         }
 
         .btn-danger {
-            color: var(--bordo);
+            color:
+                var(--danger);
 
-            border-color:
-                rgba(108,21,30,.18);
-
-            background:
-                rgba(108,21,30,.04);
-        }
-
-        .btn-danger:hover {
             background:
                 var(--danger-bg);
 
             border-color:
-                var(--bordo);
+                #efd2d5;
+        }
+
+        .btn-warning {
+            color:
+                var(--warning);
+
+            background:
+                var(--warning-bg);
+
+            border-color:
+                #efdfbc;
         }
 
         .btn:disabled {
-            opacity: .55;
+            opacity: .5;
 
-            cursor: not-allowed;
+            cursor:
+                not-allowed;
 
             transform: none;
         }
@@ -551,34 +608,36 @@
             display: grid;
 
             grid-template-columns:
-                repeat(4, minmax(0, 1fr));
+                repeat(4,minmax(0,1fr));
 
-            gap: 14px;
+            gap: 13px;
 
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .stat-card {
-            background: #fff;
+            padding: 17px;
+
+            background: white;
 
             border:
                 1px solid var(--border);
 
             border-radius: 16px;
 
-            padding: 17px;
-
-            box-shadow: var(--shadow);
+            box-shadow:
+                0 7px 25px
+                rgba(36,25,19,.04);
         }
 
         .stat-label {
             color: var(--muted);
 
-            font-size: 9px;
-            font-weight: 800;
+            font-size: 8px;
+            font-weight: 850;
 
             text-transform: uppercase;
-            letter-spacing: .08em;
+            letter-spacing: .09em;
         }
 
         .stat-value {
@@ -587,7 +646,7 @@
             color: var(--green);
 
             font-size: 27px;
-            font-weight: 850;
+            font-weight: 900;
 
             letter-spacing: -.04em;
         }
@@ -601,32 +660,34 @@
         }
 
         /* =====================================================
-           TOOLBAR
+           FILTER BAR
         ====================================================== */
 
         .toolbar {
-            background: #fff;
+            margin-bottom: 18px;
 
-            border:
-                1px solid var(--border);
-
-            border-radius: var(--radius);
-
-            padding: 15px;
-
-            margin-bottom: 20px;
-
-            box-shadow: var(--shadow);
+            padding: 14px;
 
             display: grid;
 
             grid-template-columns:
-                minmax(220px, 1.4fr)
-                minmax(160px, .8fr)
-                minmax(160px, .8fr)
+                minmax(220px,1.5fr)
+                minmax(150px,.7fr)
+                minmax(180px,.8fr)
                 auto;
 
-            gap: 10px;
+            gap: 9px;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 17px;
+
+            box-shadow:
+                0 6px 22px
+                rgba(36,25,19,.035);
         }
 
         .input,
@@ -634,19 +695,20 @@
             width: 100%;
             height: 42px;
 
-            padding: 0 12px;
+            padding:
+                0 12px;
 
             border:
                 1px solid var(--border);
 
             border-radius: 10px;
 
-            background: #fff;
-            color: var(--text);
-
             outline: none;
 
-            font-size: 11px;
+            background: white;
+            color: var(--text);
+
+            font-size: 10px;
         }
 
         .input:focus,
@@ -656,7 +718,7 @@
 
             box-shadow:
                 0 0 0 3px
-                rgba(15,61,58,.08);
+                rgba(15,61,58,.07);
         }
 
         /* =====================================================
@@ -664,7 +726,9 @@
         ====================================================== */
 
         .panel {
-            background: #fff;
+            overflow: hidden;
+
+            background: white;
 
             border:
                 1px solid var(--border);
@@ -672,12 +736,11 @@
             border-radius: var(--radius);
 
             box-shadow: var(--shadow);
-
-            overflow: hidden;
         }
 
         .panel-head {
-            padding: 18px 20px;
+            padding:
+                18px 20px;
 
             display: flex;
             align-items: center;
@@ -689,71 +752,81 @@
                 1px solid var(--border);
         }
 
-        .panel-head h2 {
+        .panel-title {
             color: var(--green);
 
-            font-size: 15px;
-
-            letter-spacing: -.02em;
+            font-size: 14px;
+            font-weight: 900;
         }
 
-        .panel-head p {
-            margin-top: 5px;
+        .panel-description {
+            margin-top: 4px;
 
             color: var(--muted);
 
-            font-size: 10px;
+            font-size: 9px;
         }
 
-        .table-wrap {
-            width: 100%;
+        .result-count {
+            color: var(--muted);
 
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        /* =====================================================
+           TABLE
+        ====================================================== */
+
+        .table-wrap {
             overflow-x: auto;
         }
 
         table {
             width: 100%;
+            min-width: 940px;
 
             border-collapse: collapse;
-
-            min-width: 850px;
         }
 
         th {
-            padding: 12px 18px;
+            padding:
+                12px 18px;
 
             background:
-                #fafbfa;
+                #fbf8f5;
+
+            border-bottom:
+                1px solid var(--border);
 
             color: var(--muted);
 
-            font-size: 9px;
+            text-align: left;
+
+            font-size: 8px;
             font-weight: 850;
 
             text-transform: uppercase;
-            letter-spacing: .07em;
-
-            text-align: left;
+            letter-spacing: .08em;
 
             white-space: nowrap;
         }
 
         td {
-            padding: 15px 18px;
+            padding:
+                15px 18px;
 
-            border-top:
-                1px solid #edf0ef;
-
-            color: var(--text);
-
-            font-size: 10px;
+            border-bottom:
+                1px solid #f0e8e2;
 
             vertical-align: middle;
+
+            font-size: 10px;
         }
 
-        tr:hover td {
+        tbody tr:hover {
             background:
-                rgba(15,61,58,.018);
+                #fdfaf7;
         }
 
         .staff-cell {
@@ -761,13 +834,14 @@
             align-items: center;
 
             gap: 10px;
-
-            min-width: 180px;
         }
 
         .staff-avatar {
-            width: 35px;
-            height: 35px;
+            width: 37px;
+            height: 37px;
+
+            display: grid;
+            place-items: center;
 
             flex: 0 0 auto;
 
@@ -776,49 +850,80 @@
             background: var(--cream);
             color: var(--green);
 
-            display: grid;
-            place-items: center;
-
             font-size: 10px;
             font-weight: 900;
         }
 
         .staff-name {
+            max-width: 190px;
+
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
             color: var(--green);
 
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 850;
         }
 
-        .staff-email {
+        .staff-id {
             margin-top: 3px;
 
             color: var(--muted);
 
-            font-size: 9px;
+            font-size: 8px;
+        }
+
+        .phone {
+            color: var(--text);
+
+            font-size: 10px;
         }
 
         .event-list {
+            max-width: 330px;
+
             display: flex;
             flex-wrap: wrap;
 
             gap: 5px;
-
-            max-width: 260px;
         }
 
         .event-chip {
-            padding: 5px 8px;
+            max-width: 170px;
+
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            padding:
+                5px 8px;
 
             border-radius: 7px;
 
             background:
-                var(--soft);
+                var(--surface-soft);
 
             color: var(--green);
 
             font-size: 8px;
             font-weight: 750;
+        }
+
+        .more-chip {
+            padding:
+                5px 8px;
+
+            border-radius: 7px;
+
+            background:
+                #efe7e0;
+
+            color: var(--muted);
+
+            font-size: 8px;
+            font-weight: 800;
         }
 
         .status {
@@ -827,12 +932,15 @@
 
             gap: 5px;
 
-            padding: 5px 8px;
+            padding:
+                6px 9px;
 
             border-radius: 999px;
 
             font-size: 8px;
             font-weight: 850;
+
+            text-transform: capitalize;
         }
 
         .status::before {
@@ -847,18 +955,27 @@
         }
 
         .status.active {
-            background: var(--success-bg);
-            color: var(--success);
+            background:
+                var(--success-bg);
+
+            color:
+                var(--success);
         }
 
-        .status.disabled {
-            background: var(--danger-bg);
-            color: var(--danger);
+        .status.suspended {
+            background:
+                var(--warning-bg);
+
+            color:
+                var(--warning);
         }
 
-        .status.pending {
-            background: var(--warning-bg);
-            color: var(--warning);
+        .status.removed {
+            background:
+                var(--danger-bg);
+
+            color:
+                var(--danger);
         }
 
         .actions {
@@ -872,28 +989,35 @@
             width: 32px;
             height: 32px;
 
-            border:
-                1px solid var(--border);
-
-            border-radius: 8px;
-
-            background: #fff;
-
-            color: var(--green);
-
             display: grid;
             place-items: center;
 
-            font-size: 11px;
+            border:
+                1px solid var(--border);
+
+            border-radius: 9px;
+
+            background: white;
+            color: var(--green);
+
+            font-size: 12px;
         }
 
         .small-btn:hover {
             border-color:
                 var(--green);
+
+            background:
+                var(--surface-soft);
+        }
+
+        .small-btn.danger {
+            color:
+                var(--danger);
         }
 
         /* =====================================================
-           MOBILE STAFF LIST
+           MOBILE LIST
         ====================================================== */
 
         .mobile-list {
@@ -929,6 +1053,7 @@
             color: var(--green);
 
             font-size: 11px;
+            font-weight: 850;
         }
 
         .mobile-card-copy span {
@@ -938,79 +1063,93 @@
 
             color: var(--muted);
 
-            font-size: 9px;
+            font-size: 8px;
 
             overflow-wrap: anywhere;
         }
 
-        .mobile-card-info {
-            margin-top: 13px;
+        .mobile-info {
+            margin-top: 14px;
 
             display: grid;
 
-            gap: 9px;
+            gap: 8px;
         }
 
-        .mobile-info-row {
+        .mobile-row {
             display: flex;
             justify-content: space-between;
 
             gap: 15px;
         }
 
-        .mobile-info-row small {
+        .mobile-row span {
             color: var(--muted);
 
             font-size: 8px;
         }
 
-        .mobile-info-row strong {
+        .mobile-row strong {
             max-width: 65%;
 
             color: var(--green);
 
-            font-size: 9px;
-
             text-align: right;
+
+            font-size: 9px;
+        }
+
+        .mobile-events {
+            display: flex;
+            flex-wrap: wrap;
+
+            justify-content: flex-end;
+
+            gap: 4px;
+
+            max-width: 65%;
         }
 
         .mobile-actions {
             margin-top: 13px;
 
-            display: flex;
+            display: grid;
+
+            grid-template-columns:
+                repeat(3,1fr);
 
             gap: 7px;
         }
 
-        .mobile-actions .btn {
-            flex: 1;
-        }
-
         /* =====================================================
-           EMPTY / LOADING
+           STATES
         ====================================================== */
 
         .state {
-            padding: 65px 25px;
+            padding:
+                65px 22px;
 
             text-align: center;
         }
 
         .state-icon {
-            width: 55px;
-            height: 55px;
+            width: 57px;
+            height: 57px;
 
-            margin: 0 auto 14px;
-
-            border-radius: 16px;
-
-            background: var(--soft);
-            color: var(--green);
+            margin:
+                0 auto 14px;
 
             display: grid;
             place-items: center;
 
-            font-size: 21px;
+            border-radius: 16px;
+
+            background:
+                var(--surface-soft);
+
+            color: var(--green);
+
+            font-size: 22px;
             font-weight: 900;
         }
 
@@ -1023,21 +1162,23 @@
         }
 
         .state p {
-            max-width: 480px;
+            max-width: 500px;
 
-            margin: 7px auto 0;
+            margin:
+                7px auto 0;
 
             color: var(--muted);
 
             font-size: 10px;
-            line-height: 1.55;
+            line-height: 1.6;
         }
 
         .spinner {
-            width: 30px;
-            height: 30px;
+            width: 31px;
+            height: 31px;
 
-            margin: 0 auto 14px;
+            margin:
+                0 auto 14px;
 
             border:
                 3px solid var(--border);
@@ -1053,7 +1194,8 @@
 
         @keyframes spin {
             to {
-                transform: rotate(360deg);
+                transform:
+                    rotate(360deg);
             }
         }
 
@@ -1065,19 +1207,19 @@
             position: fixed;
             inset: 0;
 
-            z-index: 1500;
-
-            padding: 20px;
-
-            background:
-                rgba(8,25,23,.52);
-
-            backdrop-filter:
-                blur(5px);
+            z-index: 2000;
 
             display: none;
             align-items: center;
             justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(8,25,23,.55);
+
+            backdrop-filter:
+                blur(5px);
         }
 
         .modal-backdrop.open {
@@ -1086,26 +1228,27 @@
 
         .modal {
             width:
-                min(680px, 100%);
+                min(650px,100%);
 
             max-height:
-                min(820px, 92vh);
+                92vh;
 
             overflow-y: auto;
 
-            background: #fff;
+            background: white;
 
             border-radius: 20px;
 
             box-shadow:
-                0 30px 90px rgba(0,0,0,.24);
+                0 30px 90px
+                rgba(0,0,0,.23);
         }
 
         .modal-head {
-            padding: 20px;
+            padding:
+                19px 20px;
 
             display: flex;
-            align-items: flex-start;
             justify-content: space-between;
 
             gap: 15px;
@@ -1114,21 +1257,20 @@
                 1px solid var(--border);
         }
 
-        .modal-head h2 {
+        .modal-title {
             color: var(--green);
 
-            font-size: 18px;
-
-            letter-spacing: -.03em;
+            font-size: 17px;
+            font-weight: 900;
         }
 
-        .modal-head p {
+        .modal-description {
             margin-top: 5px;
 
             color: var(--muted);
 
-            font-size: 10px;
-            line-height: 1.5;
+            font-size: 9px;
+            line-height: 1.55;
         }
 
         .close-btn {
@@ -1142,9 +1284,10 @@
 
             border-radius: 9px;
 
-            background: #fff;
-
+            background: white;
             color: var(--green);
+
+            font-size: 17px;
         }
 
         .modal-body {
@@ -1155,54 +1298,68 @@
             display: grid;
 
             grid-template-columns:
-                repeat(2, minmax(0, 1fr));
+                repeat(2,minmax(0,1fr));
 
             gap: 14px;
         }
 
         .form-group {
             display: grid;
+
             gap: 6px;
         }
 
         .form-group.full {
-            grid-column: 1 / -1;
+            grid-column:
+                1 / -1;
         }
 
         .form-label {
             color: var(--green);
 
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 850;
 
             text-transform: uppercase;
-            letter-spacing: .06em;
+            letter-spacing: .07em;
         }
 
         .form-help {
             color: var(--muted);
 
             font-size: 8px;
-            line-height: 1.45;
+            line-height: 1.5;
         }
 
-        .event-assignment {
-            max-height: 190px;
+        .readonly-field {
+            background:
+                #f8f6f3;
+
+            color:
+                var(--muted);
+
+            cursor:
+                not-allowed;
+        }
+
+        .assignment-box {
+            max-height: 240px;
 
             overflow-y: auto;
 
-            padding: 8px;
+            padding: 7px;
 
             border:
                 1px solid var(--border);
 
             border-radius: 11px;
 
-            background: #fafbfa;
+            background:
+                #fbfaf8;
         }
 
-        .event-option {
-            padding: 9px;
+        .assignment-option {
+            padding: 10px;
 
             display: flex;
             align-items: flex-start;
@@ -1214,30 +1371,31 @@
             cursor: pointer;
         }
 
-        .event-option:hover {
-            background: var(--soft);
+        .assignment-option:hover {
+            background:
+                var(--surface-soft);
         }
 
-        .event-option input {
+        .assignment-option input {
             margin-top: 2px;
         }
 
-        .event-option-copy {
+        .assignment-copy {
             min-width: 0;
         }
 
-        .event-option-copy strong {
+        .assignment-copy strong {
             display: block;
 
             color: var(--green);
 
-            font-size: 10px;
+            font-size: 9px;
         }
 
-        .event-option-copy span {
+        .assignment-copy span {
             display: block;
 
-            margin-top: 2px;
+            margin-top: 3px;
 
             color: var(--muted);
 
@@ -1245,12 +1403,13 @@
         }
 
         .modal-footer {
-            padding: 15px 20px;
+            padding:
+                14px 20px;
 
             display: flex;
             justify-content: flex-end;
 
-            gap: 9px;
+            gap: 8px;
 
             border-top:
                 1px solid var(--border);
@@ -1264,12 +1423,12 @@
             position: fixed;
             inset: 0;
 
-            z-index: 1450;
-
-            background:
-                rgba(0,0,0,.3);
+            z-index: 1800;
 
             display: none;
+
+            background:
+                rgba(0,0,0,.32);
         }
 
         .drawer-backdrop.open {
@@ -1277,29 +1436,30 @@
         }
 
         .drawer {
+            width:
+                min(470px,100%);
+
             position: fixed;
             top: 0;
             right: 0;
             bottom: 0;
 
-            z-index: 1460;
+            z-index: 1850;
 
-            width:
-                min(480px, 100%);
+            display: flex;
+            flex-direction: column;
 
-            background: #fff;
+            background: white;
 
             box-shadow:
-                -20px 0 60px rgba(0,0,0,.14);
+                -20px 0 60px
+                rgba(0,0,0,.14);
 
             transform:
                 translateX(100%);
 
             transition:
                 transform .25s ease;
-
-            display: flex;
-            flex-direction: column;
         }
 
         .drawer.open {
@@ -1308,12 +1468,10 @@
         }
 
         .drawer-head {
-            padding: 20px;
+            padding: 19px 20px;
 
             display: flex;
             justify-content: space-between;
-
-            gap: 15px;
 
             border-bottom:
                 1px solid var(--border);
@@ -1322,7 +1480,7 @@
         .drawer-head h2 {
             color: var(--green);
 
-            font-size: 17px;
+            font-size: 16px;
         }
 
         .drawer-body {
@@ -1334,9 +1492,9 @@
         }
 
         .detail-block {
-            padding: 15px;
-
             margin-bottom: 12px;
+
+            padding: 15px;
 
             border:
                 1px solid var(--border);
@@ -1349,11 +1507,11 @@
         }
 
         .detail-block h3 {
+            margin-bottom: 10px;
+
             color: var(--green);
 
             font-size: 11px;
-
-            margin-bottom: 10px;
         }
 
         .detail-line {
@@ -1365,7 +1523,7 @@
             gap: 15px;
 
             border-bottom:
-                1px solid #edf0ef;
+                1px solid #f0e8e2;
         }
 
         .detail-line:last-child {
@@ -1375,30 +1533,31 @@
         .detail-line span {
             color: var(--muted);
 
-            font-size: 9px;
+            font-size: 8px;
         }
 
         .detail-line strong {
-            max-width: 60%;
+            max-width: 65%;
 
             color: var(--green);
 
-            font-size: 9px;
-
             text-align: right;
+
+            font-size: 9px;
 
             overflow-wrap: anywhere;
         }
 
         .drawer-footer {
-            padding: 15px 20px;
-
-            border-top:
-                1px solid var(--border);
+            padding:
+                14px 20px;
 
             display: flex;
 
             gap: 8px;
+
+            border-top:
+                1px solid var(--border);
         }
 
         .drawer-footer .btn {
@@ -1415,10 +1574,10 @@
             right: 20px;
             bottom: 20px;
 
-            z-index: 3000;
+            z-index: 4000;
 
             width:
-                min(380px, calc(100vw - 30px));
+                min(380px,calc(100vw - 30px));
 
             display: grid;
 
@@ -1426,72 +1585,87 @@
         }
 
         .toast {
-            padding: 13px 15px;
+            padding:
+                13px 15px;
 
             border-radius: 12px;
 
-            background: var(--green);
-            color: #fff;
+            background:
+                var(--green);
+
+            color: white;
 
             box-shadow:
-                0 14px 35px rgba(0,0,0,.16);
+                0 15px 35px
+                rgba(0,0,0,.15);
 
-            font-size: 11px;
-
-            line-height: 1.45;
+            font-size: 10px;
+            line-height: 1.5;
 
             animation:
                 toastIn .2s ease;
         }
 
         .toast.error {
-            background: var(--bordo);
+            background:
+                var(--bordo);
+        }
+
+        .toast.warning {
+            background:
+                #89621d;
         }
 
         @keyframes toastIn {
-
             from {
                 opacity: 0;
-                transform: translateY(8px);
+                transform:
+                    translateY(8px);
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform:
+                    translateY(0);
             }
         }
 
         /* =====================================================
-           MOBILE
+           MOBILE SIDEBAR
         ====================================================== */
 
         .sidebar-overlay {
             position: fixed;
             inset: 0;
 
-            background:
-                rgba(0,0,0,.35);
-
             z-index: 950;
 
             display: none;
+
+            background:
+                rgba(0,0,0,.35);
         }
+
+        .sidebar-overlay.open {
+            display: block;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
 
         @media (max-width: 1100px) {
 
             .summary-grid {
                 grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                    repeat(2,minmax(0,1fr));
             }
 
             .toolbar {
                 grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                    repeat(2,minmax(0,1fr));
             }
 
-            .toolbar .btn {
-                width: 100%;
-            }
         }
 
         @media (max-width: 820px) {
@@ -1506,10 +1680,6 @@
                     translateX(0);
             }
 
-            .sidebar-overlay.open {
-                display: block;
-            }
-
             .main {
                 margin-left: 0;
             }
@@ -1520,32 +1690,31 @@
             }
 
             .topbar {
-                padding: 0 16px;
+                padding:
+                    0 17px;
             }
 
             .content {
                 padding:
-                    22px 16px 30px;
+                    24px 17px 45px;
             }
 
             .top-user-name {
                 display: none;
             }
+
         }
 
         @media (max-width: 650px) {
 
-            .summary-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 9px;
+            .page-head {
+                align-items: flex-start;
+
+                flex-direction: column;
             }
 
-            .stat-card {
-                padding: 14px;
-            }
-
-            .stat-value {
-                font-size: 22px;
+            .page-head .btn {
+                width: 100%;
             }
 
             .toolbar {
@@ -1558,14 +1727,6 @@
 
             .mobile-list {
                 display: block;
-            }
-
-            .page-head {
-                flex-direction: column;
-            }
-
-            .page-head > .btn {
-                width: 100%;
             }
 
             .form-grid {
@@ -1583,22 +1744,34 @@
             .modal {
                 max-height: 95vh;
             }
+
         }
 
-        @media (max-width: 400px) {
+        @media (max-width: 430px) {
 
             .summary-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding:
+                    21px 13px 40px;
             }
 
             .topbar {
                 height: 68px;
             }
 
-            .content {
-                padding-left: 12px;
-                padding-right: 12px;
+            .mobile-actions {
+                grid-template-columns:
+                    1fr 1fr;
             }
+
+            .mobile-actions .btn:last-child {
+                grid-column:
+                    1 / -1;
+            }
+
         }
     </style>
 </head>
@@ -1623,11 +1796,15 @@
             </div>
 
             <div class="brand-copy">
-                <strong>K-TICKETS</strong>
+
+                <strong>
+                    K-TICKETS
+                </strong>
 
                 <span>
                     Merchant CMS
                 </span>
+
             </div>
 
         </div>
@@ -1647,7 +1824,7 @@
                 </a>
 
                 <a href="./events.html">
-                    <span class="nav-icon">▣</span>
+                    <span class="nav-icon">◫</span>
                     <span>My Events</span>
                 </a>
 
@@ -1657,7 +1834,7 @@
                 </a>
 
                 <a href="./tickets.html">
-                    <span class="nav-icon">▤</span>
+                    <span class="nav-icon">▣</span>
                     <span>Tickets</span>
                 </a>
 
@@ -1685,7 +1862,7 @@
                 </a>
 
                 <a href="./sales.html">
-                    <span class="nav-icon">↗</span>
+                    <span class="nav-icon">▤</span>
                     <span>Sales</span>
                 </a>
 
@@ -1695,7 +1872,7 @@
                 </a>
 
                 <a href="./withdrawals.html">
-                    <span class="nav-icon">₩</span>
+                    <span class="nav-icon">↗</span>
                     <span>Withdrawals</span>
                 </a>
 
@@ -1719,11 +1896,6 @@
                 <a href="./settings.html">
                     <span class="nav-icon">⚙</span>
                     <span>Settings</span>
-                </a>
-
-                <a href="../notifications.html">
-                    <span class="nav-icon">◌</span>
-                    <span>Notifications</span>
                 </a>
 
             </nav>
@@ -1797,18 +1969,16 @@
 
                 <a
                     class="icon-btn"
-                    href="../notifications.html"
-                    aria-label="Notifications"
-                    title="Notifications"
+                    href="./dashboard.html"
+                    aria-label="Dashboard"
+                    title="Dashboard"
                 >
-                    ♢
+                    ⌂
 
                     <span
                         class="notification-badge"
                         id="notificationBadge"
-                    >
-                        0
-                    </span>
+                    ></span>
 
                 </a>
 
@@ -1865,9 +2035,9 @@
                     </h1>
 
                     <p>
-                        Create and manage dedicated gate accounts
-                        for ticket verification. Gate staff only
-                        receive access to the events you assign to them.
+                        Manage the people who verify tickets at your
+                        event gates. Each gate staff account can only
+                        access the events explicitly assigned to it.
                     </p>
 
                 </div>
@@ -1904,7 +2074,7 @@
                     </div>
 
                     <div class="stat-note">
-                        Created under your merchant account
+                        Your merchant staff records
                     </div>
 
                 </div>
@@ -1924,7 +2094,7 @@
                     </div>
 
                     <div class="stat-note">
-                        Currently allowed to scan
+                        Currently permitted to scan
                     </div>
 
                 </div>
@@ -1933,18 +2103,18 @@
                 <div class="stat-card">
 
                     <div class="stat-label">
-                        Disabled
+                        Suspended
                     </div>
 
                     <div
                         class="stat-value"
-                        id="disabledStaff"
+                        id="suspendedStaff"
                     >
                         —
                     </div>
 
                     <div class="stat-note">
-                        Access currently disabled
+                        Temporarily disabled access
                     </div>
 
                 </div>
@@ -1964,7 +2134,7 @@
                     </div>
 
                     <div class="stat-note">
-                        Events with gate staff access
+                        Unique events with staff access
                     </div>
 
                 </div>
@@ -1982,7 +2152,7 @@
                     class="input"
                     id="searchInput"
                     type="search"
-                    placeholder="Search gate staff..."
+                    placeholder="Search staff name, phone or user ID..."
                     autocomplete="off"
                 >
 
@@ -1991,6 +2161,7 @@
                     class="select"
                     id="statusFilter"
                 >
+
                     <option value="">
                         All statuses
                     </option>
@@ -1999,13 +2170,14 @@
                         Active
                     </option>
 
-                    <option value="disabled">
-                        Disabled
+                    <option value="suspended">
+                        Suspended
                     </option>
 
-                    <option value="pending">
-                        Pending
+                    <option value="removed">
+                        Removed
                     </option>
+
                 </select>
 
 
@@ -2013,9 +2185,11 @@
                     class="select"
                     id="eventFilter"
                 >
+
                     <option value="">
                         All assigned events
                     </option>
+
                 </select>
 
 
@@ -2040,36 +2214,30 @@
 
                     <div>
 
-                        <h2>
-                            Gate Accounts
-                        </h2>
+                        <div class="panel-title">
+                            Gate Staff Accounts
+                        </div>
 
-                        <p>
-                            Only staff created or assigned by your
-                            merchant account should appear here.
-                        </p>
+                        <div class="panel-description">
+                            Live records from merchant_staff and
+                            merchant_staff_events.
+                        </div>
 
                     </div>
 
-                    <span
+                    <div
+                        class="result-count"
                         id="resultCount"
-                        style="
-                            color:var(--muted);
-                            font-size:9px;
-                        "
                     >
-                        —
-                    </span>
+                        Loading...
+                    </div>
 
                 </div>
 
 
                 <!-- DESKTOP -->
 
-                <div
-                    class="table-wrap"
-                    id="tableWrap"
-                >
+                <div class="table-wrap">
 
                     <table>
 
@@ -2082,6 +2250,10 @@
                                 </th>
 
                                 <th>
+                                    Phone
+                                </th>
+
+                                <th>
                                     Assigned Events
                                 </th>
 
@@ -2090,13 +2262,11 @@
                                 </th>
 
                                 <th>
-                                    Last Access
+                                    Created
                                 </th>
 
                                 <th
-                                    style="
-                                        text-align:right;
-                                    "
+                                    style="text-align:right;"
                                 >
                                     Actions
                                 </th>
@@ -2106,11 +2276,13 @@
                         </thead>
 
 
-                        <tbody id="staffTableBody">
+                        <tbody
+                            id="staffTableBody"
+                        >
 
                             <tr>
 
-                                <td colspan="5">
+                                <td colspan="6">
 
                                     <div class="state">
 
@@ -2121,8 +2293,8 @@
                                         </strong>
 
                                         <p>
-                                            Retrieving staff accounts
-                                            from Supabase.
+                                            Retrieving your merchant
+                                            staff assignments from Supabase.
                                         </p>
 
                                     </div>
@@ -2144,6 +2316,7 @@
                     class="mobile-list"
                     id="mobileList"
                 >
+
                     <div class="state">
 
                         <div class="spinner"></div>
@@ -2153,10 +2326,11 @@
                         </strong>
 
                         <p>
-                            Retrieving staff accounts.
+                            Retrieving your merchant staff records.
                         </p>
 
                     </div>
+
                 </div>
 
             </section>
@@ -2188,14 +2362,20 @@
 
             <div>
 
-                <h2 id="modalTitle">
+                <div
+                    class="modal-title"
+                    id="modalTitle"
+                >
                     Add Gate Staff
-                </h2>
+                </div>
 
-                <p id="modalDescription">
-                    Create a dedicated account for ticket
-                    verification at the event gate.
-                </p>
+                <div
+                    class="modal-description"
+                    id="modalDescription"
+                >
+                    Create a gate account through the protected
+                    staff provisioning workflow.
+                </div>
 
             </div>
 
@@ -2283,7 +2463,7 @@
                             class="form-label"
                             for="staffStatus"
                         >
-                            Account Status
+                            Staff Status
                         </label>
 
                         <select
@@ -2295,8 +2475,8 @@
                                 Active
                             </option>
 
-                            <option value="disabled">
-                                Disabled
+                            <option value="suspended">
+                                Suspended
                             </option>
 
                         </select>
@@ -2307,20 +2487,15 @@
                     <div class="form-group full">
 
                         <label class="form-label">
-                            Assign Events
+                            Assigned Events
                         </label>
 
                         <div
-                            class="event-assignment"
+                            class="assignment-box"
                             id="eventAssignment"
                         >
 
-                            <div
-                                class="state"
-                                style="
-                                    padding:25px 10px;
-                                "
-                            >
+                            <div class="state">
                                 <div class="spinner"></div>
 
                                 <strong>
@@ -2331,8 +2506,32 @@
                         </div>
 
                         <div class="form-help">
-                            Select only the events where this staff
-                            member should be permitted to verify tickets.
+                            Gate staff can only scan tickets for the
+                            events selected here. Assignments are stored
+                            in merchant_staff_events.
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="form-group full"
+                        id="editAccountNote"
+                        style="display:none;"
+                    >
+
+                        <div
+                            class="form-help"
+                            style="
+                                padding:11px;
+                                background:var(--surface-soft);
+                                border-radius:10px;
+                            "
+                        >
+                            Authentication email and profile identity
+                            are managed through the protected staff
+                            provisioning workflow. This page changes
+                            merchant staff status and event assignments.
                         </div>
 
                     </div>
@@ -2357,7 +2556,7 @@
                     id="saveStaffBtn"
                     type="submit"
                 >
-                    Save Gate Staff
+                    Create Gate Staff
                 </button>
 
             </div>
@@ -2382,23 +2581,19 @@
 <aside
     class="drawer"
     id="staffDrawer"
-    aria-label="Gate staff details"
 >
 
     <div class="drawer-head">
 
-        <div>
-
-            <h2>
-                Gate Staff Details
-            </h2>
-
-        </div>
+        <h2>
+            Gate Staff Details
+        </h2>
 
         <button
             class="close-btn"
             id="closeDrawerBtn"
             type="button"
+            aria-label="Close"
         >
             ×
         </button>
@@ -2409,8 +2604,7 @@
     <div
         class="drawer-body"
         id="drawerBody"
-    >
-    </div>
+    ></div>
 
 
     <div class="drawer-footer">
@@ -2420,15 +2614,15 @@
             id="drawerEditBtn"
             type="button"
         >
-            Edit
+            Edit Assignments
         </button>
 
         <button
-            class="btn btn-danger"
+            class="btn btn-warning"
             id="drawerToggleBtn"
             type="button"
         >
-            Disable
+            Suspend
         </button>
 
     </div>
@@ -2449,47 +2643,70 @@
 
 <script>
 /* ============================================================
-   K-TICKETS GATE STAFF MANAGEMENT
+   K-TICKETS — MERCHANT GATE STAFF
+   ------------------------------------------------------------
+   CONFIRMED DATABASE MODEL
 
-   Supabase is the source of truth.
+   merchant_staff
+   -------------------------
+   id
+   merchant_id
+   user_id
+   status
+   created_at
+   updated_at
+
+   merchant_staff_events
+   -------------------------
+   id
+   merchant_staff_id
+   event_id
+   created_at
+
+   profiles
+   -------------------------
+   id
+   full_name
+   phone
+   role
+   is_active
+
+   events
+   -------------------------
+   id
+   merchant_id
+   title
+   description
+   venue
+   city
+   start_at
+   end_at
+   status
 
    IMPORTANT:
-   Browser-side role checks are NOT sufficient security.
+   New Supabase Auth users MUST NOT be created from the
+   browser with a service-role key.
 
-   Production database policies should enforce:
+   Creation therefore goes through the protected Edge
+   Function configured by:
 
-       merchant
-          ↓
-       merchant-owned staff
-          ↓
-       assigned merchant events only
+       window.KTICKETS_CREATE_GATE_STAFF_URL
 
-   A merchant must never be able to create or modify
-   gate accounts belonging to another merchant.
-
-   Recommended production architecture:
-
-       profiles
-       merchant_gate_staff
-       gate_staff_event_assignments
-
-   Supabase Auth remains the authentication provider.
-
-   The frontend below supports the expected relational model
-   and gracefully shows an unavailable state if the final
-   tables have not yet been created.
+   This page never contains a service-role key.
 ============================================================ */
 
 
 /* ============================================================
-   CONFIG
+   SUPABASE CONFIG
 ============================================================ */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    window.KTICKETS_SUPABASE_URL ||
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
 const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+    window.KTICKETS_SUPABASE_ANON_KEY ||
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 
 let supabaseClient = null;
@@ -2498,9 +2715,9 @@ let currentUser = null;
 
 let currentProfile = null;
 
-let staffRecords = [];
-
 let merchantEvents = [];
+
+let staffRecords = [];
 
 let editingStaff = null;
 
@@ -2508,7 +2725,7 @@ let drawerStaff = null;
 
 
 /* ============================================================
-   INIT
+   BOOT
 ============================================================ */
 
 document.addEventListener(
@@ -2519,142 +2736,158 @@ document.addEventListener(
 
 async function init() {
 
-    setupNavigation();
+    setupUI();
 
     setupActions();
 
 
-    if (
-        !SUPABASE_URL ||
-        !SUPABASE_ANON_KEY
-    ) {
-
-        showFatalState(
-            "Supabase configuration is missing."
-        );
-
-        return;
-    }
-
-
-    supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
-
-
-    await authenticateMerchant();
-}
-
-
-/* ============================================================
-   AUTHENTICATION
-============================================================ */
-
-async function authenticateMerchant() {
-
     try {
 
-        const {
-            data: {
-                session
-            },
-            error
-        } =
-            await supabaseClient
-                .auth
-                .getSession();
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY,
+                {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true
+                    }
+                }
+            );
 
 
-        if (error) {
-            throw error;
-        }
-
-
-        if (
-            !session ||
-            !session.user
-        ) {
-
-            window.location.href =
-                "../auth/login.html";
-
-            return;
-        }
-
-
-        currentUser =
-            session.user;
-
-
-        const {
-            data: profile,
-            error: profileError
-        } =
-            await supabaseClient
-                .from("profiles")
-                .select(`
-                    id,
-                    full_name,
-                    phone,
-                    role
-                `)
-                .eq(
-                    "id",
-                    currentUser.id
-                )
-                .maybeSingle();
-
-
-        if (profileError) {
-            throw profileError;
-        }
-
-
-        if (
-            !profile ||
-            profile.role !== "merchant"
-        ) {
-
-            await supabaseClient
-                .auth
-                .signOut();
-
-
-            window.location.href =
-                "../auth/login.html";
-
-            return;
-        }
-
-
-        currentProfile =
-            profile;
-
-
-        renderIdentity();
-
-
-        await loadNotifications();
-
-        await loadMerchantEvents();
-
-        await loadGateStaff();
+        await authenticateMerchant();
 
     } catch (error) {
 
         console.error(
-            "Merchant authentication error:",
+            "Gate staff initialization error:",
             error
         );
 
 
         showFatalState(
-            error?.message ||
-            "Unable to authenticate merchant."
+            getReadableError(error)
         );
+
     }
+
+}
+
+
+/* ============================================================
+   AUTHENTICATE MERCHANT
+============================================================ */
+
+async function authenticateMerchant() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+    if (error) {
+        throw error;
+    }
+
+
+    const session =
+        data?.session;
+
+
+    if (!session?.user) {
+
+        window.location.href =
+            "../login.html";
+
+        return;
+
+    }
+
+
+    currentUser =
+        session.user;
+
+
+    const {
+        data: profile,
+        error: profileError
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                is_active
+            `)
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+
+    if (profileError) {
+        throw profileError;
+    }
+
+
+    if (
+        !profile ||
+        profile.role !== "merchant"
+    ) {
+
+        await supabaseClient
+            .auth
+            .signOut();
+
+
+        window.location.href =
+            "../login.html";
+
+        return;
+
+    }
+
+
+    if (
+        profile.is_active === false
+    ) {
+
+        await supabaseClient
+            .auth
+            .signOut();
+
+
+        throw new Error(
+            "Your merchant account is currently inactive."
+        );
+
+    }
+
+
+    currentProfile =
+        profile;
+
+
+    renderIdentity();
+
+
+    await Promise.all([
+        loadMerchantEvents(),
+        loadNotificationCount()
+    ]);
+
+
+    await loadStaff();
+
 }
 
 
@@ -2666,6 +2899,8 @@ function renderIdentity() {
 
     const name =
         currentProfile.full_name ||
+        currentUser.user_metadata?.full_name ||
+        currentUser.email?.split("@")[0] ||
         "Merchant";
 
 
@@ -2695,71 +2930,57 @@ function renderIdentity() {
         "topAvatar"
     ).textContent =
         initials;
+
 }
 
 
 /* ============================================================
-   EVENTS
+   LOAD MERCHANT EVENTS
 ============================================================ */
 
 async function loadMerchantEvents() {
 
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from("events")
-                .select(`
-                    id,
-                    merchant_id,
-                    title,
-                    venue,
-                    city,
-                    start_at,
-                    end_at,
-                    status
-                `)
-                .eq(
-                    "merchant_id",
-                    currentUser.id
-                )
-                .order(
-                    "start_at",
-                    {
-                        ascending: true,
-                        nullsFirst: false
-                    }
-                );
-
-
-        if (error) {
-            throw error;
-        }
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("events")
+            .select(`
+                id,
+                merchant_id,
+                title,
+                description,
+                venue,
+                city,
+                start_at,
+                end_at,
+                status
+            `)
+            .eq(
+                "merchant_id",
+                currentUser.id
+            )
+            .order(
+                "start_at",
+                {
+                    ascending: true,
+                    nullsFirst: false
+                }
+            );
 
 
-        merchantEvents =
-            data || [];
-
-
-        populateEventFilters();
-
-    } catch (error) {
-
-        console.warn(
-            "Merchant events unavailable:",
-            error
-        );
-
-
-        merchantEvents =
-            [];
-
-
-        populateEventFilters();
+    if (error) {
+        throw error;
     }
+
+
+    merchantEvents =
+        data || [];
+
+
+    populateEventFilter();
+
 }
 
 
@@ -2767,15 +2988,15 @@ async function loadMerchantEvents() {
    EVENT FILTER
 ============================================================ */
 
-function populateEventFilters() {
+function populateEventFilter() {
 
-    const filter =
+    const select =
         document.getElementById(
             "eventFilter"
         );
 
 
-    filter.innerHTML =
+    select.innerHTML =
         `
             <option value="">
                 All assigned events
@@ -2801,11 +3022,13 @@ function populateEventFilters() {
                 "Untitled event";
 
 
-            filter.appendChild(
+            select.appendChild(
                 option
             );
+
         }
     );
+
 }
 
 
@@ -2813,69 +3036,36 @@ function populateEventFilters() {
    LOAD STAFF
 ============================================================ */
 
-async function loadGateStaff() {
+async function loadStaff() {
 
     renderLoading();
 
 
-    /*
-     * Expected table:
-     *
-     * merchant_gate_staff
-     *
-     * id
-     * merchant_id
-     * user_id
-     * full_name
-     * email
-     * phone
-     * status
-     * created_at
-     * last_access_at
-     *
-     * Event assignments:
-     *
-     * gate_staff_event_assignments
-     *
-     * id
-     * staff_id
-     * event_id
-     */
-
-
     try {
 
+        /*
+         * We intentionally do NOT depend on nested PostgREST
+         * relationship names here.
+         *
+         * Staff, profiles and assignments are loaded separately.
+         * This makes the page match the confirmed schema and
+         * avoids the obsolete gate_staff_event_assignments table.
+         */
+
+
         const {
-            data,
-            error
+            data: staffRows,
+            error: staffError
         } =
             await supabaseClient
-                .from(
-                    "merchant_gate_staff"
-                )
+                .from("merchant_staff")
                 .select(`
                     id,
                     merchant_id,
                     user_id,
-                    full_name,
-                    email,
-                    phone,
                     status,
                     created_at,
-                    last_access_at,
-                    gate_staff_event_assignments(
-                        id,
-                        event_id,
-                        events(
-                            id,
-                            title,
-                            merchant_id,
-                            venue,
-                            city,
-                            start_at,
-                            end_at
-                        )
-                    )
+                    updated_at
                 `)
                 .eq(
                     "merchant_id",
@@ -2889,14 +3079,238 @@ async function loadGateStaff() {
                 );
 
 
-        if (error) {
-            throw error;
+        if (staffError) {
+            throw staffError;
         }
 
 
+        const rows =
+            staffRows || [];
+
+
+        if (!rows.length) {
+
+            staffRecords =
+                [];
+
+            updateSummary();
+
+            renderStaff();
+
+            return;
+
+        }
+
+
+        const staffIds =
+            rows.map(
+                row => row.id
+            );
+
+
+        const userIds =
+            rows
+                .map(
+                    row => row.user_id
+                )
+                .filter(Boolean);
+
+
+        /*
+         * Load profiles.
+         */
+
+        let profiles = [];
+
+
+        if (userIds.length) {
+
+            const {
+                data: profileRows,
+                error: profileError
+            } =
+                await supabaseClient
+                    .from("profiles")
+                    .select(`
+                        id,
+                        full_name,
+                        phone,
+                        role,
+                        is_active
+                    `)
+                    .in(
+                        "id",
+                        userIds
+                    );
+
+
+            if (profileError) {
+
+                /*
+                 * Profile enrichment should not prevent the
+                 * merchant from seeing the staff relationship.
+                 */
+
+                console.warn(
+                    "Staff profile enrichment unavailable:",
+                    profileError
+                );
+
+            } else {
+
+                profiles =
+                    profileRows || [];
+
+            }
+
+        }
+
+
+        /*
+         * Load event assignments.
+         */
+
+        const {
+            data: assignmentRows,
+            error: assignmentError
+        } =
+            await supabaseClient
+                .from("merchant_staff_events")
+                .select(`
+                    id,
+                    merchant_staff_id,
+                    event_id,
+                    created_at
+                `)
+                .in(
+                    "merchant_staff_id",
+                    staffIds
+                );
+
+
+        if (assignmentError) {
+            throw assignmentError;
+        }
+
+
+        /*
+         * Build lookup maps.
+         */
+
+        const profileMap =
+            new Map(
+                profiles.map(
+                    profile => [
+                        String(profile.id),
+                        profile
+                    ]
+                )
+            );
+
+
+        const eventMap =
+            new Map(
+                merchantEvents.map(
+                    event => [
+                        String(event.id),
+                        event
+                    ]
+                )
+            );
+
+
+        const assignmentMap =
+            new Map();
+
+
+        (assignmentRows || [])
+            .forEach(
+                assignment => {
+
+                    const key =
+                        String(
+                            assignment.merchant_staff_id
+                        );
+
+
+                    if (
+                        !assignmentMap.has(
+                            key
+                        )
+                    ) {
+
+                        assignmentMap.set(
+                            key,
+                            []
+                        );
+
+                    }
+
+
+                    const event =
+                        eventMap.get(
+                            String(
+                                assignment.event_id
+                            )
+                        );
+
+
+                    /*
+                     * Because eventMap only contains events
+                     * owned by this merchant, this also prevents
+                     * unrelated event data from being rendered.
+                     */
+
+                    if (event) {
+
+                        assignmentMap
+                            .get(key)
+                            .push({
+                                ...assignment,
+                                event
+                            });
+
+                    }
+
+                }
+            );
+
+
         staffRecords =
-            (data || []).map(
-                normalizeStaff
+            rows.map(
+                staff => {
+
+                    const profile =
+                        profileMap.get(
+                            String(
+                                staff.user_id
+                            )
+                        ) || null;
+
+
+                    const assignments =
+                        assignmentMap.get(
+                            String(
+                                staff.id
+                            )
+                        ) || [];
+
+
+                    return {
+                        ...staff,
+
+                        profile,
+
+                        assignments,
+
+                        events:
+                            assignments.map(
+                                assignment =>
+                                    assignment.event
+                            )
+                    };
+
+                }
             );
 
 
@@ -2904,75 +3318,28 @@ async function loadGateStaff() {
 
         renderStaff();
 
+
     } catch (error) {
 
-        console.warn(
-            "Gate staff table unavailable:",
+        console.error(
+            "Load gate staff error:",
             error
         );
 
 
-        /*
-         * Do not fabricate staff records.
-         */
-
-        staffRecords = [];
+        staffRecords =
+            [];
 
 
         updateSummary();
 
 
         renderUnavailable(
-            error?.message ||
-            "Gate staff management is not available yet. Create the required Supabase tables before using this page."
+            getReadableError(error)
         );
+
     }
-}
 
-
-/* ============================================================
-   NORMALIZE STAFF
-============================================================ */
-
-function normalizeStaff(
-    staff
-) {
-
-    const assignments =
-        Array.isArray(
-            staff.gate_staff_event_assignments
-        )
-            ? staff.gate_staff_event_assignments
-            : [];
-
-
-    const events =
-        assignments
-            .map(
-                assignment =>
-                    normalizeRelation(
-                        assignment.events
-                    )
-            )
-            .filter(
-                event =>
-                    event &&
-                    event.id
-            )
-            .filter(
-                event =>
-                    event.merchant_id ===
-                    currentUser.id
-            );
-
-
-    return {
-        ...staff,
-
-        assignments,
-
-        events
-    };
 }
 
 
@@ -2995,12 +3362,12 @@ function updateSummary() {
         ).length;
 
 
-    const disabled =
+    const suspended =
         staffRecords.filter(
             staff =>
                 normalizeStatus(
                     staff.status
-                ) === "disabled"
+                ) === "suspended"
         ).length;
 
 
@@ -3011,17 +3378,22 @@ function updateSummary() {
     staffRecords.forEach(
         staff => {
 
-            staff.events.forEach(
-                event => {
+            (staff.events || [])
+                .forEach(
+                    event => {
 
-                    if (event.id) {
-                        eventIds.add(
-                            event.id
-                        );
+                        if (event?.id) {
+
+                            eventIds.add(
+                                String(
+                                    event.id
+                                )
+                            );
+
+                        }
+
                     }
-
-                }
-            );
+                );
 
         }
     );
@@ -3030,30 +3402,33 @@ function updateSummary() {
     document.getElementById(
         "totalStaff"
     ).textContent =
-        total;
+        formatNumber(total);
 
 
     document.getElementById(
         "activeStaff"
     ).textContent =
-        active;
+        formatNumber(active);
 
 
     document.getElementById(
-        "disabledStaff"
+        "suspendedStaff"
     ).textContent =
-        disabled;
+        formatNumber(suspended);
 
 
     document.getElementById(
         "assignedEvents"
     ).textContent =
-        eventIds.size;
+        formatNumber(
+            eventIds.size
+        );
+
 }
 
 
 /* ============================================================
-   FILTERED RECORDS
+   FILTER
 ============================================================ */
 
 function getFilteredStaff() {
@@ -3084,15 +3459,7 @@ function getFilteredStaff() {
 
             const name =
                 String(
-                    staff.full_name ||
-                    ""
-                )
-                .toLowerCase();
-
-
-            const email =
-                String(
-                    staff.email ||
+                    staff.profile?.full_name ||
                     ""
                 )
                 .toLowerCase();
@@ -3100,7 +3467,15 @@ function getFilteredStaff() {
 
             const phone =
                 String(
-                    staff.phone ||
+                    staff.profile?.phone ||
+                    ""
+                )
+                .toLowerCase();
+
+
+            const userId =
+                String(
+                    staff.user_id ||
                     ""
                 )
                 .toLowerCase();
@@ -3109,11 +3484,11 @@ function getFilteredStaff() {
             const matchesSearch =
                 !search ||
                 name.includes(search) ||
-                email.includes(search) ||
-                phone.includes(search);
+                phone.includes(search) ||
+                userId.includes(search);
 
 
-            const normalizedStatus =
+            const staffStatus =
                 normalizeStatus(
                     staff.status
                 );
@@ -3121,17 +3496,19 @@ function getFilteredStaff() {
 
             const matchesStatus =
                 !status ||
-                normalizedStatus ===
-                    status;
+                staffStatus === status;
 
 
             const matchesEvent =
                 !eventId ||
-                staff.events.some(
-                    event =>
-                        event.id ===
-                        eventId
-                );
+                (staff.events || [])
+                    .some(
+                        event =>
+                            String(
+                                event.id
+                            ) ===
+                            String(eventId)
+                    );
 
 
             return (
@@ -3139,13 +3516,15 @@ function getFilteredStaff() {
                 matchesStatus &&
                 matchesEvent
             );
+
         }
     );
+
 }
 
 
 /* ============================================================
-   RENDER
+   RENDER STAFF
 ============================================================ */
 
 function renderStaff() {
@@ -3168,11 +3547,12 @@ function renderStaff() {
     renderMobile(
         records
     );
+
 }
 
 
 /* ============================================================
-   DESKTOP
+   DESKTOP TABLE
 ============================================================ */
 
 function renderDesktop(
@@ -3185,48 +3565,36 @@ function renderDesktop(
         );
 
 
-    if (
-        !records ||
-        records.length === 0
-    ) {
+    if (!records.length) {
 
         body.innerHTML =
-            `
-                <tr>
-
-                    <td colspan="5">
-
-                        <div class="state">
-
-                            <div class="state-icon">
-                                ♟
-                            </div>
-
-                            <strong>
-                                No gate staff found
-                            </strong>
-
-                            <p>
-                                No gate staff accounts match
-                                the current filters.
-                            </p>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-            `;
+            emptyTableHTML();
 
         return;
+
     }
 
 
     body.innerHTML =
         records
             .map(
-                staff =>
-                    `
+                staff => {
+
+                    const profile =
+                        staff.profile || {};
+
+
+                    const name =
+                        profile.full_name ||
+                        "Gate Staff";
+
+
+                    const phone =
+                        profile.phone ||
+                        "Not provided";
+
+
+                    return `
                         <tr>
 
                             <td>
@@ -3234,26 +3602,23 @@ function renderDesktop(
                                 <div class="staff-cell">
 
                                     <div class="staff-avatar">
-                                        ${escapeHtml(
-                                            getInitials(
-                                                staff.full_name
-                                            )
+                                        ${escapeHTML(
+                                            getInitials(name)
                                         )}
                                     </div>
 
                                     <div>
 
                                         <div class="staff-name">
-                                            ${escapeHtml(
-                                                staff.full_name ||
-                                                "—"
-                                            )}
+                                            ${escapeHTML(name)}
                                         </div>
 
-                                        <div class="staff-email">
-                                            ${escapeHtml(
-                                                staff.email ||
-                                                "—"
+                                        <div class="staff-id">
+                                            ID:
+                                            ${escapeHTML(
+                                                shortId(
+                                                    staff.user_id
+                                                )
                                             )}
                                         </div>
 
@@ -3266,13 +3631,20 @@ function renderDesktop(
 
                             <td>
 
+                                <div class="phone">
+                                    ${escapeHTML(phone)}
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
                                 <div class="event-list">
 
-                                    ${
-                                        renderEventChips(
-                                            staff.events
-                                        )
-                                    }
+                                    ${renderEventChips(
+                                        staff.events
+                                    )}
 
                                 </div>
 
@@ -3296,9 +3668,9 @@ function renderDesktop(
                                         font-size:9px;
                                     "
                                 >
-                                    ${escapeHtml(
+                                    ${escapeHTML(
                                         formatDate(
-                                            staff.last_access_at
+                                            staff.created_at
                                         )
                                     )}
                                 </span>
@@ -3315,73 +3687,76 @@ function renderDesktop(
                                         type="button"
                                         title="View"
                                         data-action="view"
-                                        data-id="${escapeHtml(
-                                            staff.id
+                                        data-id="${escapeHTML(
+                                            String(staff.id)
                                         )}"
                                     >
                                         ⌕
                                     </button>
 
+
                                     <button
                                         class="small-btn"
                                         type="button"
-                                        title="Edit"
+                                        title="Edit assignments"
                                         data-action="edit"
-                                        data-id="${escapeHtml(
-                                            staff.id
+                                        data-id="${escapeHTML(
+                                            String(staff.id)
                                         )}"
                                     >
                                         ✎
                                     </button>
 
-                                    <button
-                                        class="small-btn"
-                                        type="button"
-                                        title="${
-                                            normalizeStatus(
-                                                staff.status
-                                            ) === "disabled"
-                                                ? "Enable"
-                                                : "Disable"
-                                        }"
-                                        data-action="toggle"
-                                        data-id="${escapeHtml(
-                                            staff.id
-                                        )}"
-                                    >
-                                        ${
-                                            normalizeStatus(
-                                                staff.status
-                                            ) === "disabled"
-                                                ? "✓"
-                                                : "×"
-                                        }
-                                    </button>
+
+                                    ${
+                                        normalizeStatus(
+                                            staff.status
+                                        ) !== "removed"
+                                            ? `
+                                                <button
+                                                    class="
+                                                        small-btn
+                                                        ${normalizeStatus(staff.status) === "active" ? "danger" : ""}
+                                                    "
+                                                    type="button"
+                                                    title="${
+                                                        normalizeStatus(staff.status) === "active"
+                                                            ? "Suspend"
+                                                            : "Activate"
+                                                    }"
+                                                    data-action="toggle"
+                                                    data-id="${escapeHTML(
+                                                        String(staff.id)
+                                                    )}"
+                                                >
+                                                    ${
+                                                        normalizeStatus(
+                                                            staff.status
+                                                        ) === "active"
+                                                            ? "×"
+                                                            : "✓"
+                                                    }
+                                                </button>
+                                              `
+                                            : ""
+                                    }
 
                                 </div>
 
                             </td>
 
                         </tr>
-                    `
+                    `;
+
+                }
             )
             .join("");
 
 
-    body
-        .querySelectorAll(
-            "[data-action]"
-        )
-        .forEach(
-            button => {
+    attachStaffActions(
+        body
+    );
 
-                button.addEventListener(
-                    "click",
-                    handleStaffAction
-                );
-
-            }
-        );
 }
 
 
@@ -3399,69 +3774,64 @@ function renderMobile(
         );
 
 
-    if (
-        !records ||
-        records.length === 0
-    ) {
+    if (!records.length) {
 
         list.innerHTML =
-            `
-                <div class="state">
-
-                    <div class="state-icon">
-                        ♟
-                    </div>
-
-                    <strong>
-                        No gate staff found
-                    </strong>
-
-                    <p>
-                        No staff accounts match
-                        the current filters.
-                    </p>
-
-                </div>
-            `;
+            emptyMobileHTML();
 
         return;
+
     }
 
 
     list.innerHTML =
         records
             .map(
-                staff =>
-                    `
-                        <div class="mobile-card">
+                staff => {
+
+                    const profile =
+                        staff.profile || {};
+
+
+                    const name =
+                        profile.full_name ||
+                        "Gate Staff";
+
+
+                    const phone =
+                        profile.phone ||
+                        "Not provided";
+
+
+                    return `
+                        <article class="mobile-card">
 
                             <div class="mobile-card-top">
 
                                 <div class="staff-avatar">
-                                    ${escapeHtml(
-                                        getInitials(
-                                            staff.full_name
-                                        )
+                                    ${escapeHTML(
+                                        getInitials(name)
                                     )}
                                 </div>
+
 
                                 <div class="mobile-card-copy">
 
                                     <strong>
-                                        ${escapeHtml(
-                                            staff.full_name ||
-                                            "—"
-                                        )}
+                                        ${escapeHTML(name)}
                                     </strong>
 
                                     <span>
-                                        ${escapeHtml(
-                                            staff.email ||
-                                            "—"
+                                        User ID:
+                                        ${escapeHTML(
+                                            shortId(
+                                                staff.user_id
+                                            )
                                         )}
                                     </span>
 
                                 </div>
+
 
                                 ${renderStatus(
                                     staff.status
@@ -3470,43 +3840,68 @@ function renderMobile(
                             </div>
 
 
-                            <div class="mobile-card-info">
+                            <div class="mobile-info">
 
-                                <div class="mobile-info-row">
+                                <div class="mobile-row">
 
-                                    <small>
-                                        Assigned events
-                                    </small>
+                                    <span>
+                                        Phone
+                                    </span>
 
                                     <strong>
-                                        ${
-                                            staff.events.length
-                                                ? staff.events
-                                                    .map(
-                                                        event =>
-                                                            escapeHtml(
-                                                                event.title ||
-                                                                "Untitled"
-                                                            )
-                                                    )
-                                                    .join(", ")
-                                                : "None"
-                                        }
+                                        ${escapeHTML(phone)}
                                     </strong>
 
                                 </div>
 
 
-                                <div class="mobile-info-row">
+                                <div class="mobile-row">
 
-                                    <small>
-                                        Last access
-                                    </small>
+                                    <span>
+                                        Events
+                                    </span>
+
+                                    <div class="mobile-events">
+
+                                        ${
+                                            staff.events?.length
+                                                ? staff.events
+                                                    .map(
+                                                        event =>
+                                                            `
+                                                                <span
+                                                                    class="event-chip"
+                                                                >
+                                                                    ${escapeHTML(
+                                                                        event.title ||
+                                                                        "Untitled event"
+                                                                    )}
+                                                                </span>
+                                                            `
+                                                    )
+                                                    .join("")
+                                                : `
+                                                    <strong>
+                                                        None
+                                                    </strong>
+                                                  `
+                                        }
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="mobile-row">
+
+                                    <span>
+                                        Created
+                                    </span>
 
                                     <strong>
-                                        ${escapeHtml(
+                                        ${escapeHTML(
                                             formatDate(
-                                                staff.last_access_at
+                                                staff.created_at
                                             )
                                         )}
                                     </strong>
@@ -3522,50 +3917,81 @@ function renderMobile(
                                     class="btn"
                                     type="button"
                                     data-action="view"
-                                    data-id="${escapeHtml(
-                                        staff.id
+                                    data-id="${escapeHTML(
+                                        String(staff.id)
                                     )}"
                                 >
                                     View
                                 </button>
 
+
                                 <button
                                     class="btn"
                                     type="button"
                                     data-action="edit"
-                                    data-id="${escapeHtml(
-                                        staff.id
+                                    data-id="${escapeHTML(
+                                        String(staff.id)
                                     )}"
                                 >
                                     Edit
                                 </button>
 
-                                <button
-                                    class="btn btn-danger"
-                                    type="button"
-                                    data-action="toggle"
-                                    data-id="${escapeHtml(
-                                        staff.id
-                                    )}"
-                                >
-                                    ${
-                                        normalizeStatus(
-                                            staff.status
-                                        ) === "disabled"
-                                            ? "Enable"
-                                            : "Disable"
-                                    }
-                                </button>
+
+                                ${
+                                    normalizeStatus(
+                                        staff.status
+                                    ) !== "removed"
+                                        ? `
+                                            <button
+                                                class="btn ${
+                                                    normalizeStatus(staff.status) === "active"
+                                                        ? "btn-danger"
+                                                        : "btn-warning"
+                                                }"
+                                                type="button"
+                                                data-action="toggle"
+                                                data-id="${escapeHTML(
+                                                    String(staff.id)
+                                                )}"
+                                            >
+                                                ${
+                                                    normalizeStatus(
+                                                        staff.status
+                                                    ) === "active"
+                                                        ? "Suspend"
+                                                        : "Activate"
+                                                }
+                                            </button>
+                                          `
+                                        : ""
+                                }
 
                             </div>
 
-                        </div>
-                    `
+                        </article>
+                    `;
+
+                }
             )
             .join("");
 
 
-    list
+    attachStaffActions(
+        list
+    );
+
+}
+
+
+/* ============================================================
+   ACTION ATTACHMENT
+============================================================ */
+
+function attachStaffActions(
+    container
+) {
+
+    container
         .querySelectorAll(
             "[data-action]"
         )
@@ -3579,6 +4005,7 @@ function renderMobile(
 
             }
         );
+
 }
 
 
@@ -3619,11 +4046,12 @@ function handleStaffAction(
         action === "view"
     ) {
 
-        openStaffDrawer(
+        openDrawer(
             staff
         );
 
         return;
+
     }
 
 
@@ -3636,6 +4064,7 @@ function handleStaffAction(
         );
 
         return;
+
     }
 
 
@@ -3643,12 +4072,12 @@ function handleStaffAction(
         action === "toggle"
     ) {
 
-        toggleStaff(
+        toggleStaffStatus(
             staff
         );
 
-        return;
     }
+
 }
 
 
@@ -3660,12 +4089,43 @@ function normalizeStatus(
     status
 ) {
 
-    return String(
-        status ||
-        "pending"
-    )
+    const value =
+        String(
+            status || ""
+        )
         .trim()
         .toLowerCase();
+
+
+    if (
+        value === "active"
+    ) {
+
+        return "active";
+
+    }
+
+
+    if (
+        value === "suspended"
+    ) {
+
+        return "suspended";
+
+    }
+
+
+    if (
+        value === "removed"
+    ) {
+
+        return "removed";
+
+    }
+
+
+    return value || "suspended";
+
 }
 
 
@@ -3679,24 +4139,16 @@ function renderStatus(
         );
 
 
-    const label =
-        normalized
-            .charAt(0)
-            .toUpperCase() +
-        normalized.slice(1);
-
-
     return `
         <span
-            class="status ${escapeHtml(
-                normalized
-            )}"
+            class="status ${escapeHTML(normalized)}"
         >
-            ${escapeHtml(
-                label
+            ${escapeHTML(
+                capitalize(normalized)
             )}
         </span>
     `;
+
 }
 
 
@@ -3710,7 +4162,7 @@ function renderEventChips(
 
     if (
         !events ||
-        events.length === 0
+        !events.length
     ) {
 
         return `
@@ -3723,37 +4175,58 @@ function renderEventChips(
                 No events assigned
             </span>
         `;
+
     }
 
 
-    return events
-        .slice(0, 4)
-        .map(
-            event =>
-                `
-                    <span class="event-chip">
-                        ${escapeHtml(
-                            event.title ||
-                            "Untitled event"
-                        )}
-                    </span>
-                `
-        )
-        .join("") +
-        (
-            events.length > 4
+    const visible =
+        events.slice(0,3);
+
+
+    const chips =
+        visible
+            .map(
+                event =>
+                    `
+                        <span
+                            class="event-chip"
+                            title="${escapeHTML(
+                                event.title || ""
+                            )}"
+                        >
+                            ${escapeHTML(
+                                event.title ||
+                                "Untitled event"
+                            )}
+                        </span>
+                    `
+            )
+            .join("");
+
+
+    const remaining =
+        events.length - visible.length;
+
+
+    return `
+        ${chips}
+
+        ${
+            remaining > 0
                 ? `
-                    <span class="event-chip">
-                        +${events.length - 4}
+                    <span class="more-chip">
+                        +${remaining}
                     </span>
-                `
+                  `
                 : ""
-        );
+        }
+    `;
+
 }
 
 
 /* ============================================================
-   MODAL
+   ADD MODAL
 ============================================================ */
 
 function openAddModal() {
@@ -3771,7 +4244,7 @@ function openAddModal() {
     document.getElementById(
         "modalDescription"
     ).textContent =
-        "Create a dedicated account for ticket verification at the event gate.";
+        "Create a dedicated gate account through the protected provisioning workflow.";
 
 
     document.getElementById(
@@ -3785,9 +4258,21 @@ function openAddModal() {
         "active";
 
 
-    renderEventAssignments(
+    document.getElementById(
+        "editAccountNote"
+    ).style.display =
+        "none";
+
+
+    renderAssignments(
         []
     );
+
+
+    document.getElementById(
+        "saveStaffBtn"
+    ).textContent =
+        "Create Gate Staff";
 
 
     document.getElementById(
@@ -3798,16 +4283,22 @@ function openAddModal() {
 
 
     setTimeout(
-        () =>
-            document
-                .getElementById(
-                    "staffName"
-                )
-                .focus(),
+        () => {
+
+            document.getElementById(
+                "staffName"
+            ).focus();
+
+        },
         50
     );
+
 }
 
+
+/* ============================================================
+   EDIT MODAL
+============================================================ */
 
 function openEditModal(
     staff
@@ -3815,6 +4306,10 @@ function openEditModal(
 
     editingStaff =
         staff;
+
+
+    const profile =
+        staff.profile || {};
 
 
     document.getElementById(
@@ -3826,28 +4321,64 @@ function openEditModal(
     document.getElementById(
         "modalDescription"
     ).textContent =
-        "Update this gate account and its event assignments.";
+        "Update event assignments or suspend/activate this gate staff record.";
 
 
     document.getElementById(
         "staffName"
     ).value =
-        staff.full_name ||
-        "";
+        profile.full_name || "";
 
 
     document.getElementById(
         "staffEmail"
     ).value =
-        staff.email ||
-        "";
+        "Managed by Supabase Auth";
 
 
     document.getElementById(
         "staffPhone"
     ).value =
-        staff.phone ||
-        "";
+        profile.phone || "";
+
+
+    document.getElementById(
+        "staffName"
+    ).readOnly =
+        true;
+
+
+    document.getElementById(
+        "staffEmail"
+    ).readOnly =
+        true;
+
+
+    document.getElementById(
+        "staffPhone"
+    ).readOnly =
+        true;
+
+
+    document.getElementById(
+        "staffName"
+    ).classList.add(
+        "readonly-field"
+    );
+
+
+    document.getElementById(
+        "staffEmail"
+    ).classList.add(
+        "readonly-field"
+    );
+
+
+    document.getElementById(
+        "staffPhone"
+    ).classList.add(
+        "readonly-field"
+    );
 
 
     document.getElementById(
@@ -3858,12 +4389,25 @@ function openEditModal(
         );
 
 
-    renderEventAssignments(
-        staff.events.map(
-            event =>
-                event.id
-        )
+    renderAssignments(
+        (staff.events || [])
+            .map(
+                event =>
+                    String(event.id)
+            )
     );
+
+
+    document.getElementById(
+        "editAccountNote"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "saveStaffBtn"
+    ).textContent =
+        "Save Changes";
 
 
     document.getElementById(
@@ -3871,8 +4415,13 @@ function openEditModal(
     ).classList.add(
         "open"
     );
+
 }
 
+
+/* ============================================================
+   CLOSE MODAL
+============================================================ */
 
 function closeModal() {
 
@@ -3885,14 +4434,43 @@ function closeModal() {
 
     editingStaff =
         null;
+
+
+    const fields = [
+        "staffName",
+        "staffEmail",
+        "staffPhone"
+    ];
+
+
+    fields.forEach(
+        id => {
+
+            const field =
+                document.getElementById(
+                    id
+                );
+
+
+            field.readOnly =
+                false;
+
+
+            field.classList.remove(
+                "readonly-field"
+            );
+
+        }
+    );
+
 }
 
 
 /* ============================================================
-   EVENT ASSIGNMENTS
+   RENDER ASSIGNMENTS
 ============================================================ */
 
-function renderEventAssignments(
+function renderAssignments(
     selectedIds
 ) {
 
@@ -3902,26 +4480,36 @@ function renderEventAssignments(
         );
 
 
+    const selected =
+        new Set(
+            (selectedIds || [])
+                .map(
+                    id =>
+                        String(id)
+                )
+        );
+
+
     if (
-        !merchantEvents ||
-        merchantEvents.length === 0
+        !merchantEvents.length
     ) {
 
         container.innerHTML =
             `
                 <div
                     style="
-                        padding:18px;
+                        padding:20px;
+                        text-align:center;
                         color:var(--muted);
                         font-size:9px;
-                        text-align:center;
                     "
                 >
-                    No merchant events are currently available.
+                    No events are currently available.
                 </div>
             `;
 
         return;
+
     }
 
 
@@ -3930,41 +4518,40 @@ function renderEventAssignments(
             .map(
                 event => {
 
-                    const selected =
-                        selectedIds.includes(
-                            event.id
+                    const checked =
+                        selected.has(
+                            String(event.id)
                         );
 
 
                     return `
-                        <label class="event-option">
+                        <label class="assignment-option">
 
                             <input
                                 type="checkbox"
                                 name="assignedEvent"
-                                value="${escapeHtml(
-                                    event.id
+                                value="${escapeHTML(
+                                    String(event.id)
                                 )}"
-                                ${selected ? "checked" : ""}
+                                ${
+                                    checked
+                                        ? "checked"
+                                        : ""
+                                }
                             >
 
-                            <span class="event-option-copy">
+                            <span class="assignment-copy">
 
                                 <strong>
-                                    ${escapeHtml(
+                                    ${escapeHTML(
                                         event.title ||
                                         "Untitled event"
                                     )}
                                 </strong>
 
                                 <span>
-                                    ${escapeHtml(
-                                        event.venue ||
-                                        event.city ||
-                                        formatDate(
-                                            event.start_at
-                                        ) ||
-                                        "Event"
+                                    ${escapeHTML(
+                                        getEventMeta(event)
                                     )}
                                 </span>
 
@@ -3972,14 +4559,16 @@ function renderEventAssignments(
 
                         </label>
                     `;
+
                 }
             )
             .join("");
+
 }
 
 
 /* ============================================================
-   SAVE STAFF
+   SAVE FORM
 ============================================================ */
 
 async function saveStaff(
@@ -3987,17 +4576,6 @@ async function saveStaff(
 ) {
 
     event.preventDefault();
-
-
-    if (!currentUser) {
-        return;
-    }
-
-
-    const saveButton =
-        document.getElementById(
-            "saveStaffBtn"
-        );
 
 
     const name =
@@ -4047,82 +4625,90 @@ async function saveStaff(
 
         showToast(
             "Full name is required.",
-            true
+            "error"
         );
 
         return;
-    }
 
-
-    if (!email) {
-
-        showToast(
-            "Email is required.",
-            true
-        );
-
-        return;
     }
 
 
     if (
-        assignedEventIds.length === 0
+        !editingStaff &&
+        !email
     ) {
 
         showToast(
-            "Assign at least one event to this gate staff account.",
-            true
+            "Email is required for a new gate account.",
+            "error"
         );
 
         return;
+
+    }
+
+
+    if (
+        !assignedEventIds.length
+    ) {
+
+        showToast(
+            "Assign at least one event to the gate staff account.",
+            "warning"
+        );
+
+        return;
+
     }
 
 
     /*
-     * Verify every selected event belongs
-     * to the current merchant before sending
-     * assignment data.
+     * Client-side validation.
+     *
+     * Database RLS must still enforce ownership.
      */
 
-    const validEventIds =
+    const merchantEventIds =
         new Set(
-            merchantEvents
-                .filter(
-                    event =>
-                        event.merchant_id ===
-                        currentUser.id
-                )
-                .map(
-                    event =>
-                        String(event.id)
-                )
+            merchantEvents.map(
+                event =>
+                    String(event.id)
+            )
         );
 
 
-    const invalidAssignment =
+    const invalidEvent =
         assignedEventIds.some(
             id =>
-                !validEventIds.has(
+                !merchantEventIds.has(
                     String(id)
                 )
         );
 
 
-    if (invalidAssignment) {
+    if (invalidEvent) {
 
         showToast(
-            "One or more selected events are not owned by this merchant.",
-            true
+            "An invalid event assignment was selected.",
+            "error"
         );
 
         return;
+
     }
 
 
-    saveButton.disabled =
+    const button =
+        document.getElementById(
+            "saveStaffBtn"
+        );
+
+
+    button.disabled =
         true;
 
-    saveButton.textContent =
+
+    button.textContent =
         editingStaff
             ? "Saving..."
             : "Creating...";
@@ -4132,12 +4718,9 @@ async function saveStaff(
 
         if (editingStaff) {
 
-            await updateExistingStaff(
+            await updateStaff(
                 editingStaff,
                 {
-                    name,
-                    email,
-                    phone,
                     status,
                     assignedEventIds
                 }
@@ -4145,7 +4728,7 @@ async function saveStaff(
 
         } else {
 
-            await createNewStaff(
+            await createStaff(
                 {
                     name,
                     email,
@@ -4154,19 +4737,22 @@ async function saveStaff(
                     assignedEventIds
                 }
             );
+
         }
 
 
         closeModal();
 
-        await loadGateStaff();
+
+        await loadStaff();
 
 
         showToast(
             editingStaff
-                ? "Gate staff updated."
-                : "Gate staff created."
+                ? "Gate staff updated successfully."
+                : "Gate staff account created successfully."
         );
+
 
     } catch (error) {
 
@@ -4177,21 +4763,20 @@ async function saveStaff(
 
 
         showToast(
-            error?.message ||
-            "Unable to save gate staff.",
-            true
+            getReadableError(error),
+            "error"
         );
 
     } finally {
 
-        saveButton.disabled =
+        button.disabled =
             false;
 
-        saveButton.textContent =
-            editingStaff
-                ? "Save Changes"
-                : "Save Gate Staff";
+        button.textContent =
+            "Create Gate Staff";
+
     }
+
 }
 
 
@@ -4199,38 +4784,30 @@ async function saveStaff(
    CREATE STAFF
 ============================================================ */
 
-async function createNewStaff(
+async function createStaff(
     payload
 ) {
 
     /*
-     * SECURITY NOTE:
+     * AUTHENTICATION USER CREATION
+     * --------------------------------
      *
-     * A merchant must NOT use the normal browser
-     * Supabase Auth client to create another user
-     * with auth.admin.createUser().
+     * This cannot safely be done with the browser
+     * Supabase client.
      *
-     * That requires the Supabase service-role key,
-     * which must NEVER be placed in this HTML.
+     * The Edge Function must:
      *
-     * Production solution:
+     * 1. Verify the bearer token.
+     * 2. Verify current profile role = merchant.
+     * 3. Verify merchant is active.
+     * 4. Verify every event belongs to this merchant.
+     * 5. Create auth.users user.
+     * 6. Create profiles row.
+     * 7. Create merchant_staff row.
+     * 8. Create merchant_staff_events rows.
+     * 9. Send invitation / password setup.
      *
-     *     Edge Function:
-     *         create-gate-staff
-     *
-     * The Edge Function should:
-     *
-     * 1. Validate merchant session.
-     * 2. Validate merchant role.
-     * 3. Validate event ownership.
-     * 4. Create Supabase Auth user.
-     * 5. Create profile.
-     * 6. Create merchant_gate_staff row.
-     * 7. Create event assignments.
-     * 8. Send invitation / password setup email.
-     * 9. Return safe staff information.
-     *
-     * This page intentionally calls that endpoint if configured.
+     * Service role key stays ONLY inside the Edge Function.
      */
 
 
@@ -4242,29 +4819,38 @@ async function createNewStaff(
     if (!functionUrl) {
 
         throw new Error(
-            "Gate staff account creation is not configured yet. Connect the create-gate-staff Supabase Edge Function before creating login accounts."
+            "Gate staff provisioning is not connected yet. Configure the create-gate-staff Supabase Edge Function before creating new login accounts."
         );
+
     }
 
 
     const {
-        data: {
-            session
-        }
+        data: sessionData,
+        error: sessionError
     } =
         await supabaseClient
             .auth
             .getSession();
 
 
+    if (sessionError) {
+        throw sessionError;
+    }
+
+
+    const session =
+        sessionData?.session;
+
+
     if (
-        !session ||
-        !session.access_token
+        !session?.access_token
     ) {
 
         throw new Error(
             "Your merchant session has expired. Please sign in again."
         );
+
     }
 
 
@@ -4311,16 +4897,16 @@ async function createNewStaff(
             );
 
 
-    if (
-        !response.ok
-    ) {
+    if (!response.ok) {
 
         throw new Error(
             result.message ||
             result.error ||
             "Gate staff account creation failed."
         );
+
     }
+
 }
 
 
@@ -4328,37 +4914,32 @@ async function createNewStaff(
    UPDATE STAFF
 ============================================================ */
 
-async function updateExistingStaff(
+async function updateStaff(
     staff,
     payload
 ) {
 
     /*
-     * Basic profile/merchant staff data can be
-     * updated directly if RLS permits it.
+     * We update only the confirmed merchant_staff fields
+     * directly from the merchant browser.
      *
-     * Authentication email changes and privileged
-     * account operations should be handled through
-     * a protected Edge Function.
+     * Profile identity and Auth email are deliberately NOT
+     * modified here.
      */
 
 
     const {
-        error
+        data: updatedStaff,
+        error: staffError
     } =
         await supabaseClient
-            .from(
-                "merchant_gate_staff"
-            )
+            .from("merchant_staff")
             .update({
-                full_name:
-                    payload.name,
-
-                phone:
-                    payload.phone,
-
                 status:
-                    payload.status
+                    payload.status,
+
+                updated_at:
+                    new Date().toISOString()
             })
             .eq(
                 "id",
@@ -4367,33 +4948,44 @@ async function updateExistingStaff(
             .eq(
                 "merchant_id",
                 currentUser.id
-            );
+            )
+            .select(`
+                id,
+                merchant_id,
+                user_id,
+                status,
+                created_at,
+                updated_at
+            `)
+            .maybeSingle();
 
 
-    if (error) {
-        throw error;
+    if (staffError) {
+        throw staffError;
+    }
+
+
+    if (!updatedStaff) {
+
+        throw new Error(
+            "The staff record was not updated. Supabase RLS may be blocking this merchant operation."
+        );
+
     }
 
 
     /*
-     * Replace event assignments.
-     *
-     * RLS must enforce that the staff record belongs
-     * to the current merchant and each selected event
-     * belongs to the same merchant.
+     * Remove existing assignments for this staff member.
      */
-
 
     const {
         error: deleteError
     } =
         await supabaseClient
-            .from(
-                "gate_staff_event_assignments"
-            )
+            .from("merchant_staff_events")
             .delete()
             .eq(
-                "staff_id",
+                "merchant_staff_id",
                 staff.id
             );
 
@@ -4403,30 +4995,30 @@ async function updateExistingStaff(
     }
 
 
-    if (
-        payload.assignedEventIds.length
-    ) {
+    /*
+     * Add the new assignments.
+     */
 
-        const rows =
-            payload.assignedEventIds
-                .map(
-                    eventId => ({
-                        staff_id:
-                            staff.id,
+    const rows =
+        payload.assignedEventIds
+            .map(
+                eventId => ({
+                    merchant_staff_id:
+                        staff.id,
 
-                        event_id:
-                            eventId
-                    })
-                );
+                    event_id:
+                        eventId
+                })
+            );
 
+
+    if (rows.length) {
 
         const {
             error: insertError
         } =
             await supabaseClient
-                .from(
-                    "gate_staff_event_assignments"
-                )
+                .from("merchant_staff_events")
                 .insert(
                     rows
                 );
@@ -4435,25 +5027,17 @@ async function updateExistingStaff(
         if (insertError) {
             throw insertError;
         }
+
     }
 
-
-    /*
-     * Email changes are deliberately not performed
-     * through a normal table update because the real
-     * authentication email lives in Supabase Auth.
-     *
-     * Configure a protected Edge Function for this
-     * operation if email changes are required.
-     */
 }
 
 
 /* ============================================================
-   TOGGLE STAFF
+   TOGGLE ACTIVE / SUSPENDED
 ============================================================ */
 
-async function toggleStaff(
+async function toggleStaffStatus(
     staff
 ) {
 
@@ -4463,22 +5047,36 @@ async function toggleStaff(
         );
 
 
-    const newStatus =
+    if (
         currentStatus ===
-            "disabled"
-            ? "active"
-            : "disabled";
+        "removed"
+    ) {
+
+        showToast(
+            "Removed staff records cannot be reactivated from this page.",
+            "warning"
+        );
+
+        return;
+
+    }
 
 
-    const actionText =
-        newStatus === "disabled"
-            ? "disable"
-            : "enable";
+    const nextStatus =
+        currentStatus === "active"
+            ? "suspended"
+            : "active";
+
+
+    const action =
+        nextStatus === "suspended"
+            ? "suspend"
+            : "activate";
 
 
     const confirmed =
         window.confirm(
-            `Are you sure you want to ${actionText} this gate staff account?`
+            `Are you sure you want to ${action} this gate staff account?`
         );
 
 
@@ -4490,15 +5088,17 @@ async function toggleStaff(
     try {
 
         const {
+            data,
             error
         } =
             await supabaseClient
-                .from(
-                    "merchant_gate_staff"
-                )
+                .from("merchant_staff")
                 .update({
                     status:
-                        newStatus
+                        nextStatus,
+
+                    updated_at:
+                        new Date().toISOString()
                 })
                 .eq(
                     "id",
@@ -4507,7 +5107,16 @@ async function toggleStaff(
                 .eq(
                     "merchant_id",
                     currentUser.id
-                );
+                )
+                .select(`
+                    id,
+                    merchant_id,
+                    user_id,
+                    status,
+                    created_at,
+                    updated_at
+                `)
+                .maybeSingle();
 
 
         if (error) {
@@ -4515,7 +5124,16 @@ async function toggleStaff(
         }
 
 
-        await loadGateStaff();
+        if (!data) {
+
+            throw new Error(
+                "Supabase did not update the staff record. Check merchant RLS policies."
+            );
+
+        }
+
+
+        await loadStaff();
 
 
         if (
@@ -4528,34 +5146,37 @@ async function toggleStaff(
                 staff;
 
             drawerStaff.status =
-                newStatus;
+                nextStatus;
 
-            openStaffDrawer(
+            openDrawer(
                 drawerStaff
             );
+
         }
 
 
         showToast(
-            newStatus === "disabled"
-                ? "Gate staff access disabled."
-                : "Gate staff access enabled."
+            nextStatus === "suspended"
+                ? "Gate staff access suspended."
+                : "Gate staff access activated."
         );
+
 
     } catch (error) {
 
         console.error(
-            "Toggle staff error:",
+            "Toggle staff status error:",
             error
         );
 
 
         showToast(
-            error?.message ||
-            "Unable to update gate staff status.",
-            true
+            getReadableError(error),
+            "error"
         );
+
     }
+
 }
 
 
@@ -4563,12 +5184,21 @@ async function toggleStaff(
    DRAWER
 ============================================================ */
 
-function openStaffDrawer(
+function openDrawer(
     staff
 ) {
 
     drawerStaff =
         staff;
+
+
+    const profile =
+        staff.profile || {};
+
+
+    const name =
+        profile.full_name ||
+        "Gate Staff";
 
 
     const body =
@@ -4577,46 +5207,23 @@ function openStaffDrawer(
         );
 
 
-    const events =
-        staff.events || [];
-
-
     body.innerHTML =
         `
             <div class="detail-block">
 
                 <h3>
-                    Account
+                    Staff Account
                 </h3>
 
 
                 <div class="detail-line">
 
                     <span>
-                        Full name
+                        Name
                     </span>
 
                     <strong>
-                        ${escapeHtml(
-                            staff.full_name ||
-                            "—"
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div class="detail-line">
-
-                    <span>
-                        Email
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            staff.email ||
-                            "—"
-                        )}
+                        ${escapeHTML(name)}
                     </strong>
 
                 </div>
@@ -4629,9 +5236,41 @@ function openStaffDrawer(
                     </span>
 
                     <strong>
-                        ${escapeHtml(
-                            staff.phone ||
+                        ${escapeHTML(
+                            profile.phone ||
+                            "Not provided"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-line">
+
+                    <span>
+                        User ID
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            staff.user_id ||
                             "—"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-line">
+
+                    <span>
+                        Role
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            profile.role ||
+                            "gate_staff"
                         )}
                     </strong>
 
@@ -4645,9 +5284,11 @@ function openStaffDrawer(
                     </span>
 
                     <strong>
-                        ${escapeHtml(
-                            normalizeStatus(
-                                staff.status
+                        ${escapeHTML(
+                            capitalize(
+                                normalizeStatus(
+                                    staff.status
+                                )
                             )
                         )}
                     </strong>
@@ -4662,26 +5303,9 @@ function openStaffDrawer(
                     </span>
 
                     <strong>
-                        ${escapeHtml(
+                        ${escapeHTML(
                             formatDate(
                                 staff.created_at
-                            )
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div class="detail-line">
-
-                    <span>
-                        Last access
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            formatDate(
-                                staff.last_access_at
                             )
                         )}
                     </strong>
@@ -4698,8 +5322,8 @@ function openStaffDrawer(
                 </h3>
 
                 ${
-                    events.length
-                        ? events
+                    staff.events?.length
+                        ? staff.events
                             .map(
                                 event =>
                                     `
@@ -4712,7 +5336,7 @@ function openStaffDrawer(
                                             </span>
 
                                             <strong>
-                                                ${escapeHtml(
+                                                ${escapeHTML(
                                                     event.title ||
                                                     "Untitled event"
                                                 )}
@@ -4731,28 +5355,30 @@ function openStaffDrawer(
                             >
                                 No events assigned.
                             </div>
-                        `
+                          `
                 }
 
             </div>
 
 
-            <div
-                class="info-card"
-                style="margin-top:12px;"
-            >
+            <div class="detail-block">
 
-                <strong>
-                    Gate access
-                </strong>
+                <h3>
+                    Permission Boundary
+                </h3>
 
-                <p>
-                    This account is intended only for
-                    ticket verification and event check-in.
-                    It must not have merchant financial,
-                    event-management, or administration
-                    permissions.
-                </p>
+                <div
+                    style="
+                        color:var(--muted);
+                        font-size:9px;
+                        line-height:1.65;
+                    "
+                >
+                    Gate staff are intended only for ticket
+                    verification and check-in. Their access should
+                    not include merchant events, sales, earnings,
+                    withdrawals, promotions or merchant settings.
+                </div>
 
             </div>
         `;
@@ -4763,9 +5389,40 @@ function openStaffDrawer(
     ).textContent =
         normalizeStatus(
             staff.status
-        ) === "disabled"
-            ? "Enable"
-            : "Disable";
+        ) === "active"
+            ? "Suspend"
+            : "Activate";
+
+
+    document.getElementById(
+        "drawerToggleBtn"
+    ).className =
+        normalizeStatus(
+            staff.status
+        ) === "active"
+            ? "btn btn-warning"
+            : "btn btn-primary";
+
+
+    if (
+        normalizeStatus(
+            staff.status
+        ) === "removed"
+    ) {
+
+        document.getElementById(
+            "drawerToggleBtn"
+        ).style.display =
+            "none";
+
+    } else {
+
+        document.getElementById(
+            "drawerToggleBtn"
+        ).style.display =
+            "";
+
+    }
 
 
     document.getElementById(
@@ -4780,6 +5437,7 @@ function openStaffDrawer(
     ).classList.add(
         "open"
     );
+
 }
 
 
@@ -4801,255 +5459,51 @@ function closeDrawer() {
 
     drawerStaff =
         null;
+
 }
 
 
 /* ============================================================
-   ACTIONS
+   UI / EVENTS
 ============================================================ */
 
-function setupActions() {
+function setupUI() {
 
-    document
-        .getElementById(
-            "addStaffBtn"
-        )
-        .addEventListener(
-            "click",
-            openAddModal
-        );
-
-
-    document
-        .getElementById(
-            "closeModalBtn"
-        )
-        .addEventListener(
-            "click",
-            closeModal
-        );
-
-
-    document
-        .getElementById(
-            "cancelModalBtn"
-        )
-        .addEventListener(
-            "click",
-            closeModal
-        );
-
-
-    document
-        .getElementById(
-            "staffForm"
-        )
-        .addEventListener(
-            "submit",
-            saveStaff
-        );
-
-
-    document
-        .getElementById(
-            "refreshBtn"
-        )
-        .addEventListener(
-            "click",
-            async () => {
-
-                await loadMerchantEvents();
-
-                await loadGateStaff();
-
-                showToast(
-                    "Gate staff refreshed."
-                );
-            }
-        );
-
-
-    document
-        .getElementById(
-            "searchInput"
-        )
-        .addEventListener(
-            "input",
-            renderStaff
-        );
-
-
-    document
-        .getElementById(
-            "statusFilter"
-        )
-        .addEventListener(
-            "change",
-            renderStaff
-        );
-
-
-    document
-        .getElementById(
-            "eventFilter"
-        )
-        .addEventListener(
-            "change",
-            renderStaff
-        );
-
-
-    document
-        .getElementById(
-            "closeDrawerBtn"
-        )
-        .addEventListener(
-            "click",
-            closeDrawer
-        );
-
-
-    document
-        .getElementById(
-            "drawerBackdrop"
-        )
-        .addEventListener(
-            "click",
-            closeDrawer
-        );
-
-
-    document
-        .getElementById(
-            "drawerEditBtn"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                if (!drawerStaff) {
-                    return;
-                }
-
-
-                const staff =
-                    drawerStaff;
-
-
-                closeDrawer();
-
-                openEditModal(
-                    staff
-                );
-            }
-        );
-
-
-    document
-        .getElementById(
-            "drawerToggleBtn"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                if (!drawerStaff) {
-                    return;
-                }
-
-
-                toggleStaff(
-                    drawerStaff
-                );
-            }
-        );
-
-
-    document
-        .getElementById(
-            "staffModal"
-        )
-        .addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target ===
-                    event.currentTarget
-                ) {
-
-                    closeModal();
-                }
-            }
-        );
-
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                closeModal();
-
-                closeDrawer();
-
-                closeMobileSidebar();
-            }
-        }
-    );
-}
-
-
-/* ============================================================
-   MOBILE NAVIGATION
-============================================================ */
-
-function setupNavigation() {
-
-    const menuBtn =
-        document.getElementById(
-            "menuBtn"
-        );
-
-
-    const sidebar =
-        document.getElementById(
-            "sidebar"
-        );
-
-
-    const overlay =
-        document.getElementById(
-            "sidebarOverlay"
-        );
-
-
-    menuBtn.addEventListener(
+    document.getElementById(
+        "menuBtn"
+    ).addEventListener(
         "click",
         () => {
 
-            sidebar.classList.add(
+            document.getElementById(
+                "sidebar"
+            ).classList.add(
                 "open"
             );
 
-            overlay.classList.add(
+
+            document.getElementById(
+                "sidebarOverlay"
+            ).classList.add(
                 "open"
             );
+
         }
     );
 
 
-    overlay.addEventListener(
+    document.getElementById(
+        "sidebarOverlay"
+    ).addEventListener(
         "click",
         closeMobileSidebar
     );
 
 
-    sidebar
-        .querySelectorAll("a")
+    document
+        .querySelectorAll(
+            ".nav a"
+        )
         .forEach(
             link => {
 
@@ -5057,230 +5511,245 @@ function setupNavigation() {
                     "click",
                     closeMobileSidebar
                 );
+
             }
         );
+
 }
 
 
 function closeMobileSidebar() {
 
-    document
-        .getElementById(
-            "sidebar"
-        )
-        .classList.remove(
-            "open"
-        );
+    document.getElementById(
+        "sidebar"
+    ).classList.remove(
+        "open"
+    );
 
 
-    document
-        .getElementById(
-            "sidebarOverlay"
-        )
-        .classList.remove(
-            "open"
-        );
+    document.getElementById(
+        "sidebarOverlay"
+    ).classList.remove(
+        "open"
+    );
+
 }
 
 
 /* ============================================================
-   LOADING / STATES
+   ACTION SETUP
 ============================================================ */
 
-function renderLoading() {
+function setupActions() {
 
     document.getElementById(
-        "staffTableBody"
-    ).innerHTML =
-        `
-            <tr>
-
-                <td colspan="5">
-
-                    <div class="state">
-
-                        <div class="spinner"></div>
-
-                        <strong>
-                            Loading gate staff
-                        </strong>
-
-                        <p>
-                            Retrieving staff accounts from Supabase.
-                        </p>
-
-                    </div>
-
-                </td>
-
-            </tr>
-        `;
+        "addStaffBtn"
+    ).addEventListener(
+        "click",
+        openAddModal
+    );
 
 
     document.getElementById(
-        "mobileList"
-    ).innerHTML =
-        `
-            <div class="state">
+        "refreshBtn"
+    ).addEventListener(
+        "click",
+        async () => {
 
-                <div class="spinner"></div>
-
-                <strong>
-                    Loading gate staff
-                </strong>
-
-                <p>
-                    Retrieving staff accounts.
-                </p>
-
-            </div>
-        `;
-}
+            const button =
+                document.getElementById(
+                    "refreshBtn"
+                );
 
 
-function renderUnavailable(
-    message
-) {
+            button.disabled =
+                true;
 
-    document.getElementById(
-        "staffTableBody"
-    ).innerHTML =
-        `
-            <tr>
+            button.textContent =
+                "Refreshing...";
 
-                <td colspan="5">
 
-                    <div class="state">
+            try {
 
-                        <div
-                            class="state-icon"
-                            style="
-                                background:var(--warning-bg);
-                                color:var(--warning);
-                            "
-                        >
-                            !
-                        </div>
+                await loadMerchantEvents();
 
-                        <strong>
-                            Gate staff management unavailable
-                        </strong>
+                await loadStaff();
 
-                        <p>
-                            ${escapeHtml(
-                                message
-                            )}
-                        </p>
+                await loadNotificationCount();
 
-                    </div>
 
-                </td>
+                showToast(
+                    "Gate staff data refreshed."
+                );
 
-            </tr>
-        `;
+            } catch (error) {
+
+                showToast(
+                    getReadableError(error),
+                    "error"
+                );
+
+            } finally {
+
+                button.disabled =
+                    false;
+
+                button.textContent =
+                    "↻ Refresh";
+
+            }
+
+        }
+    );
 
 
     document.getElementById(
-        "mobileList"
-    ).innerHTML =
-        `
-            <div class="state">
-
-                <div
-                    class="state-icon"
-                    style="
-                        background:var(--warning-bg);
-                        color:var(--warning);
-                    "
-                >
-                    !
-                </div>
-
-                <strong>
-                    Gate staff management unavailable
-                </strong>
-
-                <p>
-                    ${escapeHtml(
-                        message
-                    )}
-                </p>
-
-            </div>
-        `;
-}
-
-
-function showFatalState(
-    message
-) {
-
-    document.getElementById(
-        "staffTableBody"
-    ).innerHTML =
-        `
-            <tr>
-
-                <td colspan="5">
-
-                    <div class="state">
-
-                        <div
-                            class="state-icon"
-                            style="
-                                background:var(--danger-bg);
-                                color:var(--danger);
-                            "
-                        >
-                            !
-                        </div>
-
-                        <strong>
-                            Unable to load
-                        </strong>
-
-                        <p>
-                            ${escapeHtml(
-                                message
-                            )}
-                        </p>
-
-                    </div>
-
-                </td>
-
-            </tr>
-        `;
+        "searchInput"
+    ).addEventListener(
+        "input",
+        renderStaff
+    );
 
 
     document.getElementById(
-        "mobileList"
-    ).innerHTML =
-        `
-            <div class="state">
+        "statusFilter"
+    ).addEventListener(
+        "change",
+        renderStaff
+    );
 
-                <div
-                    class="state-icon"
-                    style="
-                        background:var(--danger-bg);
-                        color:var(--danger);
-                    "
-                >
-                    !
-                </div>
 
-                <strong>
-                    Unable to load
-                </strong>
+    document.getElementById(
+        "eventFilter"
+    ).addEventListener(
+        "change",
+        renderStaff
+    );
 
-                <p>
-                    ${escapeHtml(
-                        message
-                    )}
-                </p>
 
-            </div>
-        `;
+    document.getElementById(
+        "closeModalBtn"
+    ).addEventListener(
+        "click",
+        closeModal
+    );
+
+
+    document.getElementById(
+        "cancelModalBtn"
+    ).addEventListener(
+        "click",
+        closeModal
+    );
+
+
+    document.getElementById(
+        "staffForm"
+    ).addEventListener(
+        "submit",
+        saveStaff
+    );
+
+
+    document.getElementById(
+        "staffModal"
+    ).addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target ===
+                event.currentTarget
+            ) {
+
+                closeModal();
+
+            }
+
+        }
+    );
+
+
+    document.getElementById(
+        "closeDrawerBtn"
+    ).addEventListener(
+        "click",
+        closeDrawer
+    );
+
+
+    document.getElementById(
+        "drawerBackdrop"
+    ).addEventListener(
+        "click",
+        closeDrawer
+    );
+
+
+    document.getElementById(
+        "drawerEditBtn"
+    ).addEventListener(
+        "click",
+        () => {
+
+            if (!drawerStaff) {
+                return;
+            }
+
+
+            const staff =
+                drawerStaff;
+
+
+            closeDrawer();
+
+            openEditModal(
+                staff
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "drawerToggleBtn"
+    ).addEventListener(
+        "click",
+        () => {
+
+            if (!drawerStaff) {
+                return;
+            }
+
+
+            toggleStaffStatus(
+                drawerStaff
+            );
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                closeModal();
+
+                closeDrawer();
+
+                closeMobileSidebar();
+
+            }
+
+        }
+    );
+
 }
 
 
@@ -5288,7 +5757,7 @@ function showFatalState(
    NOTIFICATIONS
 ============================================================ */
 
-async function loadNotifications() {
+async function loadNotificationCount() {
 
     try {
 
@@ -5316,7 +5785,7 @@ async function loadNotifications() {
 
 
         if (error) {
-            return;
+            throw error;
         }
 
 
@@ -5331,94 +5800,451 @@ async function loadNotifications() {
             count > 0
         ) {
 
+            badge.style.display =
+                "flex";
+
+
             badge.textContent =
                 count > 99
                     ? "99+"
                     : String(count);
 
-            badge.style.display =
-                "flex";
-
         } else {
 
             badge.style.display =
                 "none";
+
         }
 
     } catch (error) {
 
         console.warn(
-            "Notifications unavailable:",
+            "Notification count unavailable:",
             error
         );
+
     }
+
 }
 
 
 /* ============================================================
-   HELPERS
+   LOADING
 ============================================================ */
 
-function normalizeRelation(
-    value
-) {
+function renderLoading() {
 
-    if (
-        Array.isArray(value)
-    ) {
+    document.getElementById(
+        "staffTableBody"
+    ).innerHTML =
+        `
+            <tr>
 
-        return value[0] || {};
-    }
+                <td colspan="6">
+
+                    <div class="state">
+
+                        <div class="spinner"></div>
+
+                        <strong>
+                            Loading gate staff
+                        </strong>
+
+                        <p>
+                            Retrieving staff records from Supabase.
+                        </p>
+
+                    </div>
+
+                </td>
+
+            </tr>
+        `;
 
 
-    return value || {};
+    document.getElementById(
+        "mobileList"
+    ).innerHTML =
+        `
+            <div class="state">
+
+                <div class="spinner"></div>
+
+                <strong>
+                    Loading gate staff
+                </strong>
+
+                <p>
+                    Retrieving staff records.
+                </p>
+
+            </div>
+        `;
+
 }
 
 
-function getInitials(
-    name
+/* ============================================================
+   UNAVAILABLE
+============================================================ */
+
+function renderUnavailable(
+    message
 ) {
 
-    if (!name) {
-        return "G";
-    }
+    const safeMessage =
+        escapeHTML(
+            message
+        );
 
 
-    const parts =
-        String(name)
-            .trim()
-            .split(/\s+/)
-            .filter(Boolean);
+    document.getElementById(
+        "staffTableBody"
+    ).innerHTML =
+        `
+            <tr>
+
+                <td colspan="6">
+
+                    <div class="state">
+
+                        <div class="state-icon">
+                            !
+                        </div>
+
+                        <strong>
+                            Gate staff data unavailable
+                        </strong>
+
+                        <p>
+                            ${safeMessage}
+                        </p>
+
+                        <button
+                            class="btn"
+                            type="button"
+                            onclick="loadStaff()"
+                            style="margin-top:16px;"
+                        >
+                            Try Again
+                        </button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+        `;
 
 
-    if (
-        parts.length === 1
-    ) {
+    document.getElementById(
+        "mobileList"
+    ).innerHTML =
+        `
+            <div class="state">
 
-        return parts[0]
-            .slice(0, 2)
-            .toUpperCase();
-    }
+                <div class="state-icon">
+                    !
+                </div>
 
+                <strong>
+                    Gate staff data unavailable
+                </strong>
 
-    return (
-        parts[0][0] +
-        parts[parts.length - 1][0]
-    ).toUpperCase();
+                <p>
+                    ${safeMessage}
+                </p>
+
+                <button
+                    class="btn"
+                    type="button"
+                    onclick="loadStaff()"
+                    style="margin-top:16px;"
+                >
+                    Try Again
+                </button>
+
+            </div>
+        `;
+
 }
 
+
+/* ============================================================
+   FATAL STATE
+============================================================ */
+
+function showFatalState(
+    message
+) {
+
+    document.body.innerHTML =
+        `
+            <div
+                style="
+                    min-height:100vh;
+                    display:grid;
+                    place-items:center;
+                    padding:25px;
+                    background:#f8f5f1;
+                    font-family:
+                        Inter,
+                        system-ui,
+                        sans-serif;
+                "
+            >
+
+                <div
+                    style="
+                        width:min(500px,100%);
+                        padding:30px;
+                        background:white;
+                        border:1px solid #e8ded6;
+                        border-radius:20px;
+                        text-align:center;
+                        box-shadow:
+                            0 20px 60px
+                            rgba(38,25,19,.08);
+                    "
+                >
+
+                    <div
+                        style="
+                            width:60px;
+                            height:60px;
+                            margin:0 auto 17px;
+                            display:grid;
+                            place-items:center;
+                            border-radius:17px;
+                            background:#f5eee8;
+                            color:#6C151E;
+                            font-size:22px;
+                            font-weight:900;
+                        "
+                    >
+                        !
+                    </div>
+
+                    <h2
+                        style="
+                            color:#0F3D3A;
+                            font-size:20px;
+                        "
+                    >
+                        Merchant Access Required
+                    </h2>
+
+                    <p
+                        style="
+                            margin-top:9px;
+                            color:#766f69;
+                            font-size:12px;
+                            line-height:1.65;
+                        "
+                    >
+                        ${escapeHTML(message)}
+                    </p>
+
+                    <a
+                        href="../login.html"
+                        style="
+                            display:inline-flex;
+                            margin-top:19px;
+                            min-height:42px;
+                            padding:0 18px;
+                            align-items:center;
+                            justify-content:center;
+                            border-radius:11px;
+                            background:#6C151E;
+                            color:white;
+                            font-size:11px;
+                            font-weight:800;
+                            text-decoration:none;
+                        "
+                    >
+                        Return to Login
+                    </a>
+
+                </div>
+
+            </div>
+        `;
+
+}
+
+
+/* ============================================================
+   EMPTY TABLE
+============================================================ */
+
+function emptyTableHTML() {
+
+    const hasRecords =
+        staffRecords.length > 0;
+
+
+    return `
+        <tr>
+
+            <td colspan="6">
+
+                <div class="state">
+
+                    <div class="state-icon">
+                        ♟
+                    </div>
+
+                    <strong>
+                        ${
+                            hasRecords
+                                ? "No matching gate staff"
+                                : "No gate staff yet"
+                        }
+                    </strong>
+
+                    <p>
+                        ${
+                            hasRecords
+                                ? "Try changing your search or filters."
+                                : "Create a gate staff account and assign it to one or more of your events."
+                        }
+                    </p>
+
+                    ${
+                        !hasRecords
+                            ? `
+                                <button
+                                    class="btn btn-primary"
+                                    type="button"
+                                    onclick="openAddModal()"
+                                    style="margin-top:16px;"
+                                >
+                                    ＋ Add Gate Staff
+                                </button>
+                              `
+                            : ""
+                    }
+
+                </div>
+
+            </td>
+
+        </tr>
+    `;
+
+}
+
+
+function emptyMobileHTML() {
+
+    const hasRecords =
+        staffRecords.length > 0;
+
+
+    return `
+        <div class="state">
+
+            <div class="state-icon">
+                ♟
+            </div>
+
+            <strong>
+                ${
+                    hasRecords
+                        ? "No matching gate staff"
+                        : "No gate staff yet"
+                }
+            </strong>
+
+            <p>
+                ${
+                    hasRecords
+                        ? "Try changing your search or filters."
+                        : "Create a gate staff account and assign it to your events."
+                }
+            </p>
+
+            ${
+                !hasRecords
+                    ? `
+                        <button
+                            class="btn btn-primary"
+                            type="button"
+                            onclick="openAddModal()"
+                            style="margin-top:16px;"
+                        >
+                            ＋ Add Gate Staff
+                        </button>
+                      `
+                    : ""
+            }
+
+        </div>
+    `;
+
+}
+
+
+/* ============================================================
+   EVENT HELPERS
+============================================================ */
+
+function getEventMeta(
+    event
+) {
+
+    const parts = [];
+
+
+    if (event.venue) {
+        parts.push(
+            event.venue
+        );
+    }
+
+
+    if (event.city) {
+        parts.push(
+            event.city
+        );
+    }
+
+
+    if (event.start_at) {
+
+        parts.push(
+            formatDate(
+                event.start_at
+            )
+        );
+
+    }
+
+
+    return parts.length
+        ? parts.join(" · ")
+        : "Event details unavailable";
+
+}
+
+
+/* ============================================================
+   DATE
+============================================================ */
 
 function formatDate(
-    value
+    timestamp
 ) {
 
-    if (!value) {
+    if (!timestamp) {
         return "—";
     }
 
 
     const date =
-        new Date(value);
+        new Date(
+            timestamp
+        );
 
 
     if (
@@ -5428,53 +6254,253 @@ function formatDate(
     ) {
 
         return "—";
+
     }
 
 
-    try {
+    return date.toLocaleDateString(
+        undefined,
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }
+    );
 
-        return new Intl.DateTimeFormat(
-            undefined,
-            {
-                dateStyle: "medium",
-                timeStyle: "short"
-            }
-        ).format(date);
-
-    } catch {
-
-        return date.toLocaleString();
-    }
 }
 
 
-function escapeHtml(
+/* ============================================================
+   NUMBER
+============================================================ */
+
+function formatNumber(
+    value
+) {
+
+    return Number(
+        value || 0
+    ).toLocaleString();
+
+}
+
+
+/* ============================================================
+   INITIALS
+============================================================ */
+
+function getInitials(
+    name
+) {
+
+    const parts =
+        String(
+            name || ""
+        )
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+
+    if (!parts.length) {
+        return "GS";
+    }
+
+
+    if (
+        parts.length === 1
+    ) {
+
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
+
+    }
+
+
+    return (
+        parts[0][0] +
+        parts[
+            parts.length - 1
+        ][0]
+    ).toUpperCase();
+
+}
+
+
+/* ============================================================
+   SHORT ID
+============================================================ */
+
+function shortId(
+    id
+) {
+
+    if (!id) {
+        return "—";
+    }
+
+
+    const value =
+        String(id);
+
+
+    if (
+        value.length <= 18
+    ) {
+
+        return value;
+
+    }
+
+
+    return (
+        value.slice(0,8) +
+        "…" +
+        value.slice(-6)
+    );
+
+}
+
+
+/* ============================================================
+   CAPITALIZE
+============================================================ */
+
+function capitalize(
+    value
+) {
+
+    const text =
+        String(
+            value || ""
+        );
+
+
+    return (
+        text.charAt(0).toUpperCase() +
+        text.slice(1)
+    );
+
+}
+
+
+/* ============================================================
+   ESCAPE HTML
+============================================================ */
+
+function escapeHTML(
     value
 ) {
 
     return String(
         value ?? ""
     )
-        .replace(
-            /&/g,
-            "&amp;"
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ============================================================
+   READABLE ERRORS
+============================================================ */
+
+function getReadableError(
+    error
+) {
+
+    const message =
+        error?.message ||
+        error?.details ||
+        error?.hint ||
+        "";
+
+
+    const lower =
+        String(
+            message
         )
-        .replace(
-            /</g,
-            "&lt;"
+        .toLowerCase();
+
+
+    if (
+        lower.includes(
+            "row-level security"
         )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
+    ) {
+
+        return (
+            "Supabase blocked this operation through Row Level Security. " +
+            "Check the merchant_staff and merchant_staff_events policies."
         );
+
+    }
+
+
+    if (
+        lower.includes(
+            "permission"
+        )
+    ) {
+
+        return (
+            "You do not have permission to access this merchant staff data."
+        );
+
+    }
+
+
+    if (
+        lower.includes(
+            "relation"
+        )
+    ) {
+
+        return (
+            "A required Supabase table was not found. " +
+            "This page expects merchant_staff and merchant_staff_events."
+        );
+
+    }
+
+
+    if (
+        lower.includes(
+            "column"
+        )
+    ) {
+
+        return (
+            "The Supabase schema does not match the current K-Tickets merchant staff schema."
+        );
+
+    }
+
+
+    return (
+        message ||
+        "Something went wrong while processing gate staff."
+    );
+
 }
 
 
@@ -5484,7 +6510,7 @@ function escapeHtml(
 
 function showToast(
     message,
-    isError = false
+    type = "success"
 ) {
 
     const container =
@@ -5500,12 +6526,13 @@ function showToast(
 
 
     toast.className =
-        "toast" +
-        (
-            isError
-                ? " error"
-                : ""
-        );
+        `toast ${
+            type === "error"
+                ? "error"
+                : type === "warning"
+                    ? "warning"
+                    : ""
+        }`;
 
 
     toast.textContent =
@@ -5523,20 +6550,46 @@ function showToast(
             toast.style.opacity =
                 "0";
 
+
             toast.style.transform =
                 "translateY(8px)";
 
 
             setTimeout(
-                () =>
-                    toast.remove(),
+                () => {
+
+                    toast.remove();
+
+                },
                 200
             );
 
         },
-        3200
+        3500
     );
+
 }
+
+
+/* ============================================================
+   WINDOW RESIZE
+============================================================ */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        if (
+            window.innerWidth > 820
+        ) {
+
+            closeMobileSidebar();
+
+        }
+
+    }
+);
+
 </script>
 
 </body>

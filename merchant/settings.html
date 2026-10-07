@@ -1,4084 +1,4721 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0F3D3A">
-  <title>K-Tickets — Merchant Settings</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root {
-      --bordo: #6C151E;
-      --green: #0F3D3A;
-      --cream: #F5DABF;
-      --white: #fffaf5;
-      --ink: #241916;
-      --muted: #756862;
-      --line: rgba(36, 25, 22, .11);
-      --soft: rgba(15, 61, 58, .07);
-      --success: #176b50;
-      --danger: #9d2632;
-      --warning: #9a6818;
-      --shadow: 0 18px 50px rgba(36, 25, 22, .09);
-      --sidebar-width: 260px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      background: #f8eee4;
-      color: var(--ink);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
-        BlinkMacSystemFont, "Segoe UI", sans-serif;
-      overflow-x: hidden;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    /* =========================
-       APP
-    ========================== */
-
-    .app {
-      min-height: 100vh;
-    }
-
-    /* =========================
-       SIDEBAR
-    ========================== */
-
-    .sidebar {
-      position: fixed;
-      inset: 0 auto 0 0;
-      width: var(--sidebar-width);
-      background: var(--green);
-      color: #fff;
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      z-index: 1000;
-      transition: transform .25s ease;
-    }
-
-    .brand {
-      padding: 4px 12px 26px;
-    }
-
-    .brand-name {
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 27px;
-      font-weight: 700;
-      letter-spacing: .4px;
-    }
-
-    .brand-sub {
-      margin-top: 5px;
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      opacity: .58;
-    }
-
-    .merchant-label {
-      margin: 0 12px 12px;
-      color: rgba(255,255,255,.45);
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .nav {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      overflow-y: auto;
-    }
-
-    .nav a,
-    .nav button {
-      width: 100%;
-      min-height: 46px;
-      padding: 0 13px;
-      border: 0;
-      border-radius: 13px;
-      background: transparent;
-      color: rgba(255,255,255,.67);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 13px;
-      text-align: left;
-      transition: .2s ease;
-    }
-
-    .nav a:hover,
-    .nav button:hover {
-      color: #fff;
-      background: rgba(255,255,255,.08);
-    }
-
-    .nav a.active {
-      color: #fff;
-      background: rgba(245,218,191,.13);
-      box-shadow: inset 3px 0 0 var(--cream);
-    }
-
-    .nav-icon {
-      width: 21px;
-      flex: 0 0 21px;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    .sidebar-bottom {
-      margin-top: auto;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255,255,255,.10);
-    }
-
-    .merchant-mini {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 8px;
-      margin-bottom: 6px;
-    }
-
-    .mini-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--cream);
-      color: var(--green);
-      display: grid;
-      place-items: center;
-      font-size: 11px;
-      font-weight: 900;
-      flex: 0 0 36px;
-    }
-
-    .mini-info {
-      min-width: 0;
-    }
-
-    .mini-name {
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .mini-role {
-      margin-top: 2px;
-      color: rgba(255,255,255,.45);
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* =========================
-       MAIN
-    ========================== */
-
-    .main {
-      width: calc(100% - var(--sidebar-width));
-      margin-left: var(--sidebar-width);
-      min-height: 100vh;
-    }
-
-    .topbar {
-      min-height: 74px;
-      padding: 0 34px;
-      background: rgba(255,250,245,.87);
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-    }
-
-    .topbar-title {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .mobile-menu {
-      display: none;
-      width: 42px;
-      height: 42px;
-      border: 1px solid var(--line);
-      background: #fffaf5;
-      border-radius: 12px;
-      color: var(--green);
-      font-size: 19px;
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .icon-button {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: rgba(255,255,255,.7);
-      color: var(--green);
-      display: grid;
-      place-items: center;
-      transition: .2s ease;
-    }
-
-    .icon-button:hover {
-      background: #fff;
-      transform: translateY(-1px);
-    }
-
-    .notification-dot {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      min-width: 16px;
-      height: 16px;
-      padding: 0 4px;
-      border-radius: 999px;
-      background: var(--bordo);
-      color: #fff;
-      font-size: 8px;
-      font-weight: 900;
-      display: grid;
-      place-items: center;
-    }
-
-    .top-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--green);
-      color: var(--cream);
-      display: grid;
-      place-items: center;
-      font-size: 10px;
-      font-weight: 900;
-    }
-
-    /* =========================
-       CONTENT
-    ========================== */
-
-    .content {
-      width: 100%;
-      max-width: 1500px;
-      margin: 0 auto;
-      padding: 34px;
-    }
-
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 25px;
-      margin-bottom: 28px;
-    }
-
-    .eyebrow {
-      margin-bottom: 8px;
-      color: var(--bordo);
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      color: var(--green);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(31px, 4vw, 46px);
-      line-height: 1;
-      letter-spacing: -.8px;
-    }
-
-    .page-description {
-      max-width: 700px;
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 9px;
-      flex-wrap: wrap;
-    }
-
-    /* =========================
-       BUTTONS
-    ========================== */
-
-    .btn {
-      min-height: 43px;
-      padding: 0 16px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: #fffaf5;
-      color: var(--green);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 800;
-      transition: .2s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(36,25,22,.07);
-    }
-
-    .btn-primary {
-      background: var(--bordo);
-      color: #fff;
-      border-color: var(--bordo);
-    }
-
-    .btn-primary:hover {
-      background: #591018;
-    }
-
-    .btn-green {
-      background: var(--green);
-      color: #fff;
-      border-color: var(--green);
-    }
-
-    .btn-danger {
-      color: var(--danger);
-      border-color: rgba(157,38,50,.18);
-      background: rgba(157,38,50,.04);
-    }
-
-    .btn:disabled {
-      cursor: not-allowed;
-      opacity: .55;
-      transform: none;
-      box-shadow: none;
-    }
-
-    /* =========================
-       SETTINGS LAYOUT
-    ========================== */
-
-    .settings-layout {
-      display: grid;
-      grid-template-columns: 230px minmax(0, 1fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    .settings-nav {
-      position: sticky;
-      top: 100px;
-      padding: 9px;
-    }
-
-    .settings-nav button {
-      width: 100%;
-      min-height: 44px;
-      border: 0;
-      border-radius: 11px;
-      background: transparent;
-      color: var(--muted);
-      padding: 0 12px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: .2s ease;
-    }
-
-    .settings-nav button:hover {
-      color: var(--green);
-      background: var(--soft);
-    }
-
-    .settings-nav button.active {
-      color: var(--green);
-      background: var(--soft);
-      box-shadow: inset 3px 0 0 var(--bordo);
-    }
-
-    .settings-nav-icon {
-      width: 20px;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    .settings-content {
-      min-width: 0;
-    }
-
-    .settings-section {
-      display: none;
-      margin-bottom: 18px;
-    }
-
-    .settings-section.active {
-      display: block;
-    }
-
-    .panel {
-      background: rgba(255,250,245,.84);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .panel + .panel {
-      margin-top: 18px;
-    }
-
-    .panel-header {
-      padding: 20px 22px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .panel-title {
-      color: var(--green);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 22px;
-    }
-
-    .panel-description {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.6;
-    }
-
-    .panel-body {
-      padding: 22px;
-    }
-
-    /* =========================
-       PROFILE HERO
-    ========================== */
-
-    .profile-hero {
-      display: flex;
-      align-items: center;
-      gap: 17px;
-      padding: 18px;
-      background: var(--soft);
-      border-radius: 16px;
-      margin-bottom: 20px;
-    }
-
-    .large-avatar {
-      width: 66px;
-      height: 66px;
-      flex: 0 0 66px;
-      border-radius: 50%;
-      background: var(--green);
-      color: var(--cream);
-      display: grid;
-      place-items: center;
-      font-size: 17px;
-      font-weight: 900;
-    }
-
-    .profile-info {
-      min-width: 0;
-    }
-
-    .profile-name {
-      color: var(--green);
-      font-size: 17px;
-      font-weight: 900;
-      word-break: break-word;
-    }
-
-    .profile-email {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 11px;
-      word-break: break-word;
-    }
-
-    .role-pill {
-      display: inline-flex;
-      margin-top: 8px;
-      min-height: 23px;
-      align-items: center;
-      padding: 0 8px;
-      border-radius: 999px;
-      background: rgba(108,21,30,.09);
-      color: var(--bordo);
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 900;
-    }
-
-    /* =========================
-       FORM
-    ========================== */
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 17px;
-    }
-
-    .form-group {
-      min-width: 0;
-    }
-
-    .form-group.full {
-      grid-column: 1 / -1;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 7px;
-      color: var(--green);
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .form-control {
-      width: 100%;
-      min-height: 44px;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: #fffdf9;
-      color: var(--ink);
-      outline: none;
-      font-size: 12px;
-    }
-
-    textarea.form-control {
-      min-height: 105px;
-      resize: vertical;
-    }
-
-    .form-control:focus {
-      border-color: rgba(15,61,58,.45);
-      box-shadow: 0 0 0 3px rgba(15,61,58,.06);
-    }
-
-    .form-control:disabled {
-      background: rgba(36,25,22,.035);
-      color: var(--muted);
-      cursor: not-allowed;
-    }
-
-    .helper {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 9px;
-      line-height: 1.55;
-    }
-
-    .form-footer {
-      margin-top: 20px;
-      padding-top: 18px;
-      border-top: 1px solid var(--line);
-      display: flex;
-      justify-content: flex-end;
-      gap: 9px;
-    }
-
-    /* =========================
-       PAYOUT METHODS
-    ========================== */
-
-    .method-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .method-card {
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 15px;
-      background: #fffdf9;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .method-main {
-      min-width: 0;
-    }
-
-    .method-title {
-      color: var(--green);
-      font-size: 13px;
-      font-weight: 900;
-    }
-
-    .method-detail {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 10px;
-      overflow-wrap: anywhere;
-    }
-
-    .method-status {
-      display: inline-flex;
-      align-items: center;
-      min-height: 23px;
-      padding: 0 8px;
-      border-radius: 999px;
-      font-size: 8px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      white-space: nowrap;
-    }
-
-    .method-status.active {
-      color: var(--success);
-      background: rgba(23,107,80,.09);
-    }
-
-    .method-status.inactive {
-      color: var(--muted);
-      background: rgba(36,25,22,.07);
-    }
-
-    /* =========================
-       SECURITY
-    ========================== */
-
-    .security-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      padding: 17px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .security-item:first-child {
-      padding-top: 0;
-    }
-
-    .security-item:last-child {
-      padding-bottom: 0;
-      border-bottom: 0;
-    }
-
-    .security-title {
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .security-description {
-      margin-top: 4px;
-      max-width: 600px;
-      color: var(--muted);
-      font-size: 10px;
-      line-height: 1.6;
-    }
-
-    /* =========================
-       TOGGLE
-    ========================== */
-
-    .toggle {
-      position: relative;
-      width: 44px;
-      height: 25px;
-      flex: 0 0 44px;
-    }
-
-    .toggle input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .toggle-track {
-      position: absolute;
-      inset: 0;
-      background: rgba(36,25,22,.16);
-      border-radius: 999px;
-      transition: .2s ease;
-      cursor: pointer;
-    }
-
-    .toggle-track::after {
-      content: "";
-      position: absolute;
-      width: 19px;
-      height: 19px;
-      left: 3px;
-      top: 3px;
-      border-radius: 50%;
-      background: #fff;
-      transition: .2s ease;
-      box-shadow: 0 2px 5px rgba(0,0,0,.15);
-    }
-
-    .toggle input:checked + .toggle-track {
-      background: var(--green);
-    }
-
-    .toggle input:checked + .toggle-track::after {
-      transform: translateX(19px);
-    }
-
-    /* =========================
-       DANGER ZONE
-    ========================== */
-
-    .danger-panel {
-      border-color: rgba(157,38,50,.20);
-    }
-
-    .danger-panel .panel-header {
-      background: rgba(157,38,50,.035);
-    }
-
-    .danger-panel .panel-title {
-      color: var(--danger);
-    }
-
-    /* =========================
-       LOADING
-    ========================== */
-
-    .loading-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 5000;
-      background: rgba(248,238,228,.72);
-      backdrop-filter: blur(5px);
-      display: grid;
-      place-items: center;
-      transition: .2s ease;
-    }
-
-    .loading-box {
-      padding: 25px;
-      background: #fffaf5;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      text-align: center;
-      min-width: 190px;
-    }
-
-    .spinner {
-      width: 27px;
-      height: 27px;
-      margin: 0 auto 11px;
-      border: 2px solid rgba(15,61,58,.12);
-      border-top-color: var(--green);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    .loading-text {
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* =========================
-       TOAST
-    ========================== */
-
-    .toast {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 6000;
-      width: min(390px, calc(100vw - 44px));
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: var(--green);
-      color: #fff;
-      font-size: 12px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.2);
-      transform: translateY(20px);
-      opacity: 0;
-      visibility: hidden;
-      transition: .22s ease;
-    }
-
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .toast.error {
-      background: var(--bordo);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* =========================
-       RESPONSIVE
-    ========================== */
-
-    @media (max-width: 1050px) {
-      .settings-layout {
-        grid-template-columns: 190px minmax(0, 1fr);
-      }
-
-      .content {
-        padding: 27px;
-      }
-    }
-
-    @media (max-width: 900px) {
-      :root {
-        --sidebar-width: 245px;
-      }
-
-      .sidebar {
-        transform: translateX(-100%);
-        box-shadow: 20px 0 60px rgba(0,0,0,.16);
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-      }
-
-      .main {
-        width: 100%;
-        margin-left: 0;
-      }
-
-      .mobile-menu {
-        display: grid;
-        place-items: center;
-      }
-
-      .topbar {
-        padding: 0 18px;
-      }
-
-      .content {
-        padding: 24px 18px;
-      }
-
-      .settings-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .settings-nav {
-        position: static;
-        display: flex;
-        gap: 5px;
-        overflow-x: auto;
-        padding: 7px;
-      }
-
-      .settings-nav button {
-        width: auto;
-        flex: 0 0 auto;
-        white-space: nowrap;
-      }
-    }
-
-    @media (max-width: 680px) {
-      .content {
-        padding: 21px 13px 30px;
-      }
-
-      .topbar {
-        min-height: 66px;
-        padding: 0 13px;
-      }
-
-      .topbar-title {
-        display: none;
-      }
-
-      .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        margin-bottom: 21px;
-      }
-
-      .header-actions {
-        width: 100%;
-      }
-
-      .header-actions .btn {
-        flex: 1;
-      }
-
-      .panel-header,
-      .panel-body {
-        padding: 17px;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-
-      .form-group.full {
-        grid-column: auto;
-      }
-
-      .profile-hero {
-        align-items: flex-start;
-      }
-
-      .security-item {
-        align-items: flex-start;
-      }
-
-      .method-card {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .form-footer {
-        flex-direction: column;
-      }
-
-      .form-footer .btn {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .top-avatar,
-      .icon-button,
-      .mobile-menu {
-        width: 37px;
-        height: 37px;
-      }
-
-      .large-avatar {
-        width: 56px;
-        height: 56px;
-        flex-basis: 56px;
-      }
-
-      .profile-hero {
-        gap: 12px;
-      }
-
-      .header-actions {
-        flex-direction: column;
-      }
-
-      .header-actions .btn {
-        width: 100%;
-      }
-
-      .security-item {
-        flex-direction: column;
-      }
-
-      .security-item .btn,
-      .security-item .toggle {
-        align-self: flex-start;
-      }
-    }
-  </style>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Settings | K-Tickets Merchant</title>
+
+    <meta
+        name="description"
+        content="Manage your K-Tickets merchant account settings."
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <style>
+
+        :root {
+
+            --bordo: #6C151E;
+            --bordo-dark: #531018;
+
+            --green: #0F3D3A;
+            --green-dark: #092c2a;
+
+            --cream: #F5DABF;
+
+            --bg: #faf7f3;
+            --surface: #ffffff;
+            --surface-soft: #f6f0eb;
+
+            --text: #241b19;
+            --muted: #766b67;
+
+            --border: #e7ddd6;
+
+            --success: #287952;
+            --success-bg: #e9f6ef;
+
+            --warning: #996914;
+            --warning-bg: #fff5df;
+
+            --danger: #a32935;
+            --danger-bg: #fdebed;
+
+            --shadow:
+                0 14px 38px rgba(45,25,20,.065);
+
+            --radius: 18px;
+
+            --sidebar-width: 260px;
+
+        }
+
+
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+            padding: 0;
+
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            background: var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            overflow-x: hidden;
+
+        }
+
+
+        button,
+        input {
+
+            font: inherit;
+
+        }
+
+
+        button {
+            cursor: pointer;
+        }
+
+
+        a {
+
+            color: inherit;
+
+            text-decoration: none;
+
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ====================================================== */
+
+        .sidebar {
+
+            position: fixed;
+
+            inset: 0 auto 0 0;
+
+            width: var(--sidebar-width);
+
+            z-index: 1000;
+
+            display: flex;
+
+            flex-direction: column;
+
+            background: var(--green);
+
+            color: #fff;
+
+            transition:
+                transform .25s ease;
+
+        }
+
+
+        .brand {
+
+            min-height: 88px;
+
+            padding: 21px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,.09);
+
+        }
+
+
+        .brand-mark {
+
+            width: 43px;
+            height: 43px;
+
+            flex: 0 0 auto;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 13px;
+
+            background: var(--cream);
+
+            color: var(--green);
+
+            font-family: Georgia, serif;
+
+            font-size: 19px;
+
+            font-weight: 900;
+
+        }
+
+
+        .brand-copy strong {
+
+            display: block;
+
+            font-size: 15px;
+
+            letter-spacing: .08em;
+
+        }
+
+
+        .brand-copy span {
+
+            display: block;
+
+            margin-top: 4px;
+
+            color:
+                rgba(255,255,255,.46);
+
+            font-size: 9px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: .13em;
+
+        }
+
+
+        .nav {
+
+            flex: 1;
+
+            padding: 16px 12px;
+
+            overflow-y: auto;
+
+        }
+
+
+        .nav-label {
+
+            padding:
+                12px 12px 7px;
+
+            color:
+                rgba(255,255,255,.34);
+
+            font-size: 9px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: .14em;
+
+        }
+
+
+        .nav a {
+
+            min-height: 44px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            margin-bottom: 4px;
+
+            padding: 10px 13px;
+
+            border-radius: 11px;
+
+            color:
+                rgba(255,255,255,.68);
+
+            font-size: 12px;
+
+            font-weight: 650;
+
+            transition: .2s ease;
+
+        }
+
+
+        .nav a:hover {
+
+            color: white;
+
+            background:
+                rgba(255,255,255,.07);
+
+        }
+
+
+        .nav a.active {
+
+            color: white;
+
+            background: var(--bordo);
+
+            box-shadow:
+                0 8px 20px
+                rgba(0,0,0,.12);
+
+        }
+
+
+        .nav-icon {
+
+            width: 20px;
+
+            flex: 0 0 auto;
+
+            text-align: center;
+
+            font-size: 15px;
+
+        }
+
+
+        .sidebar-footer {
+
+            padding: 14px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,.09);
+
+        }
+
+
+        .merchant-mini {
+
+            padding: 9px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255,255,255,.05);
+
+        }
+
+
+        .merchant-avatar {
+
+            width: 36px;
+            height: 36px;
+
+            flex: 0 0 auto;
+
+            display: grid;
+
+            place-items: center;
+
+            overflow: hidden;
+
+            border-radius: 50%;
+
+            background: var(--cream);
+
+            color: var(--green);
+
+            font-size: 11px;
+
+            font-weight: 900;
+
+        }
+
+
+        .merchant-avatar img {
+
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
+
+        }
+
+
+        .merchant-info {
+
+            min-width: 0;
+
+            flex: 1;
+
+        }
+
+
+        .merchant-info strong {
+
+            display: block;
+
+            overflow: hidden;
+
+            white-space: nowrap;
+
+            text-overflow: ellipsis;
+
+            font-size: 11px;
+
+        }
+
+
+        .merchant-info span {
+
+            display: block;
+
+            margin-top: 2px;
+
+            color:
+                rgba(255,255,255,.43);
+
+            font-size: 8px;
+
+        }
+
+
+        .signout {
+
+            width: 31px;
+            height: 31px;
+
+            display: grid;
+
+            place-items: center;
+
+            border: 0;
+
+            border-radius: 9px;
+
+            background: transparent;
+
+            color:
+                rgba(255,255,255,.6);
+
+            font-size: 15px;
+
+        }
+
+
+        .signout:hover {
+
+            background:
+                rgba(255,255,255,.08);
+
+            color: white;
+
+        }
+
+
+        /* =====================================================
+           MOBILE SIDEBAR
+        ====================================================== */
+
+        .sidebar-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 900;
+
+            display: none;
+
+            background:
+                rgba(0,0,0,.42);
+
+        }
+
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ====================================================== */
+
+        .main {
+
+            width:
+                calc(100% - var(--sidebar-width));
+
+            margin-left:
+                var(--sidebar-width);
+
+            min-width: 0;
+
+        }
+
+
+        .topbar {
+
+            height: 72px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 500;
+
+            padding: 0 30px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            background:
+                rgba(255,255,255,.94);
+
+            border-bottom:
+                1px solid var(--border);
+
+            backdrop-filter:
+                blur(14px);
+
+        }
+
+
+        .topbar-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+        }
+
+
+        .mobile-menu {
+
+            display: none;
+
+            width: 40px;
+            height: 40px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: var(--green);
+
+            font-size: 18px;
+
+        }
+
+
+        .breadcrumb {
+
+            color: var(--muted);
+
+            font-size: 11px;
+
+        }
+
+
+        .breadcrumb strong {
+
+            color: var(--text);
+
+        }
+
+
+        .topbar-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+        }
+
+
+        .notification-btn {
+
+            width: 40px;
+            height: 40px;
+
+            position: relative;
+
+            display: grid;
+
+            place-items: center;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 11px;
+
+            background: white;
+
+            color: var(--green);
+
+        }
+
+
+        .notification-count {
+
+            min-width: 17px;
+            height: 17px;
+
+            position: absolute;
+
+            top: -4px;
+            right: -4px;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 4px;
+
+            border:
+                2px solid white;
+
+            border-radius: 999px;
+
+            background: var(--bordo);
+
+            color: white;
+
+            font-size: 8px;
+
+            font-weight: 900;
+
+        }
+
+
+        .top-user {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+        }
+
+
+        .top-avatar {
+
+            width: 35px;
+            height: 35px;
+
+            display: grid;
+
+            place-items: center;
+
+            overflow: hidden;
+
+            border-radius: 50%;
+
+            background:
+                var(--cream);
+
+            color:
+                var(--green);
+
+            font-size: 10px;
+
+            font-weight: 900;
+
+        }
+
+
+        .top-avatar img {
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+        }
+
+
+        .top-user-name {
+
+            max-width: 170px;
+
+            overflow: hidden;
+
+            white-space: nowrap;
+
+            text-overflow: ellipsis;
+
+            color: var(--green);
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+        }
+
+
+        /* =====================================================
+           CONTENT
+        ====================================================== */
+
+        .content {
+
+            width:
+                min(1180px, 100%);
+
+            margin: 0 auto;
+
+            padding: 30px;
+
+        }
+
+
+        .page-header {
+
+            margin-bottom: 24px;
+
+        }
+
+
+        .eyebrow {
+
+            margin-bottom: 7px;
+
+            color: var(--bordo);
+
+            font-size: 9px;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            letter-spacing: .15em;
+
+        }
+
+
+        h1 {
+
+            color: var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:
+                clamp(30px, 4vw, 42px);
+
+            line-height: 1.04;
+
+            letter-spacing: -.045em;
+
+        }
+
+
+        .page-description {
+
+            max-width: 700px;
+
+            margin-top: 8px;
+
+            color: var(--muted);
+
+            font-size: 11px;
+
+            line-height: 1.65;
+
+        }
+
+
+        /* =====================================================
+           PANELS
+        ====================================================== */
+
+        .settings-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.55fr)
+                minmax(280px, .75fr);
+
+            gap: 18px;
+
+            align-items: start;
+
+        }
+
+
+        .panel {
+
+            overflow: hidden;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                var(--radius);
+
+            box-shadow:
+                var(--shadow);
+
+        }
+
+
+        .panel + .panel {
+
+            margin-top: 18px;
+
+        }
+
+
+        .panel-header {
+
+            padding: 18px 20px;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap: 14px;
+
+            border-bottom:
+                1px solid var(--border);
+
+        }
+
+
+        .panel-title {
+
+            color: var(--green);
+
+            font-size: 14px;
+
+            font-weight: 850;
+
+        }
+
+
+        .panel-description {
+
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+            line-height: 1.55;
+
+        }
+
+
+        .panel-body {
+
+            padding: 20px;
+
+        }
+
+
+        /* =====================================================
+           PROFILE HERO
+        ====================================================== */
+
+        .profile-hero {
+
+            padding: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #fffdfb,
+                    #f8f0ea
+                );
+
+            border-bottom:
+                1px solid var(--border);
+
+        }
+
+
+        .profile-avatar {
+
+            width: 72px;
+            height: 72px;
+
+            flex: 0 0 auto;
+
+            display: grid;
+
+            place-items: center;
+
+            overflow: hidden;
+
+            border-radius: 21px;
+
+            background:
+                var(--green);
+
+            color:
+                var(--cream);
+
+            font-family:
+                Georgia,
+                serif;
+
+            font-size: 22px;
+
+            font-weight: 900;
+
+            box-shadow:
+                0 10px 24px
+                rgba(15,61,58,.13);
+
+        }
+
+
+        .profile-avatar img {
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+        }
+
+
+        .profile-identity {
+
+            min-width: 0;
+
+        }
+
+
+        .profile-identity h2 {
+
+            color: var(--green);
+
+            font-family:
+                Georgia,
+                serif;
+
+            font-size: 20px;
+
+        }
+
+
+        .profile-email {
+
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 10px;
+
+            overflow-wrap: anywhere;
+
+        }
+
+
+        .profile-meta {
+
+            margin-top: 8px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+        .badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            min-height: 24px;
+
+            padding: 0 8px;
+
+            border-radius: 999px;
+
+            font-size: 8px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: .04em;
+
+        }
+
+
+        .badge-green {
+
+            background:
+                var(--success-bg);
+
+            color:
+                var(--success);
+
+        }
+
+
+        .badge-bordo {
+
+            background:
+                var(--danger-bg);
+
+            color:
+                var(--bordo);
+
+        }
+
+
+        /* =====================================================
+           FORM
+        ====================================================== */
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 16px;
+
+        }
+
+
+        .field {
+
+            min-width: 0;
+
+        }
+
+
+        .field.full {
+
+            grid-column:
+                1 / -1;
+
+        }
+
+
+        .field-label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: var(--green);
+
+            font-size: 9px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: .07em;
+
+        }
+
+
+        .input-wrap {
+
+            position: relative;
+
+        }
+
+
+        .input {
+
+            width: 100%;
+
+            height: 44px;
+
+            padding:
+                0 12px;
+
+            outline: none;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: var(--text);
+
+            font-size: 10px;
+
+            transition: .2s ease;
+
+        }
+
+
+        .input:focus {
+
+            border-color:
+                var(--green);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(15,61,58,.07);
+
+        }
+
+
+        .input:disabled {
+
+            background:
+                #f6f2ee;
+
+            color:
+                #817772;
+
+            cursor:
+                not-allowed;
+
+        }
+
+
+        .field-hint {
+
+            margin-top: 6px;
+
+            color: var(--muted);
+
+            font-size: 8px;
+
+            line-height: 1.5;
+
+        }
+
+
+        .form-actions {
+
+            margin-top: 20px;
+
+            padding-top: 17px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: flex-end;
+
+            gap: 8px;
+
+            border-top:
+                1px solid var(--border);
+
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ====================================================== */
+
+        .btn {
+
+            min-height: 41px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            padding:
+                0 14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: var(--green);
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            transition: .2s ease;
+
+        }
+
+
+        .btn:hover {
+
+            transform:
+                translateY(-1px);
+
+            border-color:
+                var(--green);
+
+        }
+
+
+        .btn-primary {
+
+            border-color:
+                var(--green);
+
+            background:
+                var(--green);
+
+            color: white;
+
+            box-shadow:
+                0 8px 20px
+                rgba(15,61,58,.13);
+
+        }
+
+
+        .btn-primary:hover {
+
+            border-color:
+                var(--green-dark);
+
+            background:
+                var(--green-dark);
+
+        }
+
+
+        .btn-danger {
+
+            border-color:
+                var(--bordo);
+
+            background:
+                var(--bordo);
+
+            color: white;
+
+        }
+
+
+        .btn-danger:hover {
+
+            border-color:
+                var(--bordo-dark);
+
+            background:
+                var(--bordo-dark);
+
+        }
+
+
+        .btn:disabled {
+
+            opacity: .55;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+        }
+
+
+        /* =====================================================
+           SECURITY CARDS
+        ====================================================== */
+
+        .security-list {
+
+            display: grid;
+
+            gap: 10px;
+
+        }
+
+
+        .security-row {
+
+            min-height: 61px;
+
+            padding: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 12px;
+
+            background:
+                #fffdfb;
+
+        }
+
+
+        .security-icon {
+
+            width: 36px;
+            height: 36px;
+
+            flex: 0 0 auto;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 10px;
+
+            background:
+                var(--surface-soft);
+
+            color:
+                var(--green);
+
+            font-size: 14px;
+
+        }
+
+
+        .security-copy {
+
+            min-width: 0;
+
+            flex: 1;
+
+        }
+
+
+        .security-copy strong {
+
+            display: block;
+
+            color: var(--green);
+
+            font-size: 10px;
+
+        }
+
+
+        .security-copy span {
+
+            display: block;
+
+            margin-top: 3px;
+
+            color: var(--muted);
+
+            font-size: 8px;
+
+            line-height: 1.4;
+
+        }
+
+
+        .security-status {
+
+            flex: 0 0 auto;
+
+            color:
+                var(--success);
+
+            font-size: 8px;
+
+            font-weight: 850;
+
+        }
+
+
+        /* =====================================================
+           ACCOUNT INFO
+        ====================================================== */
+
+        .info-list {
+
+            display: grid;
+
+            gap: 0;
+
+        }
+
+
+        .info-row {
+
+            padding:
+                12px 0;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            border-bottom:
+                1px solid #f0e9e4;
+
+        }
+
+
+        .info-row:last-child {
+
+            border-bottom: 0;
+
+        }
+
+
+        .info-label {
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+        }
+
+
+        .info-value {
+
+            max-width: 60%;
+
+            text-align: right;
+
+            color: var(--text);
+
+            font-size: 9px;
+
+            font-weight: 750;
+
+            overflow-wrap: anywhere;
+
+        }
+
+
+        .mono {
+
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Monaco,
+                Consolas,
+                monospace;
+
+            font-size: 8px;
+
+        }
+
+
+        /* =====================================================
+           PASSWORD
+        ====================================================== */
+
+        .password-box {
+
+            padding: 15px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 13px;
+
+            background:
+                #fffdfb;
+
+        }
+
+
+        .password-box h3 {
+
+            color: var(--green);
+
+            font-size: 11px;
+
+        }
+
+
+        .password-box p {
+
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 8px;
+
+            line-height: 1.55;
+
+        }
+
+
+        .password-actions {
+
+            margin-top: 12px;
+
+        }
+
+
+        /* =====================================================
+           NOTICE
+        ====================================================== */
+
+        .notice {
+
+            padding: 12px 13px;
+
+            border-radius: 11px;
+
+            background:
+                var(--surface-soft);
+
+            color: var(--muted);
+
+            font-size: 8px;
+
+            line-height: 1.6;
+
+        }
+
+
+        .notice strong {
+
+            color: var(--green);
+
+        }
+
+
+        /* =====================================================
+           LOADING / ERROR
+        ====================================================== */
+
+        .page-state {
+
+            padding: 75px 25px;
+
+            text-align: center;
+
+        }
+
+
+        .spinner {
+
+            width: 30px;
+            height: 30px;
+
+            margin:
+                0 auto 13px;
+
+            border:
+                3px solid #eadbd0;
+
+            border-top-color:
+                var(--bordo);
+
+            border-radius: 50%;
+
+            animation:
+                spin .8s linear infinite;
+
+        }
+
+
+        @keyframes spin {
+
+            to {
+                transform:
+                    rotate(360deg);
+            }
+
+        }
+
+
+        .page-state strong {
+
+            display: block;
+
+            color: var(--green);
+
+            font-size: 13px;
+
+        }
+
+
+        .page-state p {
+
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+        }
+
+
+        .error-state {
+
+            display: none;
+
+            padding: 65px 25px;
+
+            text-align: center;
+
+        }
+
+
+        .error-icon {
+
+            width: 56px;
+            height: 56px;
+
+            margin:
+                0 auto 13px;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 16px;
+
+            background:
+                var(--danger-bg);
+
+            color:
+                var(--danger);
+
+            font-size: 20px;
+
+            font-weight: 900;
+
+        }
+
+
+        .error-state strong {
+
+            display: block;
+
+            color: var(--green);
+
+            font-size: 14px;
+
+        }
+
+
+        .error-state p {
+
+            max-width: 500px;
+
+            margin:
+                6px auto 16px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* =====================================================
+           TOAST
+        ====================================================== */
+
+        .toast-container {
+
+            position: fixed;
+
+            right: 20px;
+
+            bottom: 20px;
+
+            z-index: 5000;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 8px;
+
+            width:
+                min(380px, calc(100vw - 30px));
+
+        }
+
+
+        .toast {
+
+            padding:
+                12px 14px;
+
+            border-radius: 12px;
+
+            background:
+                var(--green);
+
+            color: white;
+
+            box-shadow:
+                0 15px 35px
+                rgba(0,0,0,.18);
+
+            font-size: 9px;
+
+            line-height: 1.5;
+
+            animation:
+                toastIn .2s ease;
+
+        }
+
+
+        .toast.error {
+
+            background:
+                var(--bordo);
+
+        }
+
+
+        @keyframes toastIn {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(8px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+
+            }
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 1000px) {
+
+            .settings-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+        }
+
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+
+                transform:
+                    translateX(-100%);
+
+            }
+
+
+            .sidebar.open {
+
+                transform:
+                    translateX(0);
+
+            }
+
+
+            .main {
+
+                width: 100%;
+
+                margin-left: 0;
+
+            }
+
+
+            .mobile-menu {
+
+                display: grid;
+
+                place-items: center;
+
+            }
+
+
+            .topbar {
+
+                height: 64px;
+
+                padding:
+                    0 16px;
+
+            }
+
+
+            .content {
+
+                padding:
+                    22px 15px 32px;
+
+            }
+
+
+            .top-user-name {
+
+                display: none;
+
+            }
+
+        }
+
+
+        @media (max-width: 620px) {
+
+            .form-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .field.full {
+
+                grid-column:
+                    auto;
+
+            }
+
+
+            .profile-hero {
+
+                align-items: flex-start;
+
+            }
+
+
+            .form-actions {
+
+                flex-direction: column-reverse;
+
+                align-items: stretch;
+
+            }
+
+
+            .form-actions .btn {
+
+                width: 100%;
+
+            }
+
+
+            .info-row {
+
+                flex-direction: column;
+
+                gap: 5px;
+
+            }
+
+
+            .info-value {
+
+                max-width: none;
+
+                text-align: left;
+
+            }
+
+
+            .security-row {
+
+                align-items: flex-start;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-  <div class="app">
 
-    <!-- =========================
-         SIDEBAR
-    ========================== -->
+<!-- ============================================================
+     SIDEBAR
+============================================================ -->
 
-    <aside class="sidebar" id="sidebar">
+<aside
+    class="sidebar"
+    id="sidebar"
+>
 
-      <div class="brand">
-        <div class="brand-name">K-Tickets</div>
-        <div class="brand-sub">Merchant CMS</div>
-      </div>
+    <div class="brand">
 
-      <div class="merchant-label">
-        Merchant Workspace
-      </div>
-
-      <nav class="nav">
-
-        <a href="dashboard.html">
-          <span class="nav-icon">⌂</span>
-          <span>Dashboard</span>
-        </a>
-
-        <a href="events.html">
-          <span class="nav-icon">◫</span>
-          <span>My Events</span>
-        </a>
-
-        <a href="create-event.html">
-          <span class="nav-icon">＋</span>
-          <span>Create Event</span>
-        </a>
-
-        <a href="tickets.html">
-          <span class="nav-icon">▣</span>
-          <span>Tickets</span>
-        </a>
-
-        <a href="promotions.html">
-          <span class="nav-icon">%</span>
-          <span>Promotions</span>
-        </a>
-
-        <a href="sales.html">
-          <span class="nav-icon">◈</span>
-          <span>Sales</span>
-        </a>
-
-        <a href="withdrawals.html">
-          <span class="nav-icon">↗</span>
-          <span>Withdrawals</span>
-        </a>
-
-        <a href="settings.html" class="active">
-          <span class="nav-icon">⚙</span>
-          <span>Settings</span>
-        </a>
-
-      </nav>
-
-      <div class="sidebar-bottom">
-
-        <div class="merchant-mini">
-
-          <div class="mini-avatar" id="sidebarAvatar">
-            —
-          </div>
-
-          <div class="mini-info">
-            <div class="mini-name" id="sidebarName">
-              Loading...
-            </div>
-
-            <div class="mini-role">
-              Merchant
-            </div>
-          </div>
-
+        <div class="brand-mark">
+            K
         </div>
 
-        <button
-          class="nav"
-          id="signOutBtn"
-          style="display:flex;"
-        >
-          <span class="nav-icon">↪</span>
-          <span>Sign Out</span>
-        </button>
+        <div class="brand-copy">
 
-      </div>
+            <strong>
+                K-TICKETS
+            </strong>
 
-    </aside>
-
-
-    <!-- =========================
-         MAIN
-    ========================== -->
-
-    <main class="main">
-
-      <header class="topbar">
-
-        <div class="topbar-left">
-
-          <button
-            class="mobile-menu"
-            id="mobileMenuBtn"
-            aria-label="Open menu"
-          >
-            ☰
-          </button>
-
-          <span class="topbar-title">
-            Merchant CMS / Settings
-          </span>
-
-        </div>
-
-        <div class="topbar-right">
-
-          <button
-            class="icon-button"
-            id="refreshBtn"
-            title="Refresh"
-          >
-            ↻
-          </button>
-
-          <button
-            class="icon-button"
-            id="notificationBtn"
-            title="Notifications"
-          >
-            ♢
-            <span
-              class="notification-dot hidden"
-              id="notificationBadge"
-            >
-              0
+            <span>
+                Merchant CMS
             </span>
-          </button>
-
-          <a
-            href="settings.html"
-            class="top-avatar"
-            id="topAvatar"
-          >
-            —
-          </a>
 
         </div>
-
-      </header>
-
-
-      <section class="content">
-
-        <!-- PAGE HEADER -->
-
-        <div class="page-header">
-
-          <div>
-
-            <div class="eyebrow">
-              Merchant Account
-            </div>
-
-            <h1>Settings</h1>
-
-            <p class="page-description">
-              Manage your merchant profile, payout configuration,
-              security preferences and account settings.
-            </p>
-
-          </div>
-
-          <div class="header-actions">
-
-            <button
-              class="btn"
-              id="refreshMainBtn"
-            >
-              ↻ Refresh
-            </button>
-
-            <button
-              class="btn btn-primary"
-              id="saveHeaderBtn"
-            >
-              Save Changes
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- SETTINGS -->
-
-        <div class="settings-layout">
-
-          <!-- SETTINGS NAV -->
-
-          <aside class="panel settings-nav">
-
-            <button
-              class="active"
-              data-section="profileSection"
-            >
-              <span class="settings-nav-icon">◎</span>
-              Profile
-            </button>
-
-            <button
-              data-section="businessSection"
-            >
-              <span class="settings-nav-icon">▤</span>
-              Business
-            </button>
-
-            <button
-              data-section="payoutSection"
-            >
-              <span class="settings-nav-icon">↗</span>
-              Payouts
-            </button>
-
-            <button
-              data-section="notificationsSection"
-            >
-              <span class="settings-nav-icon">♢</span>
-              Notifications
-            </button>
-
-            <button
-              data-section="securitySection"
-            >
-              <span class="settings-nav-icon">◇</span>
-              Security
-            </button>
-
-          </aside>
-
-
-          <!-- SETTINGS CONTENT -->
-
-          <div class="settings-content">
-
-
-            <!-- =========================
-                 PROFILE
-            ========================== -->
-
-            <section
-              class="settings-section active"
-              id="profileSection"
-            >
-
-              <div class="panel">
-
-                <div class="panel-header">
-
-                  <div class="panel-title">
-                    Profile
-                  </div>
-
-                  <div class="panel-description">
-                    Your personal merchant account information.
-                  </div>
-
-                </div>
-
-                <div class="panel-body">
-
-                  <div class="profile-hero">
-
-                    <div
-                      class="large-avatar"
-                      id="largeAvatar"
-                    >
-                      —
-                    </div>
-
-                    <div class="profile-info">
-
-                      <div
-                        class="profile-name"
-                        id="profileDisplayName"
-                      >
-                        Loading...
-                      </div>
-
-                      <div
-                        class="profile-email"
-                        id="profileDisplayEmail"
-                      >
-                        —
-                      </div>
-
-                      <div class="role-pill">
-                        Merchant Account
-                      </div>
-
-                    </div>
-
-                  </div>
-
-
-                  <form id="profileForm">
-
-                    <div class="form-grid">
-
-                      <div class="form-group">
-
-                        <label for="fullName">
-                          Full Name
-                        </label>
-
-                        <input
-                          class="form-control"
-                          id="fullName"
-                          type="text"
-                          autocomplete="name"
-                          required
-                        >
-
-                      </div>
-
-
-                      <div class="form-group">
-
-                        <label for="phone">
-                          Phone
-                        </label>
-
-                        <input
-                          class="form-control"
-                          id="phone"
-                          type="tel"
-                          autocomplete="tel"
-                        >
-
-                      </div>
-
-
-                      <div class="form-group full">
-
-                        <label for="email">
-                          Email Address
-                        </label>
-
-                        <input
-                          class="form-control"
-                          id="email"
-                          type="email"
-                          disabled
-                        >
-
-                        <div class="helper">
-                          Your authentication email is managed by
-                          Supabase Auth.
-                        </div>
-
-                      </div>
-
-                    </div>
-
-
-                    <div class="form-footer">
-
-                      <button
-                        type="button"
-                        class="btn"
-                        id="resetProfileBtn"
-                      >
-                        Reset
-                      </button>
-
-                      <button
-                        type="submit"
-                        class="btn btn-primary"
-                        id="saveProfileBtn"
-                      >
-                        Save Profile
-                      </button>
-
-                    </div>
-
-                  </form>
-
-                </div>
-
-              </div>
-
-            </section>
-
-
-            <!-- =========================
-                 BUSINESS
-            ========================== -->
-
-            <section
-              class="settings-section"
-              id="businessSection"
-            >
-
-              <div class="panel">
-
-                <div class="panel-header">
-
-                  <div class="panel-title">
-                    Business Information
-                  </div>
-
-                  <div class="panel-description">
-                    Business information used across your merchant
-                    account and event operations.
-                  </div>
-
-                </div>
-
-                <div class="panel-body">
-
-                  <form id="businessForm">
-
-                    <div class="form-grid">
-
-                      <div class="form-group">
-
-                        <label for="businessName">
-                          Business Name
-                        </label>
-
-                        <input
-                          class="form-control"
-                          id="businessName"
-                          type="text"
-                          autocomplete="organization"
-                        >
-
-                      </div>
-
-
-                      <div class="form-group">
-
-                        <label for="businessPhone">
-                          Business Phone
-                        </label>
-
-                        <input
-                          class="form-control"
-                          id="businessPhone"
-                          type="tel"
-                          autocomplete="tel"
-                        >
-
-                      </div>
-
-
-                      <div class="form-group">
-
-                        <label for="businessEmail">
-                          Business Email
-                        </label>
-
-                        <input
-                          class="form-control"
-                          id="businessEmail"
-                          type="email"
-                          autocomplete="email"
-                        >
-
-                      </div>
-
-
-                      <div class="form-group">
-
-                        <label for="businessWebsite">
-                          Website
-                        </label>
-
-                        <input
-                          class="form-control"
-                          id="businessWebsite"
-                          type="url"
-                          placeholder="https://"
-                          autocomplete="url"
-                        >
-
-                      </div>
-
-
-                      <div class="form-group full">
-
-                        <label for="businessAddress">
-                          Business Address
-                        </label>
-
-                        <textarea
-                          class="form-control"
-                          id="businessAddress"
-                        ></textarea>
-
-                      </div>
-
-
-                      <div class="form-group">
-
-                        <label for="businessCity">
-                          City
-                        </label>
-
-                        <input
-                          class="form-control"
-                          id="businessCity"
-                          type="text"
-                          autocomplete="address-level2"
-                        >
-
-                      </div>
-
-
-                      <div class="form-group">
-
-                        <label for="businessCountry">
-                          Country
-                        </label>
-
-                        <input
-                          class="form-control"
-                          id="businessCountry"
-                          type="text"
-                          autocomplete="country-name"
-                        >
-
-                      </div>
-
-                    </div>
-
-
-                    <div class="form-footer">
-
-                      <button
-                        type="submit"
-                        class="btn btn-primary"
-                        id="saveBusinessBtn"
-                      >
-                        Save Business Information
-                      </button>
-
-                    </div>
-
-                  </form>
-
-                </div>
-
-              </div>
-
-            </section>
-
-
-            <!-- =========================
-                 PAYOUTS
-            ========================== -->
-
-            <section
-              class="settings-section"
-              id="payoutSection"
-            >
-
-              <div class="panel">
-
-                <div class="panel-header">
-
-                  <div class="panel-title">
-                    Payout Methods
-                  </div>
-
-                  <div class="panel-description">
-                    Review the payout destinations configured for
-                    your merchant account.
-                  </div>
-
-                </div>
-
-                <div class="panel-body">
-
-                  <div
-                    class="method-list"
-                    id="payoutMethodsList"
-                  >
-
-                    <div class="loading-text">
-                      Loading payout methods...
-                    </div>
-
-                  </div>
-
-                  <div
-                    class="helper"
-                    style="margin-top:14px;"
-                  >
-                    Payout account details are controlled by your
-                    merchant settlement configuration. This page
-                    does not invent or pre-fill payout information.
-                  </div>
-
-                </div>
-
-              </div>
-
-
-              <div class="panel">
-
-                <div class="panel-header">
-
-                  <div class="panel-title">
-                    Withdrawal Preferences
-                  </div>
-
-                  <div class="panel-description">
-                    Current payout settings available from your
-                    merchant account.
-                  </div>
-
-                </div>
-
-                <div class="panel-body">
-
-                  <div class="form-grid">
-
-                    <div class="form-group">
-
-                      <label for="preferredCurrency">
-                        Settlement Currency
-                      </label>
-
-                      <select
-                        class="form-control"
-                        id="preferredCurrency"
-                      >
-                        <option value="">
-                          Select from account configuration
-                        </option>
-                      </select>
-
-                      <div class="helper">
-                        Available currencies are loaded from
-                        your merchant configuration where supported.
-                      </div>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                      <label for="minimumWithdrawal">
-                        Minimum Withdrawal
-                      </label>
-
-                      <input
-                        class="form-control"
-                        id="minimumWithdrawal"
-                        type="text"
-                        disabled
-                        value="—"
-                      >
-
-                      <div class="helper">
-                        Displayed from platform configuration when
-                        available.
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </section>
-
-
-            <!-- =========================
-                 NOTIFICATIONS
-            ========================== -->
-
-            <section
-              class="settings-section"
-              id="notificationsSection"
-            >
-
-              <div class="panel">
-
-                <div class="panel-header">
-
-                  <div class="panel-title">
-                    Notifications
-                  </div>
-
-                  <div class="panel-description">
-                    Control which merchant account notifications
-                    you receive when supported by the platform.
-                  </div>
-
-                </div>
-
-                <div class="panel-body">
-
-                  <div class="security-item">
-
-                    <div>
-
-                      <div class="security-title">
-                        Order Notifications
-                      </div>
-
-                      <div class="security-description">
-                        Receive notifications when a ticket order
-                        related to your events changes state.
-                      </div>
-
-                    </div>
-
-                    <label class="toggle">
-                      <input
-                        type="checkbox"
-                        id="notifyOrders"
-                        checked
-                      >
-                      <span class="toggle-track"></span>
-                    </label>
-
-                  </div>
-
-
-                  <div class="security-item">
-
-                    <div>
-
-                      <div class="security-title">
-                        Payment Notifications
-                      </div>
-
-                      <div class="security-description">
-                        Receive notifications about payment
-                        confirmation and payment status changes.
-                      </div>
-
-                    </div>
-
-                    <label class="toggle">
-                      <input
-                        type="checkbox"
-                        id="notifyPayments"
-                        checked
-                      >
-                      <span class="toggle-track"></span>
-                    </label>
-
-                  </div>
-
-
-                  <div class="security-item">
-
-                    <div>
-
-                      <div class="security-title">
-                        Withdrawal Notifications
-                      </div>
-
-                      <div class="security-description">
-                        Receive updates when withdrawal requests
-                        are reviewed, processed or completed.
-                      </div>
-
-                    </div>
-
-                    <label class="toggle">
-                      <input
-                        type="checkbox"
-                        id="notifyWithdrawals"
-                        checked
-                      >
-                      <span class="toggle-track"></span>
-                    </label>
-
-                  </div>
-
-
-                  <div class="security-item">
-
-                    <div>
-
-                      <div class="security-title">
-                        Event Notifications
-                      </div>
-
-                      <div class="security-description">
-                        Receive operational updates related to
-                        your events and ticket inventory.
-                      </div>
-
-                    </div>
-
-                    <label class="toggle">
-                      <input
-                        type="checkbox"
-                        id="notifyEvents"
-                        checked
-                      >
-                      <span class="toggle-track"></span>
-                    </label>
-
-                  </div>
-
-
-                  <div class="form-footer">
-
-                    <button
-                      class="btn btn-primary"
-                      id="saveNotificationsBtn"
-                      type="button"
-                    >
-                      Save Notification Preferences
-                    </button>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </section>
-
-
-            <!-- =========================
-                 SECURITY
-            ========================== -->
-
-            <section
-              class="settings-section"
-              id="securitySection"
-            >
-
-              <div class="panel">
-
-                <div class="panel-header">
-
-                  <div class="panel-title">
-                    Security
-                  </div>
-
-                  <div class="panel-description">
-                    Manage authentication and account security.
-                  </div>
-
-                </div>
-
-                <div class="panel-body">
-
-                  <div class="security-item">
-
-                    <div>
-
-                      <div class="security-title">
-                        Email Address
-                      </div>
-
-                      <div
-                        class="security-description"
-                        id="securityEmail"
-                      >
-                        —
-                      </div>
-
-                    </div>
-
-                    <span class="method-status active">
-                      Authenticated
-                    </span>
-
-                  </div>
-
-
-                  <div class="security-item">
-
-                    <div>
-
-                      <div class="security-title">
-                        Change Password
-                      </div>
-
-                      <div class="security-description">
-                        Request a password reset through the
-                        authenticated Supabase account.
-                      </div>
-
-                    </div>
-
-                    <button
-                      class="btn btn-green"
-                      id="changePasswordBtn"
-                      type="button"
-                    >
-                      Change Password
-                    </button>
-
-                  </div>
-
-
-                  <div class="security-item">
-
-                    <div>
-
-                      <div class="security-title">
-                        Sign Out
-                      </div>
-
-                      <div class="security-description">
-                        End the current merchant session on this
-                        device.
-                      </div>
-
-                    </div>
-
-                    <button
-                      class="btn btn-danger"
-                      id="securitySignOutBtn"
-                      type="button"
-                    >
-                      Sign Out
-                    </button>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-
-              <div class="panel danger-panel">
-
-                <div class="panel-header">
-
-                  <div class="panel-title">
-                    Account Actions
-                  </div>
-
-                  <div class="panel-description">
-                    Sensitive account actions should be handled
-                    through platform support and verified
-                    procedures.
-                  </div>
-
-                </div>
-
-                <div class="panel-body">
-
-                  <div class="security-item">
-
-                    <div>
-
-                      <div class="security-title">
-                        Request Account Closure
-                      </div>
-
-                      <div class="security-description">
-                        Account closure should not be performed
-                        directly from the browser. Contact platform
-                        support so outstanding orders, tickets and
-                        settlements can be reviewed first.
-                      </div>
-
-                    </div>
-
-                    <button
-                      class="btn btn-danger"
-                      id="accountClosureBtn"
-                      type="button"
-                    >
-                      Contact Support
-                    </button>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </section>
-
-          </div>
-
-        </div>
-
-      </section>
-
-    </main>
-
-  </div>
-
-
-  <!-- =========================
-       LOADING
-  ========================== -->
-
-  <div
-    class="loading-overlay"
-    id="loadingOverlay"
-  >
-
-    <div class="loading-box">
-
-      <div class="spinner"></div>
-
-      <div class="loading-text">
-        Loading merchant settings...
-      </div>
 
     </div>
 
-  </div>
 
+    <nav class="nav">
 
-  <!-- =========================
-       TOAST
-  ========================== -->
+        <div class="nav-label">
+            Workspace
+        </div>
 
-  <div
-    class="toast"
-    id="toast"
-  ></div>
 
+        <a href="./dashboard.html">
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
 
-  <script>
-    /* =========================================================
-       K-TICKETS MERCHANT SETTINGS
-       Supabase-driven
-    ========================================================== */
 
-    const SUPABASE_URL =
-      window.KTICKETS_SUPABASE_URL || "";
+        <a href="./events.html">
+            <span class="nav-icon">◫</span>
+            <span>My Events</span>
+        </a>
 
-    const SUPABASE_ANON_KEY =
-      window.KTICKETS_SUPABASE_ANON_KEY || "";
 
-    let supabaseClient = null;
+        <a href="./create-event.html">
+            <span class="nav-icon">＋</span>
+            <span>Create Event</span>
+        </a>
 
-    if (
-      SUPABASE_URL &&
-      SUPABASE_ANON_KEY
-    ) {
-      supabaseClient =
-        window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_ANON_KEY
-        );
-    }
 
+        <a href="./tickets.html">
+            <span class="nav-icon">▣</span>
+            <span>Tickets</span>
+        </a>
 
-    /* =========================================================
-       STATE
-    ========================================================== */
 
-    let currentUser = null;
-    let currentProfile = null;
+        <a href="./attendees.html">
+            <span class="nav-icon">♙</span>
+            <span>Attendees</span>
+        </a>
 
-    let originalProfile = null;
-    let businessData = null;
-    let payoutMethods = [];
 
-    let settingsTableName = null;
-    let merchantSettings = null;
+        <a href="./scan.html">
+            <span class="nav-icon">⌁</span>
+            <span>Scan Tickets</span>
+        </a>
 
 
-    const POSSIBLE_SETTINGS_TABLES = [
-      "merchant_settings",
-      "business_settings",
-      "merchant_profiles"
-    ];
+        <a href="./gate-staff.html">
+            <span class="nav-icon">♟</span>
+            <span>Gate Staff</span>
+        </a>
 
-    const POSSIBLE_PAYOUT_TABLES = [
-      "merchant_payout_methods",
-      "payout_methods"
-    ];
 
+        <a href="./promotions.html">
+            <span class="nav-icon">%</span>
+            <span>Promotions</span>
+        </a>
 
-    /* =========================================================
-       ELEMENTS
-    ========================================================== */
 
-    const sidebar =
-      document.getElementById("sidebar");
+        <a href="./sales.html">
+            <span class="nav-icon">▤</span>
+            <span>Sales</span>
+        </a>
 
-    const mobileMenuBtn =
-      document.getElementById("mobileMenuBtn");
 
-    const loadingOverlay =
-      document.getElementById("loadingOverlay");
+        <a href="./earnings.html">
+            <span class="nav-icon">◈</span>
+            <span>Earnings</span>
+        </a>
 
-    const toast =
-      document.getElementById("toast");
 
-    const sidebarName =
-      document.getElementById("sidebarName");
+        <a href="./withdrawals.html">
+            <span class="nav-icon">↗</span>
+            <span>Withdrawals</span>
+        </a>
 
-    const sidebarAvatar =
-      document.getElementById("sidebarAvatar");
 
-    const topAvatar =
-      document.getElementById("topAvatar");
+        <div
+            class="nav-label"
+            style="margin-top:12px;"
+        >
+            Account
+        </div>
 
-    const largeAvatar =
-      document.getElementById("largeAvatar");
 
-    const profileDisplayName =
-      document.getElementById("profileDisplayName");
+        <a href="./profile.html">
+            <span class="nav-icon">♙</span>
+            <span>Profile</span>
+        </a>
 
-    const profileDisplayEmail =
-      document.getElementById("profileDisplayEmail");
 
-    const securityEmail =
-      document.getElementById("securityEmail");
+        <a
+            href="./settings.html"
+            class="active"
+        >
+            <span class="nav-icon">⚙</span>
+            <span>Settings</span>
+        </a>
 
-    const notificationBadge =
-      document.getElementById("notificationBadge");
+    </nav>
 
-    const profileForm =
-      document.getElementById("profileForm");
 
-    const businessForm =
-      document.getElementById("businessForm");
+    <div class="sidebar-footer">
 
-    const payoutMethodsList =
-      document.getElementById("payoutMethodsList");
+        <div class="merchant-mini">
 
-
-    /* =========================================================
-       HELPERS
-    ========================================================== */
-
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-
-    function initials(name) {
-
-      if (!name) {
-        return "—";
-      }
-
-      const parts =
-        String(name)
-          .trim()
-          .split(/\s+/)
-          .filter(Boolean);
-
-      if (!parts.length) {
-        return "—";
-      }
-
-      if (parts.length === 1) {
-        return parts[0]
-          .slice(0, 2)
-          .toUpperCase();
-      }
-
-      return (
-        parts[0][0] +
-        parts[parts.length - 1][0]
-      ).toUpperCase();
-    }
-
-
-    function toastMessage(
-      message,
-      isError = false
-    ) {
-
-      toast.textContent = message;
-
-      toast.classList.toggle(
-        "error",
-        isError
-      );
-
-      toast.classList.add("show");
-
-      clearTimeout(
-        window.__ktToastTimer
-      );
-
-      window.__ktToastTimer =
-        setTimeout(() => {
-          toast.classList.remove("show");
-        }, 3500);
-    }
-
-
-    function showLoading() {
-      loadingOverlay.classList.remove(
-        "hidden"
-      );
-    }
-
-
-    function hideLoading() {
-      loadingOverlay.classList.add(
-        "hidden"
-      );
-    }
-
-
-    function formatError(error) {
-
-      return (
-        error?.message ||
-        error?.details ||
-        error?.hint ||
-        "Something went wrong."
-      );
-    }
-
-
-    function closeSidebar() {
-      sidebar.classList.remove("open");
-    }
-
-
-    /* =========================================================
-       AUTHENTICATION
-    ========================================================== */
-
-    async function requireMerchant() {
-
-      if (!supabaseClient) {
-
-        hideLoading();
-
-        toastMessage(
-          "Supabase is not configured on this page.",
-          true
-        );
-
-        return false;
-      }
-
-      const {
-        data: {
-          user
-        },
-        error
-      } =
-        await supabaseClient.auth.getUser();
-
-      if (
-        error ||
-        !user
-      ) {
-
-        window.location.href =
-          "../auth/login.html";
-
-        return false;
-      }
-
-      currentUser = user;
-
-
-      const {
-        data: profile,
-        error: profileError
-      } =
-        await supabaseClient
-          .from("profiles")
-          .select(
-            "id, full_name, phone, role"
-          )
-          .eq("id", user.id)
-          .maybeSingle();
-
-
-      if (profileError) {
-
-        console.error(
-          profileError
-        );
-
-        hideLoading();
-
-        toastMessage(
-          "Unable to load your merchant profile.",
-          true
-        );
-
-        return false;
-      }
-
-
-      if (
-        !profile ||
-        profile.role !== "merchant"
-      ) {
-
-        hideLoading();
-
-        toastMessage(
-          "This page is available to merchant accounts only.",
-          true
-        );
-
-        setTimeout(() => {
-
-          window.location.href =
-            "../index.html";
-
-        }, 1200);
-
-        return false;
-      }
-
-
-      currentProfile =
-        profile;
-
-      originalProfile =
-        JSON.parse(
-          JSON.stringify(profile)
-        );
-
-
-      renderProfile();
-
-      return true;
-    }
-
-
-    /* =========================================================
-       PROFILE
-    ========================================================== */
-
-    function renderProfile() {
-
-      const name =
-        currentProfile?.full_name ||
-        currentUser?.user_metadata?.full_name ||
-        currentUser?.email ||
-        "Merchant";
-
-      const email =
-        currentUser?.email ||
-        "—";
-
-      const avatar =
-        initials(name);
-
-
-      sidebarName.textContent =
-        name;
-
-      sidebarAvatar.textContent =
-        avatar;
-
-      topAvatar.textContent =
-        avatar;
-
-      largeAvatar.textContent =
-        avatar;
-
-      profileDisplayName.textContent =
-        name;
-
-      profileDisplayEmail.textContent =
-        email;
-
-      securityEmail.textContent =
-        email;
-
-
-      document.getElementById(
-        "fullName"
-      ).value =
-        currentProfile?.full_name || "";
-
-      document.getElementById(
-        "phone"
-      ).value =
-        currentProfile?.phone || "";
-
-      document.getElementById(
-        "email"
-      ).value =
-        email;
-    }
-
-
-    /* =========================================================
-       NOTIFICATIONS
-    ========================================================== */
-
-    async function loadNotifications() {
-
-      if (
-        !supabaseClient ||
-        !currentUser
-      ) {
-        return;
-      }
-
-      try {
-
-        const {
-          count,
-          error
-        } =
-          await supabaseClient
-            .from("notifications")
-            .select(
-              "id",
-              {
-                count: "exact",
-                head: true
-              }
-            )
-            .eq(
-              "user_id",
-              currentUser.id
-            )
-            .eq(
-              "is_read",
-              false
-            );
-
-
-        if (error) {
-
-          console.warn(
-            "Notification count unavailable:",
-            error.message
-          );
-
-          notificationBadge.classList.add(
-            "hidden"
-          );
-
-          return;
-        }
-
-
-        const total =
-          Number(count || 0);
-
-
-        if (total > 0) {
-
-          notificationBadge.textContent =
-            total > 99
-              ? "99+"
-              : total;
-
-          notificationBadge.classList.remove(
-            "hidden"
-          );
-
-        } else {
-
-          notificationBadge.classList.add(
-            "hidden"
-          );
-
-        }
-
-      } catch (error) {
-
-        console.warn(error);
-
-      }
-    }
-
-
-    /* =========================================================
-       SETTINGS TABLE DISCOVERY
-    ========================================================== */
-
-    async function findSettingsTable() {
-
-      if (
-        !supabaseClient ||
-        !currentUser
-      ) {
-        return null;
-      }
-
-
-      for (
-        const tableName
-        of POSSIBLE_SETTINGS_TABLES
-      ) {
-
-        try {
-
-          const {
-            data,
-            error
-          } =
-            await supabaseClient
-              .from(tableName)
-              .select("*")
-              .eq(
-                "merchant_id",
-                currentUser.id
-              )
-              .limit(1);
-
-
-          if (!error) {
-            return tableName;
-          }
-
-        } catch (error) {
-
-          console.warn(
-            `Unable to inspect ${tableName}`,
-            error
-          );
-
-        }
-      }
-
-
-      return null;
-    }
-
-
-    /* =========================================================
-       LOAD MERCHANT SETTINGS
-    ========================================================== */
-
-    async function loadMerchantSettings() {
-
-      settingsTableName =
-        await findSettingsTable();
-
-
-      if (!settingsTableName) {
-
-        merchantSettings = null;
-        businessData = null;
-
-        renderBusinessForm();
-
-        return;
-      }
-
-
-      try {
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient
-            .from(settingsTableName)
-            .select("*")
-            .eq(
-              "merchant_id",
-              currentUser.id
-            )
-            .limit(1)
-            .maybeSingle();
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        merchantSettings =
-          data || null;
-
-        businessData =
-          data || null;
-
-        renderBusinessForm();
-
-      } catch (error) {
-
-        console.error(error);
-
-        toastMessage(
-          "Unable to load business settings: " +
-          formatError(error),
-          true
-        );
-
-      }
-    }
-
-
-    /* =========================================================
-       BUSINESS FORM
-    ========================================================== */
-
-    function firstAvailable(
-      object,
-      fields
-    ) {
-
-      for (
-        const field
-        of fields
-      ) {
-
-        if (
-          object &&
-          object[field] !== null &&
-          object[field] !== undefined
-        ) {
-          return object[field];
-        }
-      }
-
-      return "";
-    }
-
-
-    function renderBusinessForm() {
-
-      const data =
-        businessData || {};
-
-
-      document.getElementById(
-        "businessName"
-      ).value =
-        firstAvailable(
-          data,
-          [
-            "business_name",
-            "company_name",
-            "merchant_name",
-            "name"
-          ]
-        );
-
-
-      document.getElementById(
-        "businessPhone"
-      ).value =
-        firstAvailable(
-          data,
-          [
-            "business_phone",
-            "phone",
-            "contact_phone"
-          ]
-        );
-
-
-      document.getElementById(
-        "businessEmail"
-      ).value =
-        firstAvailable(
-          data,
-          [
-            "business_email",
-            "email",
-            "contact_email"
-          ]
-        );
-
-
-      document.getElementById(
-        "businessWebsite"
-      ).value =
-        firstAvailable(
-          data,
-          [
-            "website",
-            "website_url"
-          ]
-        );
-
-
-      document.getElementById(
-        "businessAddress"
-      ).value =
-        firstAvailable(
-          data,
-          [
-            "business_address",
-            "address"
-          ]
-        );
-
-
-      document.getElementById(
-        "businessCity"
-      ).value =
-        firstAvailable(
-          data,
-          [
-            "city",
-            "business_city"
-          ]
-        );
-
-
-      document.getElementById(
-        "businessCountry"
-      ).value =
-        firstAvailable(
-          data,
-          [
-            "country",
-            "business_country"
-          ]
-        );
-
-
-      loadCurrencyOptions();
-    }
-
-
-    /* =========================================================
-       PAYOUT METHODS
-    ========================================================== */
-
-    async function findPayoutTable() {
-
-      if (
-        !supabaseClient ||
-        !currentUser
-      ) {
-        return null;
-      }
-
-
-      for (
-        const tableName
-        of POSSIBLE_PAYOUT_TABLES
-      ) {
-
-        try {
-
-          const {
-            data,
-            error
-          } =
-            await supabaseClient
-              .from(tableName)
-              .select("*")
-              .eq(
-                "merchant_id",
-                currentUser.id
-              )
-              .limit(1);
-
-
-          if (!error) {
-            return tableName;
-          }
-
-        } catch (error) {
-
-          console.warn(
-            `Unable to inspect ${tableName}`,
-            error
-          );
-
-        }
-      }
-
-
-      return null;
-    }
-
-
-    async function loadPayoutMethods() {
-
-      payoutMethodsList.innerHTML =
-        `
-          <div class="loading-text">
-            Loading payout methods...
-          </div>
-        `;
-
-
-      const tableName =
-        await findPayoutTable();
-
-
-      if (!tableName) {
-
-        payoutMethods = [];
-
-        renderPayoutMethods();
-
-        return;
-      }
-
-
-      try {
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient
-            .from(tableName)
-            .select("*")
-            .eq(
-              "merchant_id",
-              currentUser.id
-            )
-            .order(
-              "created_at",
-              {
-                ascending: false
-              }
-            );
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        payoutMethods =
-          Array.isArray(data)
-            ? data
-            : [];
-
-
-        renderPayoutMethods();
-
-      } catch (error) {
-
-        console.error(error);
-
-        payoutMethods = [];
-
-        payoutMethodsList.innerHTML =
-          `
-            <div class="loading-text">
-              Unable to load payout methods.
-            </div>
-          `;
-
-        toastMessage(
-          "Unable to load payout methods: " +
-          formatError(error),
-          true
-        );
-      }
-    }
-
-
-    function renderPayoutMethods() {
-
-      if (!payoutMethods.length) {
-
-        payoutMethodsList.innerHTML =
-          `
             <div
-              style="
-                padding:28px 18px;
-                border:1px dashed rgba(36,25,22,.16);
-                border-radius:15px;
-                text-align:center;
-                color:var(--muted);
-                font-size:11px;
-              "
+                class="merchant-avatar"
+                id="sidebarAvatar"
             >
-              No payout methods are currently configured
-              for this merchant account.
+                —
             </div>
-          `;
 
-        return;
-      }
+            <div class="merchant-info">
 
+                <strong
+                    id="sidebarName"
+                >
+                    Loading...
+                </strong>
 
-      payoutMethodsList.innerHTML =
-        payoutMethods
-          .map(method => {
+                <span>
+                    Merchant account
+                </span>
 
-            const title =
-              method.name ||
-              method.label ||
-              method.channel ||
-              method.method ||
-              "Payout Method";
+            </div>
 
-            const detail =
-              method.destination ||
-              method.account_reference ||
-              method.account ||
-              method.phone ||
-              method.email ||
-              "Configured payout destination";
+            <button
+                class="signout"
+                id="signOutBtn"
+                type="button"
+                aria-label="Sign out"
+                title="Sign out"
+            >
+                ↪
+            </button>
 
+        </div>
 
-            const enabled =
-              method.is_active !== undefined
-                ? Boolean(method.is_active)
-                : method.enabled !== undefined
-                  ? Boolean(method.enabled)
-                  : true;
+    </div>
+
+</aside>
 
 
-            return `
-              <div class="method-card">
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+></div>
 
-                <div class="method-main">
 
-                  <div class="method-title">
-                    ${escapeHtml(title)}
-                  </div>
+<!-- ============================================================
+     MAIN
+============================================================ -->
 
-                  <div class="method-detail">
-                    ${escapeHtml(detail)}
-                  </div>
+<main class="main">
 
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+                type="button"
+                aria-label="Open navigation"
+            >
+                ☰
+            </button>
+
+            <div class="breadcrumb">
+
+                Merchant /
+
+                <strong>
+                    Settings
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+            <a
+                class="notification-btn"
+                href="../notifications.html"
+                aria-label="Notifications"
+                title="Notifications"
+            >
+
+                ♢
+
+                <span
+                    class="notification-count"
+                    id="notificationCount"
+                >
+                    0
+                </span>
+
+            </a>
+
+
+            <div class="top-user">
+
+                <div
+                    class="top-avatar"
+                    id="topAvatar"
+                >
+                    —
                 </div>
 
                 <span
-                  class="method-status ${
-                    enabled
-                      ? "active"
-                      : "inactive"
-                  }"
+                    class="top-user-name"
+                    id="topUserName"
                 >
-                  ${
-                    enabled
-                      ? "Active"
-                      : "Inactive"
-                  }
+                    Loading...
                 </span>
 
-              </div>
-            `;
+            </div>
 
-          })
-          .join("");
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+
+        <div class="page-header">
+
+            <div class="eyebrow">
+                Merchant Account
+            </div>
+
+            <h1>
+                Settings
+            </h1>
+
+            <p class="page-description">
+                Manage the account information associated with
+                your K-Tickets merchant account and review your
+                account security.
+            </p>
+
+        </div>
+
+
+        <!-- ====================================================
+             LOADING
+        ===================================================== -->
+
+        <div
+            class="panel"
+            id="loadingPanel"
+        >
+
+            <div class="page-state">
+
+                <div class="spinner"></div>
+
+                <strong>
+                    Loading settings
+                </strong>
+
+                <p>
+                    Verifying your merchant account and loading
+                    your profile.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             ERROR
+        ===================================================== -->
+
+        <div
+            class="panel"
+            id="errorPanel"
+            style="display:none;"
+        >
+
+            <div class="error-state" style="display:block;">
+
+                <div class="error-icon">
+                    !
+                </div>
+
+                <strong>
+                    Settings unavailable
+                </strong>
+
+                <p id="errorMessage">
+                    Unable to load your merchant settings.
+                </p>
+
+                <button
+                    class="btn btn-primary"
+                    id="retryBtn"
+                    type="button"
+                >
+                    ↻ Try Again
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             SETTINGS CONTENT
+        ===================================================== -->
+
+        <div
+            id="settingsContent"
+            style="display:none;"
+        >
+
+
+            <div class="settings-grid">
+
+
+                <!-- ============================================
+                     LEFT COLUMN
+                ============================================= -->
+
+                <div>
+
+
+                    <!-- PROFILE -->
+
+                    <section class="panel">
+
+                        <div class="profile-hero">
+
+                            <div
+                                class="profile-avatar"
+                                id="profileAvatar"
+                            >
+                                —
+                            </div>
+
+
+                            <div class="profile-identity">
+
+                                <h2
+                                    id="profileName"
+                                >
+                                    Merchant
+                                </h2>
+
+                                <div
+                                    class="profile-email"
+                                    id="profileEmail"
+                                >
+                                    —
+                                </div>
+
+
+                                <div class="profile-meta">
+
+                                    <span
+                                        class="badge badge-green"
+                                        id="roleBadge"
+                                    >
+                                        Merchant
+                                    </span>
+
+
+                                    <span
+                                        class="badge badge-green"
+                                        id="accountBadge"
+                                    >
+                                        Active
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-title">
+                                    Account Profile
+                                </div>
+
+                                <div class="panel-description">
+                                    Update the merchant contact
+                                    information stored in your
+                                    K-Tickets profile.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-body">
+
+
+                            <form
+                                id="profileForm"
+                                novalidate
+                            >
+
+                                <div class="form-grid">
+
+
+                                    <div class="field">
+
+                                        <label
+                                            class="field-label"
+                                            for="fullName"
+                                        >
+                                            Full Name
+                                        </label>
+
+                                        <input
+                                            class="input"
+                                            id="fullName"
+                                            type="text"
+                                            maxlength="120"
+                                            autocomplete="name"
+                                            required
+                                        >
+
+                                    </div>
+
+
+                                    <div class="field">
+
+                                        <label
+                                            class="field-label"
+                                            for="phone"
+                                        >
+                                            Phone
+                                        </label>
+
+                                        <input
+                                            class="input"
+                                            id="phone"
+                                            type="tel"
+                                            maxlength="40"
+                                            autocomplete="tel"
+                                        >
+
+                                    </div>
+
+
+                                    <div class="field full">
+
+                                        <label
+                                            class="field-label"
+                                            for="avatarUrl"
+                                        >
+                                            Profile Image URL
+                                        </label>
+
+                                        <input
+                                            class="input"
+                                            id="avatarUrl"
+                                            type="url"
+                                            maxlength="1000"
+                                            placeholder="https://..."
+                                            autocomplete="url"
+                                        >
+
+                                        <div class="field-hint">
+                                            Optional. This stores only
+                                            the profile image URL in
+                                            your K-Tickets profile.
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="field full">
+
+                                        <div class="notice">
+
+                                            <strong>
+                                                Merchant permissions are protected.
+                                            </strong>
+
+                                            Your role and account activation
+                                            status cannot be changed from
+                                            this page. Those values are
+                                            controlled by the K-Tickets
+                                            authorization system.
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-actions">
+
+                                    <button
+                                        class="btn"
+                                        id="resetProfileBtn"
+                                        type="button"
+                                    >
+                                        Reset Changes
+                                    </button>
+
+
+                                    <button
+                                        class="btn btn-primary"
+                                        id="saveProfileBtn"
+                                        type="submit"
+                                    >
+                                        Save Changes
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- PASSWORD -->
+
+                    <section class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-title">
+                                    Password & Authentication
+                                </div>
+
+                                <div class="panel-description">
+                                    Supabase Auth manages your
+                                    password and authentication
+                                    credentials.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-body">
+
+                            <div class="password-box">
+
+                                <h3>
+                                    Reset your password
+                                </h3>
+
+                                <p>
+                                    K-Tickets will send a password
+                                    reset email to your authenticated
+                                    account email address. Your current
+                                    password is never displayed or stored
+                                    by this page.
+                                </p>
+
+
+                                <div class="password-actions">
+
+                                    <button
+                                        class="btn btn-primary"
+                                        id="resetPasswordBtn"
+                                        type="button"
+                                    >
+                                        Send Password Reset Email
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- ACCOUNT SECURITY -->
+
+                    <section class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-title">
+                                    Security
+                                </div>
+
+                                <div class="panel-description">
+                                    Current authentication and account
+                                    state.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-body">
+
+                            <div class="security-list">
+
+
+                                <div class="security-row">
+
+                                    <div class="security-icon">
+                                        ✓
+                                    </div>
+
+                                    <div class="security-copy">
+
+                                        <strong>
+                                            Authenticated session
+                                        </strong>
+
+                                        <span>
+                                            Your browser is signed in
+                                            through Supabase Auth.
+                                        </span>
+
+                                    </div>
+
+                                    <div
+                                        class="security-status"
+                                        id="sessionStatus"
+                                    >
+                                        Active
+                                    </div>
+
+                                </div>
+
+
+                                <div class="security-row">
+
+                                    <div class="security-icon">
+                                        ♟
+                                    </div>
+
+                                    <div class="security-copy">
+
+                                        <strong>
+                                            Merchant role
+                                        </strong>
+
+                                        <span>
+                                            Your K-Tickets permissions
+                                            are determined by your
+                                            authenticated profile role.
+                                        </span>
+
+                                    </div>
+
+                                    <div
+                                        class="security-status"
+                                        id="roleStatus"
+                                    >
+                                        Merchant
+                                    </div>
+
+                                </div>
+
+
+                                <div class="security-row">
+
+                                    <div class="security-icon">
+                                        ●
+                                    </div>
+
+                                    <div class="security-copy">
+
+                                        <strong>
+                                            Account status
+                                        </strong>
+
+                                        <span>
+                                            Your account must remain
+                                            active to use merchant
+                                            features.
+                                        </span>
+
+                                    </div>
+
+                                    <div
+                                        class="security-status"
+                                        id="accountStatus"
+                                    >
+                                        Active
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                </div>
+
+
+                <!-- ============================================
+                     RIGHT COLUMN
+                ============================================= -->
+
+                <div>
+
+
+                    <!-- ACCOUNT INFORMATION -->
+
+                    <section class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-title">
+                                    Account Information
+                                </div>
+
+                                <div class="panel-description">
+                                    Read-only authentication and
+                                    profile details.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-body">
+
+                            <div class="info-list">
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        Account email
+                                    </span>
+
+                                    <span
+                                        class="info-value"
+                                        id="infoEmail"
+                                    >
+                                        —
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        User ID
+                                    </span>
+
+                                    <span
+                                        class="info-value mono"
+                                        id="infoUserId"
+                                    >
+                                        —
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        Role
+                                    </span>
+
+                                    <span
+                                        class="info-value"
+                                        id="infoRole"
+                                    >
+                                        —
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        Account status
+                                    </span>
+
+                                    <span
+                                        class="info-value"
+                                        id="infoStatus"
+                                    >
+                                        —
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        Profile created
+                                    </span>
+
+                                    <span
+                                        class="info-value"
+                                        id="infoCreated"
+                                    >
+                                        —
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        Last profile update
+                                    </span>
+
+                                    <span
+                                        class="info-value"
+                                        id="infoUpdated"
+                                    >
+                                        —
+                                    </span>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- NOTIFICATIONS -->
+
+                    <section class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-title">
+                                    Notifications
+                                </div>
+
+                                <div class="panel-description">
+                                    Platform notifications are managed
+                                    from your notification centre.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-body">
+
+                            <div class="security-row">
+
+                                <div class="security-icon">
+                                    ♢
+                                </div>
+
+                                <div class="security-copy">
+
+                                    <strong>
+                                        Unread notifications
+                                    </strong>
+
+                                    <span>
+                                        View system messages and
+                                        merchant account notifications.
+                                    </span>
+
+                                </div>
+
+                                <div
+                                    class="security-status"
+                                    id="notificationSummary"
+                                >
+                                    None
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                style="
+                                    margin-top:12px;
+                                "
+                            >
+
+                                <a
+                                    class="btn"
+                                    href="../notifications.html"
+                                >
+                                    Open Notifications
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- SIGN OUT -->
+
+                    <section class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-title">
+                                    Session
+                                </div>
+
+                                <div class="panel-description">
+                                    Sign out of this browser when
+                                    you are finished using K-Tickets.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-body">
+
+                            <button
+                                class="btn btn-danger"
+                                id="mainSignOutBtn"
+                                type="button"
+                            >
+                                ↪ Sign Out
+                            </button>
+
+                        </div>
+
+                    </section>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+<!-- ============================================================
+     TOAST
+============================================================ -->
+
+<div
+    class="toast-container"
+    id="toastContainer"
+    aria-live="polite"
+></div>
+
+
+<script>
+
+/* ============================================================
+   K-TICKETS MERCHANT SETTINGS
+   ============================================================
+
+   SOURCE OF TRUTH
+   ------------------------------------------------------------
+
+   Supabase Auth
+       - authenticated user
+       - email
+       - password reset
+       - session
+
+   public.profiles
+       - id
+       - full_name
+       - phone
+       - role
+       - avatar_url
+       - is_active
+       - created_at
+       - updated_at
+
+   public.notifications
+       - user_id
+       - is_read
+
+   SECURITY
+   ------------------------------------------------------------
+
+   This page intentionally does NOT allow a merchant to:
+
+       - change role
+       - change is_active
+       - change another user's profile
+       - change merchant ownership
+       - change payment credentials
+       - change service fees
+       - change M-Pesa credentials
+       - change WAMD credentials
+       - access service-role credentials
+
+   Supabase RLS remains the actual security boundary.
+
+============================================================ */
+
+
+/* ============================================================
+   SUPABASE CONFIG
+============================================================ */
+
+const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL ||
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+
+const SUPABASE_PUBLISHABLE_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY ||
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
+
+let supabaseClient = null;
+
+let currentUser = null;
+
+let currentProfile = null;
+
+let originalProfile = null;
+
+
+/* ============================================================
+   DOM
+============================================================ */
+
+const loadingPanel =
+    document.getElementById(
+        "loadingPanel"
+    );
+
+
+const errorPanel =
+    document.getElementById(
+        "errorPanel"
+    );
+
+
+const settingsContent =
+    document.getElementById(
+        "settingsContent"
+    );
+
+
+const errorMessage =
+    document.getElementById(
+        "errorMessage"
+    );
+
+
+/* ============================================================
+   INIT
+============================================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    initialize
+);
+
+
+async function initialize() {
+
+    setupNavigation();
+
+    setupActions();
+
+
+    try {
+
+        if (
+            !window.supabase ||
+            !window.supabase.createClient
+        ) {
+
+            throw new Error(
+                "Supabase client library could not be loaded."
+            );
+
+        }
+
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_PUBLISHABLE_KEY,
+                {
+                    auth: {
+
+                        persistSession:
+                            true,
+
+                        autoRefreshToken:
+                            true,
+
+                        detectSessionInUrl:
+                            true
+
+                    }
+                }
+            );
+
+
+        await loadAuthenticatedMerchant();
+
+
+    } catch (error) {
+
+        console.error(
+            "[K-Tickets] Settings initialization failed:",
+            error
+        );
+
+
+        showError(
+            getReadableError(
+                error
+            )
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   AUTHENTICATED MERCHANT
+============================================================ */
+
+async function loadAuthenticatedMerchant() {
+
+    showLoading();
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+    if (error) {
+        throw error;
     }
 
 
-    /* =========================================================
-       CURRENCY OPTIONS
-    ========================================================== */
+    if (
+        !data?.session?.user
+    ) {
 
-    async function loadCurrencyOptions() {
+        redirectToLogin(
+            "no_session"
+        );
 
-      const select =
+        return;
+
+    }
+
+
+    currentUser =
+        data.session.user;
+
+
+    const {
+        data: profile,
+        error: profileError
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                avatar_url,
+                is_active,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+
+    if (profileError) {
+        throw profileError;
+    }
+
+
+    if (!profile) {
+
+        await safeSignOut();
+
+        redirectToLogin(
+            "profile_missing"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        profile.role !==
+        "merchant"
+    ) {
+
+        await safeSignOut();
+
+        redirectToLogin(
+            "unauthorized"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        profile.is_active !== true
+    ) {
+
+        await safeSignOut();
+
+        showError(
+            "This merchant account is currently inactive."
+        );
+
+        return;
+
+    }
+
+
+    currentProfile =
+        profile;
+
+
+    originalProfile =
+        {
+            ...profile
+        };
+
+
+    renderProfile();
+
+
+    await loadNotifications();
+
+
+    showSettings();
+
+
+}
+
+
+/* ============================================================
+   RENDER PROFILE
+============================================================ */
+
+function renderProfile() {
+
+    const name =
+        currentProfile.full_name ||
+        currentUser.user_metadata?.full_name ||
+        "Merchant";
+
+
+    const email =
+        currentUser.email ||
+        "—";
+
+
+    const initials =
+        getInitials(
+            name
+        );
+
+
+    /* --------------------------------------------------------
+       Sidebar
+    -------------------------------------------------------- */
+
+    renderAvatar(
+        "sidebarAvatar",
+        initials,
+        currentProfile.avatar_url
+    );
+
+
+    document.getElementById(
+        "sidebarName"
+    ).textContent =
+        name;
+
+
+    /* --------------------------------------------------------
+       Topbar
+    -------------------------------------------------------- */
+
+    renderAvatar(
+        "topAvatar",
+        initials,
+        currentProfile.avatar_url
+    );
+
+
+    document.getElementById(
+        "topUserName"
+    ).textContent =
+        name;
+
+
+    /* --------------------------------------------------------
+       Hero
+    -------------------------------------------------------- */
+
+    renderAvatar(
+        "profileAvatar",
+        initials,
+        currentProfile.avatar_url
+    );
+
+
+    document.getElementById(
+        "profileName"
+    ).textContent =
+        name;
+
+
+    document.getElementById(
+        "profileEmail"
+    ).textContent =
+        email;
+
+
+    document.getElementById(
+        "roleBadge"
+    ).textContent =
+        formatRole(
+            currentProfile.role
+        );
+
+
+    document.getElementById(
+        "accountBadge"
+    ).textContent =
+        currentProfile.is_active
+            ? "Active"
+            : "Inactive";
+
+
+    if (
+        currentProfile.is_active
+    ) {
+
         document.getElementById(
-          "preferredCurrency"
-        );
+            "accountBadge"
+        ).className =
+            "badge badge-green";
+
+    } else {
+
+        document.getElementById(
+            "accountBadge"
+        ).className =
+            "badge badge-bordo";
+
+    }
 
 
-      const currencies =
-        new Set();
+    /* --------------------------------------------------------
+       Form
+    -------------------------------------------------------- */
 
-
-      if (
-        merchantSettings?.currency
-      ) {
-        currencies.add(
-          String(
-            merchantSettings.currency
-          ).toUpperCase()
-        );
-      }
-
-
-      if (
-        merchantSettings?.settlement_currency
-      ) {
-        currencies.add(
-          String(
-            merchantSettings.settlement_currency
-          ).toUpperCase()
-        );
-      }
-
-
-      payoutMethods.forEach(method => {
-
-        const currency =
-          method.currency ||
-          method.settlement_currency ||
-          method.payout_currency;
-
-        if (currency) {
-          currencies.add(
-            String(currency)
-              .toUpperCase()
-          );
-        }
-      });
-
-
-      select.innerHTML =
-        `<option value="">
-          ${
-            currencies.size
-              ? "Select currency"
-              : "No currency configured"
-          }
-        </option>`;
-
-
-      [...currencies]
-        .sort()
-        .forEach(currency => {
-
-          const option =
-            document.createElement(
-              "option"
-            );
-
-          option.value =
-            currency;
-
-          option.textContent =
-            currency;
-
-          select.appendChild(
-            option
-          );
-
-        });
-
-
-      const selected =
-        merchantSettings?.settlement_currency ||
-        merchantSettings?.currency ||
+    document.getElementById(
+        "fullName"
+    ).value =
+        currentProfile.full_name ||
         "";
 
 
-      if (selected) {
-        select.value =
-          String(selected)
-            .toUpperCase();
-      }
+    document.getElementById(
+        "phone"
+    ).value =
+        currentProfile.phone ||
+        "";
 
 
-      const minimum =
-        merchantSettings?.minimum_withdrawal ??
-        merchantSettings?.min_withdrawal ??
-        merchantSettings?.minimum_payout;
+    document.getElementById(
+        "avatarUrl"
+    ).value =
+        currentProfile.avatar_url ||
+        "";
 
 
-      document.getElementById(
-        "minimumWithdrawal"
-      ).value =
-        minimum !== undefined &&
-        minimum !== null
-          ? String(minimum)
-          : "—";
+    /* --------------------------------------------------------
+       Account information
+    -------------------------------------------------------- */
+
+    document.getElementById(
+        "infoEmail"
+    ).textContent =
+        email;
+
+
+    document.getElementById(
+        "infoUserId"
+    ).textContent =
+        currentUser.id;
+
+
+    document.getElementById(
+        "infoRole"
+    ).textContent =
+        formatRole(
+            currentProfile.role
+        );
+
+
+    document.getElementById(
+        "infoStatus"
+    ).textContent =
+        currentProfile.is_active
+            ? "Active"
+            : "Inactive";
+
+
+    document.getElementById(
+        "infoCreated"
+    ).textContent =
+        formatDateTime(
+            currentProfile.created_at
+        );
+
+
+    document.getElementById(
+        "infoUpdated"
+    ).textContent =
+        formatDateTime(
+            currentProfile.updated_at
+        );
+
+
+    /* --------------------------------------------------------
+       Security
+    -------------------------------------------------------- */
+
+    document.getElementById(
+        "sessionStatus"
+    ).textContent =
+        "Active";
+
+
+    document.getElementById(
+        "roleStatus"
+    ).textContent =
+        formatRole(
+            currentProfile.role
+        );
+
+
+    document.getElementById(
+        "accountStatus"
+    ).textContent =
+        currentProfile.is_active
+            ? "Active"
+            : "Inactive";
+
+}
+
+
+/* ============================================================
+   AVATAR
+============================================================ */
+
+function renderAvatar(
+    elementId,
+    initials,
+    avatarUrl
+) {
+
+    const element =
+        document.getElementById(
+            elementId
+        );
+
+
+    if (!element) {
+        return;
     }
 
 
-    /* =========================================================
-       SAVE PROFILE
-    ========================================================== */
+    element.innerHTML = "";
 
-    async function saveProfile(
-      event
+
+    if (
+        avatarUrl &&
+        isValidHttpUrl(
+            avatarUrl
+        )
     ) {
 
-      event.preventDefault();
-
-
-      if (
-        !supabaseClient ||
-        !currentUser
-      ) {
-        return;
-      }
-
-
-      const fullName =
-        document.getElementById(
-          "fullName"
-        ).value.trim();
-
-
-      const phone =
-        document.getElementById(
-          "phone"
-        ).value.trim();
-
-
-      if (!fullName) {
-
-        toastMessage(
-          "Full name is required.",
-          true
-        );
-
-        return;
-      }
-
-
-      const button =
-        document.getElementById(
-          "saveProfileBtn"
-        );
-
-
-      button.disabled = true;
-
-      button.textContent =
-        "Saving...";
-
-
-      try {
-
-        const {
-          error
-        } =
-          await supabaseClient
-            .from("profiles")
-            .update({
-              full_name: fullName,
-              phone: phone || null
-            })
-            .eq(
-              "id",
-              currentUser.id
+        const image =
+            document.createElement(
+                "img"
             );
 
 
+        image.src =
+            avatarUrl;
+
+
+        image.alt =
+            "Profile image";
+
+
+        image.loading =
+            "lazy";
+
+
+        image.onerror =
+            () => {
+
+                element.innerHTML =
+                    "";
+
+                element.textContent =
+                    initials;
+
+            };
+
+
+        element.appendChild(
+            image
+        );
+
+
+        return;
+
+    }
+
+
+    element.textContent =
+        initials;
+
+}
+
+
+/* ============================================================
+   PROFILE SAVE
+============================================================ */
+
+async function saveProfile(
+    event
+) {
+
+    event.preventDefault();
+
+
+    if (
+        !currentUser ||
+        !currentProfile
+    ) {
+
+        showToast(
+            "Your session is not ready.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    const fullName =
+        document.getElementById(
+            "fullName"
+        )
+        .value
+        .trim();
+
+
+    const phone =
+        document.getElementById(
+            "phone"
+        )
+        .value
+        .trim();
+
+
+    const avatarUrl =
+        document.getElementById(
+            "avatarUrl"
+        )
+        .value
+        .trim();
+
+
+    if (!fullName) {
+
+        showToast(
+            "Full name is required.",
+            true
+        );
+
+        document.getElementById(
+            "fullName"
+        ).focus();
+
+        return;
+
+    }
+
+
+    if (
+        avatarUrl &&
+        !isValidHttpUrl(
+            avatarUrl
+        )
+    ) {
+
+        showToast(
+            "Profile image URL must be a valid HTTP or HTTPS URL.",
+            true
+        );
+
+        document.getElementById(
+            "avatarUrl"
+        ).focus();
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "saveProfileBtn"
+        );
+
+
+    const originalText =
+        button.textContent;
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "Saving...";
+
+
+    try {
+
+        /*
+         * IMPORTANT:
+         *
+         * We only update fields that a merchant is allowed
+         * to edit.
+         *
+         * We deliberately do NOT send:
+         *
+         * role
+         * is_active
+         * id
+         *
+         * The authenticated user's UUID scopes the update.
+         */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("profiles")
+                .update({
+
+                    full_name:
+                        fullName,
+
+                    phone:
+                        phone ||
+                        null,
+
+                    avatar_url:
+                        avatarUrl ||
+                        null
+
+                })
+                .eq(
+                    "id",
+                    currentUser.id
+                )
+                .select(`
+                    id,
+                    full_name,
+                    phone,
+                    role,
+                    avatar_url,
+                    is_active,
+                    created_at,
+                    updated_at
+                `)
+                .single();
+
+
         if (error) {
-          throw error;
+            throw error;
         }
 
 
-        await supabaseClient.auth.updateUser({
-          data: {
-            full_name: fullName
-          }
-        });
+        /*
+         * Never trust the form as the new source of truth.
+         * Use the row returned from Supabase.
+         */
 
-
-        currentProfile.full_name =
-          fullName;
-
-        currentProfile.phone =
-          phone || null;
+        currentProfile =
+            data;
 
 
         originalProfile =
-          JSON.parse(
-            JSON.stringify(
-              currentProfile
-            )
-          );
+            {
+                ...data
+            };
 
 
         renderProfile();
 
 
-        toastMessage(
-          "Profile updated successfully."
+        showToast(
+            "Profile settings saved successfully."
         );
 
-      } catch (error) {
 
-        console.error(error);
+    } catch (error) {
 
-        toastMessage(
-          "Unable to save profile: " +
-          formatError(error),
-          true
+        console.error(
+            "[K-Tickets] Profile update failed:",
+            error
         );
 
-      } finally {
 
-        button.disabled = false;
+        showToast(
+            getReadableError(
+                error
+            ),
+            true
+        );
+
+    } finally {
+
+        button.disabled =
+            false;
 
         button.textContent =
-          "Save Profile";
-      }
+            originalText;
+
     }
 
+}
 
-    /* =========================================================
-       RESET PROFILE
-    ========================================================== */
 
-    function resetProfile() {
+/* ============================================================
+   RESET FORM
+============================================================ */
 
-      if (!originalProfile) {
+function resetProfileForm() {
+
+    if (
+        !originalProfile
+    ) {
         return;
-      }
-
-
-      currentProfile =
-        JSON.parse(
-          JSON.stringify(
-            originalProfile
-          )
-        );
-
-
-      renderProfile();
-
-      toastMessage(
-        "Profile changes reset."
-      );
     }
 
 
-    /* =========================================================
-       SAVE BUSINESS
-    ========================================================== */
+    document.getElementById(
+        "fullName"
+    ).value =
+        originalProfile.full_name ||
+        "";
 
-    async function saveBusiness(
-      event
+
+    document.getElementById(
+        "phone"
+    ).value =
+        originalProfile.phone ||
+        "";
+
+
+    document.getElementById(
+        "avatarUrl"
+    ).value =
+        originalProfile.avatar_url ||
+        "";
+
+
+    showToast(
+        "Unsaved profile changes were reset."
+    );
+
+}
+
+
+/* ============================================================
+   PASSWORD RESET
+============================================================ */
+
+async function sendPasswordReset() {
+
+    if (
+        !currentUser?.email
     ) {
 
-      event.preventDefault();
-
-
-      if (
-        !supabaseClient ||
-        !currentUser
-      ) {
-        return;
-      }
-
-
-      if (!settingsTableName) {
-
-        toastMessage(
-          "The merchant settings table is not available yet.",
-          true
+        showToast(
+            "No account email is available for password reset.",
+            true
         );
 
         return;
-      }
 
-
-      const businessName =
-        document.getElementById(
-          "businessName"
-        ).value.trim();
-
-
-      const businessPhone =
-        document.getElementById(
-          "businessPhone"
-        ).value.trim();
-
-
-      const businessEmail =
-        document.getElementById(
-          "businessEmail"
-        ).value.trim();
-
-
-      const website =
-        document.getElementById(
-          "businessWebsite"
-        ).value.trim();
-
-
-      const address =
-        document.getElementById(
-          "businessAddress"
-        ).value.trim();
-
-
-      const city =
-        document.getElementById(
-          "businessCity"
-        ).value.trim();
-
-
-      const country =
-        document.getElementById(
-          "businessCountry"
-        ).value.trim();
-
-
-      const button =
-        document.getElementById(
-          "saveBusinessBtn"
-        );
-
-
-      button.disabled = true;
-
-      button.textContent =
-        "Saving...";
-
-
-      /*
-        The expected production schema can use:
-
-        merchant_settings:
-          merchant_id
-          business_name
-          business_phone
-          business_email
-          website
-          business_address
-          city
-          country
-
-        This payload deliberately does not write arbitrary
-        financial or payout fields.
-      */
-
-      const payload = {
-        merchant_id: currentUser.id,
-        business_name:
-          businessName || null,
-        business_phone:
-          businessPhone || null,
-        business_email:
-          businessEmail || null,
-        website:
-          website || null,
-        business_address:
-          address || null,
-        city:
-          city || null,
-        country:
-          country || null
-      };
-
-
-      try {
-
-        let result;
-
-
-        if (merchantSettings?.id) {
-
-          result =
-            await supabaseClient
-              .from(settingsTableName)
-              .update(payload)
-              .eq(
-                "id",
-                merchantSettings.id
-              )
-              .eq(
-                "merchant_id",
-                currentUser.id
-              );
-
-        } else {
-
-          result =
-            await supabaseClient
-              .from(settingsTableName)
-              .insert(payload);
-
-        }
-
-
-        if (result.error) {
-          throw result.error;
-        }
-
-
-        await loadMerchantSettings();
-
-
-        toastMessage(
-          "Business information saved."
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        toastMessage(
-          "Unable to save business information: " +
-          formatError(error),
-          true
-        );
-
-      } finally {
-
-        button.disabled = false;
-
-        button.textContent =
-          "Save Business Information";
-      }
     }
 
 
-    /* =========================================================
-       NOTIFICATION PREFERENCES
-    ========================================================== */
-
-    async function saveNotificationPreferences() {
-
-      if (
-        !supabaseClient ||
-        !currentUser
-      ) {
-        return;
-      }
-
-
-      const values = {
-        orders:
-          document.getElementById(
-            "notifyOrders"
-          ).checked,
-
-        payments:
-          document.getElementById(
-            "notifyPayments"
-          ).checked,
-
-        withdrawals:
-          document.getElementById(
-            "notifyWithdrawals"
-          ).checked,
-
-        events:
-          document.getElementById(
-            "notifyEvents"
-          ).checked
-      };
-
-
-      const button =
+    const button =
         document.getElementById(
-          "saveNotificationsBtn"
+            "resetPasswordBtn"
         );
 
 
-      /*
-        Notification preferences are stored only when the final
-        merchant settings schema supports them.
-
-        We first use an existing settings record if available.
-      */
-
-      if (!settingsTableName) {
-
-        toastMessage(
-          "Merchant settings storage is not configured yet.",
-          true
-        );
-
-        return;
-      }
+    const originalText =
+        button.textContent;
 
 
-      button.disabled = true;
-
-      button.textContent =
-        "Saving...";
+    button.disabled =
+        true;
 
 
-      try {
-
-        const payload = {
-          merchant_id:
-            currentUser.id,
-
-          notification_preferences:
-            values
-        };
+    button.textContent =
+        "Sending...";
 
 
-        let result;
+    try {
 
+        /*
+         * Build the return URL dynamically from the current
+         * deployment instead of hardcoding a domain.
+         *
+         * reset-password.html is at the project root, while
+         * this page is under /merchant/.
+         */
 
-        if (merchantSettings?.id) {
+        const resetUrl =
+            new URL(
+                "../reset-password.html",
+                window.location.href
+            ).href;
 
-          result =
-            await supabaseClient
-              .from(settingsTableName)
-              .update(payload)
-              .eq(
-                "id",
-                merchantSettings.id
-              )
-              .eq(
-                "merchant_id",
-                currentUser.id
-              );
-
-        } else {
-
-          result =
-            await supabaseClient
-              .from(settingsTableName)
-              .insert(payload);
-
-        }
-
-
-        if (result.error) {
-          throw result.error;
-        }
-
-
-        await loadMerchantSettings();
-
-
-        toastMessage(
-          "Notification preferences saved."
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        toastMessage(
-          "Unable to save notification preferences: " +
-          formatError(error),
-          true
-        );
-
-      } finally {
-
-        button.disabled = false;
-
-        button.textContent =
-          "Save Notification Preferences";
-      }
-    }
-
-
-    /* =========================================================
-       LOAD NOTIFICATION PREFERENCES
-    ========================================================== */
-
-    function loadNotificationPreferences() {
-
-      const preferences =
-        merchantSettings?.notification_preferences;
-
-
-      if (
-        !preferences ||
-        typeof preferences !== "object"
-      ) {
-        return;
-      }
-
-
-      if (
-        typeof preferences.orders === "boolean"
-      ) {
-        document.getElementById(
-          "notifyOrders"
-        ).checked =
-          preferences.orders;
-      }
-
-
-      if (
-        typeof preferences.payments === "boolean"
-      ) {
-        document.getElementById(
-          "notifyPayments"
-        ).checked =
-          preferences.payments;
-      }
-
-
-      if (
-        typeof preferences.withdrawals === "boolean"
-      ) {
-        document.getElementById(
-          "notifyWithdrawals"
-        ).checked =
-          preferences.withdrawals;
-      }
-
-
-      if (
-        typeof preferences.events === "boolean"
-      ) {
-        document.getElementById(
-          "notifyEvents"
-        ).checked =
-          preferences.events;
-      }
-    }
-
-
-    /* =========================================================
-       PASSWORD RESET
-    ========================================================== */
-
-    async function changePassword() {
-
-      if (
-        !supabaseClient ||
-        !currentUser?.email
-      ) {
-        toastMessage(
-          "Your authenticated email is unavailable.",
-          true
-        );
-
-        return;
-      }
-
-
-      const confirmed =
-        window.confirm(
-          "Send a password reset link to your authenticated email?"
-        );
-
-
-      if (!confirmed) {
-        return;
-      }
-
-
-      try {
 
         const {
-          error
+            error
         } =
-          await supabaseClient.auth.resetPasswordForEmail(
-            currentUser.email,
-            {
-              redirectTo:
-                `${window.location.origin}/auth/reset-password.html`
-            }
-          );
+            await supabaseClient
+                .auth
+                .resetPasswordForEmail(
+                    currentUser.email,
+                    {
+                        redirectTo:
+                            resetUrl
+                    }
+                );
 
 
         if (error) {
-          throw error;
+            throw error;
         }
 
 
-        toastMessage(
-          "Password reset instructions have been sent."
+        showToast(
+            "Password reset instructions have been sent to your account email."
         );
 
-      } catch (error) {
 
-        console.error(error);
+    } catch (error) {
 
-        toastMessage(
-          "Unable to send password reset email: " +
-          formatError(error),
-          true
+        console.error(
+            "[K-Tickets] Password reset failed:",
+            error
         );
-      }
+
+
+        showToast(
+            getReadableError(
+                error
+            ),
+            true
+        );
+
+    } finally {
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            originalText;
+
     }
 
-
-    /* =========================================================
-       SIGN OUT
-    ========================================================== */
-
-    async function signOut() {
-
-      if (!supabaseClient) {
-        return;
-      }
+}
 
 
-      try {
+/* ============================================================
+   NOTIFICATIONS
+============================================================ */
 
-        await supabaseClient.auth.signOut();
+async function loadNotifications() {
 
-      } finally {
+    try {
 
-        window.location.href =
-          "../auth/login.html";
-
-      }
-    }
-
-
-    /* =========================================================
-       SETTINGS NAVIGATION
-    ========================================================== */
-
-    function initSettingsNavigation() {
-
-      const buttons =
-        document.querySelectorAll(
-          ".settings-nav button"
-        );
-
-
-      buttons.forEach(button => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            const sectionId =
-              button.dataset.section;
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select(
+                    "id",
+                    {
+                        count:
+                            "exact",
+                        head:
+                            true
+                    }
+                )
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .eq(
+                    "is_read",
+                    false
+                );
 
 
-            buttons.forEach(item => {
+        if (error) {
 
-              item.classList.remove(
-                "active"
-              );
+            console.warn(
+                "[K-Tickets] Notification count unavailable:",
+                error
+            );
 
-            });
+            return;
+
+        }
 
 
-            button.classList.add(
-              "active"
+        const badge =
+            document.getElementById(
+                "notificationCount"
             );
 
 
-            document
-              .querySelectorAll(
-                ".settings-section"
-              )
-              .forEach(section => {
+        const summary =
+            document.getElementById(
+                "notificationSummary"
+            );
 
-                section.classList.toggle(
-                  "active",
-                  section.id === sectionId
-                );
 
-              });
+        if (
+            count &&
+            count > 0
+        ) {
 
-          }
+            badge.textContent =
+                count > 99
+                    ? "99+"
+                    : String(count);
+
+
+            badge.style.display =
+                "flex";
+
+
+            summary.textContent =
+                count === 1
+                    ? "1 unread"
+                    : `${count} unread`;
+
+        } else {
+
+            badge.style.display =
+                "none";
+
+
+            summary.textContent =
+                "None";
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[K-Tickets] Notification loading failed:",
+            error
         );
 
-      });
+    }
+
+}
+
+
+/* ============================================================
+   SIGN OUT
+============================================================ */
+
+async function signOut() {
+
+    const confirmed =
+        window.confirm(
+            "Sign out of your K-Tickets merchant account?"
+        );
+
+
+    if (!confirmed) {
+        return;
     }
 
 
-    /* =========================================================
-       SAVE HEADER
-    ========================================================== */
+    const buttons = [
 
-    async function saveCurrentSection() {
+        document.getElementById(
+            "signOutBtn"
+        ),
 
-      const activeSection =
-        document.querySelector(
-          ".settings-section.active"
+        document.getElementById(
+            "mainSignOutBtn"
+        )
+
+    ];
+
+
+    buttons.forEach(
+        button => {
+
+            if (button) {
+
+                button.disabled =
+                    true;
+
+            }
+
+        }
+    );
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
+                .signOut();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        window.location.replace(
+            "../login.html"
         );
 
 
-      if (!activeSection) {
-        return;
-      }
+    } catch (error) {
 
-
-      if (
-        activeSection.id ===
-        "profileSection"
-      ) {
-
-        await saveProfile(
-          {
-            preventDefault: () => {}
-          }
+        console.error(
+            "[K-Tickets] Sign out failed:",
+            error
         );
 
-        return;
-      }
 
+        buttons.forEach(
+            button => {
 
-      if (
-        activeSection.id ===
-        "businessSection"
-      ) {
+                if (button) {
 
-        await saveBusiness(
-          {
-            preventDefault: () => {}
-          }
+                    button.disabled =
+                        false;
+
+                }
+
+            }
         );
 
-        return;
-      }
+
+        showToast(
+            getReadableError(
+                error
+            ),
+            true
+        );
+
+    }
+
+}
 
 
-      if (
-        activeSection.id ===
-        "notificationsSection"
-      ) {
+/* ============================================================
+   NAVIGATION
+============================================================ */
 
-        await saveNotificationPreferences();
+function setupNavigation() {
 
-        return;
-      }
+    document.getElementById(
+        "mobileMenu"
+    )
+    .addEventListener(
+        "click",
+        openSidebar
+    );
 
 
-      toastMessage(
-        "There are no unsaved changes in this section."
-      );
+    document.getElementById(
+        "sidebarOverlay"
+    )
+    .addEventListener(
+        "click",
+        closeSidebar
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                closeSidebar();
+
+            }
+
+        }
+    );
+
+}
+
+
+function openSidebar() {
+
+    document.getElementById(
+        "sidebar"
+    )
+    .classList
+    .add(
+        "open"
+    );
+
+
+    document.getElementById(
+        "sidebarOverlay"
+    )
+    .classList
+    .add(
+        "show"
+    );
+
+}
+
+
+function closeSidebar() {
+
+    document.getElementById(
+        "sidebar"
+    )
+    .classList
+    .remove(
+        "open"
+    );
+
+
+    document.getElementById(
+        "sidebarOverlay"
+    )
+    .classList
+    .remove(
+        "show"
+    );
+
+}
+
+
+/* ============================================================
+   ACTIONS
+============================================================ */
+
+function setupActions() {
+
+    document.getElementById(
+        "profileForm"
+    )
+    .addEventListener(
+        "submit",
+        saveProfile
+    );
+
+
+    document.getElementById(
+        "resetProfileBtn"
+    )
+    .addEventListener(
+        "click",
+        resetProfileForm
+    );
+
+
+    document.getElementById(
+        "resetPasswordBtn"
+    )
+    .addEventListener(
+        "click",
+        sendPasswordReset
+    );
+
+
+    document.getElementById(
+        "retryBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            window.location.reload();
+
+        }
+    );
+
+
+    document.getElementById(
+        "signOutBtn"
+    )
+    .addEventListener(
+        "click",
+        signOut
+    );
+
+
+    document.getElementById(
+        "mainSignOutBtn"
+    )
+    .addEventListener(
+        "click",
+        signOut
+    );
+
+}
+
+
+/* ============================================================
+   SHOW/HIDE STATES
+============================================================ */
+
+function showLoading() {
+
+    loadingPanel.style.display =
+        "block";
+
+
+    errorPanel.style.display =
+        "none";
+
+
+    settingsContent.style.display =
+        "none";
+
+}
+
+
+function showSettings() {
+
+    loadingPanel.style.display =
+        "none";
+
+
+    errorPanel.style.display =
+        "none";
+
+
+    settingsContent.style.display =
+        "block";
+
+}
+
+
+function showError(
+    message
+) {
+
+    loadingPanel.style.display =
+        "none";
+
+
+    settingsContent.style.display =
+        "none";
+
+
+    errorPanel.style.display =
+        "block";
+
+
+    errorMessage.textContent =
+        message;
+
+}
+
+
+/* ============================================================
+   LOGIN REDIRECT
+============================================================ */
+
+function redirectToLogin(
+    reason
+) {
+
+    const params =
+        new URLSearchParams();
+
+
+    if (reason) {
+
+        params.set(
+            "error",
+            reason
+        );
+
     }
 
 
-    /* =========================================================
-       SUPPORT / ACCOUNT CLOSURE
-    ========================================================== */
+    const query =
+        params.toString();
 
-    function contactSupport() {
 
-      /*
-        No support address is hardcoded here.
+    window.location.replace(
+        `../login.html${
+            query
+                ? "?" + query
+                : ""
+        }`
+    );
 
-        When the final platform settings table exposes a support
-        email or support URL, this button can route dynamically.
-      */
+}
 
-      toastMessage(
-        "Support contact details will be provided by the platform configuration."
-      );
+
+/* ============================================================
+   SAFE SIGN OUT
+============================================================ */
+
+async function safeSignOut() {
+
+    try {
+
+        if (
+            supabaseClient
+        ) {
+
+            await supabaseClient
+                .auth
+                .signOut();
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[K-Tickets] Safe sign-out warning:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   ROLE
+============================================================ */
+
+function formatRole(
+    role
+) {
+
+    if (
+        role ===
+        "merchant"
+    ) {
+
+        return "Merchant";
+
     }
 
 
-    /* =========================================================
-       REFRESH
-    ========================================================== */
+    if (
+        role ===
+        "gate_staff"
+    ) {
 
-    async function refreshSettings() {
+        return "Gate Staff";
 
-      showLoading();
-
-      try {
-
-        await Promise.all([
-          loadMerchantSettings(),
-          loadPayoutMethods(),
-          loadNotifications()
-        ]);
-
-        loadNotificationPreferences();
-
-        toastMessage(
-          "Merchant settings refreshed."
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        toastMessage(
-          "Unable to refresh settings.",
-          true
-        );
-
-      } finally {
-
-        hideLoading();
-
-      }
     }
 
 
-    /* =========================================================
-       EVENTS
-    ========================================================== */
+    if (
+        role ===
+        "admin"
+    ) {
 
-    mobileMenuBtn.addEventListener(
-      "click",
-      () => {
+        return "Administrator";
 
-        sidebar.classList.toggle(
-          "open"
-        );
-
-      }
-    );
-
-
-    document.getElementById(
-      "refreshBtn"
-    ).addEventListener(
-      "click",
-      refreshSettings
-    );
-
-
-    document.getElementById(
-      "refreshMainBtn"
-    ).addEventListener(
-      "click",
-      refreshSettings
-    );
-
-
-    document.getElementById(
-      "saveHeaderBtn"
-    ).addEventListener(
-      "click",
-      saveCurrentSection
-    );
-
-
-    profileForm.addEventListener(
-      "submit",
-      saveProfile
-    );
-
-
-    businessForm.addEventListener(
-      "submit",
-      saveBusiness
-    );
-
-
-    document.getElementById(
-      "resetProfileBtn"
-    ).addEventListener(
-      "click",
-      resetProfile
-    );
-
-
-    document.getElementById(
-      "saveNotificationsBtn"
-    ).addEventListener(
-      "click",
-      saveNotificationPreferences
-    );
-
-
-    document.getElementById(
-      "changePasswordBtn"
-    ).addEventListener(
-      "click",
-      changePassword
-    );
-
-
-    document.getElementById(
-      "securitySignOutBtn"
-    ).addEventListener(
-      "click",
-      signOut
-    );
-
-
-    document.getElementById(
-      "accountClosureBtn"
-    ).addEventListener(
-      "click",
-      contactSupport
-    );
-
-
-    document.getElementById(
-      "notificationBtn"
-    ).addEventListener(
-      "click",
-      () => {
-
-        window.location.href =
-          "dashboard.html#notifications";
-
-      }
-    );
-
-
-    document.getElementById(
-      "signOutBtn"
-    ).addEventListener(
-      "click",
-      signOut
-    );
-
-
-    /* =========================================================
-       INIT
-    ========================================================== */
-
-    async function init() {
-
-      showLoading();
-
-
-      const authenticated =
-        await requireMerchant();
-
-
-      if (!authenticated) {
-        return;
-      }
-
-
-      try {
-
-        await Promise.all([
-          loadMerchantSettings(),
-          loadPayoutMethods(),
-          loadNotifications()
-        ]);
-
-
-        loadNotificationPreferences();
-
-      } catch (error) {
-
-        console.error(error);
-
-        toastMessage(
-          "Some merchant settings could not be loaded.",
-          true
-        );
-
-      } finally {
-
-        hideLoading();
-
-      }
     }
 
 
-    init();
+    return String(
+        role ||
+        "Unknown"
+    );
 
-  </script>
+}
+
+
+/* ============================================================
+   INITIALS
+============================================================ */
+
+function getInitials(
+    name
+) {
+
+    const value =
+        String(
+            name ||
+            ""
+        )
+        .trim();
+
+
+    if (!value) {
+        return "KT";
+    }
+
+
+    const parts =
+        value
+            .split(
+                /\s+/
+            )
+            .filter(
+                Boolean
+            );
+
+
+    if (
+        parts.length === 1
+    ) {
+
+        return parts[0]
+            .slice(
+                0,
+                2
+            )
+            .toUpperCase();
+
+    }
+
+
+    return (
+        parts[0][0] +
+        parts[
+            parts.length - 1
+        ][0]
+    ).toUpperCase();
+
+}
+
+
+/* ============================================================
+   URL VALIDATION
+============================================================ */
+
+function isValidHttpUrl(
+    value
+) {
+
+    try {
+
+        const url =
+            new URL(
+                value
+            );
+
+
+        return (
+            url.protocol ===
+                "http:" ||
+            url.protocol ===
+                "https:"
+        );
+
+    } catch (error) {
+
+        return false;
+
+    }
+
+}
+
+
+/* ============================================================
+   DATE
+============================================================ */
+
+function formatDateTime(
+    value
+) {
+
+    if (!value) {
+        return "—";
+    }
+
+
+    const date =
+        new Date(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "—";
+
+    }
+
+
+    return date.toLocaleString(
+        undefined,
+        {
+            day:
+                "2-digit",
+
+            month:
+                "short",
+
+            year:
+                "numeric",
+
+            hour:
+                "2-digit",
+
+            minute:
+                "2-digit"
+        }
+    );
+
+}
+
+
+/* ============================================================
+   READABLE ERROR
+============================================================ */
+
+function getReadableError(
+    error
+) {
+
+    if (!error) {
+
+        return (
+            "An unexpected error occurred."
+        );
+
+    }
+
+
+    const message =
+        error.message ||
+        error.details ||
+        error.hint ||
+        String(error);
+
+
+    const lower =
+        String(
+            message
+        )
+        .toLowerCase();
+
+
+    if (
+        lower.includes(
+            "row-level security"
+        )
+    ) {
+
+        return (
+            "Supabase Row Level Security blocked this profile update. " +
+            "Check the authenticated profile update policy."
+        );
+
+    }
+
+
+    if (
+        lower.includes(
+            "jwt"
+        ) ||
+        lower.includes(
+            "session"
+        )
+    ) {
+
+        return (
+            "Your merchant session has expired. Please sign in again."
+        );
+
+    }
+
+
+    if (
+        lower.includes(
+            "duplicate"
+        )
+    ) {
+
+        return (
+            "The requested profile information could not be saved because it conflicts with existing data."
+        );
+
+    }
+
+
+    return String(
+        message
+    );
+
+}
+
+
+/* ============================================================
+   TOAST
+============================================================ */
+
+function showToast(
+    message,
+    isError = false
+) {
+
+    const container =
+        document.getElementById(
+            "toastContainer"
+        );
+
+
+    const toast =
+        document.createElement(
+            "div"
+        );
+
+
+    toast.className =
+        "toast";
+
+
+    if (
+        isError
+    ) {
+
+        toast.classList.add(
+            "error"
+        );
+
+    }
+
+
+    toast.textContent =
+        message;
+
+
+    container.appendChild(
+        toast
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.remove();
+
+        },
+        4200
+    );
+
+}
+
+</script>
+
 
 </body>
+
 </html>

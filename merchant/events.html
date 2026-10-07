@@ -1,14 +1,18 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
     <title>My Events | K-Tickets Merchant</title>
 
     <meta
         name="description"
-        content="Manage your K-Tickets events."
+        content="Manage your K-Tickets merchant events."
     >
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -16,8 +20,12 @@
     <style>
         :root {
             --bordo: #6C151E;
+            --bordo-dark: #531018;
             --green: #0F3D3A;
+            --green-dark: #092b29;
             --cream: #F5DABF;
+            --cream-light: #fffaf4;
+            --cream-soft: #f7eadf;
 
             --white: #ffffff;
             --bg: #f8f5f1;
@@ -29,13 +37,14 @@
             --border: #e8ded6;
 
             --success: #287a59;
-            --warning: #b7791f;
+            --warning: #a66a18;
             --danger: #a52832;
 
             --shadow:
                 0 14px 40px rgba(38, 25, 19, 0.07);
 
             --radius: 18px;
+            --sidebar-width: 265px;
         }
 
         * {
@@ -50,7 +59,6 @@
 
         body {
             min-height: 100vh;
-
             background: var(--bg);
             color: var(--text);
 
@@ -79,12 +87,13 @@
             text-decoration: none;
         }
 
-        /* =========================================
+        /* =========================================================
            SIDEBAR
-        ========================================= */
+        ========================================================== */
 
         .sidebar {
-            width: 265px;
+            width: var(--sidebar-width);
+            min-height: 100vh;
 
             position: fixed;
             inset: 0 auto 0 0;
@@ -95,7 +104,7 @@
             flex-direction: column;
 
             background: var(--green);
-            color: white;
+            color: var(--white);
 
             transition:
                 transform .25s ease;
@@ -110,19 +119,41 @@
         }
 
         .brand-main {
-            font-size: 21px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            font-size: 19px;
             font-weight: 850;
-            letter-spacing: -.5px;
+            letter-spacing: .02em;
+        }
+
+        .brand-mark {
+            width: 39px;
+            height: 39px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 11px;
+
+            background: var(--cream);
+            color: var(--green);
+
+            font-family: Georgia, serif;
+            font-size: 20px;
+            font-weight: 900;
         }
 
         .brand-sub {
             margin-top: 5px;
+            margin-left: 50px;
 
             color:
-                rgba(255,255,255,.58);
+                rgba(255,255,255,.55);
 
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 10px;
+            font-weight: 700;
 
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -142,8 +173,9 @@
 
             border-radius: 999px;
 
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
+            letter-spacing: .05em;
         }
 
         .status-dot {
@@ -171,7 +203,7 @@
             color:
                 rgba(255,255,255,.36);
 
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 800;
 
             text-transform: uppercase;
@@ -222,7 +254,7 @@
 
             text-align: center;
 
-            font-size: 17px;
+            font-size: 16px;
 
             flex-shrink: 0;
         }
@@ -263,19 +295,18 @@
             color: white;
         }
 
-        /* =========================================
+        /* =========================================================
            MAIN
-        ========================================= */
+        ========================================================== */
 
         .main {
             min-height: 100vh;
-
-            margin-left: 265px;
+            margin-left: var(--sidebar-width);
         }
 
-        /* =========================================
+        /* =========================================================
            TOPBAR
-        ========================================= */
+        ========================================================== */
 
         .topbar {
             height: 76px;
@@ -297,8 +328,7 @@
             border-bottom:
                 1px solid var(--border);
 
-            backdrop-filter:
-                blur(14px);
+            backdrop-filter: blur(14px);
         }
 
         .topbar-left {
@@ -354,7 +384,7 @@
 
             border-radius: 12px;
 
-            font-size: 18px;
+            font-size: 17px;
         }
 
         .notification-badge {
@@ -399,7 +429,7 @@
             background: var(--cream);
             color: var(--green);
 
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 850;
         }
 
@@ -423,13 +453,13 @@
             font-size: 10px;
         }
 
-        /* =========================================
+        /* =========================================================
            CONTENT
-        ========================================= */
+        ========================================================== */
 
         .content {
             width: 100%;
-            max-width: 1450px;
+            max-width: 1500px;
 
             margin: 0 auto;
 
@@ -446,23 +476,41 @@
             margin-bottom: 26px;
         }
 
+        .eyebrow {
+            margin-bottom: 8px;
+
+            color: var(--bordo);
+
+            font-size: 9px;
+            font-weight: 850;
+
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
         .page-header h1 {
             color: var(--green);
 
-            font-size:
-                clamp(28px, 4vw, 38px);
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
 
-            line-height: 1.1;
+            font-size:
+                clamp(30px, 4vw, 42px);
+
+            line-height: 1.08;
 
             letter-spacing: -1px;
         }
 
         .page-header p {
-            margin-top: 8px;
+            margin-top: 9px;
 
             color: var(--muted);
 
-            font-size: 14px;
+            font-size: 13px;
+            line-height: 1.6;
         }
 
         .header-actions {
@@ -471,22 +519,30 @@
             flex-wrap: wrap;
         }
 
-        /* =========================================
+        /* =========================================================
            BUTTONS
-        ========================================= */
+        ========================================================== */
 
         .btn {
+            min-height: 42px;
+
             border: 0;
 
             border-radius: 11px;
 
-            padding: 11px 16px;
+            padding: 10px 15px;
 
-            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+
+            font-size: 11px;
             font-weight: 800;
 
             transition:
                 transform .2s ease,
+                box-shadow .2s ease,
                 opacity .2s ease;
         }
 
@@ -495,8 +551,16 @@
         }
 
         .btn-primary {
-            background: var(--green);
+            background: var(--bordo);
             color: white;
+
+            box-shadow:
+                0 7px 20px
+                rgba(108,21,30,.15);
+        }
+
+        .btn-primary:hover {
+            background: var(--bordo-dark);
         }
 
         .btn-secondary {
@@ -507,9 +571,18 @@
                 1px solid var(--border);
         }
 
+        .btn-secondary:hover {
+            box-shadow:
+                0 6px 18px
+                rgba(38,25,19,.06);
+        }
+
         .btn-danger {
             background: #fff0f0;
             color: var(--danger);
+
+            border:
+                1px solid #efd0d2;
         }
 
         .btn:disabled {
@@ -518,9 +591,9 @@
             transform: none;
         }
 
-        /* =========================================
+        /* =========================================================
            SUMMARY
-        ========================================= */
+        ========================================================== */
 
         .summary-grid {
             display: grid;
@@ -548,14 +621,36 @@
                 rgba(36,25,19,.04);
         }
 
+        .summary-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
         .summary-label {
             color: var(--muted);
 
-            font-size: 10px;
-            font-weight: 800;
+            font-size: 9px;
+            font-weight: 850;
 
             text-transform: uppercase;
-            letter-spacing: .7px;
+            letter-spacing: .8px;
+        }
+
+        .summary-icon {
+            width: 31px;
+            height: 31px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 9px;
+
+            background: var(--cream-soft);
+            color: var(--green);
+
+            font-size: 13px;
         }
 
         .summary-value {
@@ -575,14 +670,14 @@
             font-size: 10px;
         }
 
-        /* =========================================
-           FILTER CARD
-        ========================================= */
+        /* =========================================================
+           FILTERS
+        ========================================================== */
 
         .filter-card {
             margin-bottom: 18px;
 
-            padding: 15px;
+            padding: 14px;
 
             display: flex;
             align-items: center;
@@ -602,10 +697,8 @@
 
         .search {
             position: relative;
-
             flex: 1;
-
-            min-width: 180px;
+            min-width: 220px;
         }
 
         .search-icon {
@@ -624,10 +717,12 @@
         .search input {
             width: 100%;
 
+            min-height: 43px;
+
             padding:
-                11px
+                10px
                 13px
-                11px
+                10px
                 39px;
 
             border:
@@ -642,7 +737,7 @@
 
             color: var(--text);
 
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .search input:focus {
@@ -651,9 +746,10 @@
         }
 
         .filter-select {
-            min-width: 145px;
+            min-width: 155px;
+            min-height: 43px;
 
-            padding: 11px 12px;
+            padding: 10px 12px;
 
             border:
                 1px solid var(--border);
@@ -666,16 +762,16 @@
 
             outline: none;
 
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .filter-select:focus {
             border-color: var(--green);
         }
 
-        /* =========================================
+        /* =========================================================
            EVENTS CARD
-        ========================================= */
+        ========================================================== */
 
         .events-card {
             overflow: hidden;
@@ -715,18 +811,19 @@
 
             color: var(--muted);
 
-            font-size: 11px;
+            font-size: 10px;
         }
 
         .event-count {
             color: var(--muted);
 
-            font-size: 11px;
+            font-size: 10px;
+            font-weight: 700;
         }
 
-        /* =========================================
-           DESKTOP TABLE
-        ========================================= */
+        /* =========================================================
+           TABLE
+        ========================================================== */
 
         .table-wrap {
             overflow-x: auto;
@@ -734,10 +831,9 @@
 
         .events-table {
             width: 100%;
+            min-width: 1050px;
 
             border-collapse: collapse;
-
-            min-width: 850px;
         }
 
         .events-table th {
@@ -753,11 +849,11 @@
 
             text-align: left;
 
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 850;
 
             text-transform: uppercase;
-            letter-spacing: .7px;
+            letter-spacing: .8px;
         }
 
         .events-table td {
@@ -781,20 +877,21 @@
         }
 
         .event-title-cell {
-            min-width: 220px;
+            min-width: 250px;
         }
 
         .event-title {
+            max-width: 300px;
+
+            overflow: hidden;
+
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
             color: var(--text);
 
             font-size: 12px;
-            font-weight: 800;
-
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-
-            max-width: 280px;
+            font-weight: 850;
         }
 
         .event-location {
@@ -802,14 +899,29 @@
 
             color: var(--muted);
 
-            font-size: 10px;
+            font-size: 9px;
+        }
+
+        .event-description {
+            max-width: 280px;
+
+            margin-top: 5px;
+
+            overflow: hidden;
+
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            color: #9a9089;
+
+            font-size: 9px;
         }
 
         .date-main {
             color: var(--text);
 
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 10px;
+            font-weight: 750;
         }
 
         .date-sub {
@@ -820,29 +932,81 @@
             font-size: 9px;
         }
 
-        .number {
+        .inventory {
+            min-width: 115px;
+        }
+
+        .inventory-main {
             color: var(--green);
 
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 850;
+        }
+
+        .inventory-sub {
+            margin-top: 3px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+        }
+
+        .inventory-bar {
+            width: 100%;
+            height: 5px;
+
+            margin-top: 7px;
+
+            overflow: hidden;
+
+            background: #eee5dd;
+
+            border-radius: 999px;
+        }
+
+        .inventory-fill {
+            height: 100%;
+
+            border-radius: inherit;
+
+            background: var(--green);
+        }
+
+        .inventory-fill.low {
+            background: var(--warning);
+        }
+
+        .inventory-fill.sold-out {
+            background: var(--danger);
         }
 
         .status {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
+            gap: 5px;
 
             padding: 6px 9px;
 
             border-radius: 999px;
 
-            font-size: 9px;
-            font-weight: 800;
+            font-size: 8px;
+            font-weight: 850;
 
             text-transform: capitalize;
         }
 
-        .status-active {
+        .status::before {
+            content: "";
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: currentColor;
+        }
+
+        .status-published {
             background: #eaf5ef;
             color: var(--success);
         }
@@ -853,8 +1017,8 @@
         }
 
         .status-ended {
-            background: #f7e8e9;
-            color: var(--bordo);
+            background: #f6ebe5;
+            color: var(--warning);
         }
 
         .status-cancelled {
@@ -896,9 +1060,9 @@
             color: var(--danger);
         }
 
-        /* =========================================
-           MOBILE EVENT CARDS
-        ========================================= */
+        /* =========================================================
+           MOBILE EVENTS
+        ========================================================== */
 
         .mobile-events {
             display: none;
@@ -953,7 +1117,7 @@
             grid-template-columns:
                 repeat(2,1fr);
 
-            gap: 10px;
+            gap: 9px;
         }
 
         .mobile-detail {
@@ -967,8 +1131,10 @@
         .mobile-detail-label {
             color: var(--muted);
 
-            font-size: 9px;
-            font-weight: 700;
+            font-size: 8px;
+            font-weight: 800;
+
+            text-transform: uppercase;
         }
 
         .mobile-detail-value {
@@ -977,24 +1143,50 @@
             color: var(--green);
 
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 850;
+        }
+
+        .mobile-inventory {
+            margin-top: 10px;
+
+            padding: 10px;
+
+            background: white;
+
+            border-radius: 10px;
+        }
+
+        .mobile-inventory-row {
+            display: flex;
+            justify-content: space-between;
+
+            color: var(--muted);
+
+            font-size: 9px;
+        }
+
+        .mobile-inventory-row strong {
+            color: var(--green);
         }
 
         .mobile-event-actions {
             margin-top: 12px;
 
-            display: flex;
+            display: grid;
+
+            grid-template-columns:
+                repeat(2,1fr);
+
             gap: 7px;
         }
 
-        .mobile-event-actions a,
-        .mobile-event-actions button {
-            flex: 1;
+        .mobile-event-actions .wide {
+            grid-column: 1 / -1;
         }
 
-        /* =========================================
+        /* =========================================================
            EMPTY / LOADING
-        ========================================= */
+        ========================================================== */
 
         .state {
             padding: 65px 20px;
@@ -1066,9 +1258,9 @@
             }
         }
 
-        /* =========================================
+        /* =========================================================
            MODAL
-        ========================================= */
+        ========================================================== */
 
         .modal {
             position: fixed;
@@ -1094,11 +1286,7 @@
         }
 
         .modal-box {
-            width: min(470px,100%);
-
-            max-height: 90vh;
-
-            overflow-y: auto;
+            width: min(480px,100%);
 
             background: white;
 
@@ -1107,6 +1295,8 @@
             box-shadow:
                 0 25px 70px
                 rgba(0,0,0,.20);
+
+            overflow: hidden;
         }
 
         .modal-header {
@@ -1150,8 +1340,8 @@
         .modal-body p {
             color: var(--muted);
 
-            font-size: 13px;
-            line-height: 1.6;
+            font-size: 12px;
+            line-height: 1.7;
         }
 
         .modal-event-name {
@@ -1170,6 +1360,23 @@
             font-weight: 800;
         }
 
+        .modal-warning {
+            margin-top: 12px;
+
+            padding: 11px 12px;
+
+            background: #fff8e9;
+
+            border: 1px solid #efdcb0;
+
+            border-radius: 10px;
+
+            color: #7c591f;
+
+            font-size: 10px;
+            line-height: 1.55;
+        }
+
         .modal-actions {
             margin-top: 18px;
 
@@ -1179,9 +1386,9 @@
             gap: 8px;
         }
 
-        /* =========================================
+        /* =========================================================
            TOAST
-        ========================================= */
+        ========================================================== */
 
         .toast-container {
             position: fixed;
@@ -1197,7 +1404,7 @@
         }
 
         .toast {
-            min-width: 250px;
+            min-width: 260px;
 
             padding: 13px 15px;
 
@@ -1210,8 +1417,11 @@
                 0 15px 35px
                 rgba(0,0,0,.15);
 
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 650;
+
+            animation:
+                toastIn .2s ease;
         }
 
         .toast.error {
@@ -1222,29 +1432,25 @@
             background: var(--success);
         }
 
-        /* =========================================
-           OVERLAY
-        ========================================= */
-
-        .overlay {
-            display: none;
-
-            position: fixed;
-            inset: 0;
-
-            z-index: 900;
-
-            background:
-                rgba(0,0,0,.38);
+        .toast.warning {
+            background: #8a611d;
         }
 
-        .overlay.active {
-            display: block;
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* =========================================
+        /* =========================================================
            RESPONSIVE
-        ========================================= */
+        ========================================================== */
 
         @media (max-width: 1150px) {
 
@@ -1281,7 +1487,8 @@
             }
 
             .content {
-                padding: 28px 20px 50px;
+                padding:
+                    28px 20px 50px;
             }
 
         }
@@ -1307,7 +1514,6 @@
 
             .page-header {
                 align-items: flex-start;
-
                 flex-direction: column;
             }
 
@@ -1321,13 +1527,13 @@
 
             .filter-card {
                 align-items: stretch;
-
                 flex-direction: column;
             }
 
             .search,
             .filter-select {
                 width: 100%;
+                min-width: 0;
             }
 
             .events-table {
@@ -1351,7 +1557,7 @@
             }
 
             .page-header h1 {
-                font-size: 29px;
+                font-size: 30px;
             }
 
             .mobile-event-details {
@@ -1368,6 +1574,14 @@
                 min-width: 0;
             }
 
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-actions .btn {
+                width: 100%;
+            }
+
         }
     </style>
 </head>
@@ -1376,9 +1590,9 @@
 
 <div class="app">
 
-    <!-- =========================================
+    <!-- =========================================================
          SIDEBAR
-    ========================================== -->
+    ========================================================== -->
 
     <aside
         class="sidebar"
@@ -1388,7 +1602,8 @@
         <div class="brand">
 
             <div class="brand-main">
-                K-Tickets
+                <div class="brand-mark">K</div>
+                <span>K-Tickets</span>
             </div>
 
             <div class="brand-sub">
@@ -1442,7 +1657,7 @@
                 href="./tickets.html"
                 class="nav-link"
             >
-                <span class="nav-icon">🎟</span>
+                <span class="nav-icon">▣</span>
                 <span>Tickets</span>
             </a>
 
@@ -1465,6 +1680,14 @@
             >
                 <span class="nav-icon">▤</span>
                 <span>Sales</span>
+            </a>
+
+            <a
+                href="./earnings.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">₵</span>
+                <span>Earnings</span>
             </a>
 
             <a
@@ -1496,6 +1719,7 @@
             <button
                 class="signout"
                 id="signOutBtn"
+                type="button"
             >
                 Sign Out
             </button>
@@ -1505,15 +1729,9 @@
     </aside>
 
 
-    <div
-        class="overlay"
-        id="overlay"
-    ></div>
-
-
-    <!-- =========================================
+    <!-- =========================================================
          MAIN
-    ========================================== -->
+    ========================================================== -->
 
     <main class="main">
 
@@ -1524,6 +1742,7 @@
                 <button
                     class="mobile-menu"
                     id="mobileMenu"
+                    type="button"
                     aria-label="Open navigation"
                 >
                     ☰
@@ -1539,11 +1758,11 @@
             <div class="top-right">
 
                 <a
-                    href="../notifications.html"
+                    href="./dashboard.html"
                     class="notification-btn"
-                    aria-label="Notifications"
+                    aria-label="Merchant dashboard"
+                    title="Merchant dashboard"
                 >
-
                     ♢
 
                     <span
@@ -1585,25 +1804,27 @@
         </header>
 
 
-        <!-- =====================================
+        <!-- =====================================================
              CONTENT
-        ====================================== -->
+        ====================================================== -->
 
         <section class="content">
-
-
-            <!-- HEADER -->
 
             <div class="page-header">
 
                 <div>
+
+                    <div class="eyebrow">
+                        Merchant Workspace
+                    </div>
 
                     <h1>
                         My Events
                     </h1>
 
                     <p>
-                        Create, manage and monitor your K-Tickets events.
+                        Create, manage and monitor the events belonging
+                        to your merchant account.
                     </p>
 
                 </div>
@@ -1614,15 +1835,16 @@
                     <button
                         class="btn btn-secondary"
                         id="refreshBtn"
+                        type="button"
                     >
-                        Refresh
+                        ↻ Refresh
                     </button>
 
                     <a
                         href="./create-event.html"
                         class="btn btn-primary"
                     >
-                        + Create Event
+                        ＋ Create Event
                     </a>
 
                 </div>
@@ -1630,16 +1852,24 @@
             </div>
 
 
-            <!-- =================================
+            <!-- =================================================
                  SUMMARY
-            ================================== -->
+            ================================================== -->
 
             <div class="summary-grid">
 
                 <div class="summary-card">
 
-                    <div class="summary-label">
-                        Total Events
+                    <div class="summary-top">
+
+                        <div class="summary-label">
+                            Total Events
+                        </div>
+
+                        <div class="summary-icon">
+                            ◫
+                        </div>
+
                     </div>
 
                     <div
@@ -1650,7 +1880,7 @@
                     </div>
 
                     <div class="summary-note">
-                        All your events
+                        All events owned by you
                     </div>
 
                 </div>
@@ -1658,19 +1888,27 @@
 
                 <div class="summary-card">
 
-                    <div class="summary-label">
-                        Active
+                    <div class="summary-top">
+
+                        <div class="summary-label">
+                            Published
+                        </div>
+
+                        <div class="summary-icon">
+                            ✓
+                        </div>
+
                     </div>
 
                     <div
                         class="summary-value"
-                        id="activeEvents"
+                        id="publishedEvents"
                     >
                         —
                     </div>
 
                     <div class="summary-note">
-                        Currently selling
+                        Public event records
                     </div>
 
                 </div>
@@ -1678,8 +1916,16 @@
 
                 <div class="summary-card">
 
-                    <div class="summary-label">
-                        Drafts
+                    <div class="summary-top">
+
+                        <div class="summary-label">
+                            Drafts
+                        </div>
+
+                        <div class="summary-icon">
+                            ◷
+                        </div>
+
                     </div>
 
                     <div
@@ -1698,19 +1944,27 @@
 
                 <div class="summary-card">
 
-                    <div class="summary-label">
-                        Ended
+                    <div class="summary-top">
+
+                        <div class="summary-label">
+                            Tickets Sold
+                        </div>
+
+                        <div class="summary-icon">
+                            ▣
+                        </div>
+
                     </div>
 
                     <div
                         class="summary-value"
-                        id="endedEvents"
+                        id="ticketsSold"
                     >
                         —
                     </div>
 
                     <div class="summary-note">
-                        Past events
+                        From ticket inventory records
                     </div>
 
                 </div>
@@ -1718,9 +1972,9 @@
             </div>
 
 
-            <!-- =================================
+            <!-- =================================================
                  FILTERS
-            ================================== -->
+            ================================================== -->
 
             <div class="filter-card">
 
@@ -1733,7 +1987,7 @@
                     <input
                         type="search"
                         id="searchInput"
-                        placeholder="Search your events..."
+                        placeholder="Search events, venues or cities..."
                         autocomplete="off"
                     >
 
@@ -1749,8 +2003,8 @@
                         All statuses
                     </option>
 
-                    <option value="active">
-                        Active
+                    <option value="published">
+                        Published
                     </option>
 
                     <option value="draft">
@@ -1770,9 +2024,9 @@
             </div>
 
 
-            <!-- =================================
+            <!-- =================================================
                  EVENTS
-            ================================== -->
+            ================================================== -->
 
             <section class="events-card">
 
@@ -1785,7 +2039,7 @@
                         </div>
 
                         <div class="card-subtitle">
-                            Events belonging to your merchant account
+                            Live event and ticket inventory data
                         </div>
 
                     </div>
@@ -1794,7 +2048,7 @@
                         class="event-count"
                         id="eventCount"
                     >
-                        —
+                        Loading...
                     </div>
 
                 </div>
@@ -1815,7 +2069,7 @@
                                 </th>
 
                                 <th>
-                                    Date
+                                    Schedule
                                 </th>
 
                                 <th>
@@ -1823,11 +2077,11 @@
                                 </th>
 
                                 <th>
-                                    Tickets
+                                    Ticket Types
                                 </th>
 
                                 <th>
-                                    Sales
+                                    Inventory
                                 </th>
 
                                 <th>
@@ -1837,7 +2091,6 @@
                             </tr>
 
                         </thead>
-
 
                         <tbody id="eventsTableBody">
 
@@ -1854,7 +2107,8 @@
                                         </h3>
 
                                         <p>
-                                            Please wait while your events are loaded.
+                                            Loading your live event records
+                                            from Supabase.
                                         </p>
 
                                     </div>
@@ -1875,23 +2129,7 @@
                 <div
                     class="mobile-events"
                     id="mobileEvents"
-                >
-
-                    <div class="state">
-
-                        <div class="loading-spinner"></div>
-
-                        <h3>
-                            Loading events
-                        </h3>
-
-                        <p>
-                            Please wait while your events are loaded.
-                        </p>
-
-                    </div>
-
-                </div>
+                ></div>
 
             </section>
 
@@ -1902,26 +2140,33 @@
 </div>
 
 
-<!-- =========================================
-     DELETE MODAL
-========================================== -->
+<!-- =========================================================
+     CANCEL MODAL
+========================================================== -->
 
 <div
     class="modal"
-    id="deleteModal"
+    id="cancelModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cancelModalTitle"
 >
 
     <div class="modal-box">
 
         <div class="modal-header">
 
-            <div class="modal-title">
-                Remove Event
+            <div
+                class="modal-title"
+                id="cancelModalTitle"
+            >
+                Cancel Event
             </div>
 
             <button
+                type="button"
                 class="modal-close"
-                id="closeDeleteModal"
+                id="closeCancelModal"
                 aria-label="Close"
             >
                 ×
@@ -1933,35 +2178,39 @@
         <div class="modal-body">
 
             <p>
-                Are you sure you want to remove this event from your merchant account?
+                This does not delete the event or its transaction history.
+                The event will be marked as cancelled.
             </p>
 
             <div
                 class="modal-event-name"
-                id="deleteEventName"
+                id="cancelEventName"
             >
                 —
             </div>
 
-            <p style="margin-top:12px;">
-                This action should only be used for events that have not generated completed customer transactions.
-            </p>
-
+            <div class="modal-warning">
+                If customers have already purchased tickets, cancellation
+                does not automatically refund payments. Refund handling
+                remains a separate payment/refund workflow.
+            </div>
 
             <div class="modal-actions">
 
                 <button
+                    type="button"
                     class="btn btn-secondary"
-                    id="cancelDelete"
+                    id="keepEventBtn"
                 >
-                    Cancel
+                    Keep Event
                 </button>
 
                 <button
+                    type="button"
                     class="btn btn-danger"
-                    id="confirmDelete"
+                    id="confirmCancelBtn"
                 >
-                    Remove Event
+                    Cancel Event
                 </button>
 
             </div>
@@ -1973,6 +2222,10 @@
 </div>
 
 
+<!-- =========================================================
+     TOAST
+========================================================== -->
+
 <div
     class="toast-container"
     id="toastContainer"
@@ -1982,320 +2235,126 @@
 <script>
     /* =========================================================
        K-TICKETS MERCHANT EVENTS
-
-       Supabase is the source of truth.
-       No event data is hardcoded.
-    ========================================================= */
-
-
-    /* =========================================================
-       SUPABASE
-    ========================================================= */
+       Supabase = source of truth
+    ========================================================== */
 
     const SUPABASE_URL =
-        window.KTICKETS_SUPABASE_URL || "";
+        window.KTICKETS_SUPABASE_URL ||
+        "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
     const SUPABASE_ANON_KEY =
-        window.KTICKETS_SUPABASE_ANON_KEY || "";
-
+        window.KTICKETS_SUPABASE_ANON_KEY ||
+        "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
     let supabaseClient = null;
 
-
-    if (
-        SUPABASE_URL &&
-        SUPABASE_ANON_KEY &&
-        window.supabase
-    ) {
-
-        supabaseClient =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_ANON_KEY
-            );
-
-    }
-
-
-    /* =========================================================
-       STATE
-    ========================================================= */
-
     let currentUser = null;
-
-    let merchantProfile = null;
+    let currentProfile = null;
 
     let events = [];
-
     let filteredEvents = [];
 
-    let eventToDelete = null;
+    let ticketTypes = [];
+
+    let eventToCancel = null;
 
 
     /* =========================================================
        DOM
-    ========================================================= */
+    ========================================================== */
 
-    const sidebar =
-        document.getElementById("sidebar");
-
-    const overlay =
-        document.getElementById("overlay");
-
-    const mobileMenu =
-        document.getElementById("mobileMenu");
-
-    const signOutBtn =
-        document.getElementById("signOutBtn");
-
-    const merchantName =
-        document.getElementById("merchantName");
-
-    const avatar =
-        document.getElementById("avatar");
-
-    const notificationBadge =
-        document.getElementById(
-            "notificationBadge"
-        );
-
-    const searchInput =
-        document.getElementById("searchInput");
-
-    const statusFilter =
-        document.getElementById("statusFilter");
-
-    const refreshBtn =
-        document.getElementById("refreshBtn");
-
-    const totalEvents =
-        document.getElementById("totalEvents");
-
-    const activeEvents =
-        document.getElementById("activeEvents");
-
-    const draftEvents =
-        document.getElementById("draftEvents");
-
-    const endedEvents =
-        document.getElementById("endedEvents");
-
-    const eventCount =
-        document.getElementById("eventCount");
-
-    const eventsTableBody =
-        document.getElementById(
-            "eventsTableBody"
-        );
-
-    const mobileEvents =
-        document.getElementById(
-            "mobileEvents"
-        );
-
-    const deleteModal =
-        document.getElementById("deleteModal");
-
-    const deleteEventName =
-        document.getElementById(
-            "deleteEventName"
-        );
-
-    const closeDeleteModal =
-        document.getElementById(
-            "closeDeleteModal"
-        );
-
-    const cancelDelete =
-        document.getElementById(
-            "cancelDelete"
-        );
-
-    const confirmDelete =
-        document.getElementById(
-            "confirmDelete"
-        );
-
-    const toastContainer =
-        document.getElementById(
-            "toastContainer"
-        );
+    const $ = id =>
+        document.getElementById(id);
 
 
     /* =========================================================
-       INIT
-    ========================================================= */
+       BOOT
+    ========================================================== */
 
     document.addEventListener(
         "DOMContentLoaded",
-        initialize
+        boot
     );
 
 
-    async function initialize() {
-
-        bindEvents();
-
-
-        if (!supabaseClient) {
-
-            showError(
-                "Supabase configuration is missing."
-            );
-
-            return;
-        }
-
+    async function boot() {
 
         try {
 
+            supabaseClient =
+                window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_ANON_KEY,
+                    {
+                        auth: {
+                            persistSession: true,
+                            autoRefreshToken: true,
+                            detectSessionInUrl: true
+                        }
+                    }
+                );
+
+
             const {
-                data,
-                error
+                data: {
+                    user
+                },
+                error: authError
             } =
-                await supabaseClient
-                    .auth
-                    .getUser();
+                await supabaseClient.auth.getUser();
 
 
             if (
-                error ||
-                !data ||
-                !data.user
+                authError ||
+                !user
             ) {
 
-                redirectToLogin();
+                window.location.href =
+                    "../login.html";
 
                 return;
+
             }
 
 
-            currentUser =
-                data.user;
+            currentUser = user;
 
 
             await loadProfile();
 
+            await loadEvents();
 
-            if (
-                merchantProfile?.role &&
-                merchantProfile.role !== "merchant"
-            ) {
-
-                showError(
-                    "This account is not registered as a merchant."
-                );
-
-                return;
-            }
+            await loadNotificationCount();
 
 
-            await Promise.all([
-                loadEvents(),
-                loadNotificationCount()
-            ]);
+            setupControls();
+
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "K-Tickets merchant events boot error:",
+                error
+            );
+
 
             showError(
-                error.message ||
-                "Unable to load merchant events."
+                getReadableError(error)
             );
 
         }
-
-    }
-
-
-    /* =========================================================
-       EVENTS
-    ========================================================= */
-
-    function bindEvents() {
-
-        mobileMenu.addEventListener(
-            "click",
-            openSidebar
-        );
-
-
-        overlay.addEventListener(
-            "click",
-            closeSidebar
-        );
-
-
-        signOutBtn.addEventListener(
-            "click",
-            signOut
-        );
-
-
-        refreshBtn.addEventListener(
-            "click",
-            loadEvents
-        );
-
-
-        searchInput.addEventListener(
-            "input",
-            applyFilters
-        );
-
-
-        statusFilter.addEventListener(
-            "change",
-            applyFilters
-        );
-
-
-        closeDeleteModal.addEventListener(
-            "click",
-            closeDeleteDialog
-        );
-
-
-        cancelDelete.addEventListener(
-            "click",
-            closeDeleteDialog
-        );
-
-
-        confirmDelete.addEventListener(
-            "click",
-            confirmEventDelete
-        );
-
-
-        deleteModal.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target ===
-                    deleteModal
-                ) {
-
-                    closeDeleteDialog();
-
-                }
-
-            }
-        );
 
     }
 
 
     /* =========================================================
        PROFILE
-    ========================================================= */
+    ========================================================== */
 
     async function loadProfile() {
 
         const {
-            data,
+            data: profile,
             error
         } =
             await supabaseClient
@@ -2304,7 +2363,8 @@
                     id,
                     full_name,
                     phone,
-                    role
+                    role,
+                    is_active
                 `)
                 .eq(
                     "id",
@@ -2314,26 +2374,66 @@
 
 
         if (error) {
-            throw error;
+
+            throw new Error(
+                `Unable to load merchant profile: ${error.message}`
+            );
+
         }
 
 
-        merchantProfile =
-            data;
+        if (!profile) {
+
+            throw new Error(
+                "Merchant profile was not found."
+            );
+
+        }
+
+
+        if (
+            String(
+                profile.role || ""
+            ).toLowerCase() !==
+            "merchant"
+        ) {
+
+            throw new Error(
+                "This page is only available to merchant accounts."
+            );
+
+        }
+
+
+        if (
+            profile.is_active === false
+        ) {
+
+            throw new Error(
+                "Your merchant account is currently inactive."
+            );
+
+        }
+
+
+        currentProfile =
+            profile;
 
 
         const name =
-            merchantProfile?.full_name ||
-            currentUser.user_metadata?.full_name ||
-            currentUser.email?.split("@")[0] ||
+            profile.full_name ||
+            currentUser
+                .user_metadata
+                ?.full_name ||
+            currentUser.email
+                ?.split("@")[0] ||
             "Merchant";
 
 
-        merchantName.textContent =
+        $("merchantName").textContent =
             name;
 
-
-        avatar.textContent =
+        $("avatar").textContent =
             getInitials(name);
 
     }
@@ -2341,22 +2441,7 @@
 
     /* =========================================================
        LOAD EVENTS
-       
-       Expected:
-       
-       events
-       ├── id
-       ├── merchant_id
-       ├── title
-       ├── description
-       ├── venue
-       ├── city
-       ├── start_at
-       ├── end_at
-       ├── status
-       ├── created_at
-       └── updated_at
-    ========================================================= */
+    ========================================================== */
 
     async function loadEvents() {
 
@@ -2365,9 +2450,17 @@
 
         try {
 
+            /*
+             * Ownership is enforced in the query.
+             *
+             * Only confirmed events columns are selected.
+             *
+             * No old sales_start_at / sales_end_at fields.
+             */
+
             const {
-                data,
-                error
+                data: eventRows,
+                error: eventError
             } =
                 await supabaseClient
                     .from("events")
@@ -2397,16 +2490,80 @@
                     );
 
 
-            if (error) {
-                throw error;
+            if (eventError) {
+                throw eventError;
             }
 
 
             events =
-                data || [];
+                eventRows || [];
 
 
-            updateSummary();
+            /*
+             * Ticket inventory is loaded separately.
+             *
+             * This avoids depending on PostgREST relationship
+             * names and gives us exact current ticket_type data.
+             */
+
+            const eventIds =
+                events.map(
+                    event =>
+                        event.id
+                );
+
+
+            ticketTypes = [];
+
+
+            if (eventIds.length) {
+
+                const {
+                    data: ticketRows,
+                    error: ticketError
+                } =
+                    await supabaseClient
+                        .from("ticket_types")
+                        .select(`
+                            id,
+                            event_id,
+                            name,
+                            price,
+                            currency,
+                            quantity_total,
+                            quantity_sold,
+                            sales_start,
+                            sales_end,
+                            active,
+                            created_at,
+                            updated_at
+                        `)
+                        .in(
+                            "event_id",
+                            eventIds
+                        )
+                        .order(
+                            "created_at",
+                            {
+                                ascending: true
+                            }
+                        );
+
+
+                if (ticketError) {
+                    throw ticketError;
+                }
+
+
+                ticketTypes =
+                    ticketRows || [];
+
+            }
+
+
+            renderSummary();
+
+            populateFilters();
 
             applyFilters();
 
@@ -2414,195 +2571,436 @@
         } catch (error) {
 
             console.error(
-                "Events:",
+                "Load merchant events error:",
                 error
             );
 
 
             showError(
-                error.message ||
-                "Could not load your events."
+                getReadableError(error)
             );
 
         }
-
-    }
-
-
-    /* =========================================================
-       FILTERS
-    ========================================================= */
-
-    function applyFilters() {
-
-        const search =
-            searchInput.value
-                .trim()
-                .toLowerCase();
-
-
-        const status =
-            statusFilter.value;
-
-
-        filteredEvents =
-            events.filter(
-                event => {
-
-                    const title =
-                        String(
-                            event.title || ""
-                        ).toLowerCase();
-
-
-                    const venue =
-                        String(
-                            event.venue || ""
-                        ).toLowerCase();
-
-
-                    const city =
-                        String(
-                            event.city || ""
-                        ).toLowerCase();
-
-
-                    const matchesSearch =
-                        !search ||
-                        title.includes(search) ||
-                        venue.includes(search) ||
-                        city.includes(search);
-
-
-                    const eventStatus =
-                        normalizeStatus(
-                            event.status
-                        );
-
-
-                    const matchesStatus =
-                        status === "all" ||
-                        eventStatus === status;
-
-
-                    return (
-                        matchesSearch &&
-                        matchesStatus
-                    );
-
-                }
-            );
-
-
-        renderEvents();
 
     }
 
 
     /* =========================================================
        SUMMARY
-    ========================================================= */
+    ========================================================== */
 
-    function updateSummary() {
+    function renderSummary() {
 
         const total =
             events.length;
 
 
-        const active =
+        const published =
             events.filter(
                 event =>
-                    normalizeStatus(
+                    normalizeStoredStatus(
                         event.status
-                    ) === "active"
+                    ) === "published"
             ).length;
 
 
         const drafts =
             events.filter(
                 event =>
-                    normalizeStatus(
+                    normalizeStoredStatus(
                         event.status
                     ) === "draft"
             ).length;
 
 
-        const ended =
-            events.filter(
-                event =>
-                    normalizeStatus(
-                        event.status
-                    ) === "ended"
-            ).length;
+        const ticketsSold =
+            ticketTypes.reduce(
+                (
+                    total,
+                    ticket
+                ) =>
+                    total +
+                    Number(
+                        ticket.quantity_sold || 0
+                    ),
+                0
+            );
 
 
-        totalEvents.textContent =
+        $("totalEvents").textContent =
             formatNumber(total);
 
 
-        activeEvents.textContent =
-            formatNumber(active);
+        $("publishedEvents").textContent =
+            formatNumber(published);
 
 
-        draftEvents.textContent =
+        $("draftEvents").textContent =
             formatNumber(drafts);
 
 
-        endedEvents.textContent =
-            formatNumber(ended);
+        $("ticketsSold").textContent =
+            formatNumber(ticketsSold);
 
     }
 
 
     /* =========================================================
-       RENDER
-    ========================================================= */
+       FILTER OPTIONS
+    ========================================================== */
 
-    function renderEvents() {
+    function populateFilters() {
 
-        eventCount.textContent =
-            `${filteredEvents.length} ${
-                filteredEvents.length === 1
-                    ? "event"
-                    : "events"
-            }`;
+        /*
+         * Status options are intentionally static because they
+         * correspond to the event status workflow.
+         *
+         * Actual event records are always read from Supabase.
+         */
 
-
-        if (
-            filteredEvents.length === 0
-        ) {
-
-            renderEmpty();
-
-            return;
-        }
+    }
 
 
-        renderDesktopTable();
+    /* =========================================================
+       FILTERING
+    ========================================================== */
+
+    function applyFilters() {
+
+        const search =
+            String(
+                $("searchInput").value || ""
+            )
+            .trim()
+            .toLowerCase();
+
+
+        const statusFilter =
+            $("statusFilter").value;
+
+
+        filteredEvents =
+            events.filter(
+                event => {
+
+                    const location =
+                        [
+                            event.venue,
+                            event.city
+                        ]
+                        .filter(Boolean)
+                        .join(" ");
+
+
+                    const searchable =
+                        [
+                            event.title,
+                            event.description,
+                            event.venue,
+                            event.city,
+                            location
+                        ]
+                        .filter(Boolean)
+                        .join(" ")
+                        .toLowerCase();
+
+
+                    if (
+                        search &&
+                        !searchable.includes(search)
+                    ) {
+
+                        return false;
+
+                    }
+
+
+                    if (
+                        statusFilter !== "all" &&
+                        getDisplayStatus(event) !==
+                            statusFilter
+                    ) {
+
+                        return false;
+
+                    }
+
+
+                    return true;
+
+                }
+            );
+
+
+        renderTable();
 
         renderMobileCards();
 
+
+        $("eventCount").textContent =
+            `${filteredEvents.length} of ${events.length}`;
+
     }
 
 
     /* =========================================================
-       DESKTOP TABLE
-    ========================================================= */
+       DISPLAY STATUS
+    ========================================================== */
 
-    function renderDesktopTable() {
+    function getDisplayStatus(event) {
 
-        eventsTableBody.innerHTML =
+        const storedStatus =
+            normalizeStoredStatus(
+                event.status
+            );
+
+
+        if (
+            storedStatus ===
+            "cancelled"
+        ) {
+
+            return "cancelled";
+
+        }
+
+
+        if (
+            storedStatus ===
+            "draft"
+        ) {
+
+            return "draft";
+
+        }
+
+
+        /*
+         * Published events can become "ended" based on their
+         * actual end_at timestamp. This is display logic only.
+         * The database status remains "published".
+         */
+
+        if (
+            storedStatus ===
+                "published" &&
+            event.end_at
+        ) {
+
+            const end =
+                new Date(
+                    event.end_at
+                );
+
+
+            if (
+                !Number.isNaN(
+                    end.getTime()
+                ) &&
+                end.getTime() <
+                    Date.now()
+            ) {
+
+                return "ended";
+
+            }
+
+        }
+
+
+        return storedStatus;
+
+    }
+
+
+    function normalizeStoredStatus(status) {
+
+        const value =
+            String(
+                status || ""
+            )
+            .trim()
+            .toLowerCase();
+
+
+        if (
+            value ===
+                "cancelled" ||
+            value ===
+                "canceled"
+        ) {
+
+            return "cancelled";
+
+        }
+
+
+        if (
+            value ===
+                "published"
+        ) {
+
+            return "published";
+
+        }
+
+
+        if (
+            value ===
+                "draft"
+        ) {
+
+            return "draft";
+
+        }
+
+
+        /*
+         * Do not invent a database status.
+         * Unknown values remain visible rather than being
+         * silently converted.
+         */
+
+        return value || "draft";
+
+    }
+
+
+    /* =========================================================
+       EVENT INVENTORY
+    ========================================================== */
+
+    function getEventTickets(
+        eventId
+    ) {
+
+        return ticketTypes.filter(
+            ticket =>
+                String(
+                    ticket.event_id
+                ) ===
+                String(eventId)
+        );
+
+    }
+
+
+    function getInventoryStats(
+        eventId
+    ) {
+
+        const tickets =
+            getEventTickets(
+                eventId
+            );
+
+
+        const total =
+            tickets.reduce(
+                (
+                    sum,
+                    ticket
+                ) =>
+                    sum +
+                    Number(
+                        ticket.quantity_total || 0
+                    ),
+                0
+            );
+
+
+        const sold =
+            tickets.reduce(
+                (
+                    sum,
+                    ticket
+                ) =>
+                    sum +
+                    Number(
+                        ticket.quantity_sold || 0
+                    ),
+                0
+            );
+
+
+        const remaining =
+            Math.max(
+                total - sold,
+                0
+            );
+
+
+        return {
+            types: tickets.length,
+            total,
+            sold,
+            remaining
+        };
+
+    }
+
+
+    /* =========================================================
+       TABLE
+    ========================================================== */
+
+    function renderTable() {
+
+        const body =
+            $("eventsTableBody");
+
+
+        if (!filteredEvents.length) {
+
+            renderEmpty(
+                body
+            );
+
+            return;
+
+        }
+
+
+        body.innerHTML =
             filteredEvents
                 .map(
                     event => {
 
-                        const status =
-                            normalizeStatus(
-                                event.status
+                        const stats =
+                            getInventoryStats(
+                                event.id
                             );
 
 
+                        const status =
+                            getDisplayStatus(
+                                event
+                            );
+
+
+                        const percent =
+                            stats.total > 0
+                                ? Math.min(
+                                    (
+                                        stats.sold /
+                                        stats.total
+                                    ) *
+                                    100,
+                                    100
+                                )
+                                : 0;
+
+
+                        const fillClass =
+                            percent >= 100
+                                ? "sold-out"
+                                : percent >= 80
+                                    ? "low"
+                                    : "";
+
+
                         return `
+
                             <tr>
 
                                 <td class="event-title-cell">
@@ -2616,11 +3014,21 @@
 
                                     <div class="event-location">
                                         ${escapeHTML(
-                                            getLocation(
-                                                event
-                                            )
+                                            getLocation(event)
                                         )}
                                     </div>
+
+                                    ${
+                                        event.description
+                                            ? `
+                                                <div class="event-description">
+                                                    ${escapeHTML(
+                                                        event.description
+                                                    )}
+                                                </div>
+                                              `
+                                            : ""
+                                    }
 
                                 </td>
 
@@ -2628,20 +3036,35 @@
                                 <td>
 
                                     <div class="date-main">
-                                        ${event.start_at
-                                            ? formatDate(
-                                                event.start_at
-                                            )
-                                            : "Not scheduled"
+                                        ${
+                                            event.start_at
+                                                ? formatDate(
+                                                    event.start_at
+                                                )
+                                                : "Not scheduled"
                                         }
                                     </div>
 
                                     <div class="date-sub">
-                                        ${event.start_at
-                                            ? formatTime(
-                                                event.start_at
-                                            )
-                                            : ""
+                                        ${
+                                            event.start_at
+                                                ? formatTime(
+                                                    event.start_at
+                                                )
+                                                : ""
+                                        }
+
+                                        ${
+                                            event.end_at
+                                                ? `
+                                                    · Ends
+                                                    ${escapeHTML(
+                                                        formatDate(
+                                                            event.end_at
+                                                        )
+                                                    )}
+                                                  `
+                                                : ""
                                         }
                                     </div>
 
@@ -2651,14 +3074,12 @@
                                 <td>
 
                                     <span
-                                        class="status ${getStatusClass(
+                                        class="
                                             status
-                                        )}"
+                                            ${getStatusClass(status)}
+                                        "
                                     >
-                                        ${escapeHTML(
-                                            status ||
-                                            "unknown"
-                                        )}
+                                        ${escapeHTML(status)}
                                     </span>
 
                                 </td>
@@ -2666,8 +3087,14 @@
 
                                 <td>
 
-                                    <div class="number">
-                                        —
+                                    <div class="inventory-main">
+                                        ${formatNumber(
+                                            stats.types
+                                        )}
+                                    </div>
+
+                                    <div class="inventory-sub">
+                                        ticket type${stats.types === 1 ? "" : "s"}
                                     </div>
 
                                 </td>
@@ -2675,8 +3102,39 @@
 
                                 <td>
 
-                                    <div class="number">
-                                        —
+                                    <div class="inventory">
+
+                                        <div class="inventory-main">
+                                            ${formatNumber(
+                                                stats.sold
+                                            )}
+                                            /
+                                            ${formatNumber(
+                                                stats.total
+                                            )}
+                                        </div>
+
+                                        <div class="inventory-sub">
+                                            ${formatNumber(
+                                                stats.remaining
+                                            )}
+                                            remaining
+                                        </div>
+
+                                        <div class="inventory-bar">
+
+                                            <div
+                                                class="
+                                                    inventory-fill
+                                                    ${fillClass}
+                                                "
+                                                style="
+                                                    width:${percent}%;
+                                                "
+                                            ></div>
+
+                                        </div>
+
                                     </div>
 
                                 </td>
@@ -2692,6 +3150,7 @@
                                             )}"
                                             class="action-btn"
                                             title="Edit event"
+                                            aria-label="Edit event"
                                         >
                                             ✎
                                         </a>
@@ -2703,8 +3162,9 @@
                                             )}"
                                             class="action-btn"
                                             title="Manage tickets"
+                                            aria-label="Manage tickets"
                                         >
-                                            🎟
+                                            ▣
                                         </a>
 
 
@@ -2713,31 +3173,55 @@
                                                 event.id
                                             )}"
                                             class="action-btn"
-                                            title="Promotions"
+                                            title="Manage promotions"
+                                            aria-label="Manage promotions"
                                         >
                                             %
                                         </a>
 
 
-                                        <button
-                                            class="action-btn danger"
-                                            title="Remove event"
-                                            data-delete-id="${escapeHTML(
-                                                String(event.id)
+                                        <a
+                                            href="../customer/event-details.html?id=${encodeURIComponent(
+                                                event.id
                                             )}"
-                                            data-delete-name="${escapeHTML(
-                                                event.title ||
-                                                "Untitled event"
-                                            )}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="action-btn"
+                                            title="Preview event"
+                                            aria-label="Preview event"
                                         >
-                                            ×
-                                        </button>
+                                            ↗
+                                        </a>
+
+
+                                        ${
+                                            status !== "cancelled"
+                                                ? `
+                                                    <button
+                                                        type="button"
+                                                        class="action-btn danger"
+                                                        title="Cancel event"
+                                                        aria-label="Cancel event"
+                                                        data-cancel-id="${escapeHTML(
+                                                            String(event.id)
+                                                        )}"
+                                                        data-cancel-name="${escapeHTML(
+                                                            event.title ||
+                                                            "Untitled event"
+                                                        )}"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                  `
+                                                : ""
+                                        }
 
                                     </div>
 
                                 </td>
 
                             </tr>
+
                         `;
 
                     }
@@ -2745,49 +3229,64 @@
                 .join("");
 
 
-        document
-            .querySelectorAll(
-                "[data-delete-id]"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        () => {
-
-                            openDeleteDialog(
-                                button.dataset.deleteId,
-                                button.dataset.deleteName
-                            );
-
-                        }
-                    );
-
-                }
-            );
+        attachCancelButtons();
 
     }
 
 
     /* =========================================================
        MOBILE CARDS
-    ========================================================= */
+    ========================================================== */
 
     function renderMobileCards() {
 
-        mobileEvents.innerHTML =
+        const container =
+            $("mobileEvents");
+
+
+        if (!filteredEvents.length) {
+
+            renderMobileEmpty(
+                container
+            );
+
+            return;
+
+        }
+
+
+        container.innerHTML =
             filteredEvents
                 .map(
                     event => {
 
-                        const status =
-                            normalizeStatus(
-                                event.status
+                        const stats =
+                            getInventoryStats(
+                                event.id
                             );
 
 
+                        const status =
+                            getDisplayStatus(
+                                event
+                            );
+
+
+                        const percent =
+                            stats.total > 0
+                                ? Math.min(
+                                    (
+                                        stats.sold /
+                                        stats.total
+                                    ) *
+                                    100,
+                                    100
+                                )
+                                : 0;
+
+
                         return `
+
                             <article class="event-card">
 
                                 <div class="mobile-event-top">
@@ -2803,9 +3302,7 @@
 
                                         <div class="mobile-event-location">
                                             ${escapeHTML(
-                                                getLocation(
-                                                    event
-                                                )
+                                                getLocation(event)
                                             )}
                                         </div>
 
@@ -2813,14 +3310,12 @@
 
 
                                     <span
-                                        class="status ${getStatusClass(
+                                        class="
                                             status
-                                        )}"
+                                            ${getStatusClass(status)}
+                                        "
                                     >
-                                        ${escapeHTML(
-                                            status ||
-                                            "unknown"
-                                        )}
+                                        ${escapeHTML(status)}
                                     </span>
 
                                 </div>
@@ -2835,11 +3330,12 @@
                                         </div>
 
                                         <div class="mobile-detail-value">
-                                            ${event.start_at
-                                                ? formatDate(
-                                                    event.start_at
-                                                )
-                                                : "Not scheduled"
+                                            ${
+                                                event.start_at
+                                                    ? formatDate(
+                                                        event.start_at
+                                                    )
+                                                    : "Not scheduled"
                                             }
                                         </div>
 
@@ -2853,11 +3349,12 @@
                                         </div>
 
                                         <div class="mobile-detail-value">
-                                            ${event.start_at
-                                                ? formatTime(
-                                                    event.start_at
-                                                )
-                                                : "—"
+                                            ${
+                                                event.start_at
+                                                    ? formatTime(
+                                                        event.start_at
+                                                    )
+                                                    : "—"
                                             }
                                         </div>
 
@@ -2867,11 +3364,13 @@
                                     <div class="mobile-detail">
 
                                         <div class="mobile-detail-label">
-                                            Tickets
+                                            Ticket Types
                                         </div>
 
                                         <div class="mobile-detail-value">
-                                            —
+                                            ${formatNumber(
+                                                stats.types
+                                            )}
                                         </div>
 
                                     </div>
@@ -2880,12 +3379,71 @@
                                     <div class="mobile-detail">
 
                                         <div class="mobile-detail-label">
-                                            Sales
+                                            Sold
                                         </div>
 
                                         <div class="mobile-detail-value">
-                                            —
+                                            ${formatNumber(
+                                                stats.sold
+                                            )}
                                         </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="mobile-inventory">
+
+                                    <div class="mobile-inventory-row">
+
+                                        <span>
+                                            Inventory
+                                        </span>
+
+                                        <strong>
+                                            ${formatNumber(
+                                                stats.sold
+                                            )}
+                                            /
+                                            ${formatNumber(
+                                                stats.total
+                                            )}
+                                        </strong>
+
+                                    </div>
+
+                                    <div class="inventory-bar">
+
+                                        <div
+                                            class="inventory-fill ${
+                                                percent >= 100
+                                                    ? "sold-out"
+                                                    : percent >= 80
+                                                        ? "low"
+                                                        : ""
+                                            }"
+                                            style="
+                                                width:${percent}%;
+                                            "
+                                        ></div>
+
+                                    </div>
+
+                                    <div
+                                        class="mobile-inventory-row"
+                                        style="margin-top:6px;"
+                                    >
+
+                                        <span>
+                                            Remaining
+                                        </span>
+
+                                        <strong>
+                                            ${formatNumber(
+                                                stats.remaining
+                                            )}
+                                        </strong>
 
                                     </div>
 
@@ -2903,6 +3461,7 @@
                                         Edit
                                     </a>
 
+
                                     <a
                                         href="./tickets.html?event_id=${encodeURIComponent(
                                             event.id
@@ -2912,22 +3471,45 @@
                                         Tickets
                                     </a>
 
-                                    <button
-                                        class="btn btn-danger"
-                                        data-delete-mobile="${escapeHTML(
-                                            String(event.id)
+
+                                    <a
+                                        href="../customer/event-details.html?id=${encodeURIComponent(
+                                            event.id
                                         )}"
-                                        data-delete-mobile-name="${escapeHTML(
-                                            event.title ||
-                                            "Untitled event"
-                                        )}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="btn btn-secondary"
                                     >
-                                        Remove
-                                    </button>
+                                        Preview
+                                    </a>
+
+
+                                    ${
+                                        status !== "cancelled"
+                                            ? `
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-danger"
+                                                    data-cancel-id="${escapeHTML(
+                                                        String(event.id)
+                                                    )}"
+                                                    data-cancel-name="${escapeHTML(
+                                                        event.title ||
+                                                        "Untitled event"
+                                                    )}"
+                                                >
+                                                    Cancel
+                                                </button>
+                                              `
+                                            : `
+                                                <div></div>
+                                              `
+                                    }
 
                                 </div>
 
                             </article>
+
                         `;
 
                     }
@@ -2935,9 +3517,20 @@
                 .join("");
 
 
+        attachCancelButtons();
+
+    }
+
+
+    /* =========================================================
+       CANCEL BUTTONS
+    ========================================================== */
+
+    function attachCancelButtons() {
+
         document
             .querySelectorAll(
-                "[data-delete-mobile]"
+                "[data-cancel-id]"
             )
             .forEach(
                 button => {
@@ -2946,9 +3539,9 @@
                         "click",
                         () => {
 
-                            openDeleteDialog(
-                                button.dataset.deleteMobile,
-                                button.dataset.deleteMobileName
+                            openCancelModal(
+                                button.dataset.cancelId,
+                                button.dataset.cancelName
                             );
 
                         }
@@ -2962,11 +3555,18 @@
 
     /* =========================================================
        EMPTY
-    ========================================================= */
+    ========================================================== */
 
-    function renderEmpty() {
+    function renderEmpty(
+        body
+    ) {
 
-        eventsTableBody.innerHTML = `
+        const hasEvents =
+            events.length > 0;
+
+
+        body.innerHTML = `
+
             <tr>
 
                 <td colspan="6">
@@ -2979,7 +3579,7 @@
 
                         <h3>
                             ${
-                                events.length
+                                hasEvents
                                     ? "No matching events"
                                     : "No events yet"
                             }
@@ -2987,22 +3587,22 @@
 
                         <p>
                             ${
-                                events.length
+                                hasEvents
                                     ? "Try changing your search or status filter."
                                     : "Create your first event to start selling tickets through K-Tickets."
                             }
                         </p>
 
                         ${
-                            !events.length
+                            !hasEvents
                                 ? `
                                     <a
                                         href="./create-event.html"
                                         class="btn btn-primary"
                                     >
-                                        Create Event
+                                        ＋ Create Event
                                     </a>
-                                `
+                                  `
                                 : ""
                         }
 
@@ -3011,10 +3611,22 @@
                 </td>
 
             </tr>
+
         `;
 
+    }
 
-        mobileEvents.innerHTML = `
+
+    function renderMobileEmpty(
+        container
+    ) {
+
+        const hasEvents =
+            events.length > 0;
+
+
+        container.innerHTML = `
+
             <div class="state">
 
                 <div class="state-icon">
@@ -3023,7 +3635,7 @@
 
                 <h3>
                     ${
-                        events.length
+                        hasEvents
                             ? "No matching events"
                             : "No events yet"
                     }
@@ -3031,92 +3643,232 @@
 
                 <p>
                     ${
-                        events.length
+                        hasEvents
                             ? "Try changing your search or status filter."
                             : "Create your first event to start selling tickets through K-Tickets."
                     }
                 </p>
 
                 ${
-                    !events.length
+                    !hasEvents
                         ? `
                             <a
                                 href="./create-event.html"
                                 class="btn btn-primary"
                             >
-                                Create Event
+                                ＋ Create Event
                             </a>
-                        `
+                          `
                         : ""
                 }
 
             </div>
+
         `;
 
     }
 
 
     /* =========================================================
-       DELETE
-       
-       IMPORTANT:
-       Final production implementation should use a
-       server-side RPC/function with ownership and
-       transaction checks.
+       LOADING
+    ========================================================== */
 
-       We do NOT blindly delete an event from the
-       browser if customer orders/tickets exist.
-    ========================================================= */
+    function setLoading() {
 
-    function openDeleteDialog(
-        id,
-        name
+        $("eventsTableBody").innerHTML = `
+
+            <tr>
+
+                <td colspan="6">
+
+                    <div class="state">
+
+                        <div class="loading-spinner"></div>
+
+                        <h3>
+                            Loading events
+                        </h3>
+
+                        <p>
+                            Loading your live event records from Supabase.
+                        </p>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        $("mobileEvents").innerHTML = `
+
+            <div class="state">
+
+                <div class="loading-spinner"></div>
+
+                <h3>
+                    Loading events
+                </h3>
+
+                <p>
+                    Loading your live event records from Supabase.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =========================================================
+       ERROR
+    ========================================================== */
+
+    function showError(
+        message
     ) {
 
-        eventToDelete = id;
+        $("eventsTableBody").innerHTML = `
 
-        deleteEventName.textContent =
-            name || "Untitled event";
+            <tr>
 
-        deleteModal.classList.add(
-            "open"
-        );
+                <td colspan="6">
+
+                    <div class="state">
+
+                        <div class="state-icon">
+                            !
+                        </div>
+
+                        <h3>
+                            Events unavailable
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(message)}
+                        </p>
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            onclick="loadEvents()"
+                        >
+                            Try Again
+                        </button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        $("mobileEvents").innerHTML = `
+
+            <div class="state">
+
+                <div class="state-icon">
+                    !
+                </div>
+
+                <h3>
+                    Events unavailable
+                </h3>
+
+                <p>
+                    ${escapeHTML(message)}
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="loadEvents()"
+                >
+                    Try Again
+                </button>
+
+            </div>
+
+        `;
 
     }
 
 
-    function closeDeleteDialog() {
+    /* =========================================================
+       CANCEL EVENT
+    ========================================================== */
 
-        eventToDelete = null;
+    function openCancelModal(
+        eventId,
+        eventName
+    ) {
 
-        deleteModal.classList.remove(
-            "open"
-        );
+        eventToCancel =
+            eventId;
+
+
+        $("cancelEventName").textContent =
+            eventName ||
+            "Untitled event";
+
+
+        $("cancelModal")
+            .classList
+            .add("open");
 
     }
 
 
-    async function confirmEventDelete() {
+    function closeCancelModal() {
 
-        if (!eventToDelete) {
+        eventToCancel =
+            null;
+
+
+        $("cancelModal")
+            .classList
+            .remove("open");
+
+    }
+
+
+    async function confirmCancelEvent() {
+
+        if (!eventToCancel) {
             return;
         }
 
 
-        confirmDelete.disabled = true;
+        const button =
+            $("confirmCancelBtn");
+
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "Cancelling...";
 
 
         try {
 
             /*
-                Before Supabase functions are finalized,
-                we intentionally use a soft status update
-                instead of destructive deletion.
-
-                This preserves customer transaction history.
-            */
+             * This is a soft cancellation.
+             *
+             * We never destructively delete an event from
+             * the merchant browser because orders, payments,
+             * tickets, scans and audit history can reference it.
+             *
+             * Ownership is included in the UPDATE query.
+             */
 
             const {
+                data,
                 error
             } =
                 await supabaseClient
@@ -3126,12 +3878,26 @@
                     })
                     .eq(
                         "id",
-                        eventToDelete
+                        eventToCancel
                     )
                     .eq(
                         "merchant_id",
                         currentUser.id
-                    );
+                    )
+                    .select(`
+                        id,
+                        merchant_id,
+                        title,
+                        description,
+                        venue,
+                        city,
+                        start_at,
+                        end_at,
+                        status,
+                        created_at,
+                        updated_at
+                    `)
+                    .maybeSingle();
 
 
             if (error) {
@@ -3139,11 +3905,20 @@
             }
 
 
-            closeDeleteDialog();
+            if (!data) {
+
+                throw new Error(
+                    "The event was not updated. Supabase may have blocked the operation through RLS."
+                );
+
+            }
+
+
+            closeCancelModal();
 
 
             showToast(
-                "Event cancelled.",
+                "Event cancelled successfully.",
                 "success"
             );
 
@@ -3154,21 +3929,23 @@
         } catch (error) {
 
             console.error(
-                "Event cancellation:",
+                "Cancel event error:",
                 error
             );
 
 
             showToast(
-                error.message ||
-                "Could not update the event.",
+                getReadableError(error),
                 "error"
             );
 
         } finally {
 
-            confirmDelete.disabled =
+            button.disabled =
                 false;
+
+            button.textContent =
+                "Cancel Event";
 
         }
 
@@ -3177,7 +3954,7 @@
 
     /* =========================================================
        NOTIFICATION COUNT
-    ========================================================= */
+    ========================================================== */
 
     async function loadNotificationCount() {
 
@@ -3207,7 +3984,14 @@
 
 
             if (error) {
-                throw error;
+
+                console.warn(
+                    "Notification count unavailable:",
+                    error
+                );
+
+                return;
+
             }
 
 
@@ -3216,11 +4000,13 @@
                 count > 0
             ) {
 
-                notificationBadge.style.display =
-                    "flex";
+                $("notificationBadge")
+                    .style
+                    .display = "flex";
 
 
-                notificationBadge.textContent =
+                $("notificationBadge")
+                    .textContent =
                     count > 99
                         ? "99+"
                         : String(count);
@@ -3230,7 +4016,7 @@
         } catch (error) {
 
             console.warn(
-                "Notification count:",
+                "Notification query failed:",
                 error
             );
 
@@ -3240,189 +4026,233 @@
 
 
     /* =========================================================
-       LOADING
-    ========================================================= */
+       CONTROLS
+    ========================================================== */
 
-    function setLoading() {
+    function setupControls() {
 
-        eventsTableBody.innerHTML = `
-            <tr>
-
-                <td colspan="6">
-
-                    <div class="state">
-
-                        <div class="loading-spinner"></div>
-
-                        <h3>
-                            Loading events
-                        </h3>
-
-                        <p>
-                            Please wait while your events are loaded.
-                        </p>
-
-                    </div>
-
-                </td>
-
-            </tr>
-        `;
+        $("searchInput")
+            .addEventListener(
+                "input",
+                applyFilters
+            );
 
 
-        mobileEvents.innerHTML = `
-            <div class="state">
-
-                <div class="loading-spinner"></div>
-
-                <h3>
-                    Loading events
-                </h3>
-
-                <p>
-                    Please wait while your events are loaded.
-                </p>
-
-            </div>
-        `;
-
-    }
+        $("statusFilter")
+            .addEventListener(
+                "change",
+                applyFilters
+            );
 
 
-    /* =========================================================
-       ERROR
-    ========================================================= */
+        $("refreshBtn")
+            .addEventListener(
+                "click",
+                async () => {
 
-    function showError(
-        message
-    ) {
-
-        eventsTableBody.innerHTML = `
-            <tr>
-
-                <td colspan="6">
-
-                    <div class="state">
-
-                        <div class="state-icon">
-                            !
-                        </div>
-
-                        <h3>
-                            Events unavailable
-                        </h3>
-
-                        <p>
-                            ${escapeHTML(
-                                message
-                            )}
-                        </p>
-
-                        <button
-                            class="btn btn-secondary"
-                            onclick="loadEvents()"
-                        >
-                            Try Again
-                        </button>
-
-                    </div>
-
-                </td>
-
-            </tr>
-        `;
+                    const button =
+                        $("refreshBtn");
 
 
-        mobileEvents.innerHTML = `
-            <div class="state">
+                    button.disabled =
+                        true;
 
-                <div class="state-icon">
-                    !
-                </div>
-
-                <h3>
-                    Events unavailable
-                </h3>
-
-                <p>
-                    ${escapeHTML(
-                        message
-                    )}
-                </p>
-
-                <button
-                    class="btn btn-secondary"
-                    onclick="loadEvents()"
-                >
-                    Try Again
-                </button>
-
-            </div>
-        `;
-
-    }
+                    button.textContent =
+                        "Refreshing...";
 
 
-    /* =========================================================
-       STATUS
-    ========================================================= */
+                    try {
 
-    function normalizeStatus(
-        status
-    ) {
+                        await loadEvents();
 
-        const value =
-            String(
-                status || ""
+                        await loadNotificationCount();
+
+                        showToast(
+                            "Event data refreshed.",
+                            "success"
+                        );
+
+                    } finally {
+
+                        button.disabled =
+                            false;
+
+                        button.textContent =
+                            "↻ Refresh";
+
+                    }
+
+                }
+            );
+
+
+        $("signOutBtn")
+            .addEventListener(
+                "click",
+                signOut
+            );
+
+
+        $("mobileMenu")
+            .addEventListener(
+                "click",
+                () => {
+
+                    $("sidebar")
+                        .classList
+                        .toggle("open");
+
+                }
+            );
+
+
+        $("closeCancelModal")
+            .addEventListener(
+                "click",
+                closeCancelModal
+            );
+
+
+        $("keepEventBtn")
+            .addEventListener(
+                "click",
+                closeCancelModal
+            );
+
+
+        $("confirmCancelBtn")
+            .addEventListener(
+                "click",
+                confirmCancelEvent
+            );
+
+
+        $("cancelModal")
+            .addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target ===
+                        $("cancelModal")
+                    ) {
+
+                        closeCancelModal();
+
+                    }
+
+                }
+            );
+
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    closeCancelModal();
+
+                    $("sidebar")
+                        .classList
+                        .remove("open");
+
+                }
+
+            }
+        );
+
+
+        document
+            .querySelectorAll(
+                ".nav-link"
             )
-            .trim()
-            .toLowerCase();
+            .forEach(
+                link => {
 
+                    link.addEventListener(
+                        "click",
+                        () => {
 
-        if (
-            value === "cancelled" ||
-            value === "canceled"
-        ) {
+                            $("sidebar")
+                                .classList
+                                .remove("open");
 
-            return "cancelled";
+                        }
+                    );
 
-        }
-
-
-        if (
-            value === "completed" ||
-            value === "past"
-        ) {
-
-            return "ended";
-
-        }
-
-
-        return value || "draft";
+                }
+            );
 
     }
 
+
+    /* =========================================================
+       SIGN OUT
+    ========================================================== */
+
+    async function signOut() {
+
+        const button =
+            $("signOutBtn");
+
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "Signing out...";
+
+
+        try {
+
+            await supabaseClient.auth.signOut();
+
+        } catch (error) {
+
+            console.error(
+                "Sign out error:",
+                error
+            );
+
+        } finally {
+
+            window.location.href =
+                "../login.html";
+
+        }
+
+    }
+
+
+    /* =========================================================
+       STATUS CLASS
+    ========================================================== */
 
     function getStatusClass(
         status
     ) {
 
         switch (
-            normalizeStatus(status)
+            normalizeStoredStatus(
+                status
+            )
         ) {
 
-            case "active":
-                return "status-active";
+            case "published":
+                return "status-published";
 
             case "draft":
                 return "status-draft";
 
-            case "ended":
-                return "status-ended";
-
             case "cancelled":
                 return "status-cancelled";
+
+            case "ended":
+                return "status-ended";
 
             default:
                 return "status-draft";
@@ -3434,7 +4264,7 @@
 
     /* =========================================================
        LOCATION
-    ========================================================= */
+    ========================================================== */
 
     function getLocation(
         event
@@ -3444,30 +4274,19 @@
             event.venue,
             event.city
         ]
-            .filter(Boolean);
+        .filter(Boolean);
 
 
         return parts.length
             ? parts.join(", ")
-            : "Location not set";
+            : "Location not provided";
 
     }
 
 
     /* =========================================================
-       FORMATTING
-    ========================================================= */
-
-    function formatNumber(
-        value
-    ) {
-
-        return Number(
-            value || 0
-        ).toLocaleString();
-
-    }
-
+       DATE
+    ========================================================== */
 
     function formatDate(
         timestamp
@@ -3541,26 +4360,43 @@
 
 
     /* =========================================================
+       NUMBER
+    ========================================================== */
+
+    function formatNumber(
+        value
+    ) {
+
+        return Number(
+            value || 0
+        ).toLocaleString();
+
+    }
+
+
+    /* =========================================================
        INITIALS
-    ========================================================= */
+    ========================================================== */
 
     function getInitials(
         name
     ) {
 
         const parts =
-            String(name)
+            String(name || "")
                 .trim()
                 .split(/\s+/)
                 .filter(Boolean);
 
 
         if (!parts.length) {
-            return "—";
+            return "M";
         }
 
 
-        if (parts.length === 1) {
+        if (
+            parts.length === 1
+        ) {
 
             return parts[0]
                 .slice(0,2)
@@ -3571,53 +4407,149 @@
 
         return (
             parts[0][0] +
-            parts[parts.length - 1][0]
+            parts[
+                parts.length - 1
+            ][0]
         ).toUpperCase();
 
     }
 
 
     /* =========================================================
-       ESCAPE
-    ========================================================= */
+       ERROR HANDLING
+    ========================================================== */
+
+    function getReadableError(
+        error
+    ) {
+
+        const message =
+            error?.message ||
+            error?.details ||
+            error?.hint ||
+            "";
+
+
+        const lower =
+            String(message)
+                .toLowerCase();
+
+
+        if (
+            lower.includes(
+                "row-level security"
+            )
+        ) {
+
+            return (
+                "Supabase blocked this operation through Row Level Security. " +
+                "Verify that the merchant events/ticket_types policies allow " +
+                "the authenticated merchant to access their own records."
+            );
+
+        }
+
+
+        if (
+            lower.includes(
+                "permission"
+            )
+        ) {
+
+            return (
+                "You do not have permission to access this merchant data."
+            );
+
+        }
+
+
+        if (
+            lower.includes(
+                "relation"
+            )
+        ) {
+
+            return (
+                "A required Supabase table could not be found. " +
+                "Check that the latest K-Tickets migrations have been applied."
+            );
+
+        }
+
+
+        if (
+            lower.includes(
+                "column"
+            )
+        ) {
+
+            return (
+                "The Supabase database columns do not match this page. " +
+                "This page uses the current events and ticket_types schema."
+            );
+
+        }
+
+
+        if (message) {
+            return message;
+        }
+
+
+        return (
+            "Something went wrong while loading the merchant events."
+        );
+
+    }
+
+
+    /* =========================================================
+       ESCAPE HTML
+    ========================================================== */
 
     function escapeHTML(
         value
     ) {
 
-        return String(value)
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
+        return String(
+            value ?? ""
+        )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
     }
 
 
     /* =========================================================
        TOAST
-    ========================================================= */
+    ========================================================== */
 
     function showToast(
         message,
-        type = ""
+        type = "success"
     ) {
+
+        const container =
+            $("toastContainer");
+
 
         const toast =
             document.createElement(
@@ -3633,14 +4565,30 @@
             message;
 
 
-        toastContainer.appendChild(
+        container.appendChild(
             toast
         );
 
 
         setTimeout(
             () => {
-                toast.remove();
+
+                toast.style.opacity =
+                    "0";
+
+                toast.style.transform =
+                    "translateY(8px)";
+
+
+                setTimeout(
+                    () => {
+
+                        toast.remove();
+
+                    },
+                    200
+                );
+
             },
             3500
         );
@@ -3649,94 +4597,25 @@
 
 
     /* =========================================================
-       SIGN OUT
-    ========================================================= */
+       RESPONSIVE SIDEBAR
+    ========================================================== */
 
-    async function signOut() {
+    window.addEventListener(
+        "resize",
+        () => {
 
-        try {
+            if (
+                window.innerWidth > 900
+            ) {
 
-            const {
-                error
-            } =
-                await supabaseClient
-                    .auth
-                    .signOut();
+                $("sidebar")
+                    .classList
+                    .remove("open");
 
-
-            if (error) {
-                throw error;
             }
 
-
-            window.location.href =
-                "../auth/login.html";
-
-        } catch (error) {
-
-            console.error(error);
-
-            showToast(
-                "Could not sign out.",
-                "error"
-            );
-
         }
-
-    }
-
-
-    /* =========================================================
-       LOGIN
-    ========================================================= */
-
-    function redirectToLogin() {
-
-        const path =
-            window.location.pathname +
-            window.location.search;
-
-
-        const redirect =
-            encodeURIComponent(
-                path
-            );
-
-
-        window.location.href =
-            `../auth/login.html?redirect=${redirect}`;
-
-    }
-
-
-    /* =========================================================
-       MOBILE SIDEBAR
-    ========================================================= */
-
-    function openSidebar() {
-
-        sidebar.classList.add(
-            "open"
-        );
-
-        overlay.classList.add(
-            "active"
-        );
-
-    }
-
-
-    function closeSidebar() {
-
-        sidebar.classList.remove(
-            "open"
-        );
-
-        overlay.classList.remove(
-            "active"
-        );
-
-    }
+    );
 
 </script>
 

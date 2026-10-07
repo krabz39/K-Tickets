@@ -1,2291 +1,6162 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Tickets — Sales</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Sales | K-Tickets Merchant</title>
+
+    <meta
+        name="description"
+        content="K-Tickets merchant sales"
+    >
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
 
     <style>
-        :root{
-            --bordo:#6C151E;
-            --green:#0F3D3A;
-            --cream:#F5DABF;
-            --white:#fffaf5;
-            --ink:#241b19;
-            --muted:#766b67;
-            --line:#eadfd6;
-            --soft:#f8eee7;
-            --success:#23734d;
-            --warning:#9a6914;
-            --danger:#a52d36;
-            --shadow:0 18px 45px rgba(45,25,20,.08);
-            --radius:20px;
+
+        :root {
+
+            --bordo: #6C151E;
+            --bordo-dark: #531018;
+
+            --green: #0F3D3A;
+            --green-dark: #092c2a;
+
+            --cream: #F5DABF;
+
+            --bg: #faf7f3;
+            --surface: #ffffff;
+            --surface-soft: #f6f0eb;
+
+            --text: #241b19;
+            --muted: #766b67;
+
+            --border: #e7ddd6;
+
+            --success: #287952;
+            --success-bg: #e9f6ef;
+
+            --warning: #996914;
+            --warning-bg: #fff5df;
+
+            --danger: #a32935;
+            --danger-bg: #fdebed;
+
+            --info: #426276;
+            --info-bg: #eaf2f7;
+
+            --shadow:
+                0 14px 38px rgba(45,25,20,.065);
+
+            --radius: 18px;
+
+            --sidebar-width: 260px;
+
         }
 
-        *{box-sizing:border-box;margin:0;padding:0}
 
-        body{
-            font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-            background:#fbf7f3;
-            color:var(--ink);
-            min-height:100vh;
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+            padding: 0;
+
         }
 
-        button,input,select{font:inherit}
-        button{cursor:pointer}
-        a{text-decoration:none;color:inherit}
 
-        .app{
-            min-height:100vh;
-            display:flex;
+        html {
+            scroll-behavior: smooth;
         }
 
-        /* SIDEBAR */
-        .sidebar{
-            width:265px;
-            flex:0 0 265px;
-            min-height:100vh;
-            background:var(--green);
-            color:#fff;
-            padding:24px 16px;
-            position:sticky;
-            top:0;
-            height:100vh;
-            overflow-y:auto;
-            z-index:50;
+
+        body {
+
+            min-height: 100vh;
+
+            background: var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            overflow-x: hidden;
+
         }
 
-        .brand{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            padding:4px 10px 28px;
-            border-bottom:1px solid rgba(255,255,255,.1);
-            margin-bottom:20px;
+
+        button,
+        input,
+        select {
+
+            font: inherit;
+
         }
 
-        .brand-mark{
-            width:42px;
-            height:42px;
-            border-radius:13px;
-            background:var(--cream);
-            color:var(--bordo);
-            display:grid;
-            place-items:center;
-            font-weight:900;
-            font-size:18px;
+
+        button {
+            cursor: pointer;
         }
 
-        .brand strong{
-            display:block;
-            font-size:18px;
-            letter-spacing:.4px;
+
+        a {
+
+            color: inherit;
+
+            text-decoration: none;
+
         }
 
-        .brand span{
-            display:block;
-            margin-top:2px;
-            color:rgba(255,255,255,.6);
-            font-size:11px;
-            letter-spacing:1.3px;
-            text-transform:uppercase;
+
+        /* =====================================================
+           SIDEBAR
+        ====================================================== */
+
+        .sidebar {
+
+            position: fixed;
+
+            inset: 0 auto 0 0;
+
+            width: var(--sidebar-width);
+
+            z-index: 1000;
+
+            display: flex;
+
+            flex-direction: column;
+
+            background: var(--green);
+
+            color: #fff;
+
+            transition:
+                transform .25s ease;
+
         }
 
-        .nav-label{
-            color:rgba(255,255,255,.4);
-            font-size:10px;
-            font-weight:800;
-            letter-spacing:1.5px;
-            text-transform:uppercase;
-            padding:0 11px 9px;
+
+        .brand {
+
+            min-height: 88px;
+
+            padding: 21px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,.09);
+
         }
 
-        .nav{
-            display:grid;
-            gap:5px;
+
+        .brand-mark {
+
+            width: 43px;
+            height: 43px;
+
+            flex: 0 0 auto;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 13px;
+
+            background: var(--cream);
+
+            color: var(--green);
+
+            font-family: Georgia, serif;
+
+            font-size: 19px;
+
+            font-weight: 900;
+
         }
 
-        .nav a{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            min-height:46px;
-            padding:0 12px;
-            border-radius:12px;
-            color:rgba(255,255,255,.7);
-            font-size:13px;
-            font-weight:650;
-            transition:.2s ease;
+
+        .brand-copy strong {
+
+            display: block;
+
+            font-size: 15px;
+
+            letter-spacing: .08em;
+
         }
 
-        .nav a:hover{
-            color:#fff;
-            background:rgba(255,255,255,.08);
+
+        .brand-copy span {
+
+            display: block;
+
+            margin-top: 4px;
+
+            color:
+                rgba(255,255,255,.46);
+
+            font-size: 9px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: .13em;
+
         }
 
-        .nav a.active{
-            color:#fff;
-            background:var(--bordo);
-            box-shadow:0 8px 20px rgba(0,0,0,.12);
+
+        .nav {
+
+            flex: 1;
+
+            padding: 16px 12px;
+
+            overflow-y: auto;
+
         }
 
-        .nav-icon{
-            width:22px;
-            text-align:center;
-            font-size:16px;
-            flex:0 0 22px;
+
+        .nav-label {
+
+            padding:
+                12px 12px 7px;
+
+            color:
+                rgba(255,255,255,.34);
+
+            font-size: 9px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: .14em;
+
         }
 
-        .sidebar-bottom{
-            margin-top:28px;
-            padding-top:18px;
-            border-top:1px solid rgba(255,255,255,.1);
+
+        .nav a {
+
+            min-height: 44px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            margin-bottom: 4px;
+
+            padding: 10px 13px;
+
+            border-radius: 11px;
+
+            color:
+                rgba(255,255,255,.68);
+
+            font-size: 12px;
+
+            font-weight: 650;
+
+            transition: .2s ease;
+
         }
 
-        .sidebar-user{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            padding:10px;
-            border-radius:14px;
-            background:rgba(255,255,255,.06);
-            margin-bottom:8px;
+
+        .nav a:hover {
+
+            color: white;
+
+            background:
+                rgba(255,255,255,.07);
+
         }
 
-        .avatar{
-            width:38px;
-            height:38px;
-            border-radius:50%;
-            background:var(--cream);
-            color:var(--green);
-            display:grid;
-            place-items:center;
-            font-weight:900;
-            font-size:13px;
-            flex:0 0 38px;
+
+        .nav a.active {
+
+            color: white;
+
+            background: var(--bordo);
+
+            box-shadow:
+                0 8px 20px
+                rgba(0,0,0,.12);
+
         }
 
-        .sidebar-user div:last-child{
-            min-width:0;
+
+        .nav-icon {
+
+            width: 20px;
+
+            flex: 0 0 auto;
+
+            text-align: center;
+
+            font-size: 15px;
+
         }
 
-        .sidebar-user strong{
-            display:block;
-            font-size:12px;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
+
+        .sidebar-footer {
+
+            padding: 14px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,.09);
+
         }
 
-        .sidebar-user span{
-            display:block;
-            color:rgba(255,255,255,.5);
-            font-size:10px;
-            margin-top:2px;
+
+        .merchant-mini {
+
+            padding: 9px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255,255,255,.05);
+
         }
 
-        .signout{
-            width:100%;
-            border:0;
-            background:transparent;
-            color:rgba(255,255,255,.65);
-            padding:10px;
-            text-align:left;
-            border-radius:10px;
-            font-size:12px;
+
+        .merchant-avatar {
+
+            width: 36px;
+            height: 36px;
+
+            flex: 0 0 auto;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 50%;
+
+            background: var(--cream);
+
+            color: var(--green);
+
+            font-size: 11px;
+
+            font-weight: 900;
+
         }
 
-        .signout:hover{
-            color:#fff;
-            background:rgba(255,255,255,.07);
+
+        .merchant-info {
+
+            min-width: 0;
+
+            flex: 1;
+
         }
 
-        /* MAIN */
-        .main{
-            flex:1;
-            min-width:0;
+
+        .merchant-info strong {
+
+            display: block;
+
+            overflow: hidden;
+
+            white-space: nowrap;
+
+            text-overflow: ellipsis;
+
+            font-size: 11px;
+
         }
 
-        .topbar{
-            height:76px;
-            padding:0 32px;
-            background:rgba(255,250,245,.92);
-            border-bottom:1px solid var(--line);
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            position:sticky;
-            top:0;
-            z-index:30;
-            backdrop-filter:blur(15px);
+
+        .merchant-info span {
+
+            display: block;
+
+            margin-top: 2px;
+
+            color:
+                rgba(255,255,255,.43);
+
+            font-size: 8px;
+
         }
 
-        .mobile-brand{
-            display:none;
-            font-weight:900;
-            color:var(--green);
+
+        .signout {
+
+            width: 31px;
+            height: 31px;
+
+            display: grid;
+
+            place-items: center;
+
+            border: 0;
+
+            border-radius: 9px;
+
+            background: transparent;
+
+            color:
+                rgba(255,255,255,.6);
+
+            font-size: 15px;
+
         }
 
-        .top-actions{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            margin-left:auto;
+
+        .signout:hover {
+
+            background:
+                rgba(255,255,255,.08);
+
+            color: white;
+
         }
 
-        .icon-btn{
-            width:42px;
-            height:42px;
-            border:1px solid var(--line);
-            background:#fff;
-            color:var(--green);
-            border-radius:12px;
-            position:relative;
-            display:grid;
-            place-items:center;
+
+        /* =====================================================
+           MOBILE SIDEBAR
+        ====================================================== */
+
+        .sidebar-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 900;
+
+            display: none;
+
+            background:
+                rgba(0,0,0,.42);
+
         }
 
-        .icon-btn:hover{
-            border-color:var(--green);
+
+        .sidebar-overlay.show {
+            display: block;
         }
 
-        .notification-dot{
-            position:absolute;
-            top:7px;
-            right:7px;
-            min-width:16px;
-            height:16px;
-            padding:0 4px;
-            border-radius:20px;
-            background:var(--bordo);
-            color:#fff;
-            font-size:8px;
-            display:none;
-            place-items:center;
-            font-weight:800;
+
+        /* =====================================================
+           MAIN
+        ====================================================== */
+
+        .main {
+
+            width:
+                calc(100% - var(--sidebar-width));
+
+            margin-left:
+                var(--sidebar-width);
+
+            min-width: 0;
+
         }
 
-        .content{
-            padding:32px;
-            max-width:1700px;
-            margin:auto;
+
+        .topbar {
+
+            height: 72px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 500;
+
+            padding: 0 30px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            background:
+                rgba(255,255,255,.94);
+
+            border-bottom:
+                1px solid var(--border);
+
+            backdrop-filter:
+                blur(14px);
+
         }
 
-        .page-head{
-            display:flex;
-            align-items:flex-end;
-            justify-content:space-between;
-            gap:20px;
-            margin-bottom:26px;
+
+        .topbar-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
         }
 
-        .eyebrow{
-            color:var(--bordo);
-            font-size:11px;
-            font-weight:900;
-            letter-spacing:1.5px;
-            text-transform:uppercase;
-            margin-bottom:7px;
+
+        .mobile-menu {
+
+            display: none;
+
+            width: 40px;
+            height: 40px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: var(--green);
+
+            font-size: 18px;
+
         }
 
-        h1{
-            font-size:clamp(28px,3vw,40px);
-            line-height:1.05;
-            letter-spacing:-1px;
+
+        .breadcrumb {
+
+            color: var(--muted);
+
+            font-size: 11px;
+
         }
 
-        .page-subtitle{
-            color:var(--muted);
-            margin-top:8px;
-            font-size:14px;
-            max-width:650px;
+
+        .breadcrumb strong {
+
+            color: var(--text);
+
         }
 
-        .head-actions{
-            display:flex;
-            gap:9px;
-            flex-wrap:wrap;
+
+        .topbar-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
         }
 
-        .btn{
-            min-height:43px;
-            border:1px solid var(--line);
-            background:#fff;
-            color:var(--green);
-            border-radius:12px;
-            padding:0 15px;
-            font-weight:750;
-            font-size:12px;
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            gap:8px;
+
+        .online {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+            font-weight: 750;
+
         }
 
-        .btn:hover{transform:translateY(-1px)}
-        .btn-primary{
-            background:var(--bordo);
-            color:#fff;
-            border-color:var(--bordo);
+
+        .online-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #42a56e;
+
         }
 
-        /* METRICS */
-        .metrics{
-            display:grid;
-            grid-template-columns:repeat(4,minmax(0,1fr));
-            gap:15px;
-            margin-bottom:20px;
+
+        .notification-btn {
+
+            width: 40px;
+            height: 40px;
+
+            position: relative;
+
+            display: grid;
+
+            place-items: center;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 11px;
+
+            background: white;
+
+            color: var(--green);
+
         }
 
-        .metric{
-            background:#fff;
-            border:1px solid var(--line);
-            border-radius:18px;
-            padding:19px;
-            box-shadow:0 8px 25px rgba(45,25,20,.035);
-            min-width:0;
+
+        .notification-count {
+
+            min-width: 17px;
+            height: 17px;
+
+            position: absolute;
+
+            top: -4px;
+            right: -4px;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 4px;
+
+            border:
+                2px solid white;
+
+            border-radius: 999px;
+
+            background: var(--bordo);
+
+            color: white;
+
+            font-size: 8px;
+
+            font-weight: 900;
+
         }
 
-        .metric-top{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:10px;
+
+        /* =====================================================
+           CONTENT
+        ====================================================== */
+
+        .content {
+
+            width:
+                min(1700px, 100%);
+
+            margin: 0 auto;
+
+            padding: 30px;
+
         }
 
-        .metric-label{
-            color:var(--muted);
-            font-size:11px;
-            font-weight:750;
-            text-transform:uppercase;
-            letter-spacing:.7px;
+
+        .page-header {
+
+            margin-bottom: 22px;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
         }
 
-        .metric-icon{
-            width:34px;
-            height:34px;
-            border-radius:10px;
-            display:grid;
-            place-items:center;
-            background:var(--soft);
-            color:var(--bordo);
-            font-size:14px;
+
+        .eyebrow {
+
+            margin-bottom: 7px;
+
+            color: var(--bordo);
+
+            font-size: 9px;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            letter-spacing: .15em;
+
         }
 
-        .metric-value{
-            margin-top:12px;
-            font-size:26px;
-            font-weight:900;
-            letter-spacing:-.5px;
+
+        h1 {
+
+            color: var(--green);
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:
+                clamp(30px, 4vw, 42px);
+
+            line-height: 1.04;
+
+            letter-spacing: -.045em;
+
         }
 
-        .metric-note{
-            margin-top:4px;
-            font-size:10px;
-            color:var(--muted);
+
+        .page-description {
+
+            max-width: 680px;
+
+            margin-top: 8px;
+
+            color: var(--muted);
+
+            font-size: 11px;
+
+            line-height: 1.65;
+
         }
 
-        /* FILTERS */
-        .panel{
-            background:#fff;
-            border:1px solid var(--line);
-            border-radius:20px;
-            box-shadow:var(--shadow);
-            overflow:hidden;
+
+        .header-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+
         }
 
-        .filters{
-            padding:16px;
-            display:grid;
-            grid-template-columns:minmax(220px,1.7fr) minmax(160px,1fr) minmax(150px,1fr) auto;
-            gap:10px;
-            border-bottom:1px solid var(--line);
+
+        /* =====================================================
+           BUTTONS
+        ====================================================== */
+
+        .btn {
+
+            min-height: 41px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            padding: 0 14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: var(--green);
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            transition: .2s ease;
+
         }
 
-        .field{
-            position:relative;
+
+        .btn:hover {
+
+            transform:
+                translateY(-1px);
+
+            border-color:
+                var(--green);
+
         }
+
+
+        .btn-primary {
+
+            border-color:
+                var(--bordo);
+
+            background:
+                var(--bordo);
+
+            color: white;
+
+            box-shadow:
+                0 8px 20px
+                rgba(108,21,30,.12);
+
+        }
+
+
+        .btn-primary:hover {
+
+            border-color:
+                var(--bordo-dark);
+
+            background:
+                var(--bordo-dark);
+
+        }
+
+
+        .btn:disabled {
+
+            opacity: .55;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+        }
+
+
+        /* =====================================================
+           METRICS
+        ====================================================== */
+
+        .metrics {
+
+            margin-bottom: 18px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 13px;
+
+        }
+
+
+        .metric {
+
+            min-width: 0;
+
+            padding: 18px;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                var(--radius);
+
+            box-shadow:
+                var(--shadow);
+
+        }
+
+
+        .metric-top {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+        }
+
+
+        .metric-label {
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: .08em;
+
+        }
+
+
+        .metric-icon {
+
+            width: 33px;
+            height: 33px;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 10px;
+
+            background:
+                #f8ebe4;
+
+            color: var(--bordo);
+
+            font-size: 14px;
+
+        }
+
+
+        .metric-value {
+
+            margin-top: 13px;
+
+            color: var(--green);
+
+            font-size: 24px;
+
+            font-weight: 900;
+
+            letter-spacing: -.035em;
+
+            overflow-wrap: anywhere;
+
+        }
+
+
+        .metric-note {
+
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 8px;
+
+            line-height: 1.4;
+
+        }
+
+
+        /* =====================================================
+           PANEL
+        ====================================================== */
+
+        .panel {
+
+            overflow: hidden;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                var(--radius);
+
+            box-shadow:
+                var(--shadow);
+
+        }
+
+
+        /* =====================================================
+           FILTER BAR
+        ====================================================== */
+
+        .filter-bar {
+
+            padding: 15px;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(220px, 1.7fr)
+                minmax(160px, 1fr)
+                minmax(150px, 1fr)
+                auto;
+
+            gap: 9px;
+
+            border-bottom:
+                1px solid var(--border);
+
+        }
+
+
+        .field {
+
+            min-width: 0;
+
+            position: relative;
+
+        }
+
 
         .field input,
-        .field select{
-            width:100%;
-            height:43px;
-            border:1px solid var(--line);
-            border-radius:11px;
-            background:#fff;
-            color:var(--ink);
-            padding:0 12px;
-            outline:none;
-            font-size:12px;
+        .field select {
+
+            width: 100%;
+
+            height: 41px;
+
+            padding: 0 11px;
+
+            outline: none;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: var(--text);
+
+            font-size: 10px;
+
         }
+
 
         .field input:focus,
-        .field select:focus{
-            border-color:var(--green);
-            box-shadow:0 0 0 3px rgba(15,61,58,.07);
+        .field select:focus {
+
+            border-color:
+                var(--green);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(15,61,58,.07);
+
         }
 
-        .search-field input{
-            padding-left:38px;
+
+        .search input {
+
+            padding-left: 34px;
+
         }
 
-        .search-icon{
-            position:absolute;
-            left:13px;
-            top:50%;
-            transform:translateY(-50%);
-            color:var(--muted);
-            font-size:13px;
-            pointer-events:none;
+
+        .search-icon {
+
+            position: absolute;
+
+            left: 12px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            color: #9b8d85;
+
+            pointer-events: none;
+
+            font-size: 14px;
+
         }
 
-        /* TABLE */
-        .table-wrap{
-            width:100%;
-            overflow-x:auto;
+
+        /* =====================================================
+           TABLE
+        ====================================================== */
+
+        .table-wrap {
+
+            width: 100%;
+
+            overflow-x: auto;
+
         }
 
-        table{
-            width:100%;
-            border-collapse:collapse;
-            min-width:900px;
+
+        table {
+
+            width: 100%;
+
+            min-width: 980px;
+
+            border-collapse:
+                collapse;
+
         }
 
-        th{
-            padding:14px 17px;
-            text-align:left;
-            color:#8b7e77;
-            font-size:10px;
-            font-weight:850;
-            letter-spacing:.8px;
-            text-transform:uppercase;
-            background:#fdf9f5;
-            border-bottom:1px solid var(--line);
-            white-space:nowrap;
+
+        th {
+
+            padding:
+                12px 16px;
+
+            text-align: left;
+
+            background:
+                #fcf8f4;
+
+            border-bottom:
+                1px solid var(--border);
+
+            color:
+                #82756e;
+
+            font-size: 8px;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            letter-spacing: .09em;
+
+            white-space: nowrap;
+
         }
 
-        td{
-            padding:16px 17px;
-            border-bottom:1px solid #f0e8e2;
-            vertical-align:middle;
-            font-size:12px;
+
+        td {
+
+            padding:
+                14px 16px;
+
+            border-bottom:
+                1px solid #f1e8e1;
+
+            vertical-align: middle;
+
+            font-size: 10px;
+
         }
 
-        tr:last-child td{border-bottom:0}
 
-        .order-id{
-            color:var(--green);
-            font-weight:850;
-            font-size:11px;
+        tbody tr:hover {
+
+            background:
+                #fffaf6;
+
         }
 
-        .event-name{
-            font-weight:800;
-            color:var(--ink);
-            max-width:220px;
+
+        tbody tr:last-child td {
+
+            border-bottom: 0;
+
         }
 
-        .event-meta{
-            color:var(--muted);
-            font-size:10px;
-            margin-top:4px;
+
+        .order-id {
+
+            color: var(--green);
+
+            font-family:
+                ui-monospace,
+                SFMono-Regular,
+                Menlo,
+                Monaco,
+                Consolas,
+                monospace;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
         }
 
-        .customer{
-            font-weight:700;
+
+        .event-name {
+
+            max-width: 230px;
+
+            color: var(--green);
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
         }
 
-        .muted{
-            color:var(--muted);
+
+        .event-meta {
+
+            margin-top: 3px;
+
+            color: var(--muted);
+
+            font-size: 8px;
+
         }
 
-        .money{
-            font-weight:850;
-            white-space:nowrap;
+
+        .customer-name {
+
+            max-width: 170px;
+
+            color: var(--text);
+
+            font-weight: 700;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
         }
 
-        .status{
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            min-height:27px;
-            padding:0 9px;
-            border-radius:30px;
-            font-size:9px;
-            font-weight:850;
-            text-transform:uppercase;
-            letter-spacing:.45px;
-            white-space:nowrap;
+
+        .money {
+
+            color: var(--green);
+
+            font-weight: 900;
+
+            white-space: nowrap;
+
         }
 
-        .status::before{
-            content:"";
-            width:6px;
-            height:6px;
-            border-radius:50%;
-            background:currentColor;
+
+        .muted {
+
+            color: var(--muted);
+
         }
+
+
+        .status {
+
+            min-height: 23px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 5px;
+
+            padding:
+                0 8px;
+
+            border-radius:
+                999px;
+
+            font-size: 7px;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            letter-spacing: .05em;
+
+            white-space: nowrap;
+
+        }
+
+
+        .status::before {
+
+            content: "";
+
+            width: 5px;
+            height: 5px;
+
+            border-radius: 50%;
+
+            background: currentColor;
+
+        }
+
 
         .status.paid,
         .status.completed,
-        .status.confirmed,
-        .status.success{
-            color:var(--success);
-            background:#e9f6ef;
+        .status.confirmed {
+
+            background:
+                var(--success-bg);
+
+            color:
+                var(--success);
+
         }
 
-        .status.pending{
-            color:var(--warning);
-            background:#fff4d9;
+
+        .status.pending {
+
+            background:
+                var(--warning-bg);
+
+            color:
+                var(--warning);
+
         }
+
+
+        .status.processing {
+
+            background:
+                var(--info-bg);
+
+            color:
+                var(--info);
+
+        }
+
 
         .status.failed,
         .status.cancelled,
-        .status.refunded{
-            color:var(--danger);
-            background:#fbeaec;
+        .status.refunded {
+
+            background:
+                var(--danger-bg);
+
+            color:
+                var(--danger);
+
         }
 
-        .status.processing{
-            color:#426276;
-            background:#e9f2f7;
+
+        .status.unknown {
+
+            background:
+                #eee9e5;
+
+            color:
+                #6e625d;
+
         }
 
-        .row-actions{
-            display:flex;
-            justify-content:flex-end;
-            gap:5px;
+
+        .row-actions {
+
+            display: flex;
+
+            justify-content: flex-end;
+
         }
 
-        .small-btn{
-            width:32px;
-            height:32px;
-            border:1px solid var(--line);
-            background:#fff;
-            border-radius:9px;
-            color:var(--green);
-            display:grid;
-            place-items:center;
+
+        .icon-action {
+
+            width: 32px;
+            height: 32px;
+
+            display: grid;
+
+            place-items: center;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 9px;
+
+            background: white;
+
+            color: var(--green);
+
+            font-size: 12px;
+
         }
 
-        .small-btn:hover{
-            border-color:var(--green);
+
+        .icon-action:hover {
+
+            border-color:
+                var(--green);
+
+            background:
+                var(--surface-soft);
+
         }
 
-        /* MOBILE CARDS */
-        .mobile-list{
-            display:none;
+
+        /* =====================================================
+           MOBILE CARDS
+        ====================================================== */
+
+        .mobile-list {
+
+            display: none;
+
+            padding: 11px;
+
         }
 
-        .sale-card{
-            padding:17px;
-            border-bottom:1px solid var(--line);
+
+        .sale-card {
+
+            margin-bottom: 9px;
+
+            padding: 14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 14px;
+
+            background: white;
+
         }
 
-        .sale-card:last-child{border-bottom:0}
 
-        .sale-card-head{
-            display:flex;
-            align-items:flex-start;
-            justify-content:space-between;
-            gap:10px;
+        .sale-card:last-child {
+            margin-bottom: 0;
         }
 
-        .sale-event{
-            font-weight:850;
-            font-size:13px;
+
+        .sale-card-top {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
         }
 
-        .sale-order{
-            color:var(--green);
-            font-size:10px;
-            font-weight:800;
-            margin-top:4px;
+
+        .sale-card-event {
+
+            min-width: 0;
+
         }
 
-        .sale-grid{
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:12px;
-            margin-top:15px;
+
+        .sale-card-event strong {
+
+            display: block;
+
+            color: var(--green);
+
+            font-size: 12px;
+
+            overflow-wrap: anywhere;
+
         }
 
-        .sale-item span{
-            display:block;
-            color:var(--muted);
-            font-size:9px;
-            text-transform:uppercase;
-            letter-spacing:.6px;
-            margin-bottom:4px;
+
+        .sale-card-event span {
+
+            display: block;
+
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 8px;
+
         }
 
-        .sale-item strong{
-            font-size:12px;
+
+        .sale-card-grid {
+
+            margin-top: 13px;
+
+            padding-top: 12px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0,1fr));
+
+            gap: 10px;
+
+            border-top:
+                1px solid var(--border);
+
         }
 
-        .sale-footer{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:10px;
-            margin-top:15px;
-            padding-top:12px;
-            border-top:1px solid #f0e8e2;
+
+        .sale-field span {
+
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: var(--muted);
+
+            font-size: 7px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: .06em;
+
         }
 
-        .empty{
-            padding:55px 20px;
-            text-align:center;
+
+        .sale-field strong {
+
+            display: block;
+
+            color: var(--text);
+
+            font-size: 9px;
+
+            overflow-wrap: anywhere;
+
         }
 
-        .empty-icon{
-            width:58px;
-            height:58px;
-            border-radius:18px;
-            background:var(--soft);
-            color:var(--bordo);
-            display:grid;
-            place-items:center;
-            margin:0 auto 14px;
-            font-size:22px;
+
+        .sale-card-footer {
+
+            margin-top: 12px;
+
+            padding-top: 11px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            border-top:
+                1px solid var(--border);
+
         }
 
-        .empty h3{
-            font-size:17px;
-            margin-bottom:7px;
+
+        .sale-date {
+
+            color: var(--muted);
+
+            font-size: 8px;
+
         }
 
-        .empty p{
-            color:var(--muted);
-            font-size:12px;
-            max-width:430px;
-            margin:auto;
-            line-height:1.6;
+
+        /* =====================================================
+           STATES
+        ====================================================== */
+
+        .state {
+
+            padding:
+                55px 22px;
+
+            text-align: center;
+
+            color: var(--muted);
+
         }
 
-        .loading{
-            padding:50px;
-            text-align:center;
-            color:var(--muted);
-            font-size:12px;
+
+        .state-icon {
+
+            width: 54px;
+            height: 54px;
+
+            margin:
+                0 auto 13px;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 16px;
+
+            background:
+                #f8ebe4;
+
+            color: var(--bordo);
+
+            font-size: 21px;
+
+            font-weight: 900;
+
         }
 
-        .spinner{
-            width:26px;
-            height:26px;
-            border:3px solid var(--line);
-            border-top-color:var(--bordo);
-            border-radius:50%;
-            animation:spin .8s linear infinite;
-            margin:0 auto 12px;
+
+        .state strong {
+
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: var(--green);
+
+            font-size: 13px;
+
         }
 
-        @keyframes spin{to{transform:rotate(360deg)}}
 
-        /* TOAST */
-        .toast-container{
-            position:fixed;
-            right:22px;
-            bottom:22px;
-            z-index:100;
-            display:grid;
-            gap:8px;
-            width:min(360px,calc(100vw - 30px));
+        .state p {
+
+            max-width: 520px;
+
+            margin: 0 auto;
+
+            font-size: 9px;
+
+            line-height: 1.65;
+
         }
 
-        .toast{
-            background:var(--green);
-            color:#fff;
-            border-radius:13px;
-            padding:13px 15px;
-            box-shadow:0 15px 35px rgba(0,0,0,.2);
-            font-size:12px;
-            animation:toastIn .2s ease;
+
+        .spinner {
+
+            width: 27px;
+            height: 27px;
+
+            margin:
+                0 auto 12px;
+
+            border:
+                3px solid #eadbd0;
+
+            border-top-color:
+                var(--bordo);
+
+            border-radius: 50%;
+
+            animation:
+                spin .8s linear infinite;
+
         }
 
-        .toast.error{background:var(--bordo)}
 
-        @keyframes toastIn{
-            from{opacity:0;transform:translateY(8px)}
-            to{opacity:1;transform:translateY(0)}
-        }
+        @keyframes spin {
 
-        /* DRAWER */
-        .drawer-backdrop{
-            position:fixed;
-            inset:0;
-            background:rgba(20,15,13,.48);
-            backdrop-filter:blur(4px);
-            z-index:70;
-            display:none;
-        }
-
-        .drawer-backdrop.show{display:block}
-
-        .drawer{
-            position:fixed;
-            top:0;
-            right:0;
-            width:min(470px,100%);
-            height:100%;
-            background:#fff;
-            z-index:80;
-            transform:translateX(100%);
-            transition:.25s ease;
-            box-shadow:-20px 0 60px rgba(0,0,0,.15);
-            overflow-y:auto;
-        }
-
-        .drawer.show{transform:translateX(0)}
-
-        .drawer-head{
-            padding:22px;
-            border-bottom:1px solid var(--line);
-            display:flex;
-            justify-content:space-between;
-            align-items:flex-start;
-            gap:15px;
-        }
-
-        .drawer-head h2{
-            font-size:20px;
-        }
-
-        .drawer-head p{
-            color:var(--muted);
-            font-size:11px;
-            margin-top:5px;
-        }
-
-        .close{
-            width:36px;
-            height:36px;
-            border:1px solid var(--line);
-            background:#fff;
-            border-radius:10px;
-        }
-
-        .drawer-body{
-            padding:22px;
-        }
-
-        .detail-section{
-            padding-bottom:20px;
-            margin-bottom:20px;
-            border-bottom:1px solid var(--line);
-        }
-
-        .detail-section:last-child{
-            border-bottom:0;
-            margin-bottom:0;
-        }
-
-        .detail-section h4{
-            color:var(--green);
-            font-size:10px;
-            letter-spacing:1px;
-            text-transform:uppercase;
-            margin-bottom:14px;
-        }
-
-        .detail-row{
-            display:flex;
-            justify-content:space-between;
-            gap:15px;
-            padding:9px 0;
-            font-size:12px;
-        }
-
-        .detail-row span:first-child{
-            color:var(--muted);
-        }
-
-        .detail-row strong{
-            text-align:right;
-        }
-
-        /* RESPONSIVE */
-        @media(max-width:1100px){
-            .sidebar{
-                width:220px;
-                flex-basis:220px;
+            to {
+                transform:
+                    rotate(360deg);
             }
 
-            .content{padding:25px}
-
-            .metrics{
-                grid-template-columns:repeat(2,minmax(0,1fr));
-            }
-
-            .filters{
-                grid-template-columns:1fr 1fr;
-            }
         }
 
-        @media(max-width:800px){
-            .sidebar{
-                width:74px;
-                flex-basis:74px;
-                padding:18px 10px;
-            }
 
-            .brand{
-                justify-content:center;
-                padding-left:0;
-                padding-right:0;
-            }
+        /* =====================================================
+           DRAWER
+        ====================================================== */
 
-            .brand > div:last-child,
-            .nav-label,
-            .nav a span:not(.nav-icon),
-            .sidebar-user > div:last-child,
-            .signout span{
-                display:none;
-            }
+        .drawer-backdrop {
 
-            .nav a{
-                justify-content:center;
-                padding:0;
-            }
+            position: fixed;
 
-            .sidebar-user{
-                justify-content:center;
-                padding:8px;
-            }
+            inset: 0;
 
-            .signout{
-                text-align:center;
-            }
+            z-index: 3000;
 
-            .topbar{padding:0 20px}
+            display: none;
 
-            .mobile-brand{display:block}
+            background:
+                rgba(15,25,24,.52);
+
+            backdrop-filter:
+                blur(4px);
+
         }
 
-        @media(max-width:650px){
-            .topbar{
-                height:65px;
-            }
 
-            .content{
-                padding:20px 15px 35px;
-            }
-
-            .page-head{
-                align-items:flex-start;
-                flex-direction:column;
-                margin-bottom:20px;
-            }
-
-            .head-actions{
-                width:100%;
-            }
-
-            .head-actions .btn{
-                flex:1;
-            }
-
-            .metrics{
-                grid-template-columns:1fr 1fr;
-                gap:10px;
-            }
-
-            .metric{
-                padding:15px;
-            }
-
-            .metric-value{
-                font-size:21px;
-            }
-
-            .filters{
-                grid-template-columns:1fr;
-                padding:12px;
-            }
-
-            .table-wrap{
-                display:none;
-            }
-
-            .mobile-list{
-                display:block;
-            }
-
-            .panel{
-                border-radius:17px;
-            }
+        .drawer-backdrop.show {
+            display: block;
         }
 
-        @media(max-width:430px){
-            .sidebar{
-                display:none;
-            }
 
-            .topbar{
-                padding:0 14px;
-            }
+        .drawer {
 
-            .content{
-                padding-left:12px;
-                padding-right:12px;
-            }
+            position: fixed;
 
-            .metrics{
-                grid-template-columns:1fr;
-            }
+            top: 0;
+            right: 0;
 
-            .metric{
-                display:flex;
-                align-items:center;
-                justify-content:space-between;
-                gap:15px;
-            }
+            width:
+                min(470px, 100%);
 
-            .metric-top{
-                flex:1;
-            }
+            height: 100%;
 
-            .metric-value{
-                margin-top:0;
-            }
+            z-index: 3100;
 
-            .metric-note{
-                display:none;
-            }
+            overflow-y: auto;
 
-            .sale-grid{
-                grid-template-columns:1fr 1fr;
-            }
+            background: white;
+
+            transform:
+                translateX(100%);
+
+            transition:
+                transform .25s ease;
+
+            box-shadow:
+                -20px 0 60px
+                rgba(0,0,0,.16);
+
         }
+
+
+        .drawer.show {
+
+            transform:
+                translateX(0);
+
+        }
+
+
+        .drawer-header {
+
+            padding: 20px;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap: 14px;
+
+            border-bottom:
+                1px solid var(--border);
+
+        }
+
+
+        .drawer-header h2 {
+
+            color: var(--green);
+
+            font-family:
+                Georgia,
+                serif;
+
+            font-size: 21px;
+
+        }
+
+
+        .drawer-header p {
+
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 8px;
+
+        }
+
+
+        .close-drawer {
+
+            width: 35px;
+            height: 35px;
+
+            display: grid;
+
+            place-items: center;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 9px;
+
+            background: white;
+
+            color: var(--green);
+
+            font-size: 17px;
+
+        }
+
+
+        .drawer-body {
+
+            padding: 20px;
+
+        }
+
+
+        .detail-section {
+
+            margin-bottom: 21px;
+
+            padding-bottom: 19px;
+
+            border-bottom:
+                1px solid var(--border);
+
+        }
+
+
+        .detail-section:last-child {
+
+            margin-bottom: 0;
+
+            padding-bottom: 0;
+
+            border-bottom: 0;
+
+        }
+
+
+        .detail-section-title {
+
+            margin-bottom: 11px;
+
+            color: var(--bordo);
+
+            font-size: 8px;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            letter-spacing: .12em;
+
+        }
+
+
+        .detail-row {
+
+            padding: 8px 0;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+
+            gap: 15px;
+
+            font-size: 10px;
+
+        }
+
+
+        .detail-row span {
+
+            color: var(--muted);
+
+        }
+
+
+        .detail-row strong {
+
+            max-width: 65%;
+
+            text-align: right;
+
+            overflow-wrap: anywhere;
+
+        }
+
+
+        /* =====================================================
+           TOAST
+        ====================================================== */
+
+        .toast-container {
+
+            position: fixed;
+
+            right: 20px;
+
+            bottom: 20px;
+
+            z-index: 5000;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 8px;
+
+            width:
+                min(380px, calc(100vw - 30px));
+
+        }
+
+
+        .toast {
+
+            padding:
+                12px 14px;
+
+            border-radius: 12px;
+
+            background: var(--green);
+
+            color: white;
+
+            box-shadow:
+                0 15px 35px
+                rgba(0,0,0,.18);
+
+            font-size: 9px;
+
+            animation:
+                toastIn .2s ease;
+
+        }
+
+
+        .toast.error {
+
+            background:
+                var(--bordo);
+
+        }
+
+
+        @keyframes toastIn {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(8px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+
+            }
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 1100px) {
+
+            .metrics {
+
+                grid-template-columns:
+                    repeat(2, minmax(0,1fr));
+
+            }
+
+
+            .filter-bar {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+
+                transform:
+                    translateX(-100%);
+
+            }
+
+
+            .sidebar.open {
+
+                transform:
+                    translateX(0);
+
+            }
+
+
+            .main {
+
+                width: 100%;
+
+                margin-left: 0;
+
+            }
+
+
+            .mobile-menu {
+
+                display: grid;
+
+                place-items: center;
+
+            }
+
+
+            .online {
+
+                display: none;
+
+            }
+
+
+            .topbar {
+
+                height: 64px;
+
+                padding:
+                    0 16px;
+
+            }
+
+
+            .content {
+
+                padding:
+                    22px 15px 32px;
+
+            }
+
+
+            .page-header {
+
+                flex-direction: column;
+
+            }
+
+
+            .header-actions {
+
+                width: 100%;
+
+            }
+
+
+            .header-actions .btn {
+
+                flex: 1;
+
+            }
+
+
+            .table-wrap {
+
+                display: none;
+
+            }
+
+
+            .mobile-list {
+
+                display: block;
+
+            }
+
+        }
+
+
+        @media (max-width: 560px) {
+
+            .metrics {
+
+                gap: 9px;
+
+            }
+
+
+            .metric {
+
+                padding: 14px;
+
+                border-radius: 14px;
+
+            }
+
+
+            .metric-value {
+
+                font-size: 20px;
+
+            }
+
+
+            .filter-bar {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .toast-container {
+
+                left: 12px;
+
+                right: 12px;
+
+                bottom: 12px;
+
+                width: auto;
+
+            }
+
+        }
+
+
+        @media (max-width: 390px) {
+
+            .metrics {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .header-actions {
+
+                flex-direction: column;
+
+            }
+
+
+            .header-actions .btn {
+
+                width: 100%;
+
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-<div class="app">
 
-    <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-mark">K</div>
-            <div>
-                <strong>K-Tickets</strong>
-                <span>Merchant CMS</span>
-            </div>
+<!-- ============================================================
+     SIDEBAR
+============================================================ -->
+
+<aside
+    class="sidebar"
+    id="sidebar"
+>
+
+    <div class="brand">
+
+        <div class="brand-mark">
+            K
         </div>
 
-        <div class="nav-label">Merchant</div>
+        <div class="brand-copy">
 
-        <nav class="nav">
-            <a href="./dashboard.html">
-                <span class="nav-icon">⌂</span>
-                <span>Dashboard</span>
-            </a>
+            <strong>
+                K-TICKETS
+            </strong>
 
-            <a href="./events.html">
-                <span class="nav-icon">▣</span>
-                <span>My Events</span>
-            </a>
+            <span>
+                Merchant CMS
+            </span>
 
-            <a href="./create-event.html">
-                <span class="nav-icon">＋</span>
-                <span>Create Event</span>
-            </a>
-
-            <a href="./tickets.html">
-                <span class="nav-icon">🎟</span>
-                <span>Tickets</span>
-            </a>
-
-            <a href="./promotions.html">
-                <span class="nav-icon">%</span>
-                <span>Promotions</span>
-            </a>
-
-            <a href="./sales.html" class="active">
-                <span class="nav-icon">↗</span>
-                <span>Sales</span>
-            </a>
-
-            <a href="./withdrawals.html">
-                <span class="nav-icon">↔</span>
-                <span>Withdrawals</span>
-            </a>
-
-            <a href="./settings.html">
-                <span class="nav-icon">⚙</span>
-                <span>Settings</span>
-            </a>
-        </nav>
-
-        <div class="sidebar-bottom">
-            <div class="sidebar-user">
-                <div class="avatar" id="sidebarAvatar">M</div>
-                <div>
-                    <strong id="sidebarName">Merchant</strong>
-                    <span>Merchant account</span>
-                </div>
-            </div>
-
-            <button class="signout" id="signOutBtn">
-                <span>↪</span> Sign Out
-            </button>
         </div>
-    </aside>
 
-    <main class="main">
-
-        <header class="topbar">
-            <div class="mobile-brand">K-Tickets</div>
-
-            <div class="top-actions">
-                <button class="icon-btn" onclick="window.location.href='../notifications.html'" aria-label="Notifications">
-                    ♧
-                    <span class="notification-dot" id="notificationCount"></span>
-                </button>
-
-                <button class="icon-btn" onclick="window.location.href='./settings.html'" aria-label="Settings">
-                    ⚙
-                </button>
-            </div>
-        </header>
-
-        <section class="content">
-
-            <div class="page-head">
-                <div>
-                    <div class="eyebrow">Merchant CMS</div>
-                    <h1>Sales</h1>
-                    <p class="page-subtitle">
-                        Monitor ticket sales, orders, payment status and revenue generated by your events.
-                    </p>
-                </div>
-
-                <div class="head-actions">
-                    <button class="btn" id="refreshBtn">↻ Refresh</button>
-                    <button class="btn btn-primary" id="exportBtn">⇩ Export</button>
-                </div>
-            </div>
-
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-top">
-                        <div class="metric-label">Total Sales</div>
-                        <div class="metric-icon">↗</div>
-                    </div>
-                    <div>
-                        <div class="metric-value" id="totalSales">0</div>
-                        <div class="metric-note">Successful ticket orders</div>
-                    </div>
-                </div>
-
-                <div class="metric">
-                    <div class="metric-top">
-                        <div class="metric-label">Tickets Sold</div>
-                        <div class="metric-icon">🎟</div>
-                    </div>
-                    <div>
-                        <div class="metric-value" id="ticketsSold">0</div>
-                        <div class="metric-note">Across your events</div>
-                    </div>
-                </div>
-
-                <div class="metric">
-                    <div class="metric-top">
-                        <div class="metric-label">Gross Revenue</div>
-                        <div class="metric-icon">¤</div>
-                    </div>
-                    <div>
-                        <div class="metric-value" id="grossRevenue">KWD 0.00</div>
-                        <div class="metric-note">Before applicable deductions</div>
-                    </div>
-                </div>
-
-                <div class="metric">
-                    <div class="metric-top">
-                        <div class="metric-label">Pending</div>
-                        <div class="metric-icon">◷</div>
-                    </div>
-                    <div>
-                        <div class="metric-value" id="pendingSales">0</div>
-                        <div class="metric-note">Orders awaiting completion</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel">
-
-                <div class="filters">
-
-                    <div class="field search-field">
-                        <span class="search-icon">⌕</span>
-                        <input
-                            type="search"
-                            id="searchInput"
-                            placeholder="Search order, customer or event..."
-                            autocomplete="off"
-                        >
-                    </div>
-
-                    <div class="field">
-                        <select id="eventFilter">
-                            <option value="">All events</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <select id="statusFilter">
-                            <option value="">All payment statuses</option>
-                            <option value="paid">Paid</option>
-                            <option value="completed">Completed</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="pending">Pending</option>
-                            <option value="processing">Processing</option>
-                            <option value="failed">Failed</option>
-                            <option value="cancelled">Cancelled</option>
-                            <option value="refunded">Refunded</option>
-                        </select>
-                    </div>
-
-                    <button class="btn" id="clearFilters">Clear</button>
-
-                </div>
-
-                <div id="loadingState" class="loading">
-                    <div class="spinner"></div>
-                    Loading sales...
-                </div>
-
-                <div id="desktopSales" class="table-wrap" style="display:none;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Order</th>
-                                <th>Event</th>
-                                <th>Customer</th>
-                                <th>Tickets</th>
-                                <th>Payment</th>
-                                <th>Total</th>
-                                <th>Date</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="salesTableBody"></tbody>
-                    </table>
-                </div>
-
-                <div id="mobileSales" class="mobile-list"></div>
-
-                <div id="emptyState" class="empty" style="display:none;">
-                    <div class="empty-icon">↗</div>
-                    <h3>No sales found</h3>
-                    <p>
-                        Sales from your ticket orders will appear here once they are available.
-                    </p>
-                </div>
-
-            </div>
-
-        </section>
-    </main>
-</div>
-
-<div class="drawer-backdrop" id="drawerBackdrop"></div>
-
-<aside class="drawer" id="saleDrawer">
-    <div class="drawer-head">
-        <div>
-            <h2>Sale Details</h2>
-            <p id="drawerOrderId">Order details</p>
-        </div>
-        <button class="close" id="closeDrawer">×</button>
     </div>
 
-    <div class="drawer-body" id="drawerBody"></div>
+
+    <nav class="nav">
+
+        <div class="nav-label">
+            Workspace
+        </div>
+
+
+        <a href="./dashboard.html">
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+
+        <a href="./events.html">
+            <span class="nav-icon">◫</span>
+            <span>My Events</span>
+        </a>
+
+
+        <a href="./create-event.html">
+            <span class="nav-icon">＋</span>
+            <span>Create Event</span>
+        </a>
+
+
+        <a href="./tickets.html">
+            <span class="nav-icon">▣</span>
+            <span>Tickets</span>
+        </a>
+
+
+        <a href="./attendees.html">
+            <span class="nav-icon">♙</span>
+            <span>Attendees</span>
+        </a>
+
+
+        <a href="./scan.html">
+            <span class="nav-icon">⌁</span>
+            <span>Scan Tickets</span>
+        </a>
+
+
+        <a href="./gate-staff.html">
+            <span class="nav-icon">♟</span>
+            <span>Gate Staff</span>
+        </a>
+
+
+        <a href="./promotions.html">
+            <span class="nav-icon">%</span>
+            <span>Promotions</span>
+        </a>
+
+
+        <a
+            href="./sales.html"
+            class="active"
+        >
+            <span class="nav-icon">▤</span>
+            <span>Sales</span>
+        </a>
+
+
+        <a href="./earnings.html">
+            <span class="nav-icon">◈</span>
+            <span>Earnings</span>
+        </a>
+
+
+        <a href="./withdrawals.html">
+            <span class="nav-icon">↗</span>
+            <span>Withdrawals</span>
+        </a>
+
+
+        <div
+            class="nav-label"
+            style="margin-top:12px;"
+        >
+            Account
+        </div>
+
+
+        <a href="./profile.html">
+            <span class="nav-icon">♙</span>
+            <span>Profile</span>
+        </a>
+
+
+        <a href="./settings.html">
+            <span class="nav-icon">⚙</span>
+            <span>Settings</span>
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-footer">
+
+        <div class="merchant-mini">
+
+            <div
+                class="merchant-avatar"
+                id="merchantAvatar"
+            >
+                —
+            </div>
+
+            <div class="merchant-info">
+
+                <strong
+                    id="merchantName"
+                >
+                    Loading...
+                </strong>
+
+                <span>
+                    Merchant account
+                </span>
+
+            </div>
+
+            <button
+                class="signout"
+                id="signOutBtn"
+                type="button"
+                aria-label="Sign out"
+                title="Sign out"
+            >
+                ↪
+            </button>
+
+        </div>
+
+    </div>
+
 </aside>
 
-<div class="toast-container" id="toastContainer"></div>
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+></div>
+
+
+<!-- ============================================================
+     MAIN
+============================================================ -->
+
+<main class="main">
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+                type="button"
+                aria-label="Open navigation"
+            >
+                ☰
+            </button>
+
+            <div class="breadcrumb">
+
+                Merchant /
+
+                <strong>
+                    Sales
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+            <div class="online">
+
+                <span class="online-dot"></span>
+
+                CMS Online
+
+            </div>
+
+
+            <a
+                href="./notifications.html"
+                class="notification-btn"
+                aria-label="Notifications"
+                title="Notifications"
+            >
+
+                ♢
+
+                <span
+                    class="notification-count"
+                    id="notificationCount"
+                >
+                    0
+                </span>
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <section class="content">
+
+        <!-- ====================================================
+             HEADER
+        ===================================================== -->
+
+        <div class="page-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    Merchant Finance
+                </div>
+
+                <h1>
+                    Sales
+                </h1>
+
+                <p class="page-description">
+                    Monitor orders generated by your events,
+                    payment status and recorded sales totals.
+                </p>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <button
+                    class="btn"
+                    id="refreshBtn"
+                    type="button"
+                >
+                    ↻ Refresh
+                </button>
+
+
+                <button
+                    class="btn btn-primary"
+                    id="exportBtn"
+                    type="button"
+                >
+                    ⇩ Export CSV
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             METRICS
+        ===================================================== -->
+
+        <div class="metrics">
+
+            <div class="metric">
+
+                <div class="metric-top">
+
+                    <span class="metric-label">
+                        Successful Sales
+                    </span>
+
+                    <div class="metric-icon">
+                        ↗
+                    </div>
+
+                </div>
+
+                <div
+                    class="metric-value"
+                    id="successfulSales"
+                >
+                    —
+                </div>
+
+                <div class="metric-note">
+                    Orders with a paid/confirmed status
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+
+                    <span class="metric-label">
+                        Tickets Sold
+                    </span>
+
+                    <div class="metric-icon">
+                        ▣
+                    </div>
+
+                </div>
+
+                <div
+                    class="metric-value"
+                    id="ticketsSold"
+                >
+                    —
+                </div>
+
+                <div class="metric-note">
+                    From recorded order quantities
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+
+                    <span class="metric-label">
+                        Recorded Revenue
+                    </span>
+
+                    <div class="metric-icon">
+                        ¤
+                    </div>
+
+                </div>
+
+                <div
+                    class="metric-value"
+                    id="recordedRevenue"
+                >
+                    —
+                </div>
+
+                <div class="metric-note">
+                    Grouped by currency
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+
+                    <span class="metric-label">
+                        Pending Orders
+                    </span>
+
+                    <div class="metric-icon">
+                        ◷
+                    </div>
+
+                </div>
+
+                <div
+                    class="metric-value"
+                    id="pendingOrders"
+                >
+                    —
+                </div>
+
+                <div class="metric-note">
+                    Awaiting successful completion
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             SALES PANEL
+        ===================================================== -->
+
+        <section class="panel">
+
+            <div class="filter-bar">
+
+                <div class="field search">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="Search order, customer or event..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <select
+                        id="eventFilter"
+                        aria-label="Filter by event"
+                    >
+
+                        <option value="">
+                            All events
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <select
+                        id="statusFilter"
+                        aria-label="Filter by status"
+                    >
+
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        <option value="paid">
+                            Paid
+                        </option>
+
+                        <option value="pending">
+                            Pending
+                        </option>
+
+                        <option value="processing">
+                            Processing
+                        </option>
+
+                        <option value="failed">
+                            Failed
+                        </option>
+
+                        <option value="cancelled">
+                            Cancelled
+                        </option>
+
+                        <option value="refunded">
+                            Refunded
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    class="btn"
+                    id="clearFilters"
+                    type="button"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+
+            <!-- LOADING -->
+
+            <div
+                class="state"
+                id="loadingState"
+            >
+
+                <div class="spinner"></div>
+
+                <strong>
+                    Loading sales
+                </strong>
+
+                <p>
+                    Getting orders belonging to your merchant events.
+                </p>
+
+            </div>
+
+
+            <!-- ERROR -->
+
+            <div
+                class="state"
+                id="errorState"
+                style="display:none;"
+            >
+
+                <div class="state-icon">
+                    !
+                </div>
+
+                <strong>
+                    Unable to load sales
+                </strong>
+
+                <p id="errorMessage">
+                    Something went wrong.
+                </p>
+
+                <button
+                    class="btn"
+                    id="retryBtn"
+                    type="button"
+                    style="margin-top:15px;"
+                >
+                    Try Again
+                </button>
+
+            </div>
+
+
+            <!-- EMPTY -->
+
+            <div
+                class="state"
+                id="emptyState"
+                style="display:none;"
+            >
+
+                <div class="state-icon">
+                    ▤
+                </div>
+
+                <strong>
+                    No sales found
+                </strong>
+
+                <p>
+                    Orders for your merchant events will appear here
+                    when they are recorded.
+                </p>
+
+            </div>
+
+
+            <!-- DESKTOP -->
+
+            <div
+                class="table-wrap"
+                id="tableWrap"
+                style="display:none;"
+            >
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Order
+                            </th>
+
+                            <th>
+                                Event
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Subtotal
+                            </th>
+
+                            <th>
+                                Service Fee
+                            </th>
+
+                            <th>
+                                Total
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="salesTableBody"
+                    ></tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- MOBILE -->
+
+            <div
+                class="mobile-list"
+                id="mobileList"
+            ></div>
+
+        </section>
+
+    </section>
+
+</main>
+
+
+<!-- ============================================================
+     DRAWER
+============================================================ -->
+
+<div
+    class="drawer-backdrop"
+    id="drawerBackdrop"
+></div>
+
+
+<aside
+    class="drawer"
+    id="saleDrawer"
+>
+
+    <div class="drawer-header">
+
+        <div>
+
+            <h2>
+                Sale Details
+            </h2>
+
+            <p
+                id="drawerOrderId"
+            >
+                Order
+            </p>
+
+        </div>
+
+
+        <button
+            class="close-drawer"
+            id="closeDrawer"
+            type="button"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <div
+        class="drawer-body"
+        id="drawerBody"
+    ></div>
+
+</aside>
+
+
+<!-- ============================================================
+     TOAST
+============================================================ -->
+
+<div
+    class="toast-container"
+    id="toastContainer"
+    aria-live="polite"
+></div>
+
 
 <script>
-    /* ============================================================
-       K-TICKETS MERCHANT SALES
-       Supabase is the source of truth.
-       No real event/customer/order values are hardcoded.
-       ============================================================ */
 
-    const SUPABASE_URL = window.KTICKETS_SUPABASE_URL || "";
-    const SUPABASE_ANON_KEY = window.KTICKETS_SUPABASE_ANON_KEY || "";
+/* ============================================================
+   K-TICKETS MERCHANT SALES
 
-    let supabaseClient = null;
-    let currentUser = null;
-    let currentProfile = null;
-    let allSales = [];
-    let filteredSales = [];
-    let merchantEvents = [];
+   SOURCE OF TRUTH
+   ------------------------------------------------------------
+   Supabase.
 
-    const $ = (id) => document.getElementById(id);
+   CONFIRMED TABLES USED
+   ------------------------------------------------------------
 
-    function showToast(message, type = "success") {
-        const container = $("toastContainer");
+   profiles
+   - id
+   - full_name
+   - phone
+   - role
+   - is_active
 
-        const toast = document.createElement("div");
-        toast.className = "toast" + (type === "error" ? " error" : "");
-        toast.textContent = message;
+   events
+   - id
+   - merchant_id
+   - title
+   - description
+   - venue
+   - city
+   - start_at
+   - end_at
+   - status
 
-        container.appendChild(toast);
+   orders
+   - id
+   - order_number
+   - user_id
+   - event_id
+   - status
+   - subtotal
+   - service_fee_percentage
+   - service_fee
+   - discount
+   - total
+   - currency
+   - promotion_id
+   - paid_at
+   - created_at
+   - updated_at
 
-        setTimeout(() => {
-            toast.remove();
-        }, 3500);
-    }
+   payments
+   - id
+   - order_id
+   - user_id
+   - event_id
+   - method
+   - provider
+   - status
+   - amount
+   - currency
+   - reference
+   - transaction_id
+   - receipt_number
+   - provider_transaction_id
+   - raw_response
+   - failure_reason
+   - paid_at
+   - created_at
+   - updated_at
 
-    function escapeHtml(value) {
-        if (value === null || value === undefined) return "";
+   IMPORTANT
+   ------------------------------------------------------------
+   This page does NOT assume that orders contains:
+   - ticket_quantity
+   - quantity
+   - tickets_count
+   - ticket_count
 
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
+   Therefore ticket quantity is not fabricated.
 
-    function getInitials(name) {
-        const value = String(name || "").trim();
+   Ticket sales/inventory remains authoritative through
+   ticket_types.quantity_sold and the ticket/order-item
+   system.
 
-        if (!value) return "M";
+   Revenue is NEVER summed across different currencies.
+============================================================ */
 
-        const parts = value.split(/\s+/).filter(Boolean);
 
-        if (parts.length === 1) {
-            return parts[0].slice(0, 2).toUpperCase();
-        }
+/* ============================================================
+   SUPABASE
+============================================================ */
 
-        return (
-            parts[0][0] +
-            parts[parts.length - 1][0]
-        ).toUpperCase();
-    }
+const SUPABASE_URL =
+    window.KTICKETS_SUPABASE_URL ||
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-    function formatMoney(amount, currency = "KWD") {
-        const number = Number(amount || 0);
 
-        return `${currency || "KWD"} ${number.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        })}`;
-    }
+const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY ||
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
-    function formatDate(value) {
-        if (!value) return "—";
 
-        const date = new Date(value);
+let supabaseClient = null;
 
-        if (Number.isNaN(date.getTime())) return "—";
+let currentUser = null;
 
-        return date.toLocaleDateString(undefined, {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
-    }
+let currentProfile = null;
 
-    function formatDateTime(value) {
-        if (!value) return "—";
+let merchantEvents = [];
 
-        const date = new Date(value);
+let allSales = [];
 
-        if (Number.isNaN(date.getTime())) return "—";
+let filteredSales = [];
 
-        return date.toLocaleString(undefined, {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-    }
 
-    function normalizeStatus(status) {
-        return String(status || "pending")
-            .toLowerCase()
-            .replace(/\s+/g, "_");
-    }
+/* ============================================================
+   INIT
+============================================================ */
 
-    function statusClass(status) {
-        const value = normalizeStatus(status);
+document.addEventListener(
+    "DOMContentLoaded",
+    initialize
+);
+
+
+async function initialize() {
+
+    setupUI();
+
+
+    try {
 
         if (
-            ["paid", "completed", "confirmed", "success"].includes(value)
-        ) return value;
+            !window.supabase ||
+            !window.supabase.createClient
+        ) {
 
-        if (["pending", "processing"].includes(value)) return value;
-
-        if (
-            ["failed", "cancelled", "refunded"].includes(value)
-        ) return value;
-
-        return "pending";
-    }
-
-    function statusLabel(status) {
-        const value = String(status || "pending");
-
-        return value
-            .replace(/_/g, " ")
-            .replace(/\b\w/g, char => char.toUpperCase());
-    }
-
-    function getSaleCustomerName(sale) {
-        return (
-            sale.customer_name ||
-            sale.customer?.full_name ||
-            sale.profile?.full_name ||
-            sale.customer?.email ||
-            sale.profile?.email ||
-            "Customer"
-        );
-    }
-
-    function getEventTitle(sale) {
-        return (
-            sale.event_title ||
-            sale.event?.title ||
-            merchantEvents.find(event => event.id === sale.event_id)?.title ||
-            "Event"
-        );
-    }
-
-    function getSaleTotal(sale) {
-        return Number(
-            sale.total ??
-            sale.amount ??
-            sale.grand_total ??
-            0
-        );
-    }
-
-    function getTicketCount(sale) {
-        return Number(
-            sale.ticket_quantity ??
-            sale.quantity ??
-            sale.tickets_count ??
-            sale.ticket_count ??
-            1
-        );
-    }
-
-    function getSaleCurrency(sale) {
-        return sale.currency || "KWD";
-    }
-
-    function getSaleDate(sale) {
-        return (
-            sale.created_at ||
-            sale.paid_at ||
-            sale.updated_at ||
-            null
-        );
-    }
-
-    async function initSupabase() {
-        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
             throw new Error(
-                "Supabase configuration is missing. Add KTICKETS_SUPABASE_URL and KTICKETS_SUPABASE_ANON_KEY."
+                "Supabase library could not be loaded."
             );
+
         }
 
-        if (!window.supabase) {
-            throw new Error("Supabase library could not be loaded.");
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY,
+                {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true
+                    }
+                }
+            );
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .auth
+                .getSession();
+
+
+        if (error) {
+            throw error;
         }
 
-        supabaseClient = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
+
+        const session =
+            data?.session;
+
+
+        if (
+            !session?.user
+        ) {
+
+            redirectToLogin(
+                "login_required"
+            );
+
+            return;
+
+        }
+
+
+        currentUser =
+            session.user;
+
+
+        await authenticateMerchant();
+
+
+        await Promise.all([
+            loadMerchantEvents(),
+            loadNotifications()
+        ]);
+
+
+        await loadSales();
+
+
+        setupRealtime();
+
+
+    } catch (error) {
+
+        console.error(
+            "[K-Tickets] Sales initialization error:",
+            error
         );
+
+
+        showError(
+            getReadableError(error)
+        );
+
     }
 
-    async function authenticateMerchant() {
-        const {
-            data: { user },
-            error
-        } = await supabaseClient.auth.getUser();
+}
 
-        if (error) throw error;
 
-        if (!user) {
-            window.location.href = "../auth/login.html";
-            return false;
-        }
+/* ============================================================
+   AUTHENTICATE MERCHANT
+============================================================ */
 
-        currentUser = user;
+async function authenticateMerchant() {
 
-        const {
-            data: profile,
-            error: profileError
-        } = await supabaseClient
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
             .from("profiles")
-            .select("id, full_name, phone, role")
-            .eq("id", user.id)
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                avatar_url,
+                is_active
+            `)
+            .eq(
+                "id",
+                currentUser.id
+            )
             .maybeSingle();
 
-        if (profileError) throw profileError;
 
-        if (!profile || profile.role !== "merchant") {
-            showToast("Merchant access is required.", "error");
-
-            setTimeout(() => {
-                window.location.href = "../index.html";
-            }, 1200);
-
-            return false;
-        }
-
-        currentProfile = profile;
-
-        updateMerchantIdentity();
-
-        return true;
+    if (error) {
+        throw error;
     }
 
-    function updateMerchantIdentity() {
-        const name =
-            currentProfile?.full_name ||
-            currentUser?.user_metadata?.full_name ||
-            currentUser?.email ||
-            "Merchant";
 
-        $("sidebarName").textContent = name;
-        $("sidebarAvatar").textContent = getInitials(name);
+    if (!data) {
+
+        await safeSignOut();
+
+        redirectToLogin(
+            "profile_missing"
+        );
+
+        return;
+
     }
 
-    async function loadNotificationCount() {
-        try {
-            const { count, error } = await supabaseClient
-                .from("notifications")
-                .select("id", {
-                    count: "exact",
-                    head: true
-                })
-                .eq("user_id", currentUser.id)
-                .eq("is_read", false);
 
-            if (error) return;
+    if (
+        data.role !==
+        "merchant"
+    ) {
 
-            if (count && count > 0) {
-                const badge = $("notificationCount");
+        await safeSignOut();
 
-                badge.textContent = count > 99 ? "99+" : count;
-                badge.style.display = "grid";
-            }
-        } catch (_) {
-            // Notifications are optional and should not block sales.
-        }
+        throw new Error(
+            "This page is restricted to merchant accounts."
+        );
+
     }
 
-    async function loadEvents() {
-        const { data, error } = await supabaseClient
+
+    if (
+        data.is_active === false
+    ) {
+
+        await safeSignOut();
+
+        throw new Error(
+            "Your merchant account is inactive."
+        );
+
+    }
+
+
+    currentProfile =
+        data;
+
+
+    updateMerchantIdentity();
+
+}
+
+
+/* ============================================================
+   MERCHANT IDENTITY
+============================================================ */
+
+function updateMerchantIdentity() {
+
+    const name =
+        currentProfile?.full_name ||
+        currentUser?.email ||
+        "Merchant";
+
+
+    document
+        .getElementById(
+            "merchantName"
+        )
+        .textContent =
+        name;
+
+
+    document
+        .getElementById(
+            "merchantAvatar"
+        )
+        .textContent =
+        getInitials(name);
+
+}
+
+
+/* ============================================================
+   LOAD EVENTS
+============================================================ */
+
+async function loadMerchantEvents() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
             .from("events")
             .select(`
                 id,
                 merchant_id,
                 title,
-                status,
+                description,
+                venue,
+                city,
                 start_at,
-                end_at
+                end_at,
+                status
             `)
-            .eq("merchant_id", currentUser.id)
-            .order("start_at", {
-                ascending: true,
-                nullsFirst: false
-            });
+            .eq(
+                "merchant_id",
+                currentUser.id
+            )
+            .order(
+                "start_at",
+                {
+                    ascending: false,
+                    nullsFirst: false
+                }
+            );
 
-        if (error) throw error;
 
-        merchantEvents = data || [];
-
-        populateEventFilter();
+    if (error) {
+        throw error;
     }
 
-    function populateEventFilter() {
-        const select = $("eventFilter");
 
-        select.innerHTML = '<option value="">All events</option>';
+    merchantEvents =
+        Array.isArray(data)
+            ? data
+            : [];
 
-        merchantEvents.forEach(event => {
-            const option = document.createElement("option");
 
-            option.value = event.id;
-            option.textContent = event.title || "Untitled event";
+    populateEventFilter();
 
-            select.appendChild(option);
-        });
-    }
+}
+
+
+/* ============================================================
+   EVENT FILTER
+============================================================ */
+
+function populateEventFilter() {
+
+    const select =
+        document.getElementById(
+            "eventFilter"
+        );
+
+
+    select.innerHTML = `
+        <option value="">
+            All events
+        </option>
+    `;
+
+
+    merchantEvents.forEach(
+        event => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                event.id;
+
+
+            option.textContent =
+                event.title ||
+                "Untitled event";
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   LOAD SALES
+============================================================ */
+
+async function loadSales() {
+
+    setLoading();
+
 
     /*
-       The query intentionally starts from orders and scopes through
-       event ownership. This keeps a merchant from seeing another
-       merchant's orders even if the frontend is modified.
+     * IMPORTANT:
+     *
+     * Do NOT use:
+     *
+     * orders.select(... events!inner(...))
+     *
+     * here.
+     *
+     * Merchant ownership is established first through the
+     * merchant-owned events list, then orders are requested
+     * using those event IDs.
+     *
+     * This also avoids relying on PostgREST embedded relationship
+     * configuration.
+     */
 
-       If your final database uses a dedicated sales table or a different
-       order schema, this loader can be changed to that table without
-       changing the rest of the page.
-    */
-    async function loadSales() {
-        $("loadingState").style.display = "block";
-        $("desktopSales").style.display = "none";
-        $("mobileSales").style.display = "none";
-        $("emptyState").style.display = "none";
 
-        let query = supabaseClient
+    if (
+        !merchantEvents.length
+    ) {
+
+        allSales = [];
+
+        updateMetrics();
+
+        applyFilters();
+
+        return;
+
+    }
+
+
+    const eventIds =
+        merchantEvents.map(
+            event => event.id
+        );
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
             .from("orders")
             .select(`
                 id,
+                order_number,
                 user_id,
                 event_id,
                 status,
                 subtotal,
+                service_fee_percentage,
                 service_fee,
+                discount,
                 total,
                 currency,
+                promotion_id,
+                paid_at,
                 created_at,
-                updated_at,
-                events!inner(
-                    id,
-                    merchant_id,
-                    title,
-                    venue,
-                    city,
-                    start_at,
-                    end_at
-                )
+                updated_at
             `)
-            .eq("events.merchant_id", currentUser.id)
-            .order("created_at", {
-                ascending: false
-            });
+            .in(
+                "event_id",
+                eventIds
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                });
 
-        const { data, error } = await query;
 
-        if (error) {
-            /*
-                If the production orders schema differs, fail gracefully
-                rather than displaying fabricated information.
-            */
-            throw error;
-        }
-
-        const orders = data || [];
-
-        /*
-            We intentionally do not fabricate customer/ticket counts.
-
-            If ticket/order-item tables are available in the final schema,
-            these values can be enriched below. The order itself remains
-            the source of truth for payment totals/status.
-        */
-        allSales = orders.map(order => ({
-            ...order,
-            event_title: order.events?.title || null,
-            event: order.events || null,
-            customer_name: null,
-            ticket_quantity: null
-        }));
-
-        /*
-            Attempt to enrich customer names from profiles.
-            Failure here does not break the sales page.
-        */
-        await enrichCustomerNames();
-
-        updateMetrics();
-        applyFilters();
+    if (error) {
+        throw error;
     }
 
-    async function enrichCustomerNames() {
-        const userIds = [
+
+    const orders =
+        Array.isArray(data)
+            ? data
+            : [];
+
+
+    /*
+     * Defense-in-depth:
+     *
+     * Even though the query is scoped to merchant event IDs,
+     * retain only records whose event exists in the merchant event
+     * collection.
+     */
+
+    const merchantEventMap =
+        new Map(
+            merchantEvents.map(
+                event => [
+                    String(event.id),
+                    event
+                ]
+            )
+        );
+
+
+    allSales =
+        orders
+            .filter(
+                order =>
+                    merchantEventMap.has(
+                        String(order.event_id)
+                    )
+            )
+            .map(
+                order => ({
+                    ...order,
+
+                    event:
+                        merchantEventMap.get(
+                            String(order.event_id)
+                        ) ||
+                        null
+                })
+            );
+
+
+    /*
+     * Customer names are optional enrichment.
+     * If profile RLS prevents reading another customer's profile,
+     * the sale remains visible with a generic customer label.
+     */
+
+    await enrichCustomerNames();
+
+
+    updateMetrics();
+
+    applyFilters();
+
+}
+
+
+/* ============================================================
+   CUSTOMER ENRICHMENT
+============================================================ */
+
+async function enrichCustomerNames() {
+
+    const userIds =
+        [
             ...new Set(
                 allSales
-                    .map(sale => sale.user_id)
+                    .map(
+                        sale =>
+                            sale.user_id
+                    )
                     .filter(Boolean)
             )
         ];
 
-        if (!userIds.length) return;
 
-        try {
-            const { data, error } = await supabaseClient
+    if (
+        !userIds.length
+    ) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
                 .from("profiles")
-                .select("id, full_name")
-                .in("id", userIds);
+                .select(`
+                    id,
+                    full_name
+                `)
+                .in(
+                    "id",
+                    userIds
+                );
 
-            if (error || !data) return;
 
-            const map = new Map(
-                data.map(profile => [
-                    profile.id,
-                    profile.full_name
-                ])
+        if (
+            error ||
+            !Array.isArray(data)
+        ) {
+
+            return;
+
+        }
+
+
+        const profileMap =
+            new Map(
+                data.map(
+                    profile => [
+                        String(profile.id),
+                        profile
+                    ]
+                )
             );
 
-            allSales = allSales.map(sale => ({
-                ...sale,
-                customer_name: map.get(sale.user_id) || null
-            }));
-        } catch (_) {
-            // Customer enrichment is optional.
-        }
+
+        allSales =
+            allSales.map(
+                sale => ({
+
+                    ...sale,
+
+                    customer_name:
+                        profileMap.get(
+                            String(
+                                sale.user_id
+                            )
+                        )?.full_name ||
+                        null
+
+                })
+            );
+
+
+    } catch (error) {
+
+        console.warn(
+            "[K-Tickets] Customer enrichment unavailable:",
+            error
+        );
+
     }
 
-    function updateMetrics() {
-        const successfulStatuses = new Set([
-            "paid",
-            "completed",
-            "confirmed",
-            "success"
-        ]);
+}
 
-        const successful = allSales.filter(sale =>
-            successfulStatuses.has(
-                normalizeStatus(sale.status)
-            )
-        );
 
-        const pending = allSales.filter(sale =>
-            ["pending", "processing"].includes(
-                normalizeStatus(sale.status)
-            )
-        );
+/* ============================================================
+   LOAD NOTIFICATIONS
+============================================================ */
 
-        const ticketCount = successful.reduce(
-            (sum, sale) => {
-                const quantity = getTicketCount(sale);
+async function loadNotifications() {
 
-                /*
-                    Orders without a ticket quantity field are counted as
-                    one order rather than inventing a larger ticket number.
-                */
-                return sum + (
-                    sale.ticket_quantity != null ||
-                    sale.quantity != null ||
-                    sale.tickets_count != null ||
-                    sale.ticket_count != null
-                        ? quantity
-                        : 1
+    try {
+
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+                .from("notifications")
+                .select(
+                    "id",
+                    {
+                        count:
+                            "exact",
+                        head:
+                            true
+                    }
+                )
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .eq(
+                    "is_read",
+                    false
                 );
-            },
-            0
+
+
+        if (error) {
+            return;
+        }
+
+
+        const badge =
+            document.getElementById(
+                "notificationCount"
+            );
+
+
+        if (
+            count &&
+            count > 0
+        ) {
+
+            badge.textContent =
+                count > 99
+                    ? "99+"
+                    : String(count);
+
+
+            badge.style.display =
+                "flex";
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[K-Tickets] Notification count unavailable:",
+            error
         );
 
-        const revenue = successful.reduce(
-            (sum, sale) => sum + getSaleTotal(sale),
-            0
-        );
-
-        $("totalSales").textContent =
-            successful.length.toLocaleString();
-
-        $("ticketsSold").textContent =
-            ticketCount.toLocaleString();
-
-        $("grossRevenue").textContent =
-            formatMoney(revenue, "KWD");
-
-        $("pendingSales").textContent =
-            pending.length.toLocaleString();
     }
 
-    function applyFilters() {
-        const search = $("searchInput").value
+}
+
+
+/* ============================================================
+   METRICS
+============================================================ */
+
+function updateMetrics() {
+
+    const successful =
+        allSales.filter(
+            sale =>
+                isSuccessfulOrderStatus(
+                    sale.status
+                )
+        );
+
+
+    const pending =
+        allSales.filter(
+            sale =>
+                [
+                    "pending",
+                    "processing",
+                    "awaiting_payment"
+                ].includes(
+                    normalizeStatus(
+                        sale.status
+                    )
+                )
+        );
+
+
+    /*
+     * We do NOT display a fabricated ticket count.
+     *
+     * The orders schema does not contain ticket quantity.
+     * The authoritative inventory count exists on ticket_types
+     * and the ticket issuance system.
+     */
+
+    document
+        .getElementById(
+            "successfulSales"
+        )
+        .textContent =
+        formatNumber(
+            successful.length
+        );
+
+
+    document
+        .getElementById(
+            "pendingOrders"
+        )
+        .textContent =
+        formatNumber(
+            pending.length
+        );
+
+
+    document
+        .getElementById(
+            "ticketsSold"
+        )
+        .textContent =
+        "—";
+
+
+    /*
+     * Never combine KWD/KES/etc. into one meaningless number.
+     */
+
+    const totalsByCurrency =
+        groupSuccessfulTotalsByCurrency(
+            successful
+        );
+
+
+    document
+        .getElementById(
+            "recordedRevenue"
+        )
+        .textContent =
+        formatCurrencyGroups(
+            totalsByCurrency
+        );
+
+}
+
+
+/* ============================================================
+   CURRENCY TOTALS
+============================================================ */
+
+function groupSuccessfulTotalsByCurrency(
+    rows
+) {
+
+    const totals =
+        {};
+
+
+    rows.forEach(
+        row => {
+
+            const currency =
+                String(
+                    row.currency ||
+                    "UNKNOWN"
+                )
+                .trim()
+                .toUpperCase();
+
+
+            const amount =
+                Number(
+                    row.total
+                );
+
+
+            if (
+                !Number.isFinite(
+                    amount
+                )
+            ) {
+                return;
+            }
+
+
+            if (
+                !Object.prototype.hasOwnProperty.call(
+                    totals,
+                    currency
+                )
+            ) {
+
+                totals[currency] =
+                    0;
+
+            }
+
+
+            totals[currency] +=
+                amount;
+
+        }
+    );
+
+
+    return totals;
+
+}
+
+
+function formatCurrencyGroups(
+    totals
+) {
+
+    const currencies =
+        Object.keys(
+            totals
+        );
+
+
+    if (
+        !currencies.length
+    ) {
+
+        return "—";
+
+    }
+
+
+    /*
+     * Compact display.
+     *
+     * Example:
+     * KWD 120.00
+     * KES 45,000.00
+     */
+
+    return currencies
+        .sort()
+        .map(
+            currency =>
+                `${currency} ${formatNumber(
+                    totals[currency],
+                    2
+                )}`
+        )
+        .join(
+            " · "
+        );
+
+}
+
+
+/* ============================================================
+   FILTERING
+============================================================ */
+
+function applyFilters() {
+
+    const search =
+        document
+            .getElementById(
+                "searchInput"
+            )
+            .value
             .trim()
             .toLowerCase();
 
-        const eventId = $("eventFilter").value;
-        const status = normalizeStatus(
-            $("statusFilter").value
+
+    const eventId =
+        document
+            .getElementById(
+                "eventFilter"
+            )
+            .value;
+
+
+    const status =
+        normalizeStatus(
+            document
+                .getElementById(
+                    "statusFilter"
+                )
+                .value
         );
 
-        filteredSales = allSales.filter(sale => {
 
-            if (eventId && sale.event_id !== eventId) {
-                return false;
-            }
+    filteredSales =
+        allSales.filter(
+            sale => {
 
-            if (
-                status &&
-                normalizeStatus(sale.status) !== status
-            ) {
-                return false;
-            }
+                if (
+                    eventId &&
+                    String(
+                        sale.event_id
+                    ) !==
+                    String(eventId)
+                ) {
 
-            if (search) {
-                const haystack = [
-                    sale.id,
-                    sale.user_id,
-                    sale.customer_name,
-                    getEventTitle(sale),
-                    sale.status
-                ]
-                    .filter(Boolean)
-                    .join(" ")
-                    .toLowerCase();
-
-                if (!haystack.includes(search)) {
                     return false;
+
                 }
+
+
+                if (
+                    status &&
+                    normalizeStatus(
+                        sale.status
+                    ) !==
+                    status
+                ) {
+
+                    return false;
+
+                }
+
+
+                if (search) {
+
+                    const haystack =
+                        [
+                            sale.id,
+                            sale.order_number,
+                            sale.user_id,
+                            sale.customer_name,
+                            sale.event?.title,
+                            sale.event?.venue,
+                            sale.event?.city,
+                            sale.status,
+                            sale.currency
+                        ]
+                            .filter(Boolean)
+                            .join(" ")
+                            .toLowerCase();
+
+
+                    if (
+                        !haystack.includes(
+                            search
+                        )
+                    ) {
+
+                        return false;
+
+                    }
+
+                }
+
+
+                return true;
+
             }
-
-            return true;
-        });
-
-        renderSales();
-    }
-
-    function renderSales() {
-        $("loadingState").style.display = "none";
-
-        if (!filteredSales.length) {
-            $("desktopSales").style.display = "none";
-            $("mobileSales").style.display = "none";
-            $("emptyState").style.display = "block";
-            return;
-        }
-
-        $("emptyState").style.display = "none";
-
-        renderDesktop();
-        renderMobile();
-
-        $("desktopSales").style.display = "block";
-        $("mobileSales").style.display = "none";
-
-        if (window.innerWidth <= 650) {
-            $("desktopSales").style.display = "none";
-            $("mobileSales").style.display = "block";
-        }
-    }
-
-    function renderDesktop() {
-        const tbody = $("salesTableBody");
-
-        tbody.innerHTML = filteredSales.map(sale => {
-
-            const status = statusClass(sale.status);
-            const label = statusLabel(sale.status);
-
-            const ticketCount =
-                sale.ticket_quantity ??
-                sale.quantity ??
-                sale.tickets_count ??
-                sale.ticket_count ??
-                "—";
-
-            return `
-                <tr>
-                    <td>
-                        <div class="order-id">
-                            #${escapeHtml(String(sale.id).slice(0, 12))}
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="event-name">
-                            ${escapeHtml(getEventTitle(sale))}
-                        </div>
-
-                        <div class="event-meta">
-                            ${escapeHtml(
-                                sale.event?.venue ||
-                                sale.event?.city ||
-                                ""
-                            )}
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="customer">
-                            ${escapeHtml(getSaleCustomerName(sale))}
-                        </div>
-                    </td>
-
-                    <td>
-                        ${escapeHtml(String(ticketCount))}
-                    </td>
-
-                    <td>
-                        <span class="status ${status}">
-                            ${escapeHtml(label)}
-                        </span>
-                    </td>
-
-                    <td>
-                        <div class="money">
-                            ${escapeHtml(
-                                formatMoney(
-                                    getSaleTotal(sale),
-                                    getSaleCurrency(sale)
-                                )
-                            )}
-                        </div>
-                    </td>
-
-                    <td>
-                        <div>${escapeHtml(formatDate(sale.created_at))}</div>
-                        <div class="event-meta">
-                            ${escapeHtml(formatDateTime(sale.created_at))}
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="row-actions">
-                            <button
-                                class="small-btn"
-                                title="View sale"
-                                onclick="openSaleDetails('${escapeHtml(String(sale.id))}')"
-                            >↗</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }).join("");
-    }
-
-    function renderMobile() {
-        $("mobileSales").innerHTML = filteredSales.map(sale => {
-
-            const status = statusClass(sale.status);
-            const label = statusLabel(sale.status);
-
-            const ticketCount =
-                sale.ticket_quantity ??
-                sale.quantity ??
-                sale.tickets_count ??
-                sale.ticket_count ??
-                "—";
-
-            return `
-                <article class="sale-card">
-
-                    <div class="sale-card-head">
-                        <div>
-                            <div class="sale-event">
-                                ${escapeHtml(getEventTitle(sale))}
-                            </div>
-
-                            <div class="sale-order">
-                                #${escapeHtml(String(sale.id).slice(0, 14))}
-                            </div>
-                        </div>
-
-                        <span class="status ${status}">
-                            ${escapeHtml(label)}
-                        </span>
-                    </div>
-
-                    <div class="sale-grid">
-
-                        <div class="sale-item">
-                            <span>Customer</span>
-                            <strong>
-                                ${escapeHtml(getSaleCustomerName(sale))}
-                            </strong>
-                        </div>
-
-                        <div class="sale-item">
-                            <span>Tickets</span>
-                            <strong>
-                                ${escapeHtml(String(ticketCount))}
-                            </strong>
-                        </div>
-
-                        <div class="sale-item">
-                            <span>Total</span>
-                            <strong>
-                                ${escapeHtml(
-                                    formatMoney(
-                                        getSaleTotal(sale),
-                                        getSaleCurrency(sale)
-                                    )
-                                )}
-                            </strong>
-                        </div>
-
-                        <div class="sale-item">
-                            <span>Date</span>
-                            <strong>
-                                ${escapeHtml(formatDate(sale.created_at))}
-                            </strong>
-                        </div>
-
-                    </div>
-
-                    <div class="sale-footer">
-                        <span class="muted">
-                            ${escapeHtml(
-                                formatDateTime(sale.created_at)
-                            )}
-                        </span>
-
-                        <button
-                            class="btn"
-                            onclick="openSaleDetails('${escapeHtml(String(sale.id))}')"
-                        >
-                            View details
-                        </button>
-                    </div>
-
-                </article>
-            `;
-        }).join("");
-    }
-
-    function openSaleDetails(orderId) {
-        const sale = allSales.find(
-            item => String(item.id) === String(orderId)
         );
 
-        if (!sale) return;
 
-        $("drawerOrderId").textContent =
-            `Order #${String(sale.id).slice(0, 18)}`;
+    renderSales();
 
-        const ticketCount =
-            sale.ticket_quantity ??
-            sale.quantity ??
-            sale.tickets_count ??
-            sale.ticket_count ??
-            "—";
+}
 
-        $("drawerBody").innerHTML = `
-            <div class="detail-section">
-                <h4>Order</h4>
 
-                <div class="detail-row">
-                    <span>Order ID</span>
-                    <strong>${escapeHtml(sale.id)}</strong>
+/* ============================================================
+   RENDER SALES
+============================================================ */
+
+function renderSales() {
+
+    if (
+        !filteredSales.length
+    ) {
+
+        document
+            .getElementById(
+                "tableWrap"
+            )
+            .style.display =
+            "none";
+
+
+        document
+            .getElementById(
+                "mobileList"
+            )
+            .style.display =
+            "none";
+
+
+        document
+            .getElementById(
+                "emptyState"
+            )
+            .style.display =
+            "block";
+
+
+        return;
+
+    }
+
+
+    document
+        .getElementById(
+            "emptyState"
+        )
+        .style.display =
+        "none";
+
+
+    renderDesktop();
+
+    renderMobile();
+
+
+    if (
+        window.innerWidth <=
+        800
+    ) {
+
+        document
+            .getElementById(
+                "tableWrap"
+            )
+            .style.display =
+            "none";
+
+
+        document
+            .getElementById(
+                "mobileList"
+            )
+            .style.display =
+            "block";
+
+    } else {
+
+        document
+            .getElementById(
+                "tableWrap"
+            )
+            .style.display =
+            "block";
+
+
+        document
+            .getElementById(
+                "mobileList"
+            )
+            .style.display =
+            "none";
+
+    }
+
+}
+
+
+/* ============================================================
+   DESKTOP
+============================================================ */
+
+function renderDesktop() {
+
+    const tbody =
+        document.getElementById(
+            "salesTableBody"
+        );
+
+
+    tbody.innerHTML =
+        filteredSales
+            .map(
+                sale => {
+
+                    const status =
+                        normalizeStatus(
+                            sale.status
+                        );
+
+
+                    return `
+                        <tr>
+
+                            <td>
+
+                                <div class="order-id">
+                                    ${
+                                        escapeHTML(
+                                            sale.order_number ||
+                                            sale.id
+                                        )
+                                    }
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="event-name">
+                                    ${
+                                        escapeHTML(
+                                            sale.event?.title ||
+                                            "Untitled event"
+                                        )
+                                    }
+                                </div>
+
+                                <div class="event-meta">
+                                    ${
+                                        escapeHTML(
+                                            [
+                                                sale.event?.venue,
+                                                sale.event?.city
+                                            ]
+                                                .filter(Boolean)
+                                                .join(" · ")
+                                        )
+                                    }
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="customer-name">
+                                    ${
+                                        escapeHTML(
+                                            sale.customer_name ||
+                                            "Customer"
+                                        )
+                                    }
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                ${statusBadge(
+                                    status
+                                )}
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="money">
+
+                                    ${
+                                        escapeHTML(
+                                            formatMoney(
+                                                sale.subtotal,
+                                                sale.currency
+                                            )
+                                        )
+                                    }
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="muted">
+
+                                    ${
+                                        escapeHTML(
+                                            formatMoney(
+                                                sale.service_fee,
+                                                sale.currency
+                                            )
+                                        )
+                                    }
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="money">
+
+                                    ${
+                                        escapeHTML(
+                                            formatMoney(
+                                                sale.total,
+                                                sale.currency
+                                            )
+                                        )
+                                    }
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <div>
+                                    ${
+                                        escapeHTML(
+                                            formatDate(
+                                                sale.created_at
+                                            )
+                                        )
+                                    }
+                                </div>
+
+                                <div class="event-meta">
+                                    ${
+                                        escapeHTML(
+                                            formatTime(
+                                                sale.created_at
+                                            )
+                                        )
+                                    }
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="row-actions">
+
+                                    <button
+                                        class="icon-action"
+                                        type="button"
+                                        title="View sale"
+                                        aria-label="View sale"
+                                        onclick="openSaleDetails('${escapeAttr(
+                                            sale.id
+                                        )}')"
+                                    >
+                                        ↗
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+function renderMobile() {
+
+    const container =
+        document.getElementById(
+            "mobileList"
+        );
+
+
+    container.innerHTML =
+        filteredSales
+            .map(
+                sale => {
+
+                    const status =
+                        normalizeStatus(
+                            sale.status
+                        );
+
+
+                    return `
+                        <article class="sale-card">
+
+                            <div class="sale-card-top">
+
+                                <div class="sale-card-event">
+
+                                    <strong>
+                                        ${
+                                            escapeHTML(
+                                                sale.event?.title ||
+                                                "Untitled event"
+                                            )
+                                        }
+                                    </strong>
+
+                                    <span>
+                                        ${
+                                            escapeHTML(
+                                                sale.order_number ||
+                                                sale.id
+                                            )
+                                        }
+                                    </span>
+
+                                </div>
+
+
+                                ${statusBadge(
+                                    status
+                                )}
+
+                            </div>
+
+
+                            <div class="sale-card-grid">
+
+                                <div class="sale-field">
+
+                                    <span>
+                                        Customer
+                                    </span>
+
+                                    <strong>
+                                        ${
+                                            escapeHTML(
+                                                sale.customer_name ||
+                                                "Customer"
+                                            )
+                                        }
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="sale-field">
+
+                                    <span>
+                                        Currency
+                                    </span>
+
+                                    <strong>
+                                        ${
+                                            escapeHTML(
+                                                sale.currency ||
+                                                "—"
+                                            )
+                                        }
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="sale-field">
+
+                                    <span>
+                                        Subtotal
+                                    </span>
+
+                                    <strong>
+                                        ${
+                                            escapeHTML(
+                                                formatMoney(
+                                                    sale.subtotal,
+                                                    sale.currency
+                                                )
+                                            )
+                                        }
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="sale-field">
+
+                                    <span>
+                                        Service Fee
+                                    </span>
+
+                                    <strong>
+                                        ${
+                                            escapeHTML(
+                                                formatMoney(
+                                                    sale.service_fee,
+                                                    sale.currency
+                                                )
+                                            )
+                                        }
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="sale-field">
+
+                                    <span>
+                                        Total
+                                    </span>
+
+                                    <strong>
+                                        ${
+                                            escapeHTML(
+                                                formatMoney(
+                                                    sale.total,
+                                                    sale.currency
+                                                )
+                                            )
+                                        }
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="sale-field">
+
+                                    <span>
+                                        Date
+                                    </span>
+
+                                    <strong>
+                                        ${
+                                            escapeHTML(
+                                                formatDate(
+                                                    sale.created_at
+                                                )
+                                            )
+                                        }
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="sale-card-footer">
+
+                                <span class="sale-date">
+
+                                    ${
+                                        escapeHTML(
+                                            formatDateTime(
+                                                sale.created_at
+                                            )
+                                        )
+                                    }
+
+                                </span>
+
+
+                                <button
+                                    class="btn"
+                                    type="button"
+                                    onclick="openSaleDetails('${escapeAttr(
+                                        sale.id
+                                    )}')"
+                                >
+                                    View Details
+                                </button>
+
+                            </div>
+
+                        </article>
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+/* ============================================================
+   SALE DETAILS
+============================================================ */
+
+function openSaleDetails(
+    saleId
+) {
+
+    const sale =
+        allSales.find(
+            row =>
+                String(row.id) ===
+                String(saleId)
+        );
+
+
+    if (!sale) {
+
+        showToast(
+            "Sale record could not be found.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    document
+        .getElementById(
+            "drawerOrderId"
+        )
+        .textContent =
+        sale.order_number ||
+        sale.id;
+
+
+    document
+        .getElementById(
+            "drawerBody"
+        )
+        .innerHTML = `
+
+            <section class="detail-section">
+
+                <div class="detail-section-title">
+                    Order
                 </div>
 
+
                 <div class="detail-row">
-                    <span>Status</span>
+
+                    <span>
+                        Order number
+                    </span>
+
                     <strong>
-                        <span class="status ${statusClass(sale.status)}">
-                            ${escapeHtml(statusLabel(sale.status))}
-                        </span>
+                        ${
+                            escapeHTML(
+                                sale.order_number ||
+                                "—"
+                            )
+                        }
                     </strong>
+
                 </div>
 
+
                 <div class="detail-row">
-                    <span>Created</span>
+
+                    <span>
+                        Order ID
+                    </span>
+
                     <strong>
-                        ${escapeHtml(formatDateTime(sale.created_at))}
+                        ${
+                            escapeHTML(
+                                sale.id
+                            )
+                        }
                     </strong>
-                </div>
-            </div>
 
-            <div class="detail-section">
-                <h4>Event</h4>
+                </div>
+
 
                 <div class="detail-row">
-                    <span>Event</span>
+
+                    <span>
+                        Status
+                    </span>
+
                     <strong>
-                        ${escapeHtml(getEventTitle(sale))}
-                    </strong>
-                </div>
-
-                <div class="detail-row">
-                    <span>Venue</span>
-                    <strong>
-                        ${escapeHtml(sale.event?.venue || "—")}
-                    </strong>
-                </div>
-
-                <div class="detail-row">
-                    <span>City</span>
-                    <strong>
-                        ${escapeHtml(sale.event?.city || "—")}
-                    </strong>
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <h4>Customer</h4>
-
-                <div class="detail-row">
-                    <span>Name</span>
-                    <strong>
-                        ${escapeHtml(getSaleCustomerName(sale))}
-                    </strong>
-                </div>
-
-                <div class="detail-row">
-                    <span>User ID</span>
-                    <strong>
-                        ${escapeHtml(sale.user_id || "—")}
-                    </strong>
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <h4>Payment</h4>
-
-                <div class="detail-row">
-                    <span>Tickets</span>
-                    <strong>${escapeHtml(String(ticketCount))}</strong>
-                </div>
-
-                <div class="detail-row">
-                    <span>Subtotal</span>
-                    <strong>
-                        ${escapeHtml(
-                            formatMoney(
-                                sale.subtotal,
-                                getSaleCurrency(sale)
+                        ${statusBadge(
+                            normalizeStatus(
+                                sale.status
                             )
                         )}
                     </strong>
+
                 </div>
 
-                <div class="detail-row">
-                    <span>Service fee</span>
-                    <strong>
-                        ${escapeHtml(
-                            formatMoney(
-                                sale.service_fee,
-                                getSaleCurrency(sale)
-                            )
-                        )}
-                    </strong>
-                </div>
 
                 <div class="detail-row">
-                    <span>Total</span>
+
+                    <span>
+                        Created
+                    </span>
+
                     <strong>
-                        ${escapeHtml(
-                            formatMoney(
-                                getSaleTotal(sale),
-                                getSaleCurrency(sale)
+                        ${
+                            escapeHTML(
+                                formatDateTime(
+                                    sale.created_at
+                                )
                             )
-                        )}
+                        }
                     </strong>
+
                 </div>
-            </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Paid at
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                formatDateTime(
+                                    sale.paid_at
+                                )
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <section class="detail-section">
+
+                <div class="detail-section-title">
+                    Event
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Event
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                sale.event?.title ||
+                                "—"
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Venue
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                sale.event?.venue ||
+                                "—"
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        City
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                sale.event?.city ||
+                                "—"
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <section class="detail-section">
+
+                <div class="detail-section-title">
+                    Customer
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Name
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                sale.customer_name ||
+                                "Customer"
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        User ID
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                sale.user_id ||
+                                "—"
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <section class="detail-section">
+
+                <div class="detail-section-title">
+                    Order Amount
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Currency
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                sale.currency ||
+                                "—"
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                formatMoney(
+                                    sale.subtotal,
+                                    sale.currency
+                                )
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Discount
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                formatMoney(
+                                    sale.discount,
+                                    sale.currency
+                                )
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Service fee
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                formatMoney(
+                                    sale.service_fee,
+                                    sale.currency
+                                )
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHTML(
+                                formatMoney(
+                                    sale.total,
+                                    sale.currency
+                                )
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Service fee %
+                    </span>
+
+                    <strong>
+                        ${
+                            sale.service_fee_percentage !==
+                            null &&
+                            sale.service_fee_percentage !==
+                            undefined
+                                ? `${formatNumber(
+                                    sale.service_fee_percentage,
+                                    2
+                                )}%`
+                                : "—"
+                        }
+                    </strong>
+
+                </div>
+
+            </section>
+
         `;
 
-        $("drawerBackdrop").classList.add("show");
-        $("saleDrawer").classList.add("show");
+
+    document
+        .getElementById(
+            "drawerBackdrop"
+        )
+        .classList.add(
+            "show"
+        );
+
+
+    document
+        .getElementById(
+            "saleDrawer"
+        )
+        .classList.add(
+            "show"
+        );
+
+}
+
+
+/* ============================================================
+   CLOSE DRAWER
+============================================================ */
+
+function closeDrawer() {
+
+    document
+        .getElementById(
+            "drawerBackdrop"
+        )
+        .classList.remove(
+            "show"
+        );
+
+
+    document
+        .getElementById(
+            "saleDrawer"
+        )
+        .classList.remove(
+            "show"
+        );
+
+}
+
+
+/* ============================================================
+   EXPORT CSV
+============================================================ */
+
+function exportSales() {
+
+    if (
+        !filteredSales.length
+    ) {
+
+        showToast(
+            "There are no sales to export.",
+            true
+        );
+
+        return;
+
     }
 
-    function closeDrawer() {
-        $("drawerBackdrop").classList.remove("show");
-        $("saleDrawer").classList.remove("show");
-    }
 
-    function exportSales() {
-        if (!filteredSales.length) {
-            showToast("There are no sales to export.", "error");
-            return;
-        }
+    const headers = [
 
-        const headers = [
-            "Order ID",
-            "Event",
-            "Customer",
-            "User ID",
-            "Tickets",
-            "Status",
-            "Subtotal",
-            "Service Fee",
-            "Total",
-            "Currency",
-            "Created At"
-        ];
+        "Order Number",
 
-        const rows = filteredSales.map(sale => [
-            sale.id,
-            getEventTitle(sale),
-            getSaleCustomerName(sale),
-            sale.user_id || "",
-            sale.ticket_quantity ??
-                sale.quantity ??
-                sale.tickets_count ??
-                sale.ticket_count ??
-                "",
-            sale.status || "",
-            sale.subtotal ?? "",
-            sale.service_fee ?? "",
-            getSaleTotal(sale),
-            getSaleCurrency(sale),
-            sale.created_at || ""
-        ]);
+        "Order ID",
 
-        const csv = [
+        "Event",
+
+        "Customer",
+
+        "User ID",
+
+        "Status",
+
+        "Subtotal",
+
+        "Discount",
+
+        "Service Fee Percentage",
+
+        "Service Fee",
+
+        "Total",
+
+        "Currency",
+
+        "Paid At",
+
+        "Created At"
+
+    ];
+
+
+    const rows =
+        filteredSales.map(
+            sale => [
+
+                sale.order_number ||
+                    "",
+
+                sale.id ||
+                    "",
+
+                sale.event?.title ||
+                    "",
+
+                sale.customer_name ||
+                    "",
+
+                sale.user_id ||
+                    "",
+
+                sale.status ||
+                    "",
+
+                sale.subtotal ??
+                    "",
+
+                sale.discount ??
+                    "",
+
+                sale.service_fee_percentage ??
+                    "",
+
+                sale.service_fee ??
+                    "",
+
+                sale.total ??
+                    "",
+
+                sale.currency ||
+                    "",
+
+                sale.paid_at ||
+                    "",
+
+                sale.created_at ||
+                    ""
+
+            ]
+        );
+
+
+    const csv =
+        [
             headers,
             ...rows
         ]
-            .map(row =>
-                row.map(value =>
-                    `"${String(value ?? "")
-                        .replace(/"/g, '""')}"`
-                ).join(",")
+            .map(
+                row =>
+                    row
+                        .map(
+                            value =>
+                                `"${String(
+                                    value ??
+                                    ""
+                                )
+                                    .replace(
+                                        /"/g,
+                                        '""'
+                                    )}"`
+                        )
+                        .join(",")
             )
             .join("\n");
 
-        const blob = new Blob(
+
+    const blob =
+        new Blob(
             [csv],
-            { type: "text/csv;charset=utf-8;" }
+            {
+                type:
+                    "text/csv;charset=utf-8;"
+            }
         );
 
-        const url = URL.createObjectURL(blob);
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "k-tickets-sales.csv";
+    const url =
+        URL.createObjectURL(
+            blob
+        );
 
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
 
-        URL.revokeObjectURL(url);
+    const link =
+        document.createElement(
+            "a"
+        );
 
-        showToast("Sales export generated.");
+
+    link.href =
+        url;
+
+
+    link.download =
+        "k-tickets-sales.csv";
+
+
+    document
+        .body
+        .appendChild(
+            link
+        );
+
+
+    link.click();
+
+
+    link.remove();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+
+    showToast(
+        "Sales CSV generated."
+    );
+
+}
+
+
+/* ============================================================
+   REFRESH
+============================================================ */
+
+async function refreshSales() {
+
+    const button =
+        document.getElementById(
+            "refreshBtn"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "↻ Loading...";
+
+
+    try {
+
+        await loadMerchantEvents();
+
+        await loadNotifications();
+
+        await loadSales();
+
+
+        showToast(
+            "Sales refreshed."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "[K-Tickets] Refresh failed:",
+            error
+        );
+
+
+        showToast(
+            getReadableError(error),
+            true
+        );
+
+
+    } finally {
+
+        button.disabled =
+            false;
+
+
+        button.textContent =
+            "↻ Refresh";
+
     }
 
-    async function refreshSales() {
-        try {
-            $("refreshBtn").disabled = true;
-            $("refreshBtn").textContent = "↻ Loading...";
+}
 
-            await loadEvents();
-            await loadSales();
 
-            showToast("Sales refreshed.");
-        } catch (error) {
-            console.error(error);
+/* ============================================================
+   REALTIME
+============================================================ */
 
-            showToast(
-                error?.message ||
-                "Unable to refresh sales.",
-                "error"
+function setupRealtime() {
+
+    if (
+        !supabaseClient ||
+        !currentUser
+    ) {
+        return;
+    }
+
+
+    supabaseClient
+        .channel(
+            `merchant-sales-${currentUser.id}`
+        )
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "orders"
+            },
+            async () => {
+
+                /*
+                 * Reload merchant events as well because an event
+                 * could be created/removed while this page is open.
+                 */
+
+                try {
+
+                    await loadMerchantEvents();
+
+                    await loadSales();
+
+                } catch (error) {
+
+                    console.warn(
+                        "[K-Tickets] Realtime sales refresh failed:",
+                        error
+                    );
+
+                }
+
+            }
+        )
+        .subscribe();
+
+}
+
+
+/* ============================================================
+   UI SETUP
+============================================================ */
+
+function setupUI() {
+
+    document
+        .getElementById(
+            "mobileMenu"
+        )
+        .addEventListener(
+            "click",
+            openSidebar
+        );
+
+
+    document
+        .getElementById(
+            "sidebarOverlay"
+        )
+        .addEventListener(
+            "click",
+            closeSidebar
+        );
+
+
+    document
+        .getElementById(
+            "searchInput"
+        )
+        .addEventListener(
+            "input",
+            applyFilters
+        );
+
+
+    document
+        .getElementById(
+            "eventFilter"
+        )
+        .addEventListener(
+            "change",
+            applyFilters
+        );
+
+
+    document
+        .getElementById(
+            "statusFilter"
+        )
+        .addEventListener(
+            "change",
+            applyFilters
+        );
+
+
+    document
+        .getElementById(
+            "clearFilters"
+        )
+        .addEventListener(
+            "click",
+            clearFilters
+        );
+
+
+    document
+        .getElementById(
+            "refreshBtn"
+        )
+        .addEventListener(
+            "click",
+            refreshSales
+        );
+
+
+    document
+        .getElementById(
+            "exportBtn"
+        )
+        .addEventListener(
+            "click",
+            exportSales
+        );
+
+
+    document
+        .getElementById(
+            "signOutBtn"
+        )
+        .addEventListener(
+            "click",
+            signOut
+        );
+
+
+    document
+        .getElementById(
+            "closeDrawer"
+        )
+        .addEventListener(
+            "click",
+            closeDrawer
+        );
+
+
+    document
+        .getElementById(
+            "drawerBackdrop"
+        )
+        .addEventListener(
+            "click",
+            closeDrawer
+        );
+
+
+    document
+        .getElementById(
+            "retryBtn"
+        )
+        .addEventListener(
+            "click",
+            refreshSales
+        );
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                closeDrawer();
+
+                closeSidebar();
+
+            }
+
+        }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        () => {
+
+            if (
+                filteredSales.length
+            ) {
+
+                renderSales();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   FILTER CLEAR
+============================================================ */
+
+function clearFilters() {
+
+    document
+        .getElementById(
+            "searchInput"
+        )
+        .value =
+        "";
+
+
+    document
+        .getElementById(
+            "eventFilter"
+        )
+        .value =
+        "";
+
+
+    document
+        .getElementById(
+            "statusFilter"
+        )
+        .value =
+        "";
+
+
+    applyFilters();
+
+}
+
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+
+function openSidebar() {
+
+    document
+        .getElementById(
+            "sidebar"
+        )
+        .classList.add(
+            "open"
+        );
+
+
+    document
+        .getElementById(
+            "sidebarOverlay"
+        )
+        .classList.add(
+            "show"
+        );
+
+}
+
+
+function closeSidebar() {
+
+    document
+        .getElementById(
+            "sidebar"
+        )
+        .classList.remove(
+            "open"
+        );
+
+
+    document
+        .getElementById(
+            "sidebarOverlay"
+        )
+        .classList.remove(
+            "show"
+        );
+
+}
+
+
+/* ============================================================
+   SIGN OUT
+============================================================ */
+
+async function signOut() {
+
+    const confirmed =
+        window.confirm(
+            "Sign out of your K-Tickets merchant account?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    const button =
+        document.getElementById(
+            "signOutBtn"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
+                .signOut();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        window.location.replace(
+            "../login.html"
+        );
+
+
+    } catch (error) {
+
+        button.disabled =
+            false;
+
+
+        showToast(
+            getReadableError(error),
+            true
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   SAFE SIGN OUT
+============================================================ */
+
+async function safeSignOut() {
+
+    try {
+
+        if (
+            supabaseClient
+        ) {
+
+            await supabaseClient
+                .auth
+                .signOut();
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[K-Tickets] Sign out error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   LOADING
+============================================================ */
+
+function setLoading() {
+
+    document
+        .getElementById(
+            "loadingState"
+        )
+        .style.display =
+        "block";
+
+
+    document
+        .getElementById(
+            "errorState"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "emptyState"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "tableWrap"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "mobileList"
+        )
+        .style.display =
+        "none";
+
+}
+
+
+/* ============================================================
+   ERROR
+============================================================ */
+
+function showError(
+    message
+) {
+
+    document
+        .getElementById(
+            "loadingState"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "tableWrap"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "mobileList"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "emptyState"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "errorState"
+        )
+        .style.display =
+        "block";
+
+
+    document
+        .getElementById(
+            "errorMessage"
+        )
+        .textContent =
+        message;
+
+}
+
+
+/* ============================================================
+   STATUS
+============================================================ */
+
+function isSuccessfulOrderStatus(
+    status
+) {
+
+    return [
+        "paid"
+    ].includes(
+        normalizeStatus(
+            status
+        )
+    );
+
+}
+
+
+function normalizeStatus(
+    value
+) {
+
+    return String(
+        value ||
+        ""
+    )
+        .trim()
+        .toLowerCase()
+        .replace(
+            /\s+/g,
+            "_"
+        );
+
+}
+
+
+function statusBadge(
+    status
+) {
+
+    const normalized =
+        normalizeStatus(
+            status
+        );
+
+
+    const safeClass =
+        [
+            "paid",
+            "pending",
+            "processing",
+            "failed",
+            "cancelled",
+            "refunded",
+            "completed",
+            "confirmed"
+        ].includes(
+            normalized
+        )
+            ? normalized
+            : "unknown";
+
+
+    const label =
+        normalized
+            ? normalized
+                .replace(
+                    /_/g,
+                    " "
+                )
+                .replace(
+                    /\b\w/g,
+                    letter =>
+                        letter.toUpperCase()
+                )
+            : "Unknown";
+
+
+    return `
+        <span
+            class="status ${safeClass}"
+        >
+            ${escapeHTML(
+                label
+            )}
+        </span>
+    `;
+
+}
+
+
+/* ============================================================
+   FORMATTING
+============================================================ */
+
+function formatMoney(
+    amount,
+    currency
+) {
+
+    const value =
+        Number(
+            amount
+        );
+
+
+    if (
+        !Number.isFinite(
+            value
+        )
+    ) {
+
+        return "—";
+
+    }
+
+
+    const code =
+        String(
+            currency ||
+            ""
+        )
+        .trim()
+        .toUpperCase();
+
+
+    if (!code) {
+
+        return formatNumber(
+            value,
+            2
+        );
+
+    }
+
+
+    return (
+        code +
+        " " +
+        formatNumber(
+            value,
+            2
+        )
+    );
+
+}
+
+
+function formatNumber(
+    value,
+    decimals = 0
+) {
+
+    const number =
+        Number(
+            value
+        );
+
+
+    if (
+        !Number.isFinite(
+            number
+        )
+    ) {
+
+        return "—";
+
+    }
+
+
+    return number.toLocaleString(
+        undefined,
+        {
+            minimumFractionDigits:
+                decimals,
+
+            maximumFractionDigits:
+                decimals
+        }
+    );
+
+}
+
+
+function formatDate(
+    value
+) {
+
+    if (!value) {
+        return "—";
+    }
+
+
+    const date =
+        new Date(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "—";
+
+    }
+
+
+    return date.toLocaleDateString(
+        undefined,
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+function formatTime(
+    value
+) {
+
+    if (!value) {
+        return "—";
+    }
+
+
+    const date =
+        new Date(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "—";
+
+    }
+
+
+    return date.toLocaleTimeString(
+        undefined,
+        {
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+
+}
+
+
+function formatDateTime(
+    value
+) {
+
+    if (!value) {
+        return "—";
+    }
+
+
+    const date =
+        new Date(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "—";
+
+    }
+
+
+    return date.toLocaleString(
+        undefined,
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+
+}
+
+
+/* ============================================================
+   INITIALS
+============================================================ */
+
+function getInitials(
+    name
+) {
+
+    const value =
+        String(
+            name ||
+            ""
+        )
+        .trim();
+
+
+    if (!value) {
+        return "KT";
+    }
+
+
+    const parts =
+        value
+            .split(
+                /\s+/
+            )
+            .filter(
+                Boolean
             );
-        } finally {
-            $("refreshBtn").disabled = false;
-            $("refreshBtn").textContent = "↻ Refresh";
-        }
+
+
+    if (
+        parts.length === 1
+    ) {
+
+        return parts[0]
+            .slice(
+                0,
+                2
+            )
+            .toUpperCase();
+
     }
 
-    async function signOut() {
-        try {
-            const { error } =
-                await supabaseClient.auth.signOut();
 
-            if (error) throw error;
+    return (
+        parts[0][0] +
+        parts[
+            parts.length - 1
+        ][0]
+    ).toUpperCase();
 
-            window.location.href = "../auth/login.html";
-        } catch (error) {
-            showToast(
-                error?.message || "Unable to sign out.",
-                "error"
-            );
-        }
+}
+
+
+/* ============================================================
+   ESCAPING
+============================================================ */
+
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value ??
+        ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+function escapeAttr(
+    value
+) {
+
+    return escapeHTML(
+        value
+    );
+
+}
+
+
+/* ============================================================
+   LOGIN
+============================================================ */
+
+function redirectToLogin(
+    reason
+) {
+
+    const params =
+        new URLSearchParams();
+
+
+    if (reason) {
+
+        params.set(
+            "error",
+            reason
+        );
+
     }
 
-    async function boot() {
-        try {
-            $("loadingState").style.display = "block";
 
-            await initSupabase();
+    const query =
+        params.toString();
 
-            const authenticated =
-                await authenticateMerchant();
 
-            if (!authenticated) return;
+    window.location.replace(
+        `../login.html${
+            query
+                ? "?" + query
+                : ""
+        }`
+    );
 
-            await Promise.all([
-                loadEvents(),
-                loadNotificationCount()
-            ]);
+}
 
-            await loadSales();
 
-        } catch (error) {
-            console.error("K-Tickets sales error:", error);
+/* ============================================================
+   READABLE ERRORS
+============================================================ */
 
-            $("loadingState").style.display = "none";
+function getReadableError(
+    error
+) {
 
-            $("emptyState").style.display = "block";
+    if (!error) {
 
-            $("emptyState").innerHTML = `
-                <div class="empty-icon">!</div>
-                <h3>Sales could not be loaded</h3>
-                <p>
-                    ${escapeHtml(
-                        error?.message ||
-                        "Please check your Supabase configuration and database policies."
-                    )}
-                </p>
-            `;
-        }
+        return (
+            "An unexpected error occurred."
+        );
+
     }
 
-    $("searchInput").addEventListener(
-        "input",
-        applyFilters
+
+    const message =
+        error.message ||
+        error.details ||
+        error.hint ||
+        String(error);
+
+
+    const lower =
+        String(
+            message
+        )
+        .toLowerCase();
+
+
+    if (
+        lower.includes(
+            "row-level security"
+        )
+    ) {
+
+        return (
+            "Supabase Row Level Security blocked this request. " +
+            "Check the merchant policies for events and orders."
+        );
+
+    }
+
+
+    if (
+        lower.includes(
+            "jwt"
+        ) ||
+        lower.includes(
+            "session"
+        )
+    ) {
+
+        return (
+            "Your merchant session has expired. Please sign in again."
+        );
+
+    }
+
+
+    return String(
+        message
     );
 
-    $("eventFilter").addEventListener(
-        "change",
-        applyFilters
+}
+
+
+/* ============================================================
+   TOAST
+============================================================ */
+
+function showToast(
+    message,
+    isError = false
+) {
+
+    const container =
+        document.getElementById(
+            "toastContainer"
+        );
+
+
+    const toast =
+        document.createElement(
+            "div"
+        );
+
+
+    toast.className =
+        `toast ${
+            isError
+                ? "error"
+                : ""
+        }`;
+
+
+    toast.textContent =
+        message;
+
+
+    container.appendChild(
+        toast
     );
 
-    $("statusFilter").addEventListener(
-        "change",
-        applyFilters
+
+    setTimeout(
+        () => {
+
+            toast.remove();
+
+        },
+        4000
     );
 
-    $("clearFilters").addEventListener("click", () => {
-        $("searchInput").value = "";
-        $("eventFilter").value = "";
-        $("statusFilter").value = "";
+}
 
-        applyFilters();
-    });
-
-    $("refreshBtn").addEventListener(
-        "click",
-        refreshSales
-    );
-
-    $("exportBtn").addEventListener(
-        "click",
-        exportSales
-    );
-
-    $("signOutBtn").addEventListener(
-        "click",
-        signOut
-    );
-
-    $("closeDrawer").addEventListener(
-        "click",
-        closeDrawer
-    );
-
-    $("drawerBackdrop").addEventListener(
-        "click",
-        closeDrawer
-    );
-
-    window.addEventListener("resize", () => {
-        if (filteredSales.length) {
-            renderSales();
-        }
-    });
-
-    window.openSaleDetails = openSaleDetails;
-
-    boot();
 </script>
 
+
 </body>
+
 </html>
