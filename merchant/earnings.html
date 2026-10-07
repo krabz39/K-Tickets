@@ -1,8 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Earnings | K-Tickets Merchant</title>
 
@@ -31,7 +35,7 @@
             --danger: #a32935;
             --danger-bg: #fdebed;
 
-            --shadow: 0 12px 35px rgba(15, 61, 58, 0.08);
+            --shadow: 0 12px 35px rgba(15,61,58,.08);
 
             --radius: 18px;
             --sidebar-width: 265px;
@@ -56,12 +60,9 @@
                 BlinkMacSystemFont,
                 "Segoe UI",
                 sans-serif;
-
             background: var(--bg);
             color: var(--text);
-
             min-height: 100vh;
-
             overflow-x: hidden;
         }
 
@@ -87,85 +88,61 @@
         .sidebar {
             position: fixed;
             inset: 0 auto 0 0;
-
             width: var(--sidebar-width);
-
             background: var(--green);
             color: #fff;
-
             z-index: 1000;
-
             display: flex;
             flex-direction: column;
-
             transition: transform .25s ease;
         }
 
         .brand {
             min-height: 88px;
-
             padding: 22px;
-
             display: flex;
             align-items: center;
-
             gap: 12px;
-
-            border-bottom:
-                1px solid rgba(255,255,255,.09);
+            border-bottom: 1px solid rgba(255,255,255,.09);
         }
 
         .brand-mark {
             width: 42px;
             height: 42px;
-
             border-radius: 13px;
-
             display: grid;
             place-items: center;
-
             background: var(--bordo);
-
             font-weight: 900;
             font-size: 17px;
         }
 
         .brand-copy strong {
             display: block;
-
             font-size: 16px;
             letter-spacing: .04em;
         }
 
         .brand-copy span {
             display: block;
-
             margin-top: 3px;
-
             color: rgba(255,255,255,.58);
-
             font-size: 10px;
-
             text-transform: uppercase;
             letter-spacing: .12em;
         }
 
         .sidebar-scroll {
             flex: 1;
-
             overflow-y: auto;
-
             padding: 18px 13px;
         }
 
         .nav-label {
             padding: 9px 12px 7px;
-
             color: rgba(255,255,255,.38);
-
             font-size: 10px;
             font-weight: 800;
-
             text-transform: uppercase;
             letter-spacing: .14em;
         }
@@ -177,21 +154,14 @@
 
         .nav a {
             min-height: 44px;
-
             padding: 10px 12px;
-
             border-radius: 12px;
-
             display: flex;
             align-items: center;
-
             gap: 11px;
-
             color: rgba(255,255,255,.7);
-
             font-size: 13px;
             font-weight: 650;
-
             transition: .2s ease;
         }
 
@@ -203,9 +173,7 @@
         .nav a.active {
             color: #fff;
             background: var(--bordo);
-
-            box-shadow:
-                0 8px 20px rgba(0,0,0,.12);
+            box-shadow: 0 8px 20px rgba(0,0,0,.12);
         }
 
         .nav-icon {
@@ -215,61 +183,44 @@
 
         .sidebar-footer {
             padding: 14px;
-
-            border-top:
-                1px solid rgba(255,255,255,.09);
+            border-top: 1px solid rgba(255,255,255,.09);
         }
 
         .merchant-mini {
             padding: 10px;
-
             display: flex;
             align-items: center;
-
             gap: 10px;
-
             border-radius: 13px;
-
             background: rgba(255,255,255,.05);
         }
 
         .avatar {
             width: 38px;
             height: 38px;
-
             border-radius: 50%;
-
             display: grid;
             place-items: center;
-
             flex: 0 0 auto;
-
             background: var(--cream);
             color: var(--green);
-
             font-size: 12px;
             font-weight: 900;
         }
 
         .merchant-mini strong {
             display: block;
-
             max-width: 145px;
-
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-
             font-size: 12px;
         }
 
         .merchant-mini span {
             display: block;
-
             margin-top: 2px;
-
             color: rgba(255,255,255,.45);
-
             font-size: 10px;
         }
 
@@ -279,53 +230,41 @@
 
         .main {
             margin-left: var(--sidebar-width);
-
             min-width: 0;
         }
 
         .topbar {
             position: sticky;
             top: 0;
-
             height: 76px;
-
             z-index: 900;
-
-            background:
-                rgba(255,255,255,.93);
-
+            background: rgba(255,255,255,.93);
             backdrop-filter: blur(14px);
-
-            border-bottom:
-                1px solid var(--border);
-
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-
             padding: 0 28px;
         }
 
-        .topbar-left {
+        .topbar-left,
+        .topbar-right {
             display: flex;
             align-items: center;
+            gap: 10px;
+        }
 
+        .topbar-left {
             gap: 12px;
-
             min-width: 0;
         }
 
         .menu-btn {
             display: none;
-
             width: 42px;
             height: 42px;
-
-            border:
-                1px solid var(--border);
-
+            border: 1px solid var(--border);
             border-radius: 11px;
-
             background: #fff;
         }
 
@@ -334,28 +273,14 @@
             font-size: 12px;
         }
 
-        .topbar-right {
-            display: flex;
-            align-items: center;
-
-            gap: 10px;
-        }
-
         .icon-btn {
             position: relative;
-
             width: 42px;
             height: 42px;
-
-            border:
-                1px solid var(--border);
-
+            border: 1px solid var(--border);
             border-radius: 11px;
-
             background: #fff;
-
             color: var(--green);
-
             display: grid;
             place-items: center;
         }
@@ -366,55 +291,41 @@
 
         .notification-badge {
             position: absolute;
-
             top: -4px;
             right: -4px;
-
             min-width: 17px;
             height: 17px;
-
             padding: 0 4px;
-
             border-radius: 20px;
-
             background: var(--bordo);
             color: #fff;
-
             display: none;
             align-items: center;
             justify-content: center;
-
             font-size: 9px;
             font-weight: 800;
-
             border: 2px solid #fff;
         }
 
         .top-user {
             display: flex;
             align-items: center;
-
             gap: 9px;
-
             padding-left: 8px;
         }
 
         .top-user-name {
             max-width: 160px;
-
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-
             font-size: 12px;
             font-weight: 750;
         }
 
         .content {
             width: min(1700px, 100%);
-
             margin: 0 auto;
-
             padding: 30px;
         }
 
@@ -426,42 +337,30 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-
             gap: 20px;
-
             margin-bottom: 25px;
         }
 
         .eyebrow {
             color: var(--bordo);
-
             font-size: 10px;
             font-weight: 900;
-
             letter-spacing: .15em;
             text-transform: uppercase;
-
             margin-bottom: 7px;
         }
 
         h1 {
             color: var(--green);
-
-            font-size:
-                clamp(27px, 3vw, 38px);
-
+            font-size: clamp(27px, 3vw, 38px);
             line-height: 1.05;
-
             letter-spacing: -.045em;
         }
 
         .page-head p {
-            max-width: 680px;
-
+            max-width: 700px;
             margin-top: 8px;
-
             color: var(--muted);
-
             font-size: 13px;
             line-height: 1.6;
         }
@@ -469,48 +368,40 @@
         .head-actions {
             display: flex;
             flex-wrap: wrap;
-
             gap: 9px;
         }
 
         .btn {
             min-height: 42px;
-
             padding: 0 15px;
-
-            border:
-                1px solid var(--border);
-
+            border: 1px solid var(--border);
             border-radius: 11px;
-
             background: #fff;
             color: var(--green);
-
             font-size: 12px;
             font-weight: 750;
-
             display: inline-flex;
             align-items: center;
             justify-content: center;
-
             gap: 7px;
-
             transition: .2s ease;
         }
 
         .btn:hover {
             transform: translateY(-1px);
+            border-color: var(--green);
+        }
 
-            border-color:
-                var(--green);
+        .btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .btn-primary {
             background: var(--green);
             color: #fff;
-
-            border-color:
-                var(--green);
+            border-color: var(--green);
         }
 
         .btn-primary:hover {
@@ -518,68 +409,47 @@
         }
 
         /* =====================================================
-           EARNINGS CARDS
+           SUMMARY
         ====================================================== */
 
         .earnings-grid {
             display: grid;
-
-            grid-template-columns:
-                repeat(4, minmax(0, 1fr));
-
+            grid-template-columns: repeat(4, minmax(0,1fr));
             gap: 15px;
-
             margin-bottom: 18px;
         }
 
         .earn-card {
             position: relative;
-
             min-height: 145px;
-
             padding: 20px;
-
             background: var(--surface);
-
-            border:
-                1px solid var(--border);
-
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-
-            box-shadow:
-                0 5px 20px rgba(15,61,58,.035);
-
+            box-shadow: 0 5px 20px rgba(15,61,58,.035);
             overflow: hidden;
         }
 
         .earn-card::after {
             content: "";
-
             position: absolute;
-
             width: 90px;
             height: 90px;
-
             right: -35px;
             bottom: -35px;
-
             border-radius: 50%;
-
-            background:
-                rgba(245,218,191,.28);
+            background: rgba(245,218,191,.28);
         }
 
         .earn-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-
             gap: 10px;
         }
 
         .earn-label {
             color: var(--muted);
-
             font-size: 11px;
             font-weight: 700;
         }
@@ -587,103 +457,71 @@
         .earn-icon {
             width: 33px;
             height: 33px;
-
             border-radius: 10px;
-
-            background:
-                var(--surface-soft);
-
+            background: var(--surface-soft);
             color: var(--green);
-
             display: grid;
             place-items: center;
-
             font-size: 14px;
         }
 
         .earn-value {
             position: relative;
             z-index: 1;
-
             margin-top: 14px;
-
             color: var(--green);
-
             font-size: 26px;
             font-weight: 850;
-
             letter-spacing: -.04em;
-
             overflow-wrap: anywhere;
         }
 
         .earn-note {
             position: relative;
             z-index: 1;
-
             margin-top: 7px;
-
             color: var(--muted);
-
             font-size: 10px;
         }
 
         /* =====================================================
-           TWO COLUMN CONTENT
+           GRID / PANELS
         ====================================================== */
 
         .dashboard-grid {
             display: grid;
-
-            grid-template-columns:
-                minmax(0, 1.45fr)
-                minmax(320px, .75fr);
-
+            grid-template-columns: minmax(0,1.45fr) minmax(320px,.75fr);
             gap: 18px;
-
             align-items: start;
         }
 
         .panel {
             background: var(--surface);
-
-            border:
-                1px solid var(--border);
-
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-
             box-shadow: var(--shadow);
-
             overflow: hidden;
         }
 
         .panel-head {
             min-height: 70px;
-
             padding: 16px 19px;
-
             display: flex;
             justify-content: space-between;
             align-items: center;
-
             gap: 15px;
-
-            border-bottom:
-                1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
 
         .panel-head h2 {
             color: var(--green);
-
             font-size: 15px;
             letter-spacing: -.02em;
         }
 
         .panel-head p {
             margin-top: 4px;
-
             color: var(--muted);
-
             font-size: 10px;
         }
 
@@ -693,18 +531,13 @@
 
         .filters {
             padding: 15px 17px;
-
-            border-bottom:
-                1px solid var(--border);
-
+            border-bottom: 1px solid var(--border);
             display: grid;
-
             grid-template-columns:
-                minmax(190px, 1.5fr)
-                minmax(160px, 1fr)
-                minmax(150px, 1fr)
+                minmax(190px,1.5fr)
+                minmax(160px,1fr)
+                minmax(150px,1fr)
                 auto;
-
             gap: 9px;
         }
 
@@ -714,47 +547,31 @@
 
         .field-label {
             display: block;
-
             color: var(--muted);
-
             font-size: 9px;
             font-weight: 800;
-
             text-transform: uppercase;
             letter-spacing: .07em;
-
             margin-bottom: 6px;
         }
 
         .input,
         .select {
             width: 100%;
-
             height: 41px;
-
             padding: 0 11px;
-
-            border:
-                1px solid var(--border);
-
+            border: 1px solid var(--border);
             border-radius: 10px;
-
             background: #fff;
             color: var(--text);
-
             outline: none;
-
             font-size: 11px;
         }
 
         .input:focus,
         .select:focus {
-            border-color:
-                var(--green);
-
-            box-shadow:
-                0 0 0 3px
-                rgba(15,61,58,.08);
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15,61,58,.08);
         }
 
         .filter-actions {
@@ -768,49 +585,32 @@
 
         .table-wrap {
             overflow-x: auto;
-
-            -webkit-overflow-scrolling:
-                touch;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
-
-            min-width: 850px;
-
-            border-collapse:
-                collapse;
+            min-width: 950px;
+            border-collapse: collapse;
         }
 
         th {
             padding: 12px 16px;
-
             background: #fafbfa;
-
             color: var(--muted);
-
-            border-bottom:
-                1px solid var(--border);
-
+            border-bottom: 1px solid var(--border);
             text-align: left;
-
             font-size: 9px;
             font-weight: 850;
-
             text-transform: uppercase;
             letter-spacing: .07em;
-
             white-space: nowrap;
         }
 
         td {
             padding: 14px 16px;
-
-            border-bottom:
-                1px solid #edf0ef;
-
+            border-bottom: 1px solid #edf0ef;
             vertical-align: middle;
-
             font-size: 11px;
         }
 
@@ -824,23 +624,18 @@
 
         .order-id {
             color: var(--green);
-
             font-family:
                 ui-monospace,
                 SFMono-Regular,
                 Menlo,
                 monospace;
-
             font-size: 10px;
         }
 
         .event-name {
             max-width: 210px;
-
             color: var(--green);
-
             font-weight: 750;
-
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -848,15 +643,12 @@
 
         .customer {
             color: var(--text);
-
             font-weight: 650;
         }
 
         .money {
             font-weight: 800;
-
             color: var(--green);
-
             white-space: nowrap;
         }
 
@@ -866,21 +658,15 @@
 
         .badge {
             min-height: 24px;
-
             padding: 0 8px;
-
             border-radius: 999px;
-
             display: inline-flex;
             align-items: center;
             justify-content: center;
-
             font-size: 8px;
             font-weight: 850;
-
             text-transform: uppercase;
             letter-spacing: .03em;
-
             white-space: nowrap;
         }
 
@@ -905,25 +691,19 @@
         }
 
         /* =====================================================
-           MOBILE SALES
+           MOBILE LIST
         ====================================================== */
 
         .mobile-list {
             display: none;
-
             padding: 12px;
         }
 
         .earning-item {
             padding: 15px;
-
             margin-bottom: 9px;
-
-            border:
-                1px solid var(--border);
-
+            border: 1px solid var(--border);
             border-radius: 14px;
-
             background: #fff;
         }
 
@@ -935,7 +715,6 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-
             gap: 12px;
         }
 
@@ -945,58 +724,40 @@
 
         .earning-event strong {
             display: block;
-
             color: var(--green);
-
             font-size: 12px;
         }
 
         .earning-event span {
             display: block;
-
             margin-top: 4px;
-
             color: var(--muted);
-
             font-size: 9px;
         }
 
-        .earning-grid {
+        .earning-fields {
             display: grid;
-
-            grid-template-columns:
-                1fr 1fr;
-
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-
             margin-top: 14px;
-
             padding-top: 12px;
-
-            border-top:
-                1px solid var(--border);
+            border-top: 1px solid var(--border);
         }
 
         .earning-field small {
             display: block;
-
             margin-bottom: 4px;
-
             color: var(--muted);
-
             font-size: 8px;
             font-weight: 800;
-
             text-transform: uppercase;
             letter-spacing: .06em;
         }
 
         .earning-field div {
             color: var(--text);
-
             font-size: 10px;
             font-weight: 650;
-
             overflow-wrap: anywhere;
         }
 
@@ -1012,13 +773,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-
             gap: 15px;
-
             padding: 13px 0;
-
-            border-bottom:
-                1px solid #edf0ef;
+            border-bottom: 1px solid #edf0ef;
         }
 
         .breakdown-row:first-child {
@@ -1027,22 +784,18 @@
 
         .breakdown-row:last-child {
             border-bottom: 0;
-
             padding-bottom: 0;
         }
 
         .breakdown-label {
             color: var(--muted);
-
             font-size: 11px;
         }
 
         .breakdown-value {
             color: var(--green);
-
             font-size: 12px;
             font-weight: 800;
-
             text-align: right;
         }
 
@@ -1055,67 +808,53 @@
         }
 
         /* =====================================================
-           PAYOUT CARD
+           PAYOUT
         ====================================================== */
 
         .payout-box {
             margin-top: 18px;
-
             padding: 18px;
-
             border-radius: 15px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--green),
-                    #174f4b
-                );
-
+            background: linear-gradient(
+                135deg,
+                var(--green),
+                #174f4b
+            );
             color: #fff;
         }
 
         .payout-box .label {
             color: rgba(255,255,255,.62);
-
             font-size: 9px;
             font-weight: 800;
-
             text-transform: uppercase;
             letter-spacing: .08em;
         }
 
         .payout-box .amount {
             margin-top: 7px;
-
             font-size: 28px;
             font-weight: 850;
-
             letter-spacing: -.04em;
         }
 
         .payout-box p {
             margin-top: 6px;
-
             color: rgba(255,255,255,.68);
-
             font-size: 10px;
             line-height: 1.5;
         }
 
         .payout-box .btn {
             margin-top: 14px;
-
             background: var(--cream);
             color: var(--green);
-
             border-color: var(--cream);
-
             width: 100%;
         }
 
         /* =====================================================
-           PERIOD INFO
+           PERIOD
         ====================================================== */
 
         .period-box {
@@ -1124,15 +863,12 @@
 
         .period-box h3 {
             color: var(--green);
-
             font-size: 13px;
         }
 
         .period-box p {
             margin-top: 5px;
-
             color: var(--muted);
-
             font-size: 10px;
             line-height: 1.5;
         }
@@ -1147,44 +883,31 @@
 
         .state {
             padding: 52px 24px;
-
             text-align: center;
         }
 
         .state-icon {
             width: 52px;
             height: 52px;
-
             margin: 0 auto 13px;
-
             border-radius: 15px;
-
-            background:
-                var(--surface-soft);
-
+            background: var(--surface-soft);
             color: var(--green);
-
             display: grid;
             place-items: center;
-
             font-size: 20px;
         }
 
         .state strong {
             display: block;
-
             color: var(--green);
-
             font-size: 14px;
         }
 
         .state p {
-            max-width: 460px;
-
+            max-width: 520px;
             margin: 7px auto 0;
-
             color: var(--muted);
-
             font-size: 11px;
             line-height: 1.6;
         }
@@ -1192,19 +915,11 @@
         .spinner {
             width: 27px;
             height: 27px;
-
             margin: 0 auto 12px;
-
-            border:
-                3px solid var(--border);
-
-            border-top-color:
-                var(--green);
-
+            border: 3px solid var(--border);
+            border-top-color: var(--green);
             border-radius: 50%;
-
-            animation:
-                spin .8s linear infinite;
+            animation: spin .8s linear infinite;
         }
 
         @keyframes spin {
@@ -1219,37 +934,23 @@
 
         .toast-container {
             position: fixed;
-
             right: 20px;
             bottom: 20px;
-
             z-index: 2000;
-
             display: grid;
-
             gap: 8px;
-
-            width:
-                min(360px, calc(100vw - 30px));
+            width: min(360px,calc(100vw - 30px));
         }
 
         .toast {
             padding: 13px 15px;
-
             border-radius: 12px;
-
             background: var(--green);
-
             color: #fff;
-
-            box-shadow:
-                0 14px 35px rgba(0,0,0,.16);
-
+            box-shadow: 0 14px 35px rgba(0,0,0,.16);
             font-size: 11px;
             line-height: 1.45;
-
-            animation:
-                toastIn .2s ease;
+            animation: toastIn .2s ease;
         }
 
         .toast.error {
@@ -1275,20 +976,18 @@
         .sidebar-overlay {
             position: fixed;
             inset: 0;
-
-            background:
-                rgba(0,0,0,.35);
-
+            background: rgba(0,0,0,.35);
             z-index: 950;
-
             display: none;
         }
 
-        @media (max-width: 1150px) {
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
 
+        @media (max-width:1150px) {
             .earnings-grid {
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(2,minmax(0,1fr));
             }
 
             .dashboard-grid {
@@ -1296,11 +995,9 @@
             }
         }
 
-        @media (max-width: 1000px) {
-
+        @media (max-width:1000px) {
             .filters {
-                grid-template-columns:
-                    1fr 1fr;
+                grid-template-columns: 1fr 1fr;
             }
 
             .filter-actions {
@@ -1308,16 +1005,13 @@
             }
         }
 
-        @media (max-width: 820px) {
-
+        @media (max-width:820px) {
             .sidebar {
-                transform:
-                    translateX(-100%);
+                transform: translateX(-100%);
             }
 
             .sidebar.open {
-                transform:
-                    translateX(0);
+                transform: translateX(0);
             }
 
             .sidebar-overlay.open {
@@ -1338,8 +1032,7 @@
             }
 
             .content {
-                padding:
-                    22px 16px 30px;
+                padding: 22px 16px 30px;
             }
 
             .top-user-name {
@@ -1359,7 +1052,7 @@
             }
 
             .table-wrap {
-                display: none;
+                display: none !important;
             }
 
             .mobile-list {
@@ -1367,18 +1060,14 @@
             }
         }
 
-        @media (max-width: 560px) {
-
+        @media (max-width:560px) {
             .earnings-grid {
-                grid-template-columns:
-                    1fr 1fr;
-
+                grid-template-columns: 1fr 1fr;
                 gap: 9px;
             }
 
             .earn-card {
                 padding: 15px;
-
                 min-height: 132px;
             }
 
@@ -1388,7 +1077,6 @@
 
             .filters {
                 grid-template-columns: 1fr;
-
                 padding: 13px;
             }
 
@@ -1398,14 +1086,11 @@
 
             .head-actions {
                 display: grid;
-
-                grid-template-columns:
-                    1fr 1fr;
+                grid-template-columns: 1fr 1fr;
             }
 
-            .earning-grid {
-                grid-template-columns:
-                    1fr;
+            .earning-fields {
+                grid-template-columns: 1fr;
             }
 
             .panel-head {
@@ -1414,8 +1099,7 @@
             }
         }
 
-        @media (max-width: 380px) {
-
+        @media (max-width:380px) {
             .earnings-grid {
                 grid-template-columns: 1fr;
             }
@@ -1438,23 +1122,13 @@
     <aside class="sidebar" id="sidebar">
 
         <div class="brand">
-
-            <div class="brand-mark">
-                K
-            </div>
+            <div class="brand-mark">K</div>
 
             <div class="brand-copy">
-
                 <strong>K-TICKETS</strong>
-
-                <span>
-                    Merchant CMS
-                </span>
-
+                <span>Merchant CMS</span>
             </div>
-
         </div>
-
 
         <div class="sidebar-scroll">
 
@@ -1499,7 +1173,10 @@
                     <span>Sales</span>
                 </a>
 
-                <a href="./earnings.html" class="active">
+                <a
+                    href="./earnings.html"
+                    class="active"
+                >
                     <span class="nav-icon">◈</span>
                     <span>Earnings</span>
                 </a>
@@ -1510,7 +1187,6 @@
                 </a>
 
             </nav>
-
 
             <div
                 class="nav-label"
@@ -1526,15 +1202,9 @@
                     <span>Settings</span>
                 </a>
 
-                <a href="../notifications.html">
-                    <span class="nav-icon">◌</span>
-                    <span>Notifications</span>
-                </a>
-
             </nav>
 
         </div>
-
 
         <div class="sidebar-footer">
 
@@ -1548,7 +1218,6 @@
                 </div>
 
                 <div>
-
                     <strong id="sidebarName">
                         Loading...
                     </strong>
@@ -1556,7 +1225,6 @@
                     <span>
                         Merchant account
                     </span>
-
                 </div>
 
             </div>
@@ -1564,7 +1232,6 @@
         </div>
 
     </aside>
-
 
     <div
         class="sidebar-overlay"
@@ -1577,8 +1244,6 @@
     ====================================================== -->
 
     <main class="main">
-
-        <!-- TOPBAR -->
 
         <header class="topbar">
 
@@ -1599,12 +1264,12 @@
 
             </div>
 
-
             <div class="topbar-right">
 
-                <a
+                <button
                     class="icon-btn"
-                    href="../notifications.html"
+                    id="notificationBtn"
+                    type="button"
                     aria-label="Notifications"
                     title="Notifications"
                 >
@@ -1616,9 +1281,7 @@
                     >
                         0
                     </span>
-
-                </a>
-
+                </button>
 
                 <a
                     class="icon-btn"
@@ -1628,7 +1291,6 @@
                 >
                     ⚙
                 </a>
-
 
                 <div class="top-user">
 
@@ -1672,13 +1334,12 @@
                     </h1>
 
                     <p>
-                        Track ticket revenue, platform fees,
-                        net earnings and payment activity
-                        generated by your events.
+                        Track confirmed ticket sales,
+                        recorded platform fees, pending orders
+                        and withdrawal activity from your events.
                     </p>
 
                 </div>
-
 
                 <div class="head-actions">
 
@@ -1704,7 +1365,7 @@
 
 
             <!-- =================================================
-                 EARNINGS SUMMARY
+                 SUMMARY
             ================================================== -->
 
             <div class="earnings-grid">
@@ -1712,15 +1373,13 @@
                 <div class="earn-card">
 
                     <div class="earn-top">
-
                         <span class="earn-label">
-                            Gross Sales
+                            Gross Ticket Sales
                         </span>
 
                         <span class="earn-icon">
                             ◈
                         </span>
-
                     </div>
 
                     <div
@@ -1731,7 +1390,7 @@
                     </div>
 
                     <div class="earn-note">
-                        Successful ticket sales
+                        Confirmed paid orders
                     </div>
 
                 </div>
@@ -1740,7 +1399,6 @@
                 <div class="earn-card">
 
                     <div class="earn-top">
-
                         <span class="earn-label">
                             Platform Fees
                         </span>
@@ -1748,7 +1406,6 @@
                         <span class="earn-icon">
                             %
                         </span>
-
                     </div>
 
                     <div
@@ -1759,7 +1416,7 @@
                     </div>
 
                     <div class="earn-note">
-                        Service fees recorded on sales
+                        Recorded service fees
                     </div>
 
                 </div>
@@ -1768,7 +1425,6 @@
                 <div class="earn-card">
 
                     <div class="earn-top">
-
                         <span class="earn-label">
                             Net Earnings
                         </span>
@@ -1776,7 +1432,6 @@
                         <span class="earn-icon">
                             ✓
                         </span>
-
                     </div>
 
                     <div
@@ -1787,7 +1442,7 @@
                     </div>
 
                     <div class="earn-note">
-                        Gross sales less platform fees
+                        Gross sales less recorded fees
                     </div>
 
                 </div>
@@ -1796,15 +1451,13 @@
                 <div class="earn-card">
 
                     <div class="earn-top">
-
                         <span class="earn-label">
-                            Pending
+                            Pending Orders
                         </span>
 
                         <span class="earn-icon">
                             ◷
                         </span>
-
                     </div>
 
                     <div
@@ -1815,7 +1468,7 @@
                     </div>
 
                     <div class="earn-note">
-                        Sales awaiting confirmation
+                        Orders not yet confirmed paid
                     </div>
 
                 </div>
@@ -1830,30 +1483,26 @@
             <div class="dashboard-grid">
 
 
-                <!-- =============================================
-                     SALES ACTIVITY
-                ============================================== -->
+                <!-- =================================================
+                     ACTIVITY
+                ================================================== -->
 
                 <section class="panel">
 
                     <div class="panel-head">
 
                         <div>
-
                             <h2>
                                 Earnings Activity
                             </h2>
 
                             <p>
-                                Successful and pending order activity
+                                Orders belonging to your events
                             </p>
-
                         </div>
 
                     </div>
 
-
-                    <!-- FILTERS -->
 
                     <div class="filters">
 
@@ -1926,7 +1575,6 @@
                                 <option value="failed">
                                     Failed / Cancelled
                                 </option>
-
                             </select>
 
                         </div>
@@ -1961,8 +1609,8 @@
                         </strong>
 
                         <p>
-                            Getting financial activity
-                            from your K-Tickets records.
+                            Getting merchant financial activity
+                            from Supabase.
                         </p>
 
                     </div>
@@ -2017,14 +1665,13 @@
                         </strong>
 
                         <p>
-                            Earnings will appear here after
-                            ticket orders are recorded.
+                            No records match the current filters.
                         </p>
 
                     </div>
 
 
-                    <!-- DESKTOP TABLE -->
+                    <!-- DESKTOP -->
 
                     <div
                         class="table-wrap"
@@ -2055,7 +1702,7 @@
                                     </th>
 
                                     <th>
-                                        Subtotal
+                                        Gross
                                     </th>
 
                                     <th>
@@ -2094,9 +1741,9 @@
                 </section>
 
 
-                <!-- =============================================
-                     FINANCIAL BREAKDOWN
-                ============================================== -->
+                <!-- =================================================
+                     BREAKDOWN
+                ================================================== -->
 
                 <aside>
 
@@ -2111,7 +1758,7 @@
                                 </h2>
 
                                 <p>
-                                    Current merchant position
+                                    Confirmed merchant activity
                                 </p>
 
                             </div>
@@ -2216,12 +1863,30 @@
 
                             </div>
 
+
+                            <div class="breakdown-row">
+
+                                <span class="breakdown-label">
+                                    Paid withdrawals
+                                </span>
+
+                                <strong
+                                    class="breakdown-value"
+                                    id="paidWithdrawals"
+                                >
+                                    —
+                                </strong>
+
+                            </div>
+
                         </div>
 
                     </section>
 
 
-                    <!-- PAYOUT -->
+                    <!-- =================================================
+                         AVAILABLE
+                    ================================================== -->
 
                     <section
                         class="payout-box"
@@ -2229,7 +1894,7 @@
                     >
 
                         <div class="label">
-                            Available earnings
+                            Calculated Available Earnings
                         </div>
 
                         <div
@@ -2239,10 +1904,9 @@
                             —
                         </div>
 
-                        <p>
-                            Available earnings are calculated
-                            from confirmed sales and recorded
-                            withdrawals.
+                        <p id="availableNote">
+                            Calculated only when confirmed earnings
+                            and paid withdrawals can be safely compared.
                         </p>
 
                         <a
@@ -2255,7 +1919,9 @@
                     </section>
 
 
-                    <!-- PERIOD -->
+                    <!-- =================================================
+                         PERIOD
+                    ================================================== -->
 
                     <section
                         class="panel"
@@ -2269,8 +1935,8 @@
                             </h3>
 
                             <p>
-                                Filter the financial activity
-                                shown on this page.
+                                Filter the activity displayed
+                                in the earnings table and summary.
                             </p>
 
                             <div class="period-select">
@@ -2331,39 +1997,38 @@
 <script>
 /* ============================================================
    K-TICKETS MERCHANT EARNINGS
+   ============================================================
 
+   SOURCE OF TRUTH
+   ----------------
    Supabase is the source of truth.
 
-   Expected core tables:
-   - profiles
-   - events
-   - orders
+   CONFIRMED CORE TABLES USED
+   --------------------------
+   profiles
+   events
+   orders
+   ticket_types
+   withdrawals
+   notifications
 
-   Current expected orders fields:
-   - id
-   - user_id
-   - event_id
-   - status
-   - subtotal
-   - service_fee
-   - total
-   - currency
-   - created_at
-   - updated_at
+   IMPORTANT
+   ---------
+   This page does NOT create, update or fabricate financial
+   records.
 
-   Optional future tables:
-   - order_items
-   - payments
-   - withdrawals
-   - payout_transactions
+   Merchant ownership is enforced by:
+       events.merchant_id = authenticated user id
 
-   Important:
-   This page does not invent earnings.
-   All values are calculated from records returned
-   by Supabase and scoped to the authenticated merchant.
+   The final security boundary remains Supabase RLS.
 
-   Production:
-   Supabase RLS must enforce merchant ownership.
+   LOGIN ROUTE
+   -----------
+   ../login.html
+
+   NO SERVICE ROLE KEY
+   -------------------
+   Only the public/publishable Supabase key belongs here.
 ============================================================ */
 
 
@@ -2372,10 +2037,10 @@
 ============================================================ */
 
 const SUPABASE_URL =
-    window.KTICKETS_SUPABASE_URL || "";
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
 const SUPABASE_ANON_KEY =
-    window.KTICKETS_SUPABASE_ANON_KEY || "";
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
 
 let supabaseClient = null;
@@ -2386,9 +2051,15 @@ let currentProfile = null;
 
 let merchantEvents = [];
 
-let allEarnings = [];
+let merchantEventIds = [];
 
-let filteredEarnings = [];
+let allOrders = [];
+
+let filteredOrders = [];
+
+let merchantTicketTypes = [];
+
+let merchantWithdrawals = [];
 
 
 /* ============================================================
@@ -2471,7 +2142,7 @@ async function init() {
     ) {
 
         showError(
-            "Supabase configuration is missing. Add KTICKETS_SUPABASE_URL and KTICKETS_SUPABASE_ANON_KEY."
+            "Supabase configuration is missing."
         );
 
         return;
@@ -2521,7 +2192,7 @@ async function authenticateMerchant() {
         ) {
 
             window.location.href =
-                "../auth/login.html";
+                "../login.html";
 
             return;
         }
@@ -2541,7 +2212,9 @@ async function authenticateMerchant() {
                     id,
                     full_name,
                     phone,
-                    role
+                    role,
+                    avatar_url,
+                    is_active
                 `)
                 .eq(
                     "id",
@@ -2561,7 +2234,8 @@ async function authenticateMerchant() {
 
         if (
             !currentProfile ||
-            currentProfile.role !== "merchant"
+            currentProfile.role !== "merchant" ||
+            currentProfile.is_active !== true
         ) {
 
             await supabaseClient
@@ -2570,7 +2244,7 @@ async function authenticateMerchant() {
 
 
             window.location.href =
-                "../auth/login.html";
+                "../login.html";
 
             return;
         }
@@ -2582,16 +2256,27 @@ async function authenticateMerchant() {
 
         await loadMerchantEvents();
 
-        await loadEarnings();
+        await loadTicketTypes();
 
+        await loadWithdrawals();
+
+        await loadOrders();
+
+
+        subscribeToRealtime();
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Merchant earnings authentication failed:",
+            error
+        );
 
         showError(
-            error?.message ||
-            "Unable to authenticate merchant account."
+            readableError(
+                error,
+                "Unable to authenticate merchant account."
+            )
         );
     }
 }
@@ -2646,10 +2331,15 @@ function getInitials(name) {
 
 
     const parts =
-        name
+        String(name)
             .trim()
             .split(/\s+/)
             .filter(Boolean);
+
+
+    if (!parts.length) {
+        return "M";
+    }
 
 
     if (parts.length === 1) {
@@ -2708,7 +2398,15 @@ async function loadMerchantEvents() {
 
 
     merchantEvents =
-        data || [];
+        Array.isArray(data)
+            ? data
+            : [];
+
+
+    merchantEventIds =
+        merchantEvents
+            .map(event => event.id)
+            .filter(Boolean);
 
 
     populateEventFilter();
@@ -2725,47 +2423,217 @@ function populateEventFilter() {
         `;
 
 
-    merchantEvents.forEach(event => {
+    merchantEvents.forEach(
+        event => {
 
-        const option =
-            document.createElement(
-                "option"
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                event.id;
+
+
+            option.textContent =
+                event.title ||
+                "Untitled event";
+
+
+            eventFilter.appendChild(
+                option
             );
-
-
-        option.value =
-            event.id;
-
-
-        option.textContent =
-            event.title ||
-            "Untitled event";
-
-
-        eventFilter.appendChild(
-            option
-        );
-    });
+        }
+    );
 }
 
 
 /* ============================================================
-   LOAD EARNINGS
+   TICKET TYPES
 ============================================================ */
 
-async function loadEarnings() {
+async function loadTicketTypes() {
+
+    merchantTicketTypes = [];
+
+
+    if (!merchantEventIds.length) {
+        updateTicketCount();
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("ticket_types")
+            .select(`
+                id,
+                event_id,
+                name,
+                description,
+                price,
+                currency,
+                quantity_total,
+                quantity_sold,
+                sales_start,
+                sales_end,
+                active,
+                created_at,
+                updated_at
+            `)
+            .in(
+                "event_id",
+                merchantEventIds
+            );
+
+
+    if (error) {
+        throw error;
+    }
+
+
+    merchantTicketTypes =
+        Array.isArray(data)
+            ? data
+            : [];
+
+
+    updateTicketCount();
+}
+
+
+function updateTicketCount() {
+
+    const total =
+        merchantTicketTypes.reduce(
+            (
+                sum,
+                ticketType
+            ) =>
+                sum +
+                toNumber(
+                    ticketType.quantity_sold
+                ),
+            0
+        );
+
+
+    document.getElementById(
+        "ticketsSold"
+    ).dataset.allTime =
+        String(total);
+}
+
+
+/* ============================================================
+   WITHDRAWALS
+============================================================ */
+
+async function loadWithdrawals() {
+
+    merchantWithdrawals = [];
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("withdrawals")
+            .select(`
+                id,
+                merchant_id,
+                amount,
+                currency,
+                channel,
+                account_reference,
+                status,
+                requested_at,
+                processed_at,
+                processed_by,
+                admin_notes,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "merchant_id",
+                currentUser.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (error) {
+
+        /*
+         * Withdrawal access should not prevent the rest
+         * of the earnings page from rendering.
+         *
+         * RLS may intentionally restrict withdrawal reads.
+         */
+
+        console.warn(
+            "Merchant withdrawal records unavailable:",
+            error
+        );
+
+        merchantWithdrawals = [];
+
+        document.getElementById(
+            "paidWithdrawals"
+        ).textContent =
+            "—";
+
+        return;
+    }
+
+
+    merchantWithdrawals =
+        Array.isArray(data)
+            ? data
+            : [];
+}
+
+
+/* ============================================================
+   ORDERS
+============================================================ */
+
+async function loadOrders() {
 
     showLoading();
+
+
+    if (!merchantEventIds.length) {
+
+        allOrders = [];
+
+        updateAllSummary();
+
+        applyFilters();
+
+        return;
+    }
 
 
     try {
 
         /*
-         * The inner events relationship allows the query
-         * to stay scoped to this merchant's events.
+         * Orders do not contain merchant_id.
          *
-         * Supabase RLS should provide the final security
-         * boundary.
+         * Ownership is therefore determined through the
+         * merchant-owned event ids.
+         *
+         * We intentionally query orders by event_id rather
+         * than relying on a fragile nested relationship.
          */
 
         const {
@@ -2776,28 +2644,24 @@ async function loadEarnings() {
                 .from("orders")
                 .select(`
                     id,
+                    order_number,
                     user_id,
                     event_id,
                     status,
                     subtotal,
+                    service_fee_percentage,
                     service_fee,
+                    discount,
                     total,
                     currency,
+                    promotion_id,
                     created_at,
                     updated_at,
-                    events!inner(
-                        id,
-                        merchant_id,
-                        title,
-                        venue,
-                        city,
-                        start_at,
-                        end_at
-                    )
+                    paid_at
                 `)
-                .eq(
-                    "events.merchant_id",
-                    currentUser.id
+                .in(
+                    "event_id",
+                    merchantEventIds
                 )
                 .order(
                     "created_at",
@@ -2813,26 +2677,46 @@ async function loadEarnings() {
 
 
         const orders =
-            data || [];
+            Array.isArray(data)
+                ? data
+                : [];
 
 
-        /* ====================================================
-           CUSTOMER ENRICHMENT
-        ===================================================== */
+        /*
+         * Build event lookup.
+         */
+
+        const eventMap = {};
+
+
+        merchantEvents.forEach(
+            event => {
+
+                eventMap[event.id] =
+                    event;
+
+            }
+        );
+
+
+        /*
+         * Customer profile enrichment.
+         */
 
         const userIds =
             [
                 ...new Set(
                     orders
-                        .map(order =>
-                            order.user_id
+                        .map(
+                            order =>
+                                order.user_id
                         )
                         .filter(Boolean)
                 )
             ];
 
 
-        let profilesById = {};
+        const profilesById = {};
 
 
         if (userIds.length) {
@@ -2845,7 +2729,8 @@ async function loadEarnings() {
                     .from("profiles")
                     .select(`
                         id,
-                        full_name
+                        full_name,
+                        phone
                     `)
                     .in(
                         "id",
@@ -2855,6 +2740,11 @@ async function loadEarnings() {
 
             if (profileError) {
 
+                /*
+                 * Customer identity is useful but not
+                 * required for financial calculation.
+                 */
+
                 console.warn(
                     "Customer profile enrichment unavailable:",
                     profileError
@@ -2862,66 +2752,69 @@ async function loadEarnings() {
 
             } else {
 
-                (profiles || [])
-                    .forEach(profile => {
+                (
+                    Array.isArray(profiles)
+                        ? profiles
+                        : []
+                ).forEach(
+                    profile => {
 
                         profilesById[
                             profile.id
                         ] = profile;
 
-                    });
+                    }
+                );
             }
         }
 
 
-        /* ====================================================
-           NORMALIZE
-        ===================================================== */
+        allOrders =
+            orders.map(
+                order => {
 
-        allEarnings =
-            orders.map(order => {
+                    return {
+                        ...order,
 
-                const profile =
-                    profilesById[
-                        order.user_id
-                    ] || null;
+                        event:
+                            eventMap[
+                                order.event_id
+                            ] || null,
 
+                        customer:
+                            profilesById[
+                                order.user_id
+                            ] || null
+                    };
 
-                return {
-
-                    ...order,
-
-                    event:
-                        order.events ||
-                        null,
-
-                    customer_name:
-                        profile?.full_name ||
-                        "Customer"
-                };
-
-            });
+                }
+            );
 
 
-        updateSummary();
+        updateAllSummary();
 
         applyFilters();
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Merchant earnings order loading failed:",
+            error
+        );
 
         showError(
-            error?.message ||
-            "Unable to load earnings records."
+            readableError(
+                error,
+                "Unable to load merchant order activity."
+            )
         );
     }
 }
 
 
 /* ============================================================
-   FILTERS
+   FILTER SETUP
 ============================================================ */
 
 function setupFilters() {
@@ -2951,6 +2844,10 @@ function setupFilters() {
 }
 
 
+/* ============================================================
+   FILTER ORDERS
+============================================================ */
+
 function applyFilters() {
 
     const search =
@@ -2975,16 +2872,14 @@ function applyFilters() {
         new Date();
 
 
-    let minimumDate =
-        null;
+    let minimumDate = null;
 
 
-    if (
-        period === "today"
-    ) {
+    if (period === "today") {
 
         minimumDate =
             new Date();
+
 
         minimumDate.setHours(
             0,
@@ -3001,6 +2896,7 @@ function applyFilters() {
         minimumDate =
             new Date();
 
+
         minimumDate.setDate(
             minimumDate.getDate() -
             Number(period)
@@ -3008,105 +2904,122 @@ function applyFilters() {
     }
 
 
-    filteredEarnings =
-        allEarnings.filter(order => {
+    filteredOrders =
+        allOrders.filter(
+            order => {
 
-            const searchable = [
-
-                order.id,
-
-                order.customer_name,
-
-                order.event?.title,
-
-                order.status,
-
-                order.currency
-
-            ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
+                const customerName =
+                    order.customer?.full_name ||
+                    "Customer";
 
 
-            const matchesSearch =
-                !search ||
-                searchable.includes(search);
+                const searchable = [
+
+                    order.id,
+
+                    order.order_number,
+
+                    customerName,
+
+                    order.event?.title,
+
+                    order.status,
+
+                    order.currency
+
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase();
 
 
-            const matchesEvent =
-                !selectedEvent ||
-                order.event_id ===
-                    selectedEvent;
-
-
-            const category =
-                getOrderCategory(
-                    order.status
-                );
-
-
-            const matchesStatus =
-                !selectedStatus ||
-                category ===
-                    selectedStatus;
-
-
-            let matchesPeriod =
-                true;
-
-
-            if (minimumDate) {
-
-                const orderDate =
-                    new Date(
-                        order.created_at
+                const matchesSearch =
+                    !search ||
+                    searchable.includes(
+                        search
                     );
 
-                matchesPeriod =
-                    !Number.isNaN(
-                        orderDate.getTime()
-                    ) &&
-                    orderDate >=
-                        minimumDate &&
-                    orderDate <=
-                        now;
+
+                const matchesEvent =
+                    !selectedEvent ||
+                    order.event_id ===
+                        selectedEvent;
+
+
+                const category =
+                    getOrderCategory(
+                        order.status
+                    );
+
+
+                const matchesStatus =
+                    !selectedStatus ||
+                    category ===
+                        selectedStatus;
+
+
+                let matchesPeriod =
+                    true;
+
+
+                if (minimumDate) {
+
+                    const orderDate =
+                        new Date(
+                            order.created_at
+                        );
+
+
+                    matchesPeriod =
+                        !Number.isNaN(
+                            orderDate.getTime()
+                        ) &&
+                        orderDate >=
+                            minimumDate &&
+                        orderDate <=
+                            now;
+                }
+
+
+                return (
+                    matchesSearch &&
+                    matchesEvent &&
+                    matchesStatus &&
+                    matchesPeriod
+                );
             }
+        );
 
 
-            return (
-                matchesSearch &&
-                matchesEvent &&
-                matchesStatus &&
-                matchesPeriod
-            );
-        });
+    updateFilteredSummary();
 
-
-    renderEarnings();
+    renderOrders();
 }
 
 
 /* ============================================================
-   ORDER CATEGORY
+   ORDER STATUS
 ============================================================ */
 
-function getOrderCategory(status) {
+function getOrderCategory(
+    status
+) {
 
     const normalized =
-        String(status || "")
+        String(
+            status || ""
+        )
             .toLowerCase()
             .trim();
 
 
+    /*
+     * Current production flow uses:
+     * paid
+     */
+
     if (
-        [
-            "paid",
-            "completed",
-            "confirmed",
-            "success",
-            "successful"
-        ].includes(normalized)
+        normalized === "paid"
     ) {
         return "successful";
     }
@@ -3114,11 +3027,12 @@ function getOrderCategory(status) {
 
     if (
         [
-            "pending",
-            "processing",
             "awaiting_payment",
-            "awaiting_confirmation"
-        ].includes(normalized)
+            "pending",
+            "processing"
+        ].includes(
+            normalized
+        )
     ) {
         return "pending";
     }
@@ -3129,9 +3043,10 @@ function getOrderCategory(status) {
             "failed",
             "cancelled",
             "canceled",
-            "refunded",
-            "rejected"
-        ].includes(normalized)
+            "refunded"
+        ].includes(
+            normalized
+        )
     ) {
         return "failed";
     }
@@ -3145,10 +3060,28 @@ function getOrderCategory(status) {
    SUMMARY
 ============================================================ */
 
-function updateSummary() {
+function updateAllSummary() {
+
+    updateSummaryFromOrders(
+        allOrders
+    );
+}
+
+
+function updateFilteredSummary() {
+
+    updateSummaryFromOrders(
+        filteredOrders
+    );
+}
+
+
+function updateSummaryFromOrders(
+    orders
+) {
 
     const successful =
-        allEarnings.filter(
+        orders.filter(
             order =>
                 getOrderCategory(
                     order.status
@@ -3157,7 +3090,7 @@ function updateSummary() {
 
 
     const pending =
-        allEarnings.filter(
+        orders.filter(
             order =>
                 getOrderCategory(
                     order.status
@@ -3165,86 +3098,63 @@ function updateSummary() {
         );
 
 
-    const gross =
-        successful.reduce(
-            (
-                total,
-                order
-            ) =>
-                total +
-                toNumber(
-                    order.subtotal
-                ),
-            0
+    const grossByCurrency =
+        sumByCurrency(
+            successful,
+            "subtotal"
         );
 
 
-    const fees =
-        successful.reduce(
-            (
-                total,
-                order
-            ) =>
-                total +
-                toNumber(
-                    order.service_fee
-                ),
-            0
+    const feeByCurrency =
+        sumByCurrency(
+            successful,
+            "service_fee"
         );
 
 
-    const net =
-        gross - fees;
+    const netByCurrency =
+        subtractCurrencyMaps(
+            grossByCurrency,
+            feeByCurrency
+        );
 
 
-    const pendingValue =
-        pending.reduce(
-            (
-                total,
-                order
-            ) =>
-                total +
-                toNumber(
-                    order.total ??
-                    order.subtotal
-                ),
-            0
+    const pendingByCurrency =
+        sumByCurrency(
+            pending,
+            "total"
         );
 
 
     document.getElementById(
         "grossSales"
     ).textContent =
-        formatMoneyGroup(
-            successful
+        formatCurrencyMap(
+            grossByCurrency
         );
 
 
     document.getElementById(
         "platformFees"
     ).textContent =
-        formatMoneyGroup(
-            successful,
-            "service_fee"
+        formatCurrencyMap(
+            feeByCurrency
         );
 
 
     document.getElementById(
         "netEarnings"
     ).textContent =
-        formatMoneyGroupValue(
-            successful,
-            net
+        formatCurrencyMap(
+            netByCurrency
         );
 
 
     document.getElementById(
         "pendingAmount"
     ).textContent =
-        formatMoneyGroupValue(
-            pending,
-            pendingValue,
-            true
+        formatCurrencyMap(
+            pendingByCurrency
         );
 
 
@@ -3255,156 +3165,316 @@ function updateSummary() {
             .toLocaleString();
 
 
+    /*
+     * The ticket_types quantity_sold value is the authoritative
+     * inventory counter for all-time tickets sold.
+     *
+     * It is not falsely tied to order count.
+     */
+
+    const allTimeTickets =
+        merchantTicketTypes.reduce(
+            (
+                sum,
+                ticketType
+            ) =>
+                sum +
+                toNumber(
+                    ticketType.quantity_sold
+                ),
+            0
+        );
+
+
     document.getElementById(
         "ticketsSold"
     ).textContent =
-        successful.length
+        allTimeTickets
             .toLocaleString();
 
 
     document.getElementById(
         "breakdownGross"
     ).textContent =
-        formatMoneyGroup(
-            successful
+        formatCurrencyMap(
+            grossByCurrency
         );
 
 
     document.getElementById(
         "breakdownFees"
     ).textContent =
-        formatMoneyGroup(
-            successful,
-            "service_fee"
+        formatCurrencyMap(
+            feeByCurrency
         );
 
 
     document.getElementById(
         "breakdownNet"
     ).textContent =
-        formatMoneyGroupValue(
-            successful,
-            net
+        formatCurrencyMap(
+            netByCurrency
         );
 
 
     document.getElementById(
         "breakdownPending"
     ).textContent =
-        formatMoneyGroupValue(
-            pending,
-            pendingValue,
-            true
+        formatCurrencyMap(
+            pendingByCurrency
         );
 
 
-    /*
-     * Available earnings.
-     *
-     * Withdrawals are intentionally not guessed here.
-     * Until a withdrawal/payout schema is connected,
-     * the page reports confirmed net earnings as the
-     * currently calculated merchant earnings position.
-     */
-
-    document.getElementById(
-        "availableEarnings"
-    ).textContent =
-        formatMoneyGroupValue(
-            successful,
-            net
-        );
-}
-
-
-/* ============================================================
-   MONEY HELPERS
-============================================================ */
-
-function formatMoneyGroup(
-    orders,
-    field = "subtotal"
-) {
-
-    if (!orders.length) {
-        return "—";
-    }
-
-
-    const currencies =
-        [
-            ...new Set(
-                orders
-                    .map(order =>
-                        order.currency
-                    )
-                    .filter(Boolean)
-            )
-        ];
-
-
-    const total =
-        orders.reduce(
-            (
-                sum,
-                order
-            ) =>
-                sum +
-                toNumber(
-                    order[field]
-                ),
-            0
-        );
-
-
-    if (currencies.length === 1) {
-
-        return formatMoney(
-            total,
-            currencies[0]
-        );
-    }
-
-
-    return formatNumber(
-        total
+    updateWithdrawalSummary(
+        netByCurrency
     );
 }
 
 
-function formatMoneyGroupValue(
-    orders,
-    value,
-    pending = false
+/* ============================================================
+   WITHDRAWAL SUMMARY
+============================================================ */
+
+function updateWithdrawalSummary(
+    netByCurrency
 ) {
 
-    if (!orders.length) {
+    const paidWithdrawals =
+        merchantWithdrawals.filter(
+            withdrawal =>
+                String(
+                    withdrawal.status || ""
+                ).toLowerCase() ===
+                "paid"
+        );
+
+
+    const paidByCurrency =
+        sumByCurrency(
+            paidWithdrawals,
+            "amount"
+        );
+
+
+    document.getElementById(
+        "paidWithdrawals"
+    ).textContent =
+        formatCurrencyMap(
+            paidByCurrency
+        );
+
+
+    /*
+     * We only calculate an available figure when:
+     *
+     * 1. Net earnings have a single currency.
+     * 2. Paid withdrawals have either zero records or
+     *    the same single currency.
+     *
+     * This prevents silently subtracting KWD from KES,
+     * etc.
+     */
+
+    const netCurrencies =
+        Object.keys(
+            netByCurrency
+        );
+
+
+    const withdrawalCurrencies =
+        Object.keys(
+            paidByCurrency
+        );
+
+
+    const canCalculate =
+        netCurrencies.length === 1 &&
+        (
+            withdrawalCurrencies.length === 0 ||
+            (
+                withdrawalCurrencies.length === 1 &&
+                withdrawalCurrencies[0] ===
+                    netCurrencies[0]
+            )
+        );
+
+
+    const availableElement =
+        document.getElementById(
+            "availableEarnings"
+        );
+
+
+    const noteElement =
+        document.getElementById(
+            "availableNote"
+        );
+
+
+    if (!canCalculate) {
+
+        availableElement.textContent =
+            "—";
+
+
+        noteElement.textContent =
+            "Available earnings cannot be safely combined across multiple currencies. Review earnings and withdrawals separately.";
+
+        return;
+    }
+
+
+    const currency =
+        netCurrencies[0];
+
+
+    const net =
+        toNumber(
+            netByCurrency[currency]
+        );
+
+
+    const withdrawn =
+        toNumber(
+            paidByCurrency[currency]
+        );
+
+
+    const available =
+        Math.max(
+            0,
+            net - withdrawn
+        );
+
+
+    availableElement.textContent =
+        formatMoney(
+            available,
+            currency
+        );
+
+
+    noteElement.textContent =
+        `Confirmed net earnings less paid withdrawals in ${currency}.`;
+}
+
+
+/* ============================================================
+   CURRENCY AGGREGATION
+============================================================ */
+
+function sumByCurrency(
+    rows,
+    field
+) {
+
+    const totals = {};
+
+
+    rows.forEach(
+        row => {
+
+            const currency =
+                String(
+                    row.currency || ""
+                )
+                    .trim()
+                    .toUpperCase();
+
+
+            /*
+             * A financial amount without a currency cannot
+             * safely be combined with other money.
+             */
+
+            if (!currency) {
+                return;
+            }
+
+
+            const amount =
+                toNumber(
+                    row[field]
+                );
+
+
+            totals[currency] =
+                (
+                    totals[currency] || 0
+                ) + amount;
+        }
+    );
+
+
+    return totals;
+}
+
+
+function subtractCurrencyMaps(
+    first,
+    second
+) {
+
+    const result = {};
+
+
+    Object.keys(first)
+        .forEach(
+            currency => {
+
+                result[currency] =
+                    toNumber(
+                        first[currency]
+                    ) -
+                    toNumber(
+                        second[currency]
+                    );
+
+            }
+        );
+
+
+    return result;
+}
+
+
+function formatCurrencyMap(
+    map
+) {
+
+    const currencies =
+        Object.keys(
+            map || {}
+        );
+
+
+    if (!currencies.length) {
         return "—";
     }
 
 
-    const currencies =
-        [
-            ...new Set(
-                orders
-                    .map(order =>
-                        order.currency
-                    )
-                    .filter(Boolean)
-            )
-        ];
-
-
     if (currencies.length === 1) {
 
+        const currency =
+            currencies[0];
+
+
         return formatMoney(
-            value,
-            currencies[0]
+            map[currency],
+            currency
         );
     }
 
 
-    return formatNumber(value);
+    return currencies
+        .map(
+            currency =>
+                formatMoney(
+                    map[currency],
+                    currency
+                )
+        )
+        .join(" · ");
 }
 
 
@@ -3413,10 +3483,12 @@ function formatMoney(
     currency
 ) {
 
+    const number =
+        Number(amount);
+
+
     if (
-        amount === null ||
-        amount === undefined ||
-        Number.isNaN(Number(amount))
+        !Number.isFinite(number)
     ) {
         return "—";
     }
@@ -3424,9 +3496,14 @@ function formatMoney(
 
     const code =
         String(
-            currency ||
-            "KWD"
-        ).toUpperCase();
+            currency || ""
+        )
+            .toUpperCase();
+
+
+    if (!code) {
+        return formatNumber(number);
+    }
 
 
     try {
@@ -3438,14 +3515,12 @@ function formatMoney(
                 currency: code,
                 maximumFractionDigits: 3
             }
-        ).format(
-            Number(amount)
-        );
+        ).format(number);
 
     } catch {
 
         return (
-            formatNumber(amount) +
+            formatNumber(number) +
             " " +
             code
         );
@@ -3453,22 +3528,28 @@ function formatMoney(
 }
 
 
-function formatNumber(value) {
+function formatNumber(
+    value
+) {
 
-    return Number(value || 0)
-        .toLocaleString(
-            undefined,
-            {
-                maximumFractionDigits: 3
-            }
-        );
+    return Number(
+        value || 0
+    ).toLocaleString(
+        undefined,
+        {
+            maximumFractionDigits: 3
+        }
+    );
 }
 
 
-function toNumber(value) {
+function toNumber(
+    value
+) {
 
     const number =
         Number(value);
+
 
     return Number.isFinite(
         number
@@ -3482,10 +3563,10 @@ function toNumber(value) {
    RENDER
 ============================================================ */
 
-function renderEarnings() {
+function renderOrders() {
 
     if (
-        !filteredEarnings.length
+        !filteredOrders.length
     ) {
 
         tableWrap.style.display =
@@ -3530,138 +3611,154 @@ function renderEarnings() {
 function renderDesktopTable() {
 
     earningsTableBody.innerHTML =
-        filteredEarnings
-            .map(order => {
+        filteredOrders
+            .map(
+                order => {
 
-                const category =
-                    getOrderCategory(
-                        order.status
-                    );
-
-
-                const statusBadge =
-                    statusBadgeHtml(
-                        order.status
-                    );
+                    const category =
+                        getOrderCategory(
+                            order.status
+                        );
 
 
-                const subtotal =
-                    toNumber(
-                        order.subtotal
-                    );
+                    const subtotal =
+                        toNumber(
+                            order.subtotal
+                        );
 
 
-                const fee =
-                    toNumber(
-                        order.service_fee
-                    );
+                    const fee =
+                        toNumber(
+                            order.service_fee
+                        );
 
 
-                const net =
-                    subtotal - fee;
+                    const net =
+                        subtotal - fee;
 
 
-                return `
-                    <tr>
+                    const orderReference =
+                        order.order_number ||
+                        order.id ||
+                        "—";
 
-                        <td>
-                            <span class="order-id">
-                                ${escapeHtml(
-                                    order.id ||
-                                    "—"
+
+                    const customerName =
+                        order.customer?.full_name ||
+                        "Customer";
+
+
+                    return `
+                        <tr>
+
+                            <td>
+                                <span class="order-id">
+                                    ${escapeHtml(
+                                        orderReference
+                                    )}
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <div class="event-name">
+                                    ${escapeHtml(
+                                        order.event?.title ||
+                                        "Untitled event"
+                                    )}
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <span class="customer">
+                                    ${escapeHtml(
+                                        customerName
+                                    )}
+                                </span>
+
+                            </td>
+
+                            <td>
+                                ${statusBadgeHtml(
+                                    order.status
                                 )}
-                            </span>
-                        </td>
+                            </td>
 
-                        <td>
+                            <td>
 
-                            <div class="event-name">
+                                <span class="money">
+
+                                    ${
+                                        category ===
+                                        "successful"
+                                            ? escapeHtml(
+                                                formatMoney(
+                                                    subtotal,
+                                                    order.currency
+                                                )
+                                            )
+                                            : "—"
+                                    }
+
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <span class="muted">
+
+                                    ${
+                                        category ===
+                                        "successful"
+                                            ? escapeHtml(
+                                                formatMoney(
+                                                    fee,
+                                                    order.currency
+                                                )
+                                            )
+                                            : "—"
+                                    }
+
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <span class="money">
+
+                                    ${
+                                        category ===
+                                        "successful"
+                                            ? escapeHtml(
+                                                formatMoney(
+                                                    net,
+                                                    order.currency
+                                                )
+                                            )
+                                            : "—"
+                                    }
+
+                                </span>
+
+                            </td>
+
+                            <td>
                                 ${escapeHtml(
-                                    order.event?.title ||
-                                    "Untitled event"
+                                    formatDate(
+                                        order.paid_at ||
+                                        order.created_at
+                                    )
                                 )}
-                            </div>
+                            </td>
 
-                        </td>
-
-                        <td>
-
-                            <span class="customer">
-                                ${escapeHtml(
-                                    order.customer_name ||
-                                    "Customer"
-                                )}
-                            </span>
-
-                        </td>
-
-                        <td>
-                            ${statusBadge}
-                        </td>
-
-                        <td>
-
-                            <span class="money">
-                                ${
-                                    category === "successful"
-                                        ? escapeHtml(
-                                            formatMoney(
-                                                subtotal,
-                                                order.currency
-                                            )
-                                        )
-                                        : "—"
-                                }
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="muted">
-                                ${
-                                    category === "successful"
-                                        ? escapeHtml(
-                                            formatMoney(
-                                                fee,
-                                                order.currency
-                                            )
-                                        )
-                                        : "—"
-                                }
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="money">
-                                ${
-                                    category === "successful"
-                                        ? escapeHtml(
-                                            formatMoney(
-                                                net,
-                                                order.currency
-                                            )
-                                        )
-                                        : "—"
-                                }
-                            </span>
-
-                        </td>
-
-                        <td>
-                            ${escapeHtml(
-                                formatDate(
-                                    order.created_at
-                                )
-                            )}
-                        </td>
-
-                    </tr>
-                `;
-
-            })
+                        </tr>
+                    `;
+                }
+            )
             .join("");
 
 
@@ -3671,191 +3768,179 @@ function renderDesktopTable() {
 
 
 /* ============================================================
-   MOBILE LIST
+   MOBILE
 ============================================================ */
 
 function renderMobileList() {
 
     mobileList.innerHTML =
-        filteredEarnings
-            .map(order => {
+        filteredOrders
+            .map(
+                order => {
 
-                const category =
-                    getOrderCategory(
-                        order.status
-                    );
-
-
-                const subtotal =
-                    toNumber(
-                        order.subtotal
-                    );
+                    const category =
+                        getOrderCategory(
+                            order.status
+                        );
 
 
-                const fee =
-                    toNumber(
-                        order.service_fee
-                    );
+                    const subtotal =
+                        toNumber(
+                            order.subtotal
+                        );
 
 
-                const net =
-                    subtotal - fee;
+                    const fee =
+                        toNumber(
+                            order.service_fee
+                        );
 
 
-                return `
-                    <article
-                        class="earning-item"
-                    >
-
-                        <div
-                            class="earning-item-head"
-                        >
-
-                            <div
-                                class="earning-event"
-                            >
-
-                                <strong>
-                                    ${escapeHtml(
-                                        order.event?.title ||
-                                        "Untitled event"
-                                    )}
-                                </strong>
-
-                                <span>
-                                    ${escapeHtml(
-                                        order.customer_name ||
-                                        "Customer"
-                                    )}
-                                </span>
-
-                            </div>
-
-                            ${statusBadgeHtml(
-                                order.status
-                            )}
-
-                        </div>
+                    const net =
+                        subtotal - fee;
 
 
-                        <div
-                            class="earning-grid"
-                        >
+                    return `
+                        <article class="earning-item">
 
-                            <div
-                                class="earning-field"
-                            >
+                            <div class="earning-item-head">
 
-                                <small>
-                                    Order
-                                </small>
+                                <div class="earning-event">
 
-                                <div>
-                                    ${escapeHtml(
-                                        order.id ||
-                                        "—"
-                                    )}
+                                    <strong>
+                                        ${escapeHtml(
+                                            order.event?.title ||
+                                            "Untitled event"
+                                        )}
+                                    </strong>
+
+                                    <span>
+                                        ${escapeHtml(
+                                            order.customer?.full_name ||
+                                            "Customer"
+                                        )}
+                                    </span>
+
                                 </div>
 
+                                ${statusBadgeHtml(
+                                    order.status
+                                )}
+
                             </div>
 
 
-                            <div
-                                class="earning-field"
-                            >
+                            <div class="earning-fields">
 
-                                <small>
-                                    Date
-                                </small>
+                                <div class="earning-field">
 
-                                <div>
-                                    ${escapeHtml(
-                                        formatDate(
-                                            order.created_at
-                                        )
-                                    )}
+                                    <small>
+                                        Order
+                                    </small>
+
+                                    <div>
+                                        ${escapeHtml(
+                                            order.order_number ||
+                                            order.id ||
+                                            "—"
+                                        )}
+                                    </div>
+
                                 </div>
 
-                            </div>
 
+                                <div class="earning-field">
 
-                            <div
-                                class="earning-field"
-                            >
+                                    <small>
+                                        Date
+                                    </small>
 
-                                <small>
-                                    Gross
-                                </small>
-
-                                <div>
-                                    ${
-                                        category === "successful"
-                                            ? escapeHtml(
-                                                formatMoney(
-                                                    subtotal,
-                                                    order.currency
-                                                )
+                                    <div>
+                                        ${escapeHtml(
+                                            formatDate(
+                                                order.paid_at ||
+                                                order.created_at
                                             )
-                                            : "—"
-                                    }
+                                        )}
+                                    </div>
+
                                 </div>
 
-                            </div>
 
+                                <div class="earning-field">
 
-                            <div
-                                class="earning-field"
-                            >
+                                    <small>
+                                        Gross
+                                    </small>
 
-                                <small>
-                                    Platform Fee
-                                </small>
-
-                                <div>
-                                    ${
-                                        category === "successful"
-                                            ? escapeHtml(
-                                                formatMoney(
-                                                    fee,
-                                                    order.currency
+                                    <div>
+                                        ${
+                                            category ===
+                                            "successful"
+                                                ? escapeHtml(
+                                                    formatMoney(
+                                                        subtotal,
+                                                        order.currency
+                                                    )
                                                 )
-                                            )
-                                            : "—"
-                                    }
+                                                : "—"
+                                        }
+                                    </div>
+
                                 </div>
 
-                            </div>
 
+                                <div class="earning-field">
 
-                            <div
-                                class="earning-field"
-                            >
+                                    <small>
+                                        Platform Fee
+                                    </small>
 
-                                <small>
-                                    Net
-                                </small>
-
-                                <div>
-                                    ${
-                                        category === "successful"
-                                            ? escapeHtml(
-                                                formatMoney(
-                                                    net,
-                                                    order.currency
+                                    <div>
+                                        ${
+                                            category ===
+                                            "successful"
+                                                ? escapeHtml(
+                                                    formatMoney(
+                                                        fee,
+                                                        order.currency
+                                                    )
                                                 )
-                                            )
-                                            : "—"
-                                    }
+                                                : "—"
+                                        }
+                                    </div>
+
+                                </div>
+
+
+                                <div class="earning-field">
+
+                                    <small>
+                                        Net
+                                    </small>
+
+                                    <div>
+                                        ${
+                                            category ===
+                                            "successful"
+                                                ? escapeHtml(
+                                                    formatMoney(
+                                                        net,
+                                                        order.currency
+                                                    )
+                                                )
+                                                : "—"
+                                        }
+                                    </div>
+
                                 </div>
 
                             </div>
 
-                        </div>
-
-                    </article>
-                `;
-
-            })
+                        </article>
+                    `;
+                }
+            )
             .join("");
 
 
@@ -3868,52 +3953,56 @@ function renderMobileList() {
    STATUS BADGES
 ============================================================ */
 
-function statusBadgeHtml(status) {
+function statusBadgeHtml(
+    status
+) {
 
     const category =
-        getOrderCategory(status);
+        getOrderCategory(
+            status
+        );
+
+
+    const label =
+        formatStatus(
+            status
+        );
 
 
     if (
-        category === "successful"
+        category ===
+        "successful"
     ) {
 
         return `
             <span class="badge badge-success">
-                ${escapeHtml(
-                    status ||
-                    "Successful"
-                )}
+                ${escapeHtml(label)}
             </span>
         `;
     }
 
 
     if (
-        category === "pending"
+        category ===
+        "pending"
     ) {
 
         return `
             <span class="badge badge-warning">
-                ${escapeHtml(
-                    status ||
-                    "Pending"
-                )}
+                ${escapeHtml(label)}
             </span>
         `;
     }
 
 
     if (
-        category === "failed"
+        category ===
+        "failed"
     ) {
 
         return `
             <span class="badge badge-danger">
-                ${escapeHtml(
-                    status ||
-                    "Failed"
-                )}
+                ${escapeHtml(label)}
             </span>
         `;
     }
@@ -3921,12 +4010,38 @@ function statusBadgeHtml(status) {
 
     return `
         <span class="badge badge-neutral">
-            ${escapeHtml(
-                status ||
-                "Unknown"
-            )}
+            ${escapeHtml(label)}
         </span>
     `;
+}
+
+
+function formatStatus(
+    status
+) {
+
+    const value =
+        String(
+            status || "unknown"
+        )
+            .trim()
+            .replaceAll(
+                "_",
+                " "
+            );
+
+
+    if (!value) {
+        return "Unknown";
+    }
+
+
+    return value
+        .replace(
+            /\b\w/g,
+            character =>
+                character.toUpperCase()
+        );
 }
 
 
@@ -3978,7 +4093,9 @@ async function loadNotifications() {
             );
 
 
-        if (count > 0) {
+        if (
+            Number(count) > 0
+        ) {
 
             badge.textContent =
                 count > 99
@@ -3997,10 +4114,110 @@ async function loadNotifications() {
     } catch (error) {
 
         console.warn(
-            "Notification table unavailable:",
+            "Notification loading failed:",
             error
         );
     }
+}
+
+
+/* ============================================================
+   REALTIME
+============================================================ */
+
+function subscribeToRealtime() {
+
+    if (!supabaseClient) {
+        return;
+    }
+
+
+    supabaseClient
+        .channel(
+            `merchant-earnings-${currentUser.id}`
+        )
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "orders"
+            },
+            async () => {
+
+                await loadOrders();
+
+            }
+        )
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "ticket_types"
+            },
+            async () => {
+
+                await loadTicketTypes();
+
+                updateAllSummary();
+
+                applyFilters();
+
+            }
+        )
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "withdrawals"
+            },
+            async payload => {
+
+                /*
+                 * Re-fetch instead of trusting realtime payload
+                 * as the authoritative financial record.
+                 */
+
+                const merchantId =
+                    payload?.new?.merchant_id ||
+                    payload?.old?.merchant_id;
+
+
+                if (
+                    merchantId &&
+                    merchantId !==
+                        currentUser.id
+                ) {
+                    return;
+                }
+
+
+                await loadWithdrawals();
+
+                updateAllSummary();
+
+                applyFilters();
+
+            }
+        )
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "notifications",
+                filter:
+                    `user_id=eq.${currentUser.id}`
+            },
+            async () => {
+
+                await loadNotifications();
+
+            }
+        )
+        .subscribe();
 }
 
 
@@ -4011,7 +4228,7 @@ async function loadNotifications() {
 function exportCSV() {
 
     if (
-        !filteredEarnings.length
+        !filteredOrders.length
     ) {
 
         showToast(
@@ -4027,6 +4244,8 @@ function exportCSV() {
 
         "Order ID",
 
+        "Order Number",
+
         "Event",
 
         "Customer",
@@ -4035,11 +4254,17 @@ function exportCSV() {
 
         "Subtotal",
 
+        "Service Fee Percentage",
+
         "Service Fee",
 
-        "Net",
+        "Discount",
+
+        "Total",
 
         "Currency",
+
+        "Paid At",
 
         "Created At",
 
@@ -4049,50 +4274,39 @@ function exportCSV() {
 
 
     const rows =
-        filteredEarnings
-            .map(order => {
+        filteredOrders.map(
+            order => [
 
-                const subtotal =
-                    toNumber(
-                        order.subtotal
-                    );
+                order.id || "",
 
+                order.order_number || "",
 
-                const fee =
-                    toNumber(
-                        order.service_fee
-                    );
+                order.event?.title || "",
 
+                order.customer?.full_name || "",
 
-                const net =
-                    subtotal - fee;
+                order.status || "",
 
+                order.subtotal ?? "",
 
-                return [
+                order.service_fee_percentage ?? "",
 
-                    order.id || "",
+                order.service_fee ?? "",
 
-                    order.event?.title || "",
+                order.discount ?? "",
 
-                    order.customer_name || "",
+                order.total ?? "",
 
-                    order.status || "",
+                order.currency || "",
 
-                    subtotal,
+                order.paid_at || "",
 
-                    fee,
+                order.created_at || "",
 
-                    net,
+                order.updated_at || ""
 
-                    order.currency || "",
-
-                    order.created_at || "",
-
-                    order.updated_at || ""
-
-                ];
-
-            });
+            ]
+        );
 
 
     const csv =
@@ -4100,10 +4314,13 @@ function exportCSV() {
             headers,
             ...rows
         ]
-            .map(row =>
-                row
-                    .map(csvEscape)
-                    .join(",")
+            .map(
+                row =>
+                    row
+                        .map(
+                            csvEscape
+                        )
+                        .join(",")
             )
             .join("\n");
 
@@ -4135,7 +4352,7 @@ function exportCSV() {
 
 
     link.download =
-        `k-tickets-earnings-${dateStamp()}.csv`;
+        `k-tickets-merchant-earnings-${dateStamp()}.csv`;
 
 
     document.body.appendChild(
@@ -4145,9 +4362,7 @@ function exportCSV() {
 
     link.click();
 
-
     link.remove();
-
 
     URL.revokeObjectURL(
         url
@@ -4160,7 +4375,9 @@ function exportCSV() {
 }
 
 
-function csvEscape(value) {
+function csvEscape(
+    value
+) {
 
     const stringValue =
         String(
@@ -4174,12 +4391,14 @@ function csvEscape(value) {
         stringValue.includes("\n")
     ) {
 
-        return '"' +
+        return (
+            '"' +
             stringValue.replace(
                 /"/g,
                 '""'
             ) +
-            '"';
+            '"'
+        );
     }
 
 
@@ -4191,7 +4410,7 @@ function dateStamp() {
 
     return new Date()
         .toISOString()
-        .slice(0, 10);
+        .slice(0,10);
 }
 
 
@@ -4207,18 +4426,7 @@ function setupButtons() {
         )
         .addEventListener(
             "click",
-            async () => {
-
-                showToast(
-                    "Refreshing earnings..."
-                );
-
-                await loadMerchantEvents();
-
-                await loadEarnings();
-
-                await loadNotifications();
-            }
+            refreshAll
         );
 
 
@@ -4228,11 +4436,7 @@ function setupButtons() {
         )
         .addEventListener(
             "click",
-            async () => {
-
-                await loadEarnings();
-
-            }
+            refreshAll
         );
 
 
@@ -4244,13 +4448,19 @@ function setupButtons() {
             "click",
             () => {
 
-                searchInput.value = "";
+                searchInput.value =
+                    "";
 
-                eventFilter.value = "";
+                eventFilter.value =
+                    "";
 
-                statusFilter.value = "";
+                statusFilter.value =
+                    "";
 
-                periodFilter.value = "all";
+                periodFilter.value =
+                    "all";
+
+                updateAllSummary();
 
                 applyFilters();
             }
@@ -4265,6 +4475,74 @@ function setupButtons() {
             "click",
             exportCSV
         );
+
+
+    document
+        .getElementById(
+            "notificationBtn"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                /*
+                 * The merchant notifications page is a separate
+                 * merchant CMS page. If it has not yet been created,
+                 * this button does not mutate anything.
+                 */
+
+                window.location.href =
+                    "./notifications.html";
+            }
+        );
+}
+
+
+async function refreshAll() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    showToast(
+        "Refreshing earnings..."
+    );
+
+
+    try {
+
+        await loadMerchantEvents();
+
+        await loadTicketTypes();
+
+        await loadWithdrawals();
+
+        await loadOrders();
+
+        await loadNotifications();
+
+
+        showToast(
+            "Earnings refreshed."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Refresh failed:",
+            error
+        );
+
+
+        showToast(
+            readableError(
+                error,
+                "Unable to refresh earnings."
+            ),
+            true
+        );
+    }
 }
 
 
@@ -4316,14 +4594,16 @@ function setupNavigation() {
 
     sidebar
         .querySelectorAll("a")
-        .forEach(link => {
+        .forEach(
+            link => {
 
-            link.addEventListener(
-                "click",
-                closeMobileSidebar
-            );
+                link.addEventListener(
+                    "click",
+                    closeMobileSidebar
+                );
 
-        });
+            }
+        );
 
 
     document.addEventListener(
@@ -4331,7 +4611,8 @@ function setupNavigation() {
         event => {
 
             if (
-                event.key === "Escape"
+                event.key ===
+                "Escape"
             ) {
 
                 closeMobileSidebar();
@@ -4387,7 +4668,9 @@ function showLoading() {
 }
 
 
-function showError(message) {
+function showError(
+    message
+) {
 
     loadingState.style.display =
         "none";
@@ -4469,10 +4752,12 @@ function showToast(
 
 
 /* ============================================================
-   FORMATTERS / SECURITY
+   FORMATTERS
 ============================================================ */
 
-function formatDate(value) {
+function formatDate(
+    value
+) {
 
     if (!value) {
         return "—";
@@ -4488,7 +4773,6 @@ function formatDate(value) {
             date.getTime()
         )
     ) {
-
         return "—";
     }
 
@@ -4503,7 +4787,62 @@ function formatDate(value) {
 }
 
 
-function escapeHtml(value) {
+/* ============================================================
+   ERROR NORMALIZATION
+============================================================ */
+
+function readableError(
+    error,
+    fallback
+) {
+
+    const message =
+        error?.message ||
+        error?.details ||
+        error?.hint ||
+        "";
+
+
+    if (
+        message
+            .toLowerCase()
+            .includes("row-level security")
+    ) {
+
+        return (
+            "Supabase RLS blocked this merchant request. " +
+            "Check the merchant SELECT policy for the affected table."
+        );
+    }
+
+
+    if (
+        message
+            .toLowerCase()
+            .includes("permission denied")
+    ) {
+
+        return (
+            "Supabase permissions denied this merchant request. " +
+            "Check the table RLS policy."
+        );
+    }
+
+
+    return (
+        message ||
+        fallback
+    );
+}
+
+
+/* ============================================================
+   SECURITY
+============================================================ */
+
+function escapeHtml(
+    value
+) {
 
     return String(
         value ?? ""
