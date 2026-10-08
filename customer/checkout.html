@@ -8,11 +8,6 @@
 
 <title>Checkout | K-Tickets</title>
 
-<meta
-    name="description"
-    content="Review your K-Tickets order."
->
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -33,6 +28,7 @@
     --muted:#77716d;
     --line:#e8e1da;
     --surface:#fbfaf8;
+
     --danger:#9b2029;
     --success:#26705c;
     --warning:#9a681b;
@@ -67,8 +63,7 @@ body{
 }
 
 button,
-input,
-select{
+input{
     font:inherit;
 }
 
@@ -86,6 +81,10 @@ a{
     color:inherit;
     text-decoration:none;
 }
+
+/* ============================================================
+   APP
+============================================================ */
 
 .app{
     min-height:100vh;
@@ -336,6 +335,10 @@ a{
     line-height:1.6;
 }
 
+/* ============================================================
+   CHECKOUT
+============================================================ */
+
 .checkout-layout{
     margin-top:25px;
     display:grid;
@@ -362,7 +365,7 @@ a{
 }
 
 /* ============================================================
-   EVENT SUMMARY
+   EVENT
 ============================================================ */
 
 .event-summary{
@@ -414,7 +417,7 @@ a{
 }
 
 /* ============================================================
-   CUSTOMER INFORMATION
+   CUSTOMER
 ============================================================ */
 
 .customer-info{
@@ -516,6 +519,10 @@ a{
 
 .ticket-stock.low{
     color:var(--warning);
+}
+
+.ticket-stock.unavailable{
+    color:var(--danger);
 }
 
 /* ============================================================
@@ -638,7 +645,7 @@ a{
     white-space:nowrap;
 }
 
-.summary-row.secure-fee strong{
+.secure-fee strong{
     color:var(--muted);
     font-size:10px;
     font-weight:700;
@@ -744,7 +751,7 @@ a{
 }
 
 /* ============================================================
-   MOBILE NAV
+   MOBILE
 ============================================================ */
 
 .mobile-nav{
@@ -875,444 +882,445 @@ a{
 
 <div class="app">
 
-    <!-- ========================================================
-         SIDEBAR
-    ========================================================= -->
+<!-- ============================================================
+     SIDEBAR
+============================================================ -->
 
-    <aside class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar">
 
-        <a href="../index.html" class="brand">
+    <a href="../index.html" class="brand">
 
-            <div class="brand-mark">K</div>
+        <div class="brand-mark">K</div>
 
-            <div class="brand-text">
-                <strong>K-TICKETS</strong>
-                <span>Customer</span>
-            </div>
+        <div class="brand-text">
+            <strong>K-TICKETS</strong>
+            <span>Customer</span>
+        </div>
 
+    </a>
+
+    <div class="nav-label">
+        Menu
+    </div>
+
+    <nav class="nav">
+
+        <a href="dashboard.html" class="nav-link">
+            <span class="nav-icon">⌂</span>
+            Dashboard
         </a>
 
-        <div class="nav-label">
-            Menu
+        <a href="events.html" class="nav-link active">
+            <span class="nav-icon">◫</span>
+            Discover Events
+        </a>
+
+        <a href="my-tickets.html" class="nav-link">
+            <span class="nav-icon">▣</span>
+            My Tickets
+        </a>
+
+        <a href="orders.html" class="nav-link">
+            <span class="nav-icon">◷</span>
+            Payment History
+        </a>
+
+        <a href="profile.html" class="nav-link">
+            <span class="nav-icon">◎</span>
+            Account
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <div class="support-card">
+            <small>Need help?</small>
+            <strong>K-Tickets Support</strong>
         </div>
 
-        <nav class="nav">
+        <button
+            class="logout-btn"
+            id="logoutButton"
+            type="button"
+        >
+            Log out
+        </button>
 
-            <a href="dashboard.html" class="nav-link">
-                <span class="nav-icon">⌂</span>
-                Dashboard
-            </a>
+    </div>
 
-            <a href="events.html" class="nav-link active">
-                <span class="nav-icon">◫</span>
-                Discover Events
-            </a>
+</aside>
 
-            <a href="my-tickets.html" class="nav-link">
-                <span class="nav-icon">▣</span>
-                My Tickets
-            </a>
+<!-- ============================================================
+     MAIN
+============================================================ -->
 
-            <a href="orders.html" class="nav-link">
-                <span class="nav-icon">◷</span>
-                Payment History
-            </a>
+<main class="main">
 
-            <a href="profile.html" class="nav-link">
-                <span class="nav-icon">◎</span>
-                Account
-            </a>
+<header class="topbar">
 
-        </nav>
+    <div style="display:flex;align-items:center;gap:10px;">
 
-        <div class="sidebar-bottom">
+        <button
+            class="mobile-menu"
+            id="mobileMenu"
+            type="button"
+            aria-label="Open navigation"
+        >
+            ☰
+        </button>
 
-            <div class="support-card">
-                <small>Need help?</small>
-                <strong>K-Tickets Support</strong>
-            </div>
-
-            <button
-                class="logout-btn"
-                id="logoutButton"
-                type="button"
-            >
-                Log out
-            </button>
-
+        <div class="breadcrumb">
+            <a href="events.html">Events</a>
+            <span> / Checkout</span>
         </div>
 
-    </aside>
-
-    <!-- ========================================================
-         MAIN
-    ========================================================= -->
-
-    <main class="main">
+    </div>
 
-        <header class="topbar">
+    <div class="top-actions">
 
-            <div style="display:flex;align-items:center;gap:10px;">
+        <button
+            class="notification-btn"
+            id="notificationButton"
+            type="button"
+            title="Notifications"
+        >
+            ♢
 
-                <button
-                    class="mobile-menu"
-                    id="mobileMenu"
-                    type="button"
-                    aria-label="Open navigation"
-                >
-                    ☰
-                </button>
+            <span
+                id="notificationDot"
+                class="notification-dot"
+                hidden
+            ></span>
 
-                <div class="breadcrumb">
-                    <a href="events.html">Events</a>
-                    <span> / Checkout</span>
-                </div>
+        </button>
 
-            </div>
+        <div
+            class="avatar"
+            id="avatar"
+            aria-label="Account"
+        >
+            —
+        </div>
 
-            <div class="top-actions">
+    </div>
 
-                <button
-                    class="notification-btn"
-                    id="notificationButton"
-                    type="button"
-                    title="Notifications"
-                >
-                    ♢
+</header>
 
-                    <span
-                        id="notificationDot"
-                        class="notification-dot"
-                        hidden
-                    ></span>
+<section class="content">
 
-                </button>
+    <div class="page-heading">
 
-                <div
-                    class="avatar"
-                    id="avatar"
-                    aria-label="Account"
-                >
-                    —
-                </div>
+        <small>
+            Secure checkout
+        </small>
 
-            </div>
+        <h1>
+            Review your order.
+        </h1>
 
-        </header>
+        <p>
+            Confirm your ticket selection before continuing to payment.
+            Pricing and availability are verified again by K-Tickets when
+            the order is created.
+        </p>
 
-        <section class="content">
+    </div>
 
-            <div class="page-heading">
+    <div
+        class="error"
+        id="errorBox"
+        role="alert"
+    ></div>
 
-                <small>
-                    Secure checkout
-                </small>
+    <div
+        class="notice"
+        id="securityNotice"
+        style="display:none;"
+    ></div>
 
-                <h1>
-                    Review your order.
-                </h1>
+    <div
+        id="loading"
+        class="loading"
+    >
+        Loading your checkout…
+    </div>
 
-                <p>
-                    Confirm your ticket selection before continuing to payment.
-                    Pricing and availability are verified again by K-Tickets when the order is created.
-                </p>
+    <div
+        class="checkout-layout"
+        id="checkoutLayout"
+        style="display:none;"
+    >
 
-            </div>
+        <div>
 
-            <div
-                class="error"
-                id="errorBox"
-                role="alert"
-            ></div>
+            <!-- EVENT -->
 
-            <div
-                class="notice"
-                id="securityNotice"
-                style="display:none;"
-            ></div>
+            <section class="card">
 
-            <div
-                id="loading"
-                class="loading"
-            >
-                Loading your checkout…
-            </div>
+                <h2>
+                    Event
+                </h2>
 
-            <div
-                class="checkout-layout"
-                id="checkoutLayout"
-                style="display:none;"
-            >
+                <div class="event-summary">
 
-                <div>
+                    <div class="event-summary-top">
 
-                    <!-- EVENT -->
+                        <div>
 
-                    <section class="card">
+                            <small>
+                                Event
+                            </small>
 
-                        <h2>
-                            Event
-                        </h2>
+                            <h3 id="eventName">
+                                —
+                            </h3>
 
-                        <div class="event-summary">
-
-                            <div class="event-summary-top">
-
-                                <div>
-
-                                    <small>
-                                        Event
-                                    </small>
-
-                                    <h3 id="eventName">
-                                        —
-                                    </h3>
-
-                                    <div
-                                        class="event-meta"
-                                        id="eventMeta"
-                                    >
-                                        —
-                                    </div>
-
-                                    <div
-                                        class="event-description"
-                                        id="eventDescription"
-                                        hidden
-                                    ></div>
-
-                                </div>
-
-                                <a
-                                    href="events.html"
-                                    class="change-link"
-                                >
-                                    Change
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <!-- CUSTOMER -->
-
-                    <section class="card">
-
-                        <h2>
-                            Your information
-                        </h2>
-
-                        <div class="customer-info">
-
-                            <div class="field">
-
-                                <label for="customerName">
-                                    Full name
-                                </label>
-
-                                <input
-                                    id="customerName"
-                                    type="text"
-                                    readonly
-                                    autocomplete="name"
-                                >
-
-                            </div>
-
-                            <div class="field">
-
-                                <label for="customerEmail">
-                                    Email
-                                </label>
-
-                                <input
-                                    id="customerEmail"
-                                    type="email"
-                                    readonly
-                                    autocomplete="email"
-                                >
-
-                            </div>
-
-                            <div class="field full">
-
-                                <label for="customerPhone">
-                                    Phone
-                                </label>
-
-                                <input
-                                    id="customerPhone"
-                                    type="tel"
-                                    readonly
-                                    autocomplete="tel"
-                                >
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <!-- TICKETS -->
-
-                    <section class="card">
-
-                        <h2>
-                            Tickets
-                        </h2>
-
-                        <div id="ticketRows"></div>
-
-                    </section>
-
-                    <!-- PROMOTION -->
-
-                    <section class="card">
-
-                        <h2>
-                            Promotion
-                        </h2>
-
-                        <div class="promotion-box">
-
-                            <label for="promotionCode">
-                                Promotion code
-                            </label>
-
-                            <div class="promotion-row">
-
-                                <input
-                                    id="promotionCode"
-                                    type="text"
-                                    maxlength="100"
-                                    autocomplete="off"
-                                    placeholder="Enter a code"
-                                    spellcheck="false"
-                                >
-
-                                <button
-                                    class="apply-promo"
-                                    id="applyPromoButton"
-                                    type="button"
-                                >
-                                    Apply
-                                </button>
-
+                            <div
+                                class="event-meta"
+                                id="eventMeta"
+                            >
+                                —
                             </div>
 
                             <div
-                                id="promoMessage"
-                                class="promo-message"
-                                aria-live="polite"
+                                class="event-description"
+                                id="eventDescription"
+                                hidden
                             ></div>
 
                         </div>
 
-                    </section>
+                        <a
+                            href="events.html"
+                            class="change-link"
+                        >
+                            Change
+                        </a>
+
+                    </div>
 
                 </div>
 
-                <!-- SUMMARY -->
+            </section>
 
-                <aside class="card summary-card">
+            <!-- CUSTOMER -->
 
-                    <h2>
-                        Order summary
-                    </h2>
+            <section class="card">
 
-                    <div class="summary-event">
+                <h2>
+                    Your information
+                </h2>
 
-                        <small>
-                            Event
-                        </small>
+                <div class="customer-info">
 
-                        <strong id="summaryEvent">
-                            —
-                        </strong>
+                    <div class="field">
 
-                    </div>
+                        <label for="customerName">
+                            Full name
+                        </label>
 
-                    <div id="summaryRows"></div>
-
-                    <div class="divider"></div>
-
-                    <div class="summary-row">
-
-                        <span>
-                            Ticket subtotal
-                        </span>
-
-                        <strong id="subtotal">
-                            —
-                        </strong>
-
-                    </div>
-
-                    <div class="summary-row">
-
-                        <span>
-                            Promotion
-                        </span>
-
-                        <strong id="discount">
-                            —
-                        </strong>
-
-                    </div>
-
-                    <div class="summary-row secure-fee">
-
-                        <span>
-                            Service fee
-                        </span>
-
-                        <strong id="serviceFee">
-                            Calculated securely
-                        </strong>
-
-                    </div>
-
-                    <div class="divider"></div>
-
-                    <div class="total-row">
-
-                        <span>
-                            Total
-                        </span>
-
-                        <strong
-                            id="total"
-                            class="total-pending"
+                        <input
+                            id="customerName"
+                            type="text"
+                            readonly
+                            autocomplete="name"
                         >
-                            Calculated securely
-                        </strong>
 
                     </div>
 
-                    <button
-                        class="continue-btn"
-                        id="continueButton"
-                        type="button"
-                        disabled
-                    >
-                        Continue to Payment
-                    </button>
+                    <div class="field">
 
-                    <div class="secure">
-                        K-Tickets verifies inventory, promotion eligibility,
-                        service fees and the final amount on the server
-                        before creating your order.
+                        <label for="customerEmail">
+                            Email
+                        </label>
+
+                        <input
+                            id="customerEmail"
+                            type="email"
+                            readonly
+                            autocomplete="email"
+                        >
+
                     </div>
 
-                </aside>
+                    <div class="field full">
+
+                        <label for="customerPhone">
+                            Phone
+                        </label>
+
+                        <input
+                            id="customerPhone"
+                            type="tel"
+                            readonly
+                            autocomplete="tel"
+                        >
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- TICKETS -->
+
+            <section class="card">
+
+                <h2>
+                    Tickets
+                </h2>
+
+                <div id="ticketRows"></div>
+
+            </section>
+
+            <!-- PROMOTION -->
+
+            <section class="card">
+
+                <h2>
+                    Promotion
+                </h2>
+
+                <div class="promotion-box">
+
+                    <label for="promotionCode">
+                        Promotion code
+                    </label>
+
+                    <div class="promotion-row">
+
+                        <input
+                            id="promotionCode"
+                            type="text"
+                            maxlength="100"
+                            autocomplete="off"
+                            placeholder="Enter a code"
+                            spellcheck="false"
+                        >
+
+                        <button
+                            class="apply-promo"
+                            id="applyPromoButton"
+                            type="button"
+                        >
+                            Apply
+                        </button>
+
+                    </div>
+
+                    <div
+                        id="promoMessage"
+                        class="promo-message"
+                        aria-live="polite"
+                    ></div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        <!-- SUMMARY -->
+
+        <aside class="card summary-card">
+
+            <h2>
+                Order summary
+            </h2>
+
+            <div class="summary-event">
+
+                <small>
+                    Event
+                </small>
+
+                <strong id="summaryEvent">
+                    —
+                </strong>
 
             </div>
 
-        </section>
+            <div id="summaryRows"></div>
 
-    </main>
+            <div class="divider"></div>
+
+            <div class="summary-row">
+
+                <span>
+                    Ticket subtotal
+                </span>
+
+                <strong id="subtotal">
+                    —
+                </strong>
+
+            </div>
+
+            <div class="summary-row">
+
+                <span>
+                    Promotion
+                </span>
+
+                <strong id="discount">
+                    —
+                </strong>
+
+            </div>
+
+            <div class="summary-row secure-fee">
+
+                <span>
+                    Service fee
+                </span>
+
+                <strong id="serviceFee">
+                    Calculated securely
+                </strong>
+
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="total-row">
+
+                <span>
+                    Total
+                </span>
+
+                <strong
+                    id="total"
+                    class="total-pending"
+                >
+                    Calculated securely
+                </strong>
+
+            </div>
+
+            <button
+                class="continue-btn"
+                id="continueButton"
+                type="button"
+                disabled
+            >
+                Continue to Payment
+            </button>
+
+            <div class="secure">
+                K-Tickets verifies inventory, promotion eligibility,
+                service fees and the final amount on the server
+                before creating your order.
+            </div>
+
+        </aside>
+
+    </div>
+
+</section>
+
+</main>
 
 </div>
 
@@ -1352,58 +1360,37 @@ a{
 K-TICKETS CUSTOMER CHECKOUT
 ============================================================
 
-IMPORTANT:
+NO BUSINESS RECORDS ARE HARDCODED HERE.
 
-This page contains NO hardcoded customer, event, ticket,
-price, promotion, inventory or order records.
-
-REAL DATA SOURCES:
+DATA SOURCES:
 
 - Supabase Auth
 - public.profiles
 - public.events
 - public.ticket_types
-- public.merchant_applications are NOT used here
-- create_checkout_order() is the authoritative checkout RPC
+- public.notifications
+- create_checkout_order()
 
-The browser does NOT create orders by inserting directly into
-orders/order_items.
+The browser sends only identifiers and quantities.
 
-The browser also does NOT decide the final service fee or
-final order total.
-
-The secure RPC is responsible for:
+The server remains authoritative for:
 
 - authentication
 - event validation
 - ticket validation
-- inventory validation
-- 15-minute reservations
-- promotion validation
-- service fee snapshot
+- inventory
+- reservations
+- promotions
+- service fee
+- discount
+- order total
 - order creation
 - order items
-- reservation creation
-
-Expected URL:
-
-checkout.html?event=<EVENT_ID>&<TICKET_TYPE_ID>=<QUANTITY>
-
-Examples of supported quantity parameters:
-
-?event=<EVENT_ID>&<TICKET_TYPE_ID>=2
-
-or
-
-?event=<EVENT_ID>&ticket_type_id=<QUANTITY>
-
-The event ID and ticket type IDs are identifiers only.
-The actual business data comes from Supabase.
 ============================================================
 */
 
 /* ============================================================
-   SUPABASE CONFIGURATION
+   SUPABASE
 ============================================================ */
 
 const SUPABASE_URL =
@@ -1417,6 +1404,7 @@ let supabaseClient = null;
 let currentUser = null;
 let currentProfile = null;
 let currentEvent = null;
+
 let selectedTickets = {};
 let promotionCode = "";
 
@@ -1439,52 +1427,34 @@ const eventId =
 ============================================================ */
 
 const loadingElement =
-    document.getElementById(
-        "loading"
-    );
+    document.getElementById("loading");
 
 const checkoutLayout =
-    document.getElementById(
-        "checkoutLayout"
-    );
+    document.getElementById("checkoutLayout");
 
 const errorBox =
-    document.getElementById(
-        "errorBox"
-    );
+    document.getElementById("errorBox");
 
 const securityNotice =
-    document.getElementById(
-        "securityNotice"
-    );
+    document.getElementById("securityNotice");
 
 const continueButton =
-    document.getElementById(
-        "continueButton"
-    );
+    document.getElementById("continueButton");
 
 const ticketRows =
-    document.getElementById(
-        "ticketRows"
-    );
+    document.getElementById("ticketRows");
 
 const summaryRows =
-    document.getElementById(
-        "summaryRows"
-    );
+    document.getElementById("summaryRows");
 
 const promotionCodeInput =
-    document.getElementById(
-        "promotionCode"
-    );
+    document.getElementById("promotionCode");
 
 const promoMessage =
-    document.getElementById(
-        "promoMessage"
-    );
+    document.getElementById("promoMessage");
 
 /* ============================================================
-   INIT SUPABASE
+   INITIALISE SUPABASE
 ============================================================ */
 
 function initializeSupabase(){
@@ -1679,6 +1649,25 @@ async function loadCustomer(){
         );
     }
 
+    /*
+    Checkout is a customer flow.
+    Merchant/admin/gate staff accounts should not
+    create customer orders through this page.
+    */
+
+    if(data.role !== "customer"){
+
+        await safeSignOut();
+
+        redirectToLogin(
+            "customer_only"
+        );
+
+        throw new Error(
+            "This checkout is available to customer accounts only."
+        );
+    }
+
     currentProfile =
         data;
 }
@@ -1713,6 +1702,18 @@ async function loadEvent(){
 
         throw new Error(
             "This event could not be found or is not currently available."
+        );
+    }
+
+    /*
+    Customer checkout may only proceed for published events.
+    This matches the events RLS policy and marketplace rules.
+    */
+
+    if(event.status !== "published"){
+
+        throw new Error(
+            "This event is not currently available for purchase."
         );
     }
 
@@ -1800,7 +1801,6 @@ function readTicketSelection(){
 
                     break;
                 }
-
             }
 
             selectedTickets[
@@ -1811,8 +1811,10 @@ function readTicketSelection(){
     );
 
     /*
-    Support a generic ticket_type_id parameter when
-    exactly one active ticket type exists.
+    If there is exactly one active ticket type,
+    also support:
+
+    ?event=UUID&ticket_type_id=2
     */
 
     if(
@@ -1878,8 +1880,44 @@ function validateSelection(){
                 `The ${getTicketName(item.ticket)} ticket type is no longer available.`
             );
         }
+
+        const quantityTotal =
+            numericValue(
+                item.ticket.quantity_total
+            );
+
+        const quantitySold =
+            numericValue(
+                item.ticket.quantity_sold
+            );
+
+        const available =
+            Math.max(
+                0,
+                quantityTotal -
+                quantitySold
+            );
+
+        /*
+        This is only a UI freshness check.
+        The secure RPC remains authoritative.
+        */
+
+        if(
+            quantityTotal > 0 &&
+            item.quantity > available
+        ){
+
+            throw new Error(
+                `Only ${available} ${getTicketName(item.ticket)} ticket${available === 1 ? "" : "s"} appear to be available. Please return to the event and refresh.`
+            );
+        }
     }
 }
+
+/* ============================================================
+   SELECTED ITEMS
+============================================================ */
 
 function getSelectedTicketItems(){
 
@@ -1911,7 +1949,7 @@ function getSelectedTicketItems(){
 }
 
 /* ============================================================
-   RENDER CUSTOMER
+   CUSTOMER RENDER
 ============================================================ */
 
 function renderCustomer(){
@@ -1965,7 +2003,7 @@ function renderCustomer(){
 }
 
 /* ============================================================
-   RENDER EVENT
+   EVENT RENDER
 ============================================================ */
 
 function renderEvent(){
@@ -1985,15 +2023,12 @@ function renderEvent(){
     ).textContent =
         eventName;
 
-    const eventMeta =
-        buildEventMeta(
-            currentEvent
-        );
-
     document.getElementById(
         "eventMeta"
     ).textContent =
-        eventMeta ||
+        buildEventMeta(
+            currentEvent
+        ) ||
         "Event information is available from K-Tickets.";
 
     const description =
@@ -2025,7 +2060,7 @@ function renderEvent(){
 }
 
 /* ============================================================
-   RENDER TICKETS
+   TICKET RENDER
 ============================================================ */
 
 function renderTickets(){
@@ -2150,7 +2185,7 @@ function renderTickets(){
 }
 
 /* ============================================================
-   RENDER SUMMARY
+   SUMMARY
 ============================================================ */
 
 function renderSummary(){
@@ -2243,11 +2278,12 @@ function renderSummary(){
             : "—";
 
     /*
-    Deliberately do not calculate the service fee
-    or final total in browser code.
+    IMPORTANT:
 
-    The current backend RPC snapshots the active fee
-    and calculates the authoritative total.
+    Never calculate the final service fee,
+    discount or order total in the browser.
+
+    create_checkout_order() is authoritative.
     */
 
     document.getElementById(
@@ -2319,8 +2355,16 @@ function applyPromotionCode(){
     }
 
     /*
-    This page does not mark a promotion valid locally.
-    The checkout RPC performs the real promotion validation.
+    The browser never decides whether a promotion
+    is valid.
+
+    The secure RPC checks:
+    - code
+    - event
+    - ticket type
+    - date
+    - status
+    - discount
     */
 
     setPromoMessage(
@@ -2346,7 +2390,7 @@ function setPromoMessage(
 }
 
 /* ============================================================
-   CREATE ORDER
+   CREATE SECURE ORDER
 ============================================================ */
 
 continueButton.addEventListener(
@@ -2388,10 +2432,11 @@ async function createOrder(){
     try{
 
         /*
-        Reload live event/ticket data immediately before
-        creating the order.
+        Reload the live event/ticket data.
 
-        This keeps the UI fresh but does NOT replace the
+        This refreshes the browser view.
+
+        It does NOT replace the authoritative
         server-side validation.
         */
 
@@ -2400,6 +2445,8 @@ async function createOrder(){
         readTicketSelection();
 
         validateSelection();
+
+        renderEvent();
 
         renderTickets();
 
@@ -2425,6 +2472,18 @@ async function createOrder(){
                 })
             );
 
+        /*
+        IMPORTANT:
+
+        No price.
+        No subtotal.
+        No service fee.
+        No total.
+        No merchant ID.
+
+        Only ticket IDs + quantities.
+        */
+
         const {
             data,
             error
@@ -2436,7 +2495,8 @@ async function createOrder(){
                         rpcItems,
 
                     p_promotion_code:
-                        promotionCode || null
+                        promotionCode ||
+                        null
                 }
             );
 
@@ -2467,15 +2527,15 @@ async function createOrder(){
         }
 
         /*
-        The server has now:
-        - validated inventory
-        - reserved tickets
-        - calculated the fee
-        - calculated discount
-        - created order items
-        - created the awaiting-payment order
+        At this point the secure RPC has created:
 
-        The payment page becomes responsible for payment.
+        - order
+        - order items
+        - reservation
+        - service fee snapshot
+        - promotion/discount result
+
+        The payment page now takes over.
         */
 
         window.location.href =
@@ -2505,7 +2565,7 @@ async function createOrder(){
 }
 
 /* ============================================================
-   RPC RESULT NORMALISATION
+   RPC RESULT
 ============================================================ */
 
 function normalizeRPCResult(
@@ -2516,7 +2576,8 @@ function normalizeRPCResult(
         Array.isArray(data)
     ){
 
-        return data[0] || null;
+        return data[0] ||
+            null;
     }
 
     return data;
@@ -2529,6 +2590,7 @@ function extractOrderId(
     if(
         typeof result === "string"
     ){
+
         return result;
     }
 
@@ -2536,6 +2598,7 @@ function extractOrderId(
         !result ||
         typeof result !== "object"
     ){
+
         return null;
     }
 
@@ -2549,7 +2612,7 @@ function extractOrderId(
 }
 
 /* ============================================================
-   ERRORS
+   ERROR NORMALISATION
 ============================================================ */
 
 function normalizeCheckoutError(
@@ -2568,67 +2631,51 @@ function normalizeCheckoutError(
         raw.toLowerCase();
 
     if(
-        lower.includes(
-            "insufficient"
-        ) ||
-        lower.includes(
-            "available"
-        ) ||
-        lower.includes(
-            "inventory"
-        ) ||
-        lower.includes(
-            "sold out"
-        )
+        lower.includes("insufficient") ||
+        lower.includes("available") ||
+        lower.includes("inventory") ||
+        lower.includes("sold out")
     ){
 
-        return (
+        return(
             "One or more selected tickets are no longer available. Please return to the event and refresh the ticket selection."
         );
     }
 
     if(
-        lower.includes(
-            "promotion"
-        ) ||
-        lower.includes(
-            "promo"
-        )
+        lower.includes("promotion") ||
+        lower.includes("promo")
     ){
 
         return raw;
     }
 
     if(
-        lower.includes(
-            "expired"
-        )
+        lower.includes("expired")
     ){
 
-        return (
+        return(
             "This ticket selection has expired. Please return to the event and select the tickets again."
         );
     }
 
     if(
-        lower.includes(
-            "authentication"
-        ) ||
-        lower.includes(
-            "unauthorized"
-        ) ||
-        lower.includes(
-            "not authenticated"
-        )
+        lower.includes("authentication") ||
+        lower.includes("unauthorized") ||
+        lower.includes("not authenticated")
     ){
 
-        return (
+        return(
             "Your session has expired. Please sign in again."
         );
     }
 
     return raw;
 }
+
+/* ============================================================
+   ERRORS
+============================================================ */
 
 function showError(
     message
@@ -2657,7 +2704,7 @@ function hideError(){
 }
 
 /* ============================================================
-   SHOW CHECKOUT
+   SHOW
 ============================================================ */
 
 function showCheckout(){
@@ -2747,40 +2794,11 @@ document
         toggleSidebar
     );
 
-document
-    .querySelectorAll(
-        ".sidebar .nav-link"
-    )
-    .forEach(
-        link => {
-
-            link.addEventListener(
-                "click",
-                () => {
-
-                    document
-                        .getElementById(
-                            "sidebar"
-                        )
-                        .classList
-                        .remove(
-                            "open"
-                        );
-                }
-            );
-        }
-    );
-
 function toggleSidebar(){
 
     document
-        .getElementById(
-            "sidebar"
-        )
-        .classList
-        .toggle(
-            "open"
-        );
+        .getElementById("sidebar")
+        .classList.toggle("open");
 }
 
 /* ============================================================
@@ -2793,37 +2811,22 @@ document
     )
     .addEventListener(
         "click",
-        logout
-    );
+        async () => {
 
-async function logout(){
+            await safeSignOut();
 
-    try{
-
-        if(supabaseClient){
-
-            await supabaseClient.auth.signOut();
+            window.location.href =
+                "../login.html";
         }
-
-    }catch(error){
-
-        console.warn(
-            "Logout warning:",
-            error
-        );
-
-    }finally{
-
-        window.location.href =
-            "../login.html";
-    }
-}
+    );
 
 async function safeSignOut(){
 
     try{
 
-        if(supabaseClient){
+        if(
+            supabaseClient
+        ){
 
             await supabaseClient.auth.signOut();
         }
@@ -2831,26 +2834,39 @@ async function safeSignOut(){
     }catch(error){
 
         console.warn(
-            "Sign-out warning:",
+            "Sign out failed:",
             error
         );
     }
 }
 
 /* ============================================================
-   REDIRECT
+   LOGIN
 ============================================================ */
 
 function redirectToLogin(
     reason
 ){
 
-    window.location.replace(
-        "../login.html?error=" +
-        encodeURIComponent(
-            reason || "unauthorized"
-        )
+    const params =
+        new URLSearchParams();
+
+    params.set(
+        "next",
+        "customer/checkout.html"
     );
+
+    if(reason){
+
+        params.set(
+            "reason",
+            reason
+        );
+    }
+
+    window.location.href =
+        "../login.html?" +
+        params.toString();
 }
 
 /* ============================================================
@@ -2861,21 +2877,11 @@ function getEventName(
     event
 ){
 
-    if(!event){
-        return "";
-    }
-
-    return (
+    return(
         cleanValue(
-            event.name
+            event?.title
         ) ||
-        cleanValue(
-            event.title
-        ) ||
-        cleanValue(
-            event.event_name
-        ) ||
-        ""
+        "Event"
     );
 }
 
@@ -2883,18 +2889,10 @@ function getEventDescription(
     event
 ){
 
-    if(!event){
-        return "";
-    }
-
-    return (
+    return(
         cleanValue(
-            event.description
-        ) ||
-        cleanValue(
-            event.event_description
-        ) ||
-        ""
+            event?.description
+        )
     );
 }
 
@@ -2902,93 +2900,53 @@ function buildEventMeta(
     event
 ){
 
-    if(!event){
-        return "";
-    }
-
     const parts = [];
 
-    const date =
-        firstValue(
-            event,
-            [
-                "date",
-                "event_date",
-                "start_date"
-            ]
-        );
-
-    const startTime =
-        firstValue(
-            event,
-            [
-                "start_time",
-                "time",
-                "event_time"
-            ]
-        );
-
-    const endTime =
-        firstValue(
-            event,
-            [
-                "end_time"
-            ]
-        );
-
-    const location =
-        firstValue(
-            event,
-            [
-                "location",
-                "venue",
-                "address"
-            ]
+    const venue =
+        cleanValue(
+            event?.venue
         );
 
     const city =
-        firstValue(
-            event,
-            [
-                "city"
-            ]
+        cleanValue(
+            event?.city
         );
 
-    if(date){
-
+    if(venue){
         parts.push(
-            formatEventDate(
-                date
-            )
-        );
-    }
-
-    if(startTime){
-
-        parts.push(
-            endTime
-                ? `${startTime} – ${endTime}`
-                : String(startTime)
-        );
-    }
-
-    if(location){
-
-        parts.push(
-            String(location)
+            venue
         );
     }
 
     if(city){
-
         parts.push(
-            String(city)
+            city
         );
     }
 
-    return parts.join(
-        " · "
-    );
+    const start =
+        formatDateTime(
+            event?.start_at
+        );
+
+    if(start){
+        parts.push(
+            start
+        );
+    }
+
+    const end =
+        formatDateTime(
+            event?.end_at
+        );
+
+    if(end){
+        parts.push(
+            `Ends ${end}`
+        );
+    }
+
+    return parts.join(" • ");
 }
 
 /* ============================================================
@@ -2999,21 +2957,11 @@ function getTicketName(
     ticket
 ){
 
-    if(!ticket){
-        return "";
-    }
-
-    return (
+    return(
         cleanValue(
-            ticket.name
+            ticket?.name
         ) ||
-        cleanValue(
-            ticket.title
-        ) ||
-        cleanValue(
-            ticket.ticket_name
-        ) ||
-        ""
+        "Ticket"
     );
 }
 
@@ -3021,11 +2969,11 @@ function getCurrency(
     ticket
 ){
 
-    return (
+    return(
         cleanValue(
             ticket?.currency
         ) ||
-        "KWD"
+        ""
     );
 }
 
@@ -3033,37 +2981,36 @@ function getOrderCurrency(
     items
 ){
 
-    for(
-        const item of items
-    ){
+    const currencies =
+        [
+            ...new Set(
+                items
+                    .map(
+                        item =>
+                            getCurrency(
+                                item.ticket
+                            )
+                    )
+                    .filter(Boolean)
+            )
+        ];
 
-        const currency =
-            cleanValue(
-                item.ticket?.currency
-            );
+    if(currencies.length === 1){
 
-        if(currency){
-            return currency;
-        }
+        return currencies[0];
     }
 
-    return "KWD";
-}
+    if(currencies.length > 1){
 
-/* ============================================================
-   AVAILABILITY DISPLAY
-============================================================ */
+        return "Multiple";
+    }
+
+    return "";
+}
 
 function getDisplayAvailability(
     ticket
 ){
-
-    /*
-    This is display-only.
-
-    quantity_total and quantity_sold are read from
-    Supabase. The checkout RPC remains authoritative.
-    */
 
     const total =
         numericValue(
@@ -3075,20 +3022,15 @@ function getDisplayAvailability(
             ticket?.quantity_sold
         );
 
-    if(
-        total <= 0
-    ){
+    if(total <= 0){
 
         return null;
     }
 
-    const available =
-        Math.max(
-            0,
-            total - sold
-        );
-
-    return available;
+    return Math.max(
+        0,
+        total - sold
+    );
 }
 
 function buildAvailabilityMarkup(
@@ -3099,6 +3041,7 @@ function buildAvailabilityMarkup(
         available === null ||
         available === undefined
     ){
+
         return "";
     }
 
@@ -3107,60 +3050,37 @@ function buildAvailabilityMarkup(
     ){
 
         return `
+            <div class="ticket-stock unavailable">
+                Sold out
+            </div>
+        `;
+    }
+
+    if(
+        available <= 5
+    ){
+
+        return `
             <div class="ticket-stock low">
-                Availability will be verified at checkout.
+                Only ${escapeHTML(
+                    String(available)
+                )} left
             </div>
         `;
     }
 
     return `
-        <div class="ticket-stock ${available <= 10 ? "low" : "available"}">
+        <div class="ticket-stock available">
             ${escapeHTML(
                 String(available)
-            )}
-            currently shown as available
+            )} available
         </div>
     `;
 }
 
 /* ============================================================
-   MONEY
+   NUMBERS
 ============================================================ */
-
-function formatMoney(
-    value,
-    currency
-){
-
-    const amount =
-        Number(value);
-
-    if(
-        !Number.isFinite(
-            amount
-        )
-    ){
-        return "—";
-    }
-
-    const code =
-        cleanValue(
-            currency
-        ) ||
-        "KWD";
-
-    /*
-    K-Tickets currently uses monetary values coming from
-    database records. Display precision follows the existing
-    KWD UI convention while the server remains authoritative.
-    */
-
-    return (
-        amount.toFixed(3) +
-        " " +
-        code
-    );
-}
 
 function numericValue(
     value
@@ -3176,73 +3096,136 @@ function numericValue(
         : 0;
 }
 
+function parseQuantity(
+    value
+){
+
+    const number =
+        Number(
+            value
+        );
+
+    if(
+        !Number.isFinite(number)
+    ){
+
+        return 0;
+    }
+
+    const integer =
+        Math.floor(number);
+
+    if(
+        integer < 1
+    ){
+
+        return 0;
+    }
+
+    return Math.min(
+        integer,
+        999
+    );
+}
+
+/* ============================================================
+   MONEY
+============================================================ */
+
+function formatMoney(
+    amount,
+    currency
+){
+
+    const value =
+        numericValue(
+            amount
+        );
+
+    const code =
+        cleanValue(
+            currency
+        );
+
+    if(!code){
+
+        return value.toFixed(3);
+    }
+
+    if(
+        code.toUpperCase() ===
+        "MULTIPLE"
+    ){
+
+        return "Multiple currencies";
+    }
+
+    try{
+
+        return new Intl.NumberFormat(
+            undefined,
+            {
+                style:"currency",
+                currency:code,
+                minimumFractionDigits:3,
+                maximumFractionDigits:3
+            }
+        ).format(value);
+
+    }catch(error){
+
+        return(
+            `${code} ${value.toFixed(3)}`
+        );
+    }
+}
+
 /* ============================================================
    DATE
 ============================================================ */
 
-function formatEventDate(
+function formatDateTime(
     value
 ){
 
     if(!value){
+
         return "";
     }
 
-    const raw =
-        String(value)
-            .trim();
-
     const date =
-        new Date(raw);
+        new Date(
+            value
+        );
 
     if(
         Number.isNaN(
             date.getTime()
         )
     ){
-        return raw;
+
+        return "";
     }
 
-    /*
-    Date-only database values are displayed using a
-    locale-safe format.
-    */
+    try{
 
-    return date.toLocaleDateString(
-        undefined,
-        {
-            year:"numeric",
-            month:"short",
-            day:"numeric"
-        }
-    );
+        return new Intl.DateTimeFormat(
+            undefined,
+            {
+                dateStyle:"medium",
+                timeStyle:"short"
+            }
+        ).format(date);
+
+    }catch(error){
+
+        return date.toLocaleString();
+    }
 }
 
 /* ============================================================
-   GENERIC VALUES
+   TEXT
 ============================================================ */
-
-function firstValue(
-    object,
-    keys
-){
-
-    for(
-        const key of keys
-    ){
-
-        const value =
-            cleanValue(
-                object?.[key]
-            );
-
-        if(value){
-            return value;
-        }
-    }
-
-    return "";
-}
 
 function cleanValue(
     value
@@ -3252,74 +3235,14 @@ function cleanValue(
         value === null ||
         value === undefined
     ){
+
         return "";
     }
 
-    const result =
-        String(value)
-            .trim();
-
-    return result;
+    return String(
+        value
+    ).trim();
 }
-
-function parseQuantity(
-    value
-){
-
-    const number =
-        Number(
-            String(
-                value ?? ""
-            ).trim()
-        );
-
-    if(
-        !Number.isInteger(
-            number
-        ) ||
-        number < 0
-    ){
-        return 0;
-    }
-
-    return number;
-}
-
-/* ============================================================
-   INITIALS
-============================================================ */
-
-function getInitials(
-    value
-){
-
-    const cleaned =
-        cleanValue(
-            value
-        );
-
-    if(!cleaned){
-        return "K";
-    }
-
-    const parts =
-        cleaned
-            .split(/\s+/)
-            .filter(Boolean);
-
-    return parts
-        .slice(0,2)
-        .map(
-            part =>
-                part.charAt(0)
-        )
-        .join("")
-        .toUpperCase() || "K";
-}
-
-/* ============================================================
-   HTML ESCAPE
-============================================================ */
 
 function escapeHTML(
     value
@@ -3328,39 +3251,70 @@ function escapeHTML(
     return String(
         value ?? ""
     )
-        .replaceAll(
-            "&",
+        .replace(
+            /&/g,
             "&amp;"
         )
-        .replaceAll(
-            "<",
+        .replace(
+            /</g,
             "&lt;"
         )
-        .replaceAll(
-            ">",
+        .replace(
+            />/g,
             "&gt;"
         )
-        .replaceAll(
-            '"',
+        .replace(
+            /"/g,
             "&quot;"
         )
-        .replaceAll(
-            "'",
+        .replace(
+            /'/g,
             "&#039;"
         );
+}
+
+function getInitials(
+    value
+){
+
+    const text =
+        cleanValue(
+            value
+        );
+
+    if(!text){
+
+        return "—";
+    }
+
+    const parts =
+        text
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if(parts.length === 1){
+
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
+    }
+
+    return(
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
 }
 
 /* ============================================================
    START
 ============================================================ */
 
-(async function(){
+initialise();
 
-    monitorAuth();
-
-    await initialise();
-
-})();
+setTimeout(
+    monitorAuth,
+    500
+);
 </script>
 
 </body>
