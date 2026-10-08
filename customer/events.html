@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +7,11 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="same-origin">
 
-<title>Event Details | K-Tickets</title>
+<title>Discover Events | K-Tickets</title>
 
 <meta
     name="description"
-    content="View event details and available tickets on K-Tickets."
+    content="Discover and purchase tickets for events on K-Tickets."
 >
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -68,7 +69,8 @@ body{
 }
 
 button,
-input{
+input,
+select{
     font:inherit;
 }
 
@@ -79,7 +81,7 @@ button{
 
 button:disabled{
     cursor:not-allowed;
-    opacity:.5;
+    opacity:.55;
 }
 
 a{
@@ -113,9 +115,9 @@ a{
 .brand-mark{
     width:42px;
     height:42px;
-    border-radius:12px;
     display:grid;
     place-items:center;
+    border-radius:12px;
     background:var(--cream);
     color:var(--green);
     font-size:20px;
@@ -133,8 +135,8 @@ a{
     margin-top:2px;
     color:rgba(255,255,255,.55);
     font-size:10px;
-    letter-spacing:.15em;
     text-transform:uppercase;
+    letter-spacing:.15em;
 }
 
 .nav-label{
@@ -142,8 +144,8 @@ a{
     padding:0 12px;
     color:rgba(255,255,255,.4);
     font-size:10px;
-    text-transform:uppercase;
     letter-spacing:.15em;
+    text-transform:uppercase;
 }
 
 .nav{
@@ -164,8 +166,8 @@ a{
 }
 
 .nav-link:hover{
-    background:rgba(255,255,255,.08);
     color:white;
+    background:rgba(255,255,255,.08);
 }
 
 .nav-link.active{
@@ -207,8 +209,8 @@ a{
 .logout-btn{
     height:42px;
     border-radius:11px;
-    border:1px solid rgba(255,255,255,.12);
     background:transparent;
+    border:1px solid rgba(255,255,255,.12);
     color:rgba(255,255,255,.7);
 }
 
@@ -252,18 +254,30 @@ a{
     font-size:20px;
 }
 
-.breadcrumb{
-    color:var(--muted);
-    font-size:11px;
-    min-width:0;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+.search-box{
+    width:min(560px,100%);
+    height:45px;
+    padding:0 14px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
 }
 
-.breadcrumb a{
-    color:var(--green);
-    font-weight:700;
+.search-box span{
+    font-size:17px;
+    color:var(--muted);
+}
+
+.search-box input{
+    width:100%;
+    border:0;
+    outline:0;
+    background:transparent;
+    color:var(--ink);
+    font-size:13px;
 }
 
 .top-actions{
@@ -292,6 +306,12 @@ a{
     background:var(--bordo);
 }
 
+.profile{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
 .avatar{
     width:40px;
     height:40px;
@@ -304,24 +324,112 @@ a{
     font-weight:800;
 }
 
+.profile-name{
+    max-width:150px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:12px;
+    font-weight:700;
+}
+
 /* ============================================================
    CONTENT
 ============================================================ */
 
 .content{
-    max-width:1500px;
+    max-width:1700px;
     margin:auto;
     padding:35px;
+}
+
+.page-heading small{
+    display:block;
+    color:var(--bordo);
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    font-size:10px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+.page-heading h1{
+    color:var(--green);
+    font-size:clamp(28px,3vw,42px);
+    line-height:1.1;
+    letter-spacing:-.04em;
+}
+
+.page-heading p{
+    margin-top:9px;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.6;
+}
+
+/* ============================================================
+   FILTERS
+============================================================ */
+
+.filter-bar{
+    margin-top:28px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.filter-btn{
+    height:39px;
+    padding:0 15px;
+    border-radius:50px;
+    border:1px solid var(--line);
+    background:white;
+    color:var(--muted);
+    font-size:11px;
+    font-weight:700;
+    transition:.2s ease;
+}
+
+.filter-btn:hover{
+    border-color:var(--green);
+    color:var(--green);
+}
+
+.filter-btn.active{
+    background:var(--green);
+    border-color:var(--green);
+    color:white;
+}
+
+.sort-wrap{
+    margin-left:auto;
+}
+
+.sort-select{
+    height:39px;
+    padding:0 13px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:white;
+    color:var(--green);
+    outline:0;
+    font-size:11px;
+    font-weight:700;
 }
 
 /* ============================================================
    LOADING
 ============================================================ */
 
-.loading-screen{
-    min-height:70vh;
+.loading{
+    margin-top:30px;
+    min-height:320px;
     display:grid;
     place-items:center;
+    border:1px solid var(--line);
+    border-radius:22px;
+    background:white;
 }
 
 .loader-box{
@@ -329,8 +437,8 @@ a{
 }
 
 .loader{
-    width:36px;
-    height:36px;
+    width:38px;
+    height:38px;
     margin:0 auto 15px;
     border:3px solid rgba(15,61,58,.12);
     border-top-color:var(--green);
@@ -350,590 +458,399 @@ a{
 }
 
 /* ============================================================
-   ERROR
+   FEATURED
 ============================================================ */
 
-.error-panel{
+.featured{
     display:none;
-    min-height:65vh;
-    align-items:center;
-    justify-content:center;
-}
-
-.error-panel.show{
-    display:flex;
-}
-
-.error-box{
-    width:min(560px,100%);
-    text-align:center;
-    padding:35px;
-    background:white;
-    border:1px solid var(--line);
-    border-radius:22px;
-    box-shadow:var(--shadow-sm);
-}
-
-.error-icon{
-    width:54px;
-    height:54px;
-    margin:0 auto 16px;
-    border-radius:16px;
-    display:grid;
-    place-items:center;
-    background:var(--bordo-soft);
-    color:var(--bordo);
-    font-weight:900;
-    font-size:20px;
-}
-
-.error-box h2{
-    color:var(--green);
-    font-size:20px;
-}
-
-.error-box p{
-    margin-top:9px;
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.7;
-}
-
-.error-actions{
-    margin-top:19px;
-    display:flex;
-    gap:8px;
-    justify-content:center;
-    flex-wrap:wrap;
-}
-
-.error-btn{
-    padding:11px 15px;
-    border-radius:11px;
-    font-size:11px;
-    font-weight:800;
-}
-
-.error-btn.primary{
-    background:var(--green);
-    color:#fff;
-}
-
-.error-btn.secondary{
-    background:var(--cream);
-    color:var(--green);
-}
-
-/* ============================================================
-   EVENT HERO
-============================================================ */
-
-.event-hero{
-    min-height:390px;
-    border-radius:27px;
-    overflow:hidden;
+    margin-top:25px;
+    min-height:280px;
+    border-radius:25px;
+    padding:30px;
     position:relative;
-    padding:32px;
-    display:flex;
+    overflow:hidden;
     align-items:flex-end;
     background:
         radial-gradient(
-            circle at 80% 20%,
-            rgba(245,218,191,.38),
+            circle at 78% 25%,
+            rgba(245,218,191,.45),
             transparent 25%
         ),
         linear-gradient(
-            125deg,
+            120deg,
             var(--green),
             var(--bordo)
         );
     color:white;
-    box-shadow:var(--shadow-md);
 }
 
-.event-hero::before{
-    content:"K";
-    position:absolute;
-    right:7%;
-    top:-65px;
-    font-size:410px;
-    font-weight:900;
-    line-height:1;
-    color:rgba(255,255,255,.045);
-    pointer-events:none;
+.featured.show{
+    display:flex;
 }
 
-.event-hero.has-image{
+.featured.has-image{
     background-size:cover;
     background-position:center;
 }
 
-.event-hero.has-image::after{
+.featured.has-image::after{
     content:"";
     position:absolute;
     inset:0;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(15,61,58,.15),
-            rgba(15,61,58,.86)
-        );
+    background:linear-gradient(
+        180deg,
+        rgba(15,61,58,.12),
+        rgba(15,61,58,.88)
+    );
 }
 
-.hero-content{
+.featured::before{
+    content:"K";
+    position:absolute;
+    right:7%;
+    top:-30px;
+    font-size:300px;
+    line-height:1;
+    font-weight:900;
+    color:rgba(255,255,255,.045);
+    pointer-events:none;
+}
+
+.featured-content{
     position:relative;
     z-index:2;
-    max-width:800px;
-    width:100%;
+    max-width:720px;
 }
 
-.event-badges{
-    display:flex;
-    flex-wrap:wrap;
-    gap:7px;
-}
-
-.event-badge{
-    padding:7px 10px;
+.featured-badge{
+    display:inline-flex;
+    padding:6px 10px;
     border-radius:50px;
-    background:rgba(255,255,255,.13);
-    border:1px solid rgba(255,255,255,.13);
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.14);
     font-size:9px;
     font-weight:800;
-    text-transform:uppercase;
     letter-spacing:.08em;
+    text-transform:uppercase;
 }
 
-.event-content-title{
-    margin-top:15px;
-    font-size:clamp(32px,4vw,55px);
-    line-height:1;
-    letter-spacing:-.05em;
-    overflow-wrap:anywhere;
+.featured h2{
+    margin-top:12px;
+    font-size:clamp(25px,3vw,38px);
+    line-height:1.05;
+    letter-spacing:-.04em;
 }
 
-.event-description-short{
-    max-width:680px;
-    margin-top:13px;
-    color:rgba(255,255,255,.75);
-    font-size:13px;
-    line-height:1.7;
-    overflow-wrap:anywhere;
+.featured p{
+    margin-top:9px;
+    color:rgba(255,255,255,.72);
+    font-size:12px;
+    line-height:1.6;
 }
 
-.hero-meta{
-    margin-top:20px;
+.featured-meta{
+    margin-top:17px;
     display:flex;
     flex-wrap:wrap;
-    gap:9px;
+    gap:8px;
 }
 
-.hero-meta span{
-    padding:8px 11px;
-    border-radius:10px;
+.featured-meta span{
+    padding:7px 10px;
+    border-radius:9px;
     background:rgba(0,0,0,.15);
-    color:rgba(255,255,255,.9);
     font-size:10px;
 }
 
+.featured-action{
+    margin-top:18px;
+    min-height:40px;
+    padding:0 15px;
+    border-radius:10px;
+    background:white;
+    color:var(--green);
+    font-size:10px;
+    font-weight:800;
+}
+
 /* ============================================================
-   LAYOUT
+   RESULTS
 ============================================================ */
 
-.event-layout{
-    margin-top:22px;
-    display:grid;
-    grid-template-columns:minmax(0,1.5fr) minmax(340px,.65fr);
-    gap:22px;
-    align-items:start;
+.results-head{
+    margin-top:35px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
 }
 
-.left-column{
-    display:grid;
-    gap:20px;
-}
-
-.card{
-    background:white;
-    border:1px solid var(--line);
-    border-radius:22px;
-    padding:24px;
-    box-shadow:var(--shadow-sm);
-}
-
-.card h2{
+.results-head h2{
     color:var(--green);
     font-size:19px;
 }
 
+.results-count{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.event-grid{
+    margin-top:17px;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:19px;
+}
+
 /* ============================================================
-   EVENT INFORMATION
+   EVENT CARD
 ============================================================ */
 
-.description{
-    margin-top:14px;
-    color:#625d59;
-    font-size:13px;
-    line-height:1.8;
-    overflow-wrap:anywhere;
-    white-space:pre-line;
-}
-
-.info-grid{
-    margin-top:18px;
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:11px;
-}
-
-.info-box{
-    padding:15px;
+.event-card{
+    background:white;
     border:1px solid var(--line);
-    border-radius:14px;
-    background:var(--surface);
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:var(--shadow-sm);
+    transition:.25s ease;
 }
 
-.info-box small{
+.event-card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--shadow-md);
+}
+
+.event-cover{
+    min-height:205px;
+    padding:15px;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    color:white;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(255,255,255,.18),
+            transparent 22%
+        ),
+        linear-gradient(
+            145deg,
+            var(--green),
+            var(--bordo)
+        );
+}
+
+.event-cover.has-image{
+    background-size:cover;
+    background-position:center;
+}
+
+.event-cover.has-image::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        180deg,
+        rgba(15,61,58,.12),
+        rgba(15,61,58,.82)
+    );
+}
+
+.event-cover::before{
+    content:"K";
+    position:absolute;
+    right:-10px;
+    bottom:-55px;
+    font-size:220px;
+    line-height:1;
+    font-weight:900;
+    color:rgba(255,255,255,.045);
+    pointer-events:none;
+}
+
+.date-box{
+    position:relative;
+    z-index:2;
+    width:50px;
+    padding:7px;
+    border-radius:10px;
+    background:rgba(255,255,255,.94);
+    color:var(--green);
+    text-align:center;
+}
+
+.date-box strong{
     display:block;
-    color:var(--muted);
+    font-size:16px;
+    line-height:1;
+}
+
+.date-box span{
+    display:block;
+    margin-top:3px;
+    font-size:8px;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.cover-title{
+    position:relative;
+    z-index:2;
+}
+
+.cover-title small{
+    display:block;
+    color:rgba(255,255,255,.68);
     font-size:9px;
     text-transform:uppercase;
-    letter-spacing:.08em;
+    letter-spacing:.1em;
 }
 
-.info-box strong{
+.cover-title strong{
     display:block;
-    margin-top:7px;
-    color:var(--green);
-    font-size:12px;
-    line-height:1.55;
+    margin-top:4px;
+    font-size:19px;
+    line-height:1.05;
+    max-width:88%;
     overflow-wrap:anywhere;
 }
 
-.organizer{
-    margin-top:20px;
-    display:flex;
-    align-items:center;
-    gap:13px;
-    padding-top:20px;
-    border-top:1px solid var(--line);
-}
-
-.organizer-avatar{
-    width:45px;
-    height:45px;
-    flex:none;
-    border-radius:13px;
-    display:grid;
-    place-items:center;
-    background:var(--cream);
-    color:var(--green);
-    font-weight:900;
-}
-
-.organizer small{
-    color:var(--muted);
-    font-size:9px;
-}
-
-.organizer strong{
-    display:block;
-    margin-top:3px;
-    color:var(--green);
-    font-size:13px;
-    overflow-wrap:anywhere;
-}
-
-/* ============================================================
-   TICKETS
-============================================================ */
-
-.ticket-section-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    margin-bottom:16px;
-}
-
-.ticket-section-head span{
-    color:var(--muted);
-    font-size:10px;
-}
-
-.ticket-option{
+.event-body{
     padding:17px;
-    border:1px solid var(--line);
-    border-radius:16px;
-    transition:.2s ease;
 }
 
-.ticket-option + .ticket-option{
-    margin-top:10px;
+.event-category{
+    color:var(--bordo);
+    font-size:9px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.1em;
 }
 
-.ticket-option.selected{
-    border-color:var(--bordo);
-    box-shadow:0 0 0 2px rgba(108,21,30,.07);
-}
-
-.ticket-option.unavailable{
-    opacity:.6;
-}
-
-.ticket-option-top{
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-}
-
-.ticket-option-info{
-    min-width:0;
-}
-
-.ticket-option h3{
+.event-body h3{
+    margin-top:6px;
     color:var(--green);
-    font-size:14px;
-}
-
-.ticket-option p{
-    margin-top:5px;
-    color:var(--muted);
-    font-size:10px;
-    line-height:1.6;
+    font-size:16px;
+    line-height:1.2;
     overflow-wrap:anywhere;
 }
 
-.ticket-price{
-    white-space:nowrap;
-    text-align:right;
+.event-info{
+    margin-top:9px;
+    display:grid;
+    gap:5px;
 }
 
-.ticket-price strong{
-    color:var(--green);
-    font-size:15px;
-}
-
-.ticket-price del{
-    display:block;
-    margin-top:3px;
+.event-info div{
     color:var(--muted);
-    font-size:9px;
+    font-size:10px;
+    line-height:1.4;
 }
 
-.ticket-bottom{
-    margin-top:13px;
+.event-footer{
+    margin-top:15px;
     padding-top:13px;
     border-top:1px solid var(--line);
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:15px;
+    gap:10px;
 }
 
-.availability{
+.price{
+    min-width:0;
+}
+
+.price strong{
     color:var(--green);
-    font-size:9px;
-    font-weight:700;
-    line-height:1.5;
-}
-
-.availability.low{
-    color:var(--warning);
-}
-
-.availability.none{
-    color:var(--danger);
-}
-
-.ticket-sales{
-    margin-top:4px;
-    color:var(--muted);
-    font-size:9px;
-}
-
-.quantity{
-    display:flex;
-    align-items:center;
-    border:1px solid var(--line);
-    border-radius:10px;
-    overflow:hidden;
-    flex:none;
-}
-
-.quantity button{
-    width:34px;
-    height:34px;
-    background:var(--surface);
-    color:var(--green);
-    font-weight:800;
     font-size:15px;
 }
 
-.quantity button:hover:not(:disabled){
-    background:var(--green-soft);
+.price small{
+    display:block;
+    margin-top:3px;
+    color:var(--muted);
+    font-size:9px;
 }
 
-.quantity span{
-    width:38px;
-    text-align:center;
-    font-size:12px;
-    font-weight:800;
-}
-
-.ticket-disabled{
-    padding:10px 12px;
-    border-radius:9px;
-    background:var(--bordo-soft);
+.sold-out{
+    display:inline-block;
+    margin-top:4px;
     color:var(--danger);
     font-size:9px;
     font-weight:800;
 }
 
-/* ============================================================
-   CHECKOUT
-============================================================ */
-
-.checkout-card{
-    position:sticky;
-    top:100px;
-}
-
-.checkout-card h2{
-    font-size:20px;
-}
-
-.selected-summary{
-    margin-top:18px;
-    padding:14px;
-    border-radius:14px;
-    background:var(--surface);
-    border:1px solid var(--line);
-}
-
-.selected-summary small{
-    color:var(--muted);
-    font-size:9px;
-    text-transform:uppercase;
-}
-
-.selected-summary strong{
-    display:block;
-    margin-top:5px;
-    color:var(--green);
-    font-size:13px;
-    line-height:1.5;
-    overflow-wrap:anywhere;
-}
-
-.summary-items{
-    margin-top:14px;
-    display:grid;
-    gap:9px;
-}
-
-.summary-item{
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-    font-size:11px;
-    color:var(--muted);
-}
-
-.summary-item strong{
-    color:var(--ink);
-    white-space:nowrap;
-}
-
-.summary-divider{
-    height:1px;
-    background:var(--line);
-    margin:18px 0;
-}
-
-.summary-row{
-    margin-top:11px;
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-    color:var(--muted);
-    font-size:11px;
-}
-
-.summary-row strong{
-    color:var(--ink);
-    text-align:right;
-}
-
-.total-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-}
-
-.total-row span{
-    color:var(--muted);
-    font-size:11px;
-}
-
-.total-row strong{
-    color:var(--green);
-    font-size:21px;
-}
-
-.dynamic-note{
-    margin-top:14px;
-    padding:11px 12px;
-    border-radius:11px;
-    background:var(--green-soft);
-    color:var(--green);
-    font-size:9px;
-    line-height:1.6;
-}
-
-.buy-btn{
-    width:100%;
-    height:51px;
-    margin-top:19px;
-    border-radius:13px;
+.view-btn{
+    min-height:38px;
+    padding:0 13px;
+    border-radius:10px;
     background:var(--bordo);
     color:white;
-    font-size:12px;
+    font-size:10px;
     font-weight:800;
-    transition:.2s ease;
+    flex:none;
 }
 
-.buy-btn:hover:not(:disabled){
+.view-btn:hover{
     background:var(--bordo-dark);
-    transform:translateY(-1px);
-}
-
-.secure-note{
-    margin-top:11px;
-    text-align:center;
-    color:var(--muted);
-    font-size:9px;
-    line-height:1.6;
 }
 
 /* ============================================================
-   EMPTY
+   EMPTY / ERROR
 ============================================================ */
 
 .empty{
-    padding:35px 20px;
+    display:none;
+    margin-top:20px;
+    padding:60px 20px;
     text-align:center;
-    color:var(--muted);
-    font-size:11px;
-    line-height:1.7;
+    border:1px dashed var(--line);
+    border-radius:20px;
+    background:white;
+}
+
+.empty.show{
+    display:block;
+}
+
+.empty-icon{
+    width:50px;
+    height:50px;
+    margin:0 auto 15px;
+    border-radius:14px;
+    display:grid;
+    place-items:center;
+    background:var(--green-soft);
+    color:var(--green);
+    font-size:20px;
+    font-weight:900;
 }
 
 .empty strong{
-    display:block;
-    margin-bottom:5px;
-    color:var(--ink);
-    font-size:13px;
+    color:var(--green);
+    font-size:15px;
+}
+
+.empty p{
+    margin:7px auto 0;
+    max-width:500px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.6;
+}
+
+.retry-btn{
+    margin-top:16px;
+    min-height:40px;
+    padding:0 15px;
+    border-radius:10px;
+    background:var(--green);
+    color:white;
+    font-size:10px;
+    font-weight:800;
 }
 
 /* ============================================================
@@ -977,14 +894,10 @@ a{
    RESPONSIVE
 ============================================================ */
 
-@media(max-width:1100px){
+@media(max-width:1200px){
 
-    .event-layout{
-        grid-template-columns:1fr;
-    }
-
-    .checkout-card{
-        position:static;
+    .event-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
     }
 }
 
@@ -1051,76 +964,64 @@ a{
     }
 }
 
-@media(max-width:600px){
+@media(max-width:650px){
 
     .topbar{
         padding:12px 15px;
     }
 
-    .breadcrumb{
+    .search-box{
+        display:none;
+    }
+
+    .profile-name{
         display:none;
     }
 
     .content{
-        padding:18px 15px 100px;
+        padding:22px 15px 100px;
     }
 
-    .event-hero{
-        min-height:390px;
+    .featured{
+        min-height:310px;
         padding:23px;
         border-radius:20px;
     }
 
-    .event-hero::before{
-        font-size:270px;
+    .featured::before{
+        font-size:220px;
     }
 
-    .event-content-title{
-        font-size:34px;
+    .filter-bar{
+        flex-wrap:nowrap;
+        overflow-x:auto;
+        padding-bottom:4px;
+        scrollbar-width:none;
     }
 
-    .card{
-        padding:17px;
-        border-radius:18px;
+    .filter-bar::-webkit-scrollbar{
+        display:none;
     }
 
-    .info-grid{
+    .filter-btn{
+        white-space:nowrap;
+    }
+
+    .sort-wrap{
+        margin-left:0;
+        flex:none;
+    }
+
+    .sort-select{
+        flex-shrink:0;
+    }
+
+    .event-grid{
         grid-template-columns:1fr;
     }
 
-    .ticket-option-top{
-        flex-direction:column;
-        gap:8px;
-    }
-
-    .ticket-price{
-        text-align:left;
-    }
-
-    .ticket-bottom{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-
-    .quantity{
-        align-self:stretch;
-        justify-content:space-between;
-    }
-
-    .quantity button{
-        width:45%;
-    }
-
-    .quantity span{
-        flex:1;
-    }
-
-    .checkout-card{
-        margin-bottom:15px;
-    }
-
-    .error-box{
-        padding:25px 18px;
+    .event-cover{
+        min-height:220px;
     }
 }
 </style>
@@ -1134,15 +1035,9 @@ a{
          SIDEBAR
     ========================================================= -->
 
-    <aside
-        class="sidebar"
-        id="sidebar"
-    >
+    <aside class="sidebar" id="sidebar">
 
-        <a
-            href="../index.html"
-            class="brand"
-        >
+        <a href="../index.html" class="brand">
 
             <div class="brand-mark">
                 K
@@ -1150,13 +1045,9 @@ a{
 
             <div class="brand-text">
 
-                <strong>
-                    K-TICKETS
-                </strong>
+                <strong>K-TICKETS</strong>
 
-                <span>
-                    Customer
-                </span>
+                <span>Customer</span>
 
             </div>
 
@@ -1245,7 +1136,12 @@ a{
         <header class="topbar">
 
             <div
-                style="display:flex;align-items:center;gap:10px;min-width:0;"
+                style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                    min-width:0;
+                "
             >
 
                 <button
@@ -1257,19 +1153,16 @@ a{
                     ☰
                 </button>
 
-                <div class="breadcrumb">
+                <div class="search-box">
 
-                    <a href="events.html">
-                        Events
-                    </a>
+                    <span>⌕</span>
 
-                    <span>
-                        /
-                    </span>
-
-                    <span id="breadcrumbTitle">
-                        Event details
-                    </span>
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="Search events, places or categories..."
+                        autocomplete="off"
+                    >
 
                 </div>
 
@@ -1284,7 +1177,6 @@ a{
                     title="Notifications"
                     aria-label="Notifications"
                 >
-
                     ♢
 
                     <span
@@ -1295,12 +1187,23 @@ a{
 
                 </button>
 
-                <div
-                    class="avatar"
-                    id="avatar"
-                    aria-label="Account"
-                >
-                    K
+                <div class="profile">
+
+                    <div
+                        class="avatar"
+                        id="avatar"
+                        aria-label="Account"
+                    >
+                        K
+                    </div>
+
+                    <span
+                        class="profile-name"
+                        id="profileName"
+                    >
+                        —
+                    </span>
+
                 </div>
 
             </div>
@@ -1310,12 +1213,116 @@ a{
         <section class="content">
 
             <!-- ==================================================
+                 PAGE HEADING
+            ================================================== -->
+
+            <div class="page-heading">
+
+                <small>
+                    Explore Kuwait
+                </small>
+
+                <h1>
+                    Find your next experience.
+                </h1>
+
+                <p>
+                    Discover events, gatherings, workshops and experiences
+                    happening around Kuwait.
+                </p>
+
+            </div>
+
+            <!-- ==================================================
+                 FILTERS
+            ================================================== -->
+
+            <div
+                class="filter-bar"
+                id="filterBar"
+            >
+
+                <!--
+                    Categories are generated dynamically from
+                    public.events.category.
+                -->
+
+                <button
+                    class="filter-btn active"
+                    type="button"
+                    data-category="all"
+                >
+                    All
+                </button>
+
+            </div>
+
+            <!-- ==================================================
+                 FEATURED EVENT
+            ================================================== -->
+
+            <section
+                class="featured"
+                id="featuredEvent"
+            >
+
+                <div class="featured-content">
+
+                    <span class="featured-badge">
+                        Featured experience
+                    </span>
+
+                    <h2 id="featuredTitle">
+                        —
+                    </h2>
+
+                    <p id="featuredDescription">
+                        —
+                    </p>
+
+                    <div
+                        class="featured-meta"
+                        id="featuredMeta"
+                    ></div>
+
+                    <button
+                        class="featured-action"
+                        id="featuredAction"
+                        type="button"
+                    >
+                        View Event
+                    </button>
+
+                </div>
+
+            </section>
+
+            <!-- ==================================================
+                 RESULTS
+            ================================================== -->
+
+            <div class="results-head">
+
+                <h2>
+                    Upcoming Events
+                </h2>
+
+                <span
+                    class="results-count"
+                    id="resultsCount"
+                >
+                    Loading…
+                </span>
+
+            </div>
+
+            <!-- ==================================================
                  LOADING
             ================================================== -->
 
             <div
-                class="loading-screen"
-                id="loadingScreen"
+                class="loading"
+                id="loadingState"
             >
 
                 <div class="loader-box">
@@ -1323,10 +1330,52 @@ a{
                     <div class="loader"></div>
 
                     <p>
-                        Loading event details…
+                        Loading events…
                     </p>
 
                 </div>
+
+            </div>
+
+            <!-- ==================================================
+                 EVENT GRID
+            ================================================== -->
+
+            <div
+                class="event-grid"
+                id="eventGrid"
+                hidden
+            ></div>
+
+            <!-- ==================================================
+                 EMPTY
+            ================================================== -->
+
+            <div
+                class="empty"
+                id="emptyState"
+            >
+
+                <div class="empty-icon">
+                    K
+                </div>
+
+                <strong id="emptyTitle">
+                    No events found
+                </strong>
+
+                <p id="emptyMessage">
+                    There are currently no published events matching
+                    your search or category.
+                </p>
+
+                <button
+                    class="retry-btn"
+                    id="emptyReset"
+                    type="button"
+                >
+                    Reset Filters
+                </button>
 
             </div>
 
@@ -1335,265 +1384,29 @@ a{
             ================================================== -->
 
             <div
-                class="error-panel"
-                id="errorPanel"
+                class="empty"
+                id="errorState"
             >
 
-                <div class="error-box">
-
-                    <div class="error-icon">
-                        !
-                    </div>
-
-                    <h2 id="errorTitle">
-                        Event unavailable
-                    </h2>
-
-                    <p id="errorMessage">
-                        This event could not be loaded.
-                    </p>
-
-                    <div class="error-actions">
-
-                        <a
-                            href="events.html"
-                            class="error-btn primary"
-                        >
-                            Browse Events
-                        </a>
-
-                        <button
-                            type="button"
-                            class="error-btn secondary"
-                            id="retryButton"
-                        >
-                            Try Again
-                        </button>
-
-                    </div>
-
+                <div class="empty-icon">
+                    !
                 </div>
 
-            </div>
+                <strong>
+                    Events could not be loaded
+                </strong>
 
-            <!-- ==================================================
-                 EVENT CONTENT
-            ================================================== -->
+                <p id="errorMessage">
+                    Please try again.
+                </p>
 
-            <div
-                id="eventPage"
-                hidden
-            >
-
-                <!-- EVENT HERO -->
-
-                <section
-                    class="event-hero"
-                    id="eventHero"
+                <button
+                    class="retry-btn"
+                    id="retryButton"
+                    type="button"
                 >
-
-                    <div class="hero-content">
-
-                        <div
-                            class="event-badges"
-                            id="eventBadges"
-                        ></div>
-
-                        <h1
-                            class="event-content-title"
-                            id="eventTitle"
-                        >
-                            —
-                        </h1>
-
-                        <p
-                            class="event-description-short"
-                            id="eventShortDescription"
-                        >
-                            —
-                        </p>
-
-                        <div
-                            class="hero-meta"
-                            id="heroMeta"
-                        ></div>
-
-                    </div>
-
-                </section>
-
-                <div class="event-layout">
-
-                    <!-- ==================================================
-                         LEFT
-                    ================================================== -->
-
-                    <div class="left-column">
-
-                        <!-- ABOUT -->
-
-                        <section class="card">
-
-                            <h2>
-                                About this event
-                            </h2>
-
-                            <p
-                                class="description"
-                                id="description"
-                            >
-                                —
-                            </p>
-
-                            <div
-                                class="info-grid"
-                                id="infoGrid"
-                            ></div>
-
-                            <div
-                                class="organizer"
-                                id="organizer"
-                                hidden
-                            >
-
-                                <div
-                                    class="organizer-avatar"
-                                    id="organizerAvatar"
-                                >
-                                    K
-                                </div>
-
-                                <div>
-
-                                    <small>
-                                        Organized by
-                                    </small>
-
-                                    <strong
-                                        id="organizerName"
-                                    >
-                                        —
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
-                        </section>
-
-                        <!-- TICKETS -->
-
-                        <section class="card">
-
-                            <div class="ticket-section-head">
-
-                                <h2>
-                                    Select tickets
-                                </h2>
-
-                                <span id="ticketSectionNote">
-                                    Live availability
-                                </span>
-
-                            </div>
-
-                            <div
-                                id="ticketList"
-                            ></div>
-
-                        </section>
-
-                    </div>
-
-                    <!-- ==================================================
-                         CHECKOUT
-                    ================================================== -->
-
-                    <aside class="card checkout-card">
-
-                        <h2>
-                            Your order
-                        </h2>
-
-                        <div class="selected-summary">
-
-                            <small>
-                                Event
-                            </small>
-
-                            <strong id="summaryEvent">
-                                —
-                            </strong>
-
-                        </div>
-
-                        <div
-                            class="summary-items"
-                            id="summaryItems"
-                        ></div>
-
-                        <div class="summary-divider"></div>
-
-                        <div class="summary-row">
-
-                            <span>
-                                Selected tickets
-                            </span>
-
-                            <strong id="summaryQuantity">
-                                0
-                            </strong>
-
-                        </div>
-
-                        <div class="summary-row">
-
-                            <span>
-                                Subtotal
-                            </span>
-
-                            <strong id="subtotal">
-                                —
-                            </strong>
-
-                        </div>
-
-                        <div class="summary-divider"></div>
-
-                        <div class="total-row">
-
-                            <span>
-                                Estimated ticket total
-                            </span>
-
-                            <strong id="total">
-                                —
-                            </strong>
-
-                        </div>
-
-                        <div class="dynamic-note">
-                            The final service fee, promotion eligibility,
-                            inventory and total are calculated securely
-                            by K-Tickets when the checkout order is created.
-                        </div>
-
-                        <button
-                            class="buy-btn"
-                            id="continueButton"
-                            type="button"
-                            disabled
-                        >
-                            Continue to Checkout
-                        </button>
-
-                        <p class="secure-note">
-                            Secure checkout · Server-side inventory verification
-                        </p>
-
-                    </aside>
-
-                </div>
+                    Try Again
+                </button>
 
             </div>
 
@@ -1610,26 +1423,34 @@ a{
 <nav class="mobile-nav">
 
     <a href="dashboard.html">
+
         <span>⌂</span>
         <span>Home</span>
+
     </a>
 
     <a
         href="events.html"
         class="active"
     >
+
         <span>◫</span>
         <span>Events</span>
+
     </a>
 
     <a href="my-tickets.html">
+
         <span>▣</span>
         <span>Tickets</span>
+
     </a>
 
     <a href="profile.html">
+
         <span>◎</span>
         <span>Account</span>
+
     </a>
 
 </nav>
@@ -1645,58 +1466,40 @@ a{
 
 /*
 ============================================================
-K-TICKETS CUSTOMER EVENT DETAILS
+K-TICKETS CUSTOMER EVENTS
 ============================================================
 
-STRICT DATA RULE:
+STRICT PRODUCTION DATA RULE:
 
-No production event, customer, merchant, ticket, price,
-inventory, promotion or service-fee record is hardcoded here.
+There are NO hardcoded production events in this file.
 
-REAL DATA SOURCES:
+All event records come from:
 
-- Supabase Auth
-- public.profiles
-- public.events
-- public.ticket_types
-- public.notifications
+    public.events
 
-The URL supplies ONLY the event UUID:
+All ticket information comes from:
 
-event-details.html?id=<EVENT_ID>
+    public.ticket_types
 
-Everything else is retrieved from Supabase.
+Customer identity comes from:
 
-CHECKOUT FLOW:
+    Supabase Auth
+    public.profiles
 
-Event details
-    ↓
-Customer selects ticket quantities
-    ↓
-checkout.html?event=<EVENT_ID>&<TICKET_TYPE_ID>=<QTY>
-    ↓
-checkout page
-    ↓
-create_checkout_order()
-    ↓
-secure inventory reservation
-    ↓
-payment.html
+Notifications come from:
 
-IMPORTANT:
+    public.notifications
 
-This page's prices and inventory are display values only.
+The only event identifier passed through the URL is the
+real Supabase event UUID:
 
-The authoritative checkout RPC remains responsible for:
+    events.html
 
-- ticket validity
-- inventory
-- reservation
-- active service fee
-- promotion
-- order total
-- order creation
+        ↓
 
+    event-details.html?id=<REAL_EVENT_UUID>
+
+No demo records are inserted or fabricated here.
 ============================================================
 */
 
@@ -1712,66 +1515,142 @@ const SUPABASE_PUBLISHABLE_KEY =
 
 let supabaseClient = null;
 
+
+/* ============================================================
+   STATE
+============================================================ */
+
 let currentUser = null;
 let currentProfile = null;
 
-let currentEvent = null;
-let ticketTypes = [];
+let events = [];
+let visibleEvents = [];
 
-let quantities = new Map();
+let activeCategory = "all";
+let searchTerm = "";
+let sortMode = "date";
 
-/* ============================================================
-   EVENT ID
-============================================================ */
+let notificationChannel = null;
 
-const pageParams =
-    new URLSearchParams(
-        window.location.search
-    );
-
-const eventId =
-    cleanValue(
-        pageParams.get("id")
-    );
 
 /* ============================================================
    ELEMENTS
 ============================================================ */
 
-const loadingScreen =
-    document.getElementById(
-        "loadingScreen"
-    );
+const sidebar =
+    document.getElementById("sidebar");
 
-const errorPanel =
-    document.getElementById(
-        "errorPanel"
-    );
+const mobileMenu =
+    document.getElementById("mobileMenu");
 
-const eventPage =
-    document.getElementById(
-        "eventPage"
-    );
+const logoutButton =
+    document.getElementById("logoutButton");
 
-const errorTitle =
-    document.getElementById(
-        "errorTitle"
-    );
+const searchInput =
+    document.getElementById("searchInput");
+
+const notificationButton =
+    document.getElementById("notificationButton");
+
+const notificationDot =
+    document.getElementById("notificationDot");
+
+const avatar =
+    document.getElementById("avatar");
+
+const profileName =
+    document.getElementById("profileName");
+
+const filterBar =
+    document.getElementById("filterBar");
+
+const sortSelectContainer =
+    document.createElement("div");
+
+const featuredEvent =
+    document.getElementById("featuredEvent");
+
+const featuredTitle =
+    document.getElementById("featuredTitle");
+
+const featuredDescription =
+    document.getElementById("featuredDescription");
+
+const featuredMeta =
+    document.getElementById("featuredMeta");
+
+const featuredAction =
+    document.getElementById("featuredAction");
+
+const eventGrid =
+    document.getElementById("eventGrid");
+
+const resultsCount =
+    document.getElementById("resultsCount");
+
+const loadingState =
+    document.getElementById("loadingState");
+
+const emptyState =
+    document.getElementById("emptyState");
+
+const emptyTitle =
+    document.getElementById("emptyTitle");
+
+const emptyMessage =
+    document.getElementById("emptyMessage");
+
+const emptyReset =
+    document.getElementById("emptyReset");
+
+const errorState =
+    document.getElementById("errorState");
 
 const errorMessage =
-    document.getElementById(
-        "errorMessage"
-    );
+    document.getElementById("errorMessage");
 
-const ticketList =
-    document.getElementById(
-        "ticketList"
-    );
+const retryButton =
+    document.getElementById("retryButton");
 
-const continueButton =
-    document.getElementById(
-        "continueButton"
-    );
+const toast =
+    document.getElementById("toast");
+
+
+/* ============================================================
+   SORT SELECT
+============================================================ */
+
+const sortWrap =
+    document.createElement("div");
+
+sortWrap.className =
+    "sort-wrap";
+
+sortWrap.innerHTML = `
+    <select
+        class="sort-select"
+        id="sortSelect"
+        aria-label="Sort events"
+    >
+        <option value="date">
+            Sort: Upcoming
+        </option>
+
+        <option value="price-low">
+            Price: Low to high
+        </option>
+
+        <option value="price-high">
+            Price: High to low
+        </option>
+    </select>
+`;
+
+filterBar.appendChild(sortWrap);
+
+const sortSelect =
+    document.getElementById("sortSelect");
+
 
 /* ============================================================
    INITIALISE SUPABASE
@@ -1812,6 +1691,7 @@ function initializeSupabase(){
         );
 }
 
+
 /* ============================================================
    SESSION
 ============================================================ */
@@ -1833,9 +1713,7 @@ async function loadSession(){
 
     if(!data?.session?.user){
 
-        redirectToLogin(
-            "no_session"
-        );
+        redirectToLogin();
 
         return null;
     }
@@ -1845,6 +1723,7 @@ async function loadSession(){
 
     return currentUser;
 }
+
 
 /* ============================================================
    PROFILE
@@ -1886,15 +1765,11 @@ async function loadProfile(){
         );
     }
 
-    if(
-        data.is_active !== true
-    ){
+    if(data.is_active !== true){
 
         await safeSignOut();
 
-        redirectToLogin(
-            "account_inactive"
-        );
+        redirectToLogin();
 
         throw new Error(
             "This K-Tickets account is inactive."
@@ -1905,16 +1780,12 @@ async function loadProfile(){
         String(
             data.role || ""
         )
-            .trim()
-            .toLowerCase();
+        .trim()
+        .toLowerCase();
 
-    if(
-        role !== "customer"
-    ){
+    if(role !== "customer"){
 
-        routeByRole(
-            role
-        );
+        routeByRole(role);
 
         throw new Error(
             "Redirecting to your K-Tickets portal."
@@ -1927,15 +1798,15 @@ async function loadProfile(){
     renderIdentity();
 }
 
+
 /* ============================================================
    ROLE ROUTING
 ============================================================ */
 
-function routeByRole(
-    role
-){
+function routeByRole(role){
 
     const routes = {
+
         merchant:
             "../merchant/dashboard.html",
 
@@ -1944,6 +1815,7 @@ function routeByRole(
 
         admin:
             "../admin/dashboard.html"
+
     };
 
     if(routes[role]){
@@ -1951,134 +1823,90 @@ function routeByRole(
         window.location.replace(
             routes[role]
         );
-    }else{
 
-        redirectToLogin(
-            "unauthorized"
-        );
+        return;
     }
+
+    redirectToLogin();
 }
 
+
 /* ============================================================
-   EVENT
+   LOAD EVENTS
 ============================================================ */
 
-async function loadEvent(){
-
-    if(!eventId){
-
-        throw new Error(
-            "No event ID was supplied."
-        );
-    }
+async function loadEvents(){
 
     const {
-        data:event,
+        data,
         error
     } =
         await supabaseClient
             .from("events")
-            .select("*")
+            .select(`
+                id,
+                merchant_id,
+                title,
+                description,
+                venue,
+                city,
+                start_at,
+                end_at,
+                status,
+                category,
+                image_url,
+                featured,
+                created_at,
+                updated_at
+            `)
             .eq(
-                "id",
-                eventId
+                "status",
+                "published"
             )
-            .maybeSingle();
+            .order(
+                "start_at",
+                {
+                    ascending:true
+                }
+            );
 
     if(error){
 
         throw new Error(
-            `Event could not be loaded: ${error.message}`
+            `Events could not be loaded: ${error.message}`
         );
     }
 
-    if(!event){
+    events =
+        Array.isArray(data)
+            ? data
+            : [];
 
-        throw new Error(
-            "This event could not be found or is not currently available."
-        );
-    }
+    await loadTicketInformation();
 
-    validateEventVisibility(
-        event
-    );
+    buildCategories();
 
-    currentEvent =
-        event;
+    renderFeatured();
+
+    applyFilters();
 }
 
-/* ============================================================
-   EVENT VISIBILITY
-============================================================ */
-
-function validateEventVisibility(
-    event
-){
-
-    if(
-        Object.prototype.hasOwnProperty.call(
-            event,
-            "active"
-        ) &&
-        event.active === false
-    ){
-
-        throw new Error(
-            "This event is no longer active."
-        );
-    }
-
-    if(
-        Object.prototype.hasOwnProperty.call(
-            event,
-            "is_published"
-        ) &&
-        event.is_published === false
-    ){
-
-        throw new Error(
-            "This event is not currently published."
-        );
-    }
-
-    if(
-        Object.prototype.hasOwnProperty.call(
-            event,
-            "published"
-        ) &&
-        event.published === false
-    ){
-
-        throw new Error(
-            "This event is not currently published."
-        );
-    }
-
-    const status =
-        cleanValue(
-            event.status
-        )
-            .toLowerCase();
-
-    if(
-        status === "draft" ||
-        status === "cancelled" ||
-        status === "canceled" ||
-        status === "archived" ||
-        status === "inactive"
-    ){
-
-        throw new Error(
-            "This event is not currently available."
-        );
-    }
-}
 
 /* ============================================================
-   TICKET TYPES
+   LOAD TICKET INFORMATION
 ============================================================ */
 
-async function loadTicketTypes(){
+async function loadTicketInformation(){
+
+    if(!events.length){
+
+        return;
+    }
+
+    const eventIds =
+        events.map(
+            event => event.id
+        );
 
     const {
         data,
@@ -2086,10 +1914,22 @@ async function loadTicketTypes(){
     } =
         await supabaseClient
             .from("ticket_types")
-            .select("*")
-            .eq(
+            .select(`
+                id,
+                event_id,
+                name,
+                description,
+                price,
+                currency,
+                quantity_total,
+                quantity_sold,
+                sales_start,
+                sales_end,
+                active
+            `)
+            .in(
                 "event_id",
-                eventId
+                eventIds
             )
             .eq(
                 "active",
@@ -2106,33 +1946,1012 @@ async function loadTicketTypes(){
     if(error){
 
         throw new Error(
-            `Ticket types could not be loaded: ${error.message}`
+            `Ticket information could not be loaded: ${error.message}`
         );
     }
 
-    ticketTypes =
+    const tickets =
         Array.isArray(data)
             ? data
             : [];
 
-    quantities =
+    const ticketMap =
         new Map();
 
-    ticketTypes.forEach(
-        ticket => {
+    tickets.forEach(ticket => {
 
-            quantities.set(
-                String(
-                    ticket.id
-                ),
-                0
+        const key =
+            String(
+                ticket.event_id
+            );
+
+        if(!ticketMap.has(key)){
+
+            ticketMap.set(
+                key,
+                []
+            );
+        }
+
+        ticketMap
+            .get(key)
+            .push(ticket);
+    });
+
+    events =
+        events.map(event => {
+
+            const eventTickets =
+                ticketMap.get(
+                    String(event.id)
+                ) || [];
+
+            return {
+                ...event,
+
+                ticket_types:
+                    eventTickets,
+
+                pricing:
+                    calculateEventPricing(
+                        eventTickets
+                    )
+            };
+        });
+}
+
+
+/* ============================================================
+   EVENT PRICING
+============================================================ */
+
+function calculateEventPricing(
+    ticketTypes
+){
+
+    if(!ticketTypes.length){
+
+        return {
+            hasTickets:false,
+            soldOut:false,
+            minimumPrice:null,
+            maximumPrice:null,
+            currency:null
+        };
+    }
+
+    const now =
+        Date.now();
+
+    const purchasable =
+        ticketTypes.filter(ticket => {
+
+            const available =
+                getTicketAvailability(
+                    ticket
+                );
+
+            if(
+                available !== null &&
+                available <= 0
+            ){
+
+                return false;
+            }
+
+            const salesStart =
+                parseDate(
+                    ticket.sales_start
+                );
+
+            const salesEnd =
+                parseDate(
+                    ticket.sales_end
+                );
+
+            if(
+                salesStart &&
+                now < salesStart.getTime()
+            ){
+
+                return false;
+            }
+
+            if(
+                salesEnd &&
+                now > salesEnd.getTime()
+            ){
+
+                return false;
+            }
+
+            return true;
+        });
+
+    const prices =
+        purchasable
+            .map(ticket =>
+                Number(ticket.price)
+            )
+            .filter(
+                Number.isFinite
+            );
+
+    const currency =
+        cleanValue(
+            purchasable[0]?.currency ||
+            ticketTypes[0]?.currency
+        );
+
+    const totalAvailable =
+        ticketTypes.reduce(
+            (
+                total,
+                ticket
+            ) => {
+
+                const availability =
+                    getTicketAvailability(
+                        ticket
+                    );
+
+                if(
+                    availability === null
+                ){
+
+                    return total;
+                }
+
+                return total +
+                    Math.max(
+                        0,
+                        availability
+                    );
+            },
+            0
+        );
+
+    return {
+
+        hasTickets:
+            ticketTypes.length > 0,
+
+        soldOut:
+            totalAvailable <= 0,
+
+        minimumPrice:
+            prices.length
+                ? Math.min(...prices)
+                : null,
+
+        maximumPrice:
+            prices.length
+                ? Math.max(...prices)
+                : null,
+
+        currency:
+            currency || null
+    };
+}
+
+
+/* ============================================================
+   CATEGORIES
+============================================================ */
+
+function buildCategories(){
+
+    const categories =
+        Array.from(
+            new Set(
+                events
+                    .map(event =>
+                        cleanValue(
+                            event.category
+                        )
+                    )
+                    .filter(Boolean)
+            )
+        )
+        .sort(
+            (a,b) =>
+                a.localeCompare(
+                    b
+                )
+        );
+
+    filterBar
+        .querySelectorAll(
+            ".category-filter"
+        )
+        .forEach(button =>
+            button.remove()
+        );
+
+    const allButton =
+        filterBar.querySelector(
+            '[data-category="all"]'
+        );
+
+    categories.forEach(category => {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+        button.type =
+            "button";
+
+        button.className =
+            "filter-btn category-filter";
+
+        button.dataset.category =
+            category;
+
+        button.textContent =
+            category;
+
+        filterBar.insertBefore(
+            button,
+            sortWrap
+        );
+    });
+
+    filterBar
+        .querySelectorAll(
+            ".filter-btn"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    filterBar
+                        .querySelectorAll(
+                            ".filter-btn"
+                        )
+                        .forEach(
+                            btn =>
+                                btn.classList.remove(
+                                    "active"
+                                )
+                        );
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                    activeCategory =
+                        button.dataset.category;
+
+                    applyFilters();
+                }
+            );
+        });
+
+    if(allButton){
+
+        allButton.addEventListener(
+            "click",
+            () => {
+
+                activeCategory =
+                    "all";
+
+                applyFilters();
+            }
+        );
+    }
+}
+
+
+/* ============================================================
+   FILTERING
+============================================================ */
+
+function applyFilters(){
+
+    searchTerm =
+        cleanValue(
+            searchInput.value
+        )
+        .toLowerCase();
+
+    visibleEvents =
+        events.filter(event => {
+
+            const category =
+                cleanValue(
+                    event.category
+                )
+                .toLowerCase();
+
+            const categoryMatch =
+                activeCategory === "all" ||
+                category ===
+                    activeCategory.toLowerCase();
+
+            const searchValues = [
+
+                event.title,
+
+                event.description,
+
+                event.venue,
+
+                event.city,
+
+                event.category
+
+            ]
+            .map(value =>
+                cleanValue(value)
+                    .toLowerCase()
+            );
+
+            const searchMatch =
+                !searchTerm ||
+                searchValues.some(
+                    value =>
+                        value.includes(
+                            searchTerm
+                        )
+                );
+
+            return (
+                categoryMatch &&
+                searchMatch
+            );
+        });
+
+    sortEvents();
+
+    renderEvents();
+}
+
+
+/* ============================================================
+   SORTING
+============================================================ */
+
+function sortEvents(){
+
+    if(sortMode === "price-low"){
+
+        visibleEvents.sort(
+            (a,b) => {
+
+                const aPrice =
+                    a.pricing?.minimumPrice;
+
+                const bPrice =
+                    b.pricing?.minimumPrice;
+
+                if(aPrice === null){
+                    return 1;
+                }
+
+                if(bPrice === null){
+                    return -1;
+                }
+
+                return aPrice - bPrice;
+            }
+        );
+
+        return;
+    }
+
+    if(sortMode === "price-high"){
+
+        visibleEvents.sort(
+            (a,b) => {
+
+                const aPrice =
+                    a.pricing?.minimumPrice;
+
+                const bPrice =
+                    b.pricing?.minimumPrice;
+
+                if(aPrice === null){
+                    return 1;
+                }
+
+                if(bPrice === null){
+                    return -1;
+                }
+
+                return bPrice - aPrice;
+            }
+        );
+
+        return;
+    }
+
+    visibleEvents.sort(
+        (a,b) => {
+
+            const aDate =
+                parseDate(
+                    a.start_at
+                );
+
+            const bDate =
+                parseDate(
+                    b.start_at
+                );
+
+            if(!aDate){
+                return 1;
+            }
+
+            if(!bDate){
+                return -1;
+            }
+
+            return (
+                aDate.getTime() -
+                bDate.getTime()
             );
         }
     );
 }
 
+
 /* ============================================================
-   RENDER IDENTITY
+   RENDER EVENTS
+============================================================ */
+
+function renderEvents(){
+
+    eventGrid.innerHTML =
+        "";
+
+    resultsCount.textContent =
+        `${visibleEvents.length} event${
+            visibleEvents.length === 1
+                ? ""
+                : "s"
+        }`;
+
+    if(!visibleEvents.length){
+
+        eventGrid.hidden =
+            true;
+
+        emptyState.classList.add(
+            "show"
+        );
+
+        emptyTitle.textContent =
+            events.length
+                ? "No matching events"
+                : "No published events";
+
+        emptyMessage.textContent =
+            events.length
+                ? "Try another search or category."
+                : "There are currently no published events available.";
+
+        return;
+    }
+
+    emptyState.classList.remove(
+        "show"
+    );
+
+    eventGrid.hidden =
+        false;
+
+    visibleEvents.forEach(
+        event => {
+
+            eventGrid.appendChild(
+                createEventCard(
+                    event
+                )
+            );
+        }
+    );
+}
+
+
+/* ============================================================
+   EVENT CARD
+============================================================ */
+
+function createEventCard(
+    event
+){
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+    card.className =
+        "event-card";
+
+    const eventTitle =
+        getEventTitle(
+            event
+        );
+
+    const category =
+        cleanValue(
+            event.category
+        );
+
+    const eventDate =
+        parseDate(
+            event.start_at
+        );
+
+    const dateParts =
+        formatDateParts(
+            eventDate
+        );
+
+    const timeText =
+        formatTime(
+            event.start_at,
+            event.end_at
+        );
+
+    const location =
+        formatLocation(
+            event
+        );
+
+    const pricing =
+        event.pricing || {};
+
+    const imageUrl =
+        cleanValue(
+            event.image_url
+        );
+
+    const soldOut =
+        pricing.soldOut;
+
+    const cover =
+        document.createElement(
+            "div"
+        );
+
+    cover.className =
+        "event-cover";
+
+    if(imageUrl){
+
+        cover.classList.add(
+            "has-image"
+        );
+
+        cover.style.backgroundImage =
+            `url("${escapeCSSUrl(imageUrl)}")`;
+    }
+
+    const dateBox =
+        document.createElement(
+            "div"
+        );
+
+    dateBox.className =
+        "date-box";
+
+    dateBox.innerHTML = `
+        <strong>
+            ${escapeHTML(
+                dateParts.day
+            )}
+        </strong>
+
+        <span>
+            ${escapeHTML(
+                dateParts.month
+            )}
+        </span>
+    `;
+
+    const coverTitle =
+        document.createElement(
+            "div"
+        );
+
+    coverTitle.className =
+        "cover-title";
+
+    coverTitle.innerHTML = `
+        <small>
+            ${escapeHTML(
+                category ||
+                "Event"
+            )}
+        </small>
+
+        <strong>
+            ${escapeHTML(
+                eventTitle ||
+                "Event"
+            )}
+        </strong>
+    `;
+
+    cover.appendChild(
+        dateBox
+    );
+
+    cover.appendChild(
+        coverTitle
+    );
+
+    const body =
+        document.createElement(
+            "div"
+        );
+
+    body.className =
+        "event-body";
+
+    const categoryElement =
+        document.createElement(
+            "div"
+        );
+
+    categoryElement.className =
+        "event-category";
+
+    categoryElement.textContent =
+        category ||
+        "Event";
+
+    const titleElement =
+        document.createElement(
+            "h3"
+        );
+
+    titleElement.textContent =
+        eventTitle ||
+        "Event";
+
+    const info =
+        document.createElement(
+            "div"
+        );
+
+    info.className =
+        "event-info";
+
+    addInfoRow(
+        info,
+        "◷",
+        timeText ||
+        "Time available in event details"
+    );
+
+    addInfoRow(
+        info,
+        "⌖",
+        location ||
+        "Location available in event details"
+    );
+
+    const footer =
+        document.createElement(
+            "div"
+        );
+
+    footer.className =
+        "event-footer";
+
+    const price =
+        document.createElement(
+            "div"
+        );
+
+    price.className =
+        "price";
+
+    if(
+        pricing.minimumPrice !== null
+    ){
+
+        const priceText =
+            formatMoney(
+                pricing.minimumPrice,
+                pricing.currency
+            );
+
+        price.innerHTML = `
+            <strong>
+                From ${escapeHTML(
+                    priceText
+                )}
+            </strong>
+
+            <small>
+                ${
+                    pricing.maximumPrice !== null &&
+                    pricing.maximumPrice !==
+                        pricing.minimumPrice
+                        ? "Ticket prices vary"
+                        : "Ticket price"
+                }
+            </small>
+        `;
+    }
+    else{
+
+        price.innerHTML = `
+            <strong>
+                ${
+                    pricing.hasTickets
+                        ? "Ticket details"
+                        : "Tickets unavailable"
+                }
+            </strong>
+        `;
+    }
+
+    if(soldOut){
+
+        const soldOutLabel =
+            document.createElement(
+                "span"
+            );
+
+        soldOutLabel.className =
+            "sold-out";
+
+        soldOutLabel.textContent =
+            "Sold out";
+
+        price.appendChild(
+            soldOutLabel
+        );
+    }
+
+    const viewButton =
+        document.createElement(
+            "button"
+        );
+
+    viewButton.type =
+        "button";
+
+    viewButton.className =
+        "view-btn";
+
+    viewButton.textContent =
+        "View Event";
+
+    viewButton.addEventListener(
+        "click",
+        () =>
+            openEvent(
+                event.id
+            )
+    );
+
+    footer.appendChild(
+        price
+    );
+
+    footer.appendChild(
+        viewButton
+    );
+
+    body.appendChild(
+        categoryElement
+    );
+
+    body.appendChild(
+        titleElement
+    );
+
+    body.appendChild(
+        info
+    );
+
+    body.appendChild(
+        footer
+    );
+
+    card.appendChild(
+        cover
+    );
+
+    card.appendChild(
+        body
+    );
+
+    return card;
+}
+
+
+/* ============================================================
+   FEATURED EVENT
+============================================================ */
+
+function renderFeatured(){
+
+    const featured =
+        events
+            .filter(
+                event =>
+                    event.featured === true
+            )
+            .filter(
+                event =>
+                    isFutureOrCurrentEvent(
+                        event
+                    )
+            )
+            .sort(
+                (a,b) => {
+
+                    const aDate =
+                        parseDate(
+                            a.start_at
+                        );
+
+                    const bDate =
+                        parseDate(
+                            b.start_at
+                        );
+
+                    if(!aDate){
+                        return 1;
+                    }
+
+                    if(!bDate){
+                        return -1;
+                    }
+
+                    return (
+                        aDate.getTime() -
+                        bDate.getTime()
+                    );
+                }
+            )[0];
+
+    if(!featured){
+
+        featuredEvent.classList.remove(
+            "show"
+        );
+
+        return;
+    }
+
+    const imageUrl =
+        cleanValue(
+            featured.image_url
+        );
+
+    featuredEvent.classList.add(
+        "show"
+    );
+
+    if(imageUrl){
+
+        featuredEvent.classList.add(
+            "has-image"
+        );
+
+        featuredEvent.style.backgroundImage =
+            `url("${escapeCSSUrl(imageUrl)}")`;
+    }
+    else{
+
+        featuredEvent.classList.remove(
+            "has-image"
+        );
+
+        featuredEvent.style.backgroundImage =
+            "";
+    }
+
+    featuredTitle.textContent =
+        getEventTitle(
+            featured
+        ) ||
+        "Featured Event";
+
+    featuredDescription.textContent =
+        getEventDescription(
+            featured
+        ) ||
+        "Discover this featured K-Tickets experience.";
+
+    featuredMeta.innerHTML =
+        "";
+
+    const dateText =
+        formatDate(
+            featured.start_at
+        );
+
+    const location =
+        formatLocation(
+            featured
+        );
+
+    const price =
+        featured.pricing?.minimumPrice;
+
+    const currency =
+        featured.pricing?.currency;
+
+    [
+        dateText,
+        location,
+        price !== null &&
+        price !== undefined
+            ? `From ${formatMoney(
+                price,
+                currency
+            )}`
+            : null
+    ]
+    .filter(Boolean)
+    .forEach(value => {
+
+        const span =
+            document.createElement(
+                "span"
+            );
+
+        span.textContent =
+            value;
+
+        featuredMeta.appendChild(
+            span
+        );
+    });
+
+    featuredAction.onclick =
+        () =>
+            openEvent(
+                featured.id
+            );
+}
+
+
+/* ============================================================
+   OPEN EVENT
+============================================================ */
+
+function openEvent(
+    eventId
+){
+
+    const cleanId =
+        cleanValue(
+            eventId
+        );
+
+    if(!cleanId){
+
+        showToast(
+            "This event does not have a valid ID."
+        );
+
+        return;
+    }
+
+    window.location.href =
+        `event-details.html?id=${encodeURIComponent(
+            cleanId
+        )}`;
+}
+
+
+/* ============================================================
+   IDENTITY
 ============================================================ */
 
 function renderIdentity(){
@@ -2143,1990 +2962,360 @@ function renderIdentity(){
         ) ||
         cleanValue(
             currentUser?.email
-        );
+        ) ||
+        "Customer";
 
-    document.getElementById(
-        "avatar"
-    ).textContent =
+    profileName.textContent =
+        name;
+
+    avatar.textContent =
         getInitials(
             name
         );
 }
 
-/* ============================================================
-   RENDER EVENT
-============================================================ */
-
-function renderEvent(){
-
-    const title =
-        getEventTitle(
-            currentEvent
-        );
-
-    const description =
-        getEventDescription(
-            currentEvent
-        );
-
-    const shortDescription =
-        getEventShortDescription(
-            currentEvent
-        ) ||
-        description;
-
-    document.getElementById(
-        "eventTitle"
-    ).textContent =
-        title ||
-        "Event unavailable";
-
-    document.getElementById(
-        "breadcrumbTitle"
-    ).textContent =
-        title ||
-        "Event details";
-
-    document.getElementById(
-        "summaryEvent"
-    ).textContent =
-        title ||
-        "Event unavailable";
-
-    document.getElementById(
-        "description"
-    ).textContent =
-        description ||
-        "Event description unavailable.";
-
-    document.getElementById(
-        "eventShortDescription"
-    ).textContent =
-        shortDescription ||
-        "Event information is available from K-Tickets.";
-
-    renderHeroImage();
-
-    renderBadges();
-
-    renderHeroMeta();
-
-    renderInfoGrid();
-
-    renderOrganizer();
-}
-
-/* ============================================================
-   HERO IMAGE
-============================================================ */
-
-function renderHeroImage(){
-
-    const imageUrl =
-        getEventImageUrl(
-            currentEvent
-        );
-
-    const hero =
-        document.getElementById(
-            "eventHero"
-        );
-
-    if(!imageUrl){
-        return;
-    }
-
-    /*
-    Only use image URLs that actually exist in the
-    Supabase event record. No placeholder image is invented.
-    */
-
-    hero.classList.add(
-        "has-image"
-    );
-
-    hero.style.backgroundImage =
-        `url("${escapeCSSUrl(imageUrl)}")`;
-}
-
-/* ============================================================
-   BADGES
-============================================================ */
-
-function renderBadges(){
-
-    const container =
-        document.getElementById(
-            "eventBadges"
-        );
-
-    container.innerHTML =
-        "";
-
-    const values = [];
-
-    const category =
-        firstNonEmpty(
-            currentEvent,
-            [
-                "category",
-                "event_category",
-                "type"
-            ]
-        );
-
-    const status =
-        firstNonEmpty(
-            currentEvent,
-            [
-                "status"
-            ]
-        );
-
-    if(category){
-
-        values.push(
-            {
-                label:category,
-                className:""
-            }
-        );
-    }
-
-    if(status){
-
-        const cleanStatus =
-            String(status)
-                .trim()
-                .toLowerCase();
-
-        if(
-            cleanStatus !== "published" &&
-            cleanStatus !== "active"
-        ){
-
-            values.push(
-                {
-                    label:status,
-                    className:""
-                }
-            );
-        }
-    }
-
-    values.forEach(
-        item => {
-
-            const badge =
-                document.createElement(
-                    "span"
-                );
-
-            badge.className =
-                "event-badge " +
-                item.className;
-
-            badge.textContent =
-                item.label;
-
-            container.appendChild(
-                badge
-            );
-        }
-    );
-}
-
-/* ============================================================
-   HERO META
-============================================================ */
-
-function renderHeroMeta(){
-
-    const container =
-        document.getElementById(
-            "heroMeta"
-        );
-
-    container.innerHTML =
-        "";
-
-    const dateText =
-        formatEventDate(
-            getEventDate(
-                currentEvent
-            )
-        );
-
-    const timeText =
-        formatEventTime(
-            currentEvent
-        );
-
-    const locationText =
-        getEventLocation(
-            currentEvent
-        );
-
-    [
-        dateText,
-        timeText,
-        locationText
-    ]
-        .filter(
-            Boolean
-        )
-        .forEach(
-            value => {
-
-                const span =
-                    document.createElement(
-                        "span"
-                    );
-
-                span.textContent =
-                    value;
-
-                container.appendChild(
-                    span
-                );
-            }
-        );
-}
-
-/* ============================================================
-   INFORMATION GRID
-============================================================ */
-
-function renderInfoGrid(){
-
-    const container =
-        document.getElementById(
-            "infoGrid"
-        );
-
-    container.innerHTML =
-        "";
-
-    const fields = [
-        {
-            label:"Date",
-            value:
-                formatEventDate(
-                    getEventDate(
-                        currentEvent
-                    )
-                )
-        },
-        {
-            label:"Time",
-            value:
-                formatEventTime(
-                    currentEvent
-                )
-        },
-        {
-            label:"Location",
-            value:
-                getEventLocation(
-                    currentEvent
-                )
-        },
-        {
-            label:"Entry",
-            value:
-                getEntryInformation(
-                    currentEvent
-                )
-        }
-    ];
-
-    fields.forEach(
-        field => {
-
-            const box =
-                document.createElement(
-                    "div"
-                );
-
-            box.className =
-                "info-box";
-
-            const small =
-                document.createElement(
-                    "small"
-                );
-
-            small.textContent =
-                field.label;
-
-            const strong =
-                document.createElement(
-                    "strong"
-                );
-
-            strong.textContent =
-                field.value ||
-                "—";
-
-            box.appendChild(
-                small
-            );
-
-            box.appendChild(
-                strong
-            );
-
-            container.appendChild(
-                box
-            );
-        }
-    );
-}
-
-/* ============================================================
-   ORGANIZER
-============================================================ */
-
-function renderOrganizer(){
-
-    const wrapper =
-        document.getElementById(
-            "organizer"
-        );
-
-    const organizerName =
-        firstNonEmpty(
-            currentEvent,
-            [
-                "organizer_name",
-                "organizer",
-                "merchant_name",
-                "business_name"
-            ]
-        );
-
-    if(!organizerName){
-
-        wrapper.hidden =
-            true;
-
-        return;
-    }
-
-    wrapper.hidden =
-        false;
-
-    document.getElementById(
-        "organizerName"
-    ).textContent =
-        organizerName;
-
-    document.getElementById(
-        "organizerAvatar"
-    ).textContent =
-        getInitials(
-            organizerName
-        );
-}
-
-/* ============================================================
-   TICKETS
-============================================================ */
-
-function renderTickets(){
-
-    ticketList.innerHTML =
-        "";
-
-    if(!ticketTypes.length){
-
-        ticketList.innerHTML = `
-            <div class="empty">
-                <strong>No active ticket types</strong>
-                Tickets are not currently available for this event.
-            </div>
-        `;
-
-        updateSummary();
-
-        return;
-    }
-
-    ticketTypes.forEach(
-        ticket => {
-
-            const quantity =
-                getQuantity(
-                    ticket.id
-                );
-
-            const availability =
-                getAvailability(
-                    ticket
-                );
-
-            const salesState =
-                getSalesState(
-                    ticket
-                );
-
-            const available =
-                availability !== null
-                    ? availability > 0
-                    : true;
-
-            const purchasable =
-                available &&
-                salesState.available;
-
-            const option =
-                document.createElement(
-                    "article"
-                );
-
-            option.className =
-                "ticket-option";
-
-            if(quantity > 0){
-
-                option.classList.add(
-                    "selected"
-                );
-            }
-
-            if(!purchasable){
-
-                option.classList.add(
-                    "unavailable"
-                );
-            }
-
-            option.dataset.ticketId =
-                String(
-                    ticket.id
-                );
-
-            const currentPrice =
-                getNumeric(
-                    ticket.price
-                );
-
-            const currency =
-                cleanValue(
-                    ticket.currency
-                );
-
-            const originalPrice =
-                getOriginalPrice(
-                    ticket
-                );
-
-            const description =
-                cleanValue(
-                    ticket.description
-                );
-
-            const ticketName =
-                getTicketName(
-                    ticket
-                );
-
-            option.innerHTML = `
-
-                <div class="ticket-option-top">
-
-                    <div class="ticket-option-info">
-
-                        <h3>
-                            ${escapeHTML(
-                                ticketName ||
-                                "Ticket"
-                            )}
-                        </h3>
-
-                        <p>
-                            ${escapeHTML(
-                                description ||
-                                "Ticket details are available from K-Tickets."
-                            )}
-                        </p>
-
-                    </div>
-
-                    <div class="ticket-price">
-
-                        <strong>
-                            ${escapeHTML(
-                                formatMoney(
-                                    currentPrice,
-                                    currency
-                                )
-                            )}
-                        </strong>
-
-                        ${
-                            originalPrice !== null &&
-                            currency
-                                ? `
-                                    <del>
-                                        ${escapeHTML(
-                                            formatMoney(
-                                                originalPrice,
-                                                currency
-                                            )
-                                        )}
-                                    </del>
-                                `
-                                : ""
-                        }
-
-                    </div>
-
-                </div>
-
-                <div class="ticket-bottom">
-
-                    <div>
-
-                        <div class="${getAvailabilityClass(availability)}">
-
-                            ${escapeHTML(
-                                getAvailabilityText(
-                                    availability
-                                )
-                            )}
-
-                        </div>
-
-                        <div class="ticket-sales">
-
-                            ${escapeHTML(
-                                salesState.text
-                            )}
-
-                        </div>
-
-                    </div>
-
-                    ${
-                        purchasable
-                            ? `
-                                <div class="quantity">
-
-                                    <button
-                                        type="button"
-                                        data-quantity-action="decrease"
-                                        data-ticket-id="${escapeHTML(
-                                            String(ticket.id)
-                                        )}"
-                                        aria-label="Decrease quantity"
-                                    >
-                                        −
-                                    </button>
-
-                                    <span
-                                        id="quantity-${escapeHTML(
-                                            String(ticket.id)
-                                        )}"
-                                    >
-                                        ${quantity}
-                                    </span>
-
-                                    <button
-                                        type="button"
-                                        data-quantity-action="increase"
-                                        data-ticket-id="${escapeHTML(
-                                            String(ticket.id)
-                                        )}"
-                                        aria-label="Increase quantity"
-                                    >
-                                        +
-                                    </button>
-
-                                </div>
-                            `
-                            : `
-                                <span class="ticket-disabled">
-                                    ${escapeHTML(
-                                        salesState.reason
-                                    )}
-                                </span>
-                            `
-                    }
-
-                </div>
-            `;
-
-            ticketList.appendChild(
-                option
-            );
-        }
-    );
-
-    updateSummary();
-}
-
-/* ============================================================
-   QUANTITY
-============================================================ */
-
-ticketList.addEventListener(
-    "click",
-    event => {
-
-        const button =
-            event.target.closest(
-                "button[data-quantity-action]"
-            );
-
-        if(!button){
-            return;
-        }
-
-        const ticketId =
-            button.dataset.ticketId;
-
-        const action =
-            button.dataset.quantityAction;
-
-        changeQuantity(
-            ticketId,
-            action === "increase"
-                ? 1
-                : -1
-        );
-    }
-);
-
-function changeQuantity(
-    ticketId,
-    change
-){
-
-    const ticket =
-        ticketTypes.find(
-            item =>
-                String(item.id) ===
-                String(ticketId)
-        );
-
-    if(!ticket){
-        return;
-    }
-
-    const current =
-        getQuantity(
-            ticketId
-        );
-
-    const availability =
-        getAvailability(
-            ticket
-        );
-
-    const salesState =
-        getSalesState(
-            ticket
-        );
-
-    let maxQuantity =
-        availability !== null
-            ? Math.max(
-                0,
-                availability
-            )
-            : null;
-
-    const ticketLimit =
-        getTicketPurchaseLimit(
-            ticket
-        );
-
-    if(
-        ticketLimit !== null
-    ){
-
-        maxQuantity =
-            maxQuantity === null
-                ? ticketLimit
-                : Math.min(
-                    maxQuantity,
-                    ticketLimit
-                );
-    }
-
-    const next =
-        current +
-        change;
-
-    if(next < 0){
-        return;
-    }
-
-    if(
-        !salesState.available
-    ){
-
-        showToast(
-            salesState.reason
-        );
-
-        return;
-    }
-
-    if(
-        maxQuantity !== null &&
-        next > maxQuantity
-    ){
-
-        showToast(
-            maxQuantity > 0
-                ? `Only ${maxQuantity} ticket${
-                    maxQuantity === 1
-                        ? ""
-                        : "s"
-                } can currently be selected for this ticket type.`
-                : "No tickets are currently available."
-        );
-
-        return;
-    }
-
-    quantities.set(
-        String(ticketId),
-        next
-    );
-
-    updateTicketOption(
-        ticket
-    );
-
-    updateSummary();
-}
-
-function updateTicketOption(
-    ticket
-){
-
-    const option =
-        ticketList.querySelector(
-            `[data-ticket-id="${cssEscape(
-                String(ticket.id)
-            )}"]`
-        );
-
-    if(!option){
-        return;
-    }
-
-    const quantity =
-        getQuantity(
-            ticket.id
-        );
-
-    option.classList.toggle(
-        "selected",
-        quantity > 0
-    );
-
-    const quantityElement =
-        option.querySelector(
-            `[id="quantity-${cssEscape(
-                String(ticket.id)
-            )}"]`
-        );
-
-    if(quantityElement){
-
-        quantityElement.textContent =
-            String(
-                quantity
-            );
-    }
-}
-
-/* ============================================================
-   SUMMARY
-============================================================ */
-
-function updateSummary(){
-
-    const summary =
-        calculateDisplaySummary();
-
-    const summaryContainer =
-        document.getElementById(
-            "summaryItems"
-        );
-
-    summaryContainer.innerHTML =
-        "";
-
-    summary.items.forEach(
-        item => {
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-            row.className =
-                "summary-item";
-
-            row.innerHTML = `
-
-                <span>
-                    ${escapeHTML(
-                        item.name
-                    )}
-                    ×
-                    ${escapeHTML(
-                        String(
-                            item.quantity
-                        )
-                    )}
-                </span>
-
-                <strong>
-                    ${escapeHTML(
-                        item.lineTotal
-                    )}
-                </strong>
-
-            `;
-
-            summaryContainer.appendChild(
-                row
-            );
-        }
-    );
-
-    if(!summary.items.length){
-
-        summaryContainer.innerHTML = `
-            <div class="empty" style="padding:20px 5px;">
-                Select tickets to build your order.
-            </div>
-        `;
-    }
-
-    document.getElementById(
-        "summaryQuantity"
-    ).textContent =
-        summary.totalQuantity.toLocaleString();
-
-    document.getElementById(
-        "subtotal"
-    ).textContent =
-        summary.subtotalText;
-
-    document.getElementById(
-        "total"
-    ).textContent =
-        summary.subtotalText;
-
-    continueButton.disabled =
-        summary.totalQuantity <= 0;
-
-    continueButton.textContent =
-        summary.totalQuantity > 0
-            ? "Continue to Checkout"
-            : "Select Tickets";
-}
-
-/* ============================================================
-   DISPLAY SUMMARY
-============================================================ */
-
-function calculateDisplaySummary(){
-
-    let totalQuantity =
-        0;
-
-    let subtotal =
-        0;
-
-    let currency =
-        "";
-
-    const items = [];
-
-    ticketTypes.forEach(
-        ticket => {
-
-            const quantity =
-                getQuantity(
-                    ticket.id
-                );
-
-            if(quantity <= 0){
-                return;
-            }
-
-            const price =
-                getNumeric(
-                    ticket.price
-                );
-
-            const ticketCurrency =
-                cleanValue(
-                    ticket.currency
-                );
-
-            if(!currency){
-
-                currency =
-                    ticketCurrency;
-            }
-
-            const lineTotal =
-                price *
-                quantity;
-
-            subtotal +=
-                lineTotal;
-
-            totalQuantity +=
-                quantity;
-
-            items.push({
-                name:
-                    getTicketName(
-                        ticket
-                    ) ||
-                    "Ticket",
-
-                quantity,
-
-                lineTotal:
-                    formatMoney(
-                        lineTotal,
-                        ticketCurrency
-                    )
-            });
-        }
-    );
-
-    return {
-        items,
-        totalQuantity,
-        subtotal,
-        subtotalText:
-            currency
-                ? formatMoney(
-                    subtotal,
-                    currency
-                )
-                : "—"
-    };
-}
-
-/* ============================================================
-   CHECKOUT
-============================================================ */
-
-continueButton.addEventListener(
-    "click",
-    continueToCheckout
-);
-
-async function continueToCheckout(){
-
-    const selected =
-        ticketTypes
-            .map(
-                ticket => ({
-                    ticket,
-                    quantity:
-                        getQuantity(
-                            ticket.id
-                        )
-                })
-            )
-            .filter(
-                item =>
-                    item.quantity > 0
-            );
-
-    if(!selected.length){
-
-        showToast(
-            "Please select at least one ticket."
-        );
-
-        return;
-    }
-
-    /*
-    The selected quantity is encoded in the URL only as
-    display/navigation state.
-
-    checkout.html reads the IDs and sends the quantities
-    into create_checkout_order().
-
-    The server validates everything again.
-    */
-
-    const checkoutParams =
-        new URLSearchParams();
-
-    checkoutParams.set(
-        "event",
-        eventId
-    );
-
-    selected.forEach(
-        item => {
-
-            checkoutParams.set(
-                String(
-                    item.ticket.id
-                ),
-                String(
-                    item.quantity
-                )
-            );
-        }
-    );
-
-    continueButton.disabled =
-        true;
-
-    continueButton.textContent =
-        "Opening Checkout…";
-
-    /*
-    Give the UI a small synchronous handoff point.
-    No order is created here.
-    */
-
-    window.location.href =
-        `checkout.html?${checkoutParams.toString()}`;
-}
 
 /* ============================================================
    NOTIFICATIONS
 ============================================================ */
 
-document
-    .getElementById(
-        "notificationButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
+async function loadNotificationState(){
 
-            window.location.href =
-                "notifications.html";
-        }
-    );
+    if(!currentUser){
 
-async function updateNotificationState(){
-
-    try{
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from("notifications")
-                .select("id")
-                .eq(
-                    "user_id",
-                    currentUser.id
-                )
-                .eq(
-                    "is_read",
-                    false
-                )
-                .limit(1);
-
-        if(error){
-
-            console.warn(
-                "Notification state unavailable:",
-                error
-            );
-
-            return;
-        }
-
-        document.getElementById(
-            "notificationDot"
-        ).hidden =
-            !(
-                Array.isArray(data) &&
-                data.length > 0
-            );
-
-    }catch(error){
-
-        console.warn(
-            "Notification state check failed:",
-            error
-        );
+        return;
     }
+
+    const {
+        count,
+        error
+    } =
+        await supabaseClient
+            .from("notifications")
+            .select(
+                "id",
+                {
+                    count:"exact",
+                    head:true
+                }
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .eq(
+                "is_read",
+                false
+            );
+
+    if(error){
+
+        return;
+    }
+
+    notificationDot.hidden =
+        !count;
 }
+
 
 /* ============================================================
-   MOBILE MENU
+   NOTIFICATION REALTIME
 ============================================================ */
 
-document
-    .getElementById(
-        "mobileMenu"
-    )
-    .addEventListener(
-        "click",
-        toggleSidebar
-    );
+function subscribeToNotifications(){
 
-document
-    .querySelectorAll(
-        ".sidebar .nav-link"
-    )
-    .forEach(
-        link => {
+    if(
+        !supabaseClient ||
+        !currentUser
+    ){
 
-            link.addEventListener(
-                "click",
+        return;
+    }
+
+    notificationChannel =
+        supabaseClient
+            .channel(
+                `customer-events-notifications-${currentUser.id}`
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"notifications",
+                    filter:`user_id=eq.${currentUser.id}`
+                },
                 () => {
 
-                    document
-                        .getElementById(
-                            "sidebar"
-                        )
-                        .classList
-                        .remove(
-                            "open"
-                        );
+                    loadNotificationState();
                 }
+            )
+            .subscribe();
+}
+
+
+/* ============================================================
+   NOTIFICATION BUTTON
+============================================================ */
+
+notificationButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "notifications.html";
+    }
+);
+
+
+/* ============================================================
+   SEARCH
+============================================================ */
+
+searchInput.addEventListener(
+    "input",
+    () => {
+
+        applyFilters();
+    }
+);
+
+
+/* ============================================================
+   SORT
+============================================================ */
+
+sortSelect.addEventListener(
+    "change",
+    () => {
+
+        sortMode =
+            sortSelect.value;
+
+        applyFilters();
+    }
+);
+
+
+/* ============================================================
+   RESET
+============================================================ */
+
+emptyReset.addEventListener(
+    "click",
+    () => {
+
+        searchInput.value =
+            "";
+
+        activeCategory =
+            "all";
+
+        sortMode =
+            "date";
+
+        sortSelect.value =
+            "date";
+
+        filterBar
+            .querySelectorAll(
+                ".filter-btn"
+            )
+            .forEach(
+                button =>
+                    button.classList.remove(
+                        "active"
+                    )
+            );
+
+        const allButton =
+            filterBar.querySelector(
+                '[data-category="all"]'
+            );
+
+        if(allButton){
+
+            allButton.classList.add(
+                "active"
             );
         }
-    );
 
-function toggleSidebar(){
+        applyFilters();
+    }
+);
 
-    document
-        .getElementById(
-            "sidebar"
-        )
-        .classList
-        .toggle(
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+
+mobileMenu.addEventListener(
+    "click",
+    () => {
+
+        sidebar.classList.toggle(
             "open"
         );
-}
+    }
+);
+
 
 /* ============================================================
    LOGOUT
 ============================================================ */
 
-document
-    .getElementById(
-        "logoutButton"
-    )
-    .addEventListener(
-        "click",
-        logout
-    );
+logoutButton.addEventListener(
+    "click",
+    async () => {
 
-async function logout(){
+        logoutButton.disabled =
+            true;
 
-    try{
+        try{
 
-        if(supabaseClient){
+            await safeSignOut();
 
-            await supabaseClient.auth.signOut();
         }
+        finally{
 
-    }catch(error){
-
-        console.warn(
-            "Logout warning:",
-            error
-        );
-
-    }finally{
-
-        window.location.replace(
-            "../login.html"
-        );
+            window.location.href =
+                "../login.html";
+        }
     }
-}
+);
 
 async function safeSignOut(){
 
+    if(!supabaseClient){
+
+        return;
+    }
+
     try{
 
-        if(supabaseClient){
+        await supabaseClient.auth.signOut();
 
-            await supabaseClient.auth.signOut();
-        }
-
-    }catch(error){
+    }
+    catch(error){
 
         console.warn(
-            "Sign-out warning:",
+            "Sign out warning:",
             error
         );
     }
 }
 
-/* ============================================================
-   TICKET AVAILABILITY
-============================================================ */
-
-function getAvailability(
-    ticket
-){
-
-    const total =
-        getFiniteNullable(
-            ticket?.quantity_total
-        );
-
-    const sold =
-        getFiniteNullable(
-            ticket?.quantity_sold
-        );
-
-    if(
-        total === null
-    ){
-        return null;
-    }
-
-    const soldValue =
-        sold === null
-            ? 0
-            : Math.max(
-                0,
-                sold
-            );
-
-    return Math.max(
-        0,
-        total - soldValue
-    );
-}
-
-function getAvailabilityText(
-    availability
-){
-
-    if(
-        availability === null
-    ){
-
-        return "Availability will be verified at checkout.";
-    }
-
-    if(
-        availability <= 0
-    ){
-
-        return "Currently sold out.";
-    }
-
-    return (
-        availability.toLocaleString() +
-        " ticket" +
-        (
-            availability === 1
-                ? ""
-                : "s"
-        ) +
-        " currently available"
-    );
-}
-
-function getAvailabilityClass(
-    availability
-){
-
-    if(
-        availability === null
-    ){
-        return "availability";
-    }
-
-    if(
-        availability <= 0
-    ){
-        return "availability none";
-    }
-
-    if(
-        availability <= 10
-    ){
-        return "availability low";
-    }
-
-    return "availability";
-}
 
 /* ============================================================
-   SALES WINDOW
+   INITIALISE
 ============================================================ */
 
-function getSalesState(
-    ticket
-){
+async function initializePage(){
 
-    const now =
-        Date.now();
+    loadingState.style.display =
+        "grid";
 
-    const startValue =
-        firstNonEmpty(
-            ticket,
-            [
-                "sales_start",
-                "sale_start",
-                "sales_start_at",
-                "start_at"
-            ]
-        );
+    eventGrid.hidden =
+        true;
 
-    const endValue =
-        firstNonEmpty(
-            ticket,
-            [
-                "sales_end",
-                "sale_end",
-                "sales_end_at",
-                "end_at"
-            ]
-        );
+    emptyState.classList.remove(
+        "show"
+    );
 
-    if(startValue){
+    errorState.classList.remove(
+        "show"
+    );
 
-        const start =
-            new Date(
-                startValue
-            );
+    try{
 
-        if(
-            !Number.isNaN(
-                start.getTime()
-            ) &&
-            now < start.getTime()
-        ){
+        initializeSupabase();
 
-            return {
-                available:false,
-                reason:"Sales have not started.",
-                text:
-                    "Sales have not started yet."
-            };
+        await loadSession();
+
+        if(!currentUser){
+
+            return;
         }
+
+        await loadProfile();
+
+        await loadEvents();
+
+        await loadNotificationState();
+
+        subscribeToNotifications();
+
+        loadingState.style.display =
+            "none";
+
     }
+    catch(error){
 
-    if(endValue){
+        console.error(
+            "K-Tickets customer events error:",
+            error
+        );
 
-        const end =
-            new Date(
-                endValue
-            );
+        loadingState.style.display =
+            "none";
 
-        if(
-            !Number.isNaN(
-                end.getTime()
-            ) &&
-            now > end.getTime()
-        ){
+        eventGrid.hidden =
+            true;
 
-            return {
-                available:false,
-                reason:"Sales have ended.",
-                text:
-                    "Ticket sales have ended."
-            };
-        }
+        emptyState.classList.remove(
+            "show"
+        );
+
+        errorState.classList.add(
+            "show"
+        );
+
+        errorMessage.textContent =
+            error?.message ||
+            "The events marketplace could not be loaded.";
     }
-
-    return {
-        available:true,
-        reason:"",
-        text:
-            "Sales availability verified from the ticket record."
-    };
 }
+
 
 /* ============================================================
-   PURCHASE LIMIT
+   RETRY
 ============================================================ */
 
-function getTicketPurchaseLimit(
-    ticket
-){
+retryButton.addEventListener(
+    "click",
+    () => {
 
-    const value =
-        firstNonEmpty(
-            ticket,
-            [
-                "max_per_order",
-                "purchase_limit",
-                "quantity_limit",
-                "max_quantity",
-                "max_tickets"
-            ]
-        );
-
-    if(!value){
-        return null;
+        initializePage();
     }
+);
 
-    const number =
-        Number(
-            value
-        );
-
-    if(
-        !Number.isInteger(
-            number
-        ) ||
-        number < 1
-    ){
-
-        return null;
-    }
-
-    return number;
-}
 
 /* ============================================================
-   EVENT HELPERS
+   URL SEARCH
 ============================================================ */
 
-function getEventTitle(
-    event
-){
-
-    return firstNonEmpty(
-        event,
-        [
-            "title",
-            "name",
-            "event_name"
-        ]
+const urlParams =
+    new URLSearchParams(
+        window.location.search
     );
-}
 
-function getEventDescription(
-    event
-){
-
-    return firstNonEmpty(
-        event,
-        [
-            "description",
-            "event_description",
-            "details",
-            "content"
-        ]
-    );
-}
-
-function getEventShortDescription(
-    event
-){
-
-    return firstNonEmpty(
-        event,
-        [
-            "short_description",
-            "summary",
-            "excerpt",
-            "subtitle"
-        ]
-    );
-}
-
-function getEventImageUrl(
-    event
-){
-
-    return firstNonEmpty(
-        event,
-        [
-            "image_url",
-            "cover_image_url",
-            "banner_url",
-            "hero_image_url",
-            "image"
-        ]
-    );
-}
-
-function getEventDate(
-    event
-){
-
-    return firstNonEmpty(
-        event,
-        [
-            "date",
-            "event_date",
-            "start_date",
-            "start_at",
-            "starts_at"
-        ]
-    );
-}
-
-function getEventLocation(
-    event
-){
-
-    const location =
-        firstNonEmpty(
-            event,
-            [
-                "location",
-                "venue",
-                "address"
-            ]
-        );
-
-    const city =
-        firstNonEmpty(
-            event,
-            [
-                "city"
-            ]
-        );
-
-    if(
-        location &&
-        city &&
-        !location
-            .toLowerCase()
-            .includes(
-                city.toLowerCase()
-            )
-    ){
-
-        return `${location}, ${city}`;
-    }
-
-    return (
-        location ||
-        city
-    );
-}
-
-function getEntryInformation(
-    event
-){
-
-    return firstNonEmpty(
-        event,
-        [
-            "entry_type",
-            "entry_method",
-            "access_type",
-            "ticket_delivery",
-            "entry"
-        ]
-    );
-}
-
-function getTicketName(
-    ticket
-){
-
-    return firstNonEmpty(
-        ticket,
-        [
-            "name",
-            "title",
-            "ticket_name"
-        ]
-    );
-}
-
-function getOriginalPrice(
-    ticket
-){
-
-    const value =
-        firstNonEmpty(
-            ticket,
-            [
-                "original_price",
-                "regular_price",
-                "compare_at_price",
-                "previous_price"
-            ]
-        );
-
-    if(!value){
-        return null;
-    }
-
-    const number =
-        Number(
-            value
-        );
-
-    if(
-        !Number.isFinite(
-            number
+const initialSearch =
+    cleanValue(
+        urlParams.get(
+            "search"
         )
-    ){
-        return null;
-    }
-
-    const current =
-        getNumeric(
-            ticket.price
-        );
-
-    return number > current
-        ? number
-        : null;
-}
-
-/* ============================================================
-   DATE / TIME
-============================================================ */
-
-function formatEventDate(
-    value
-){
-
-    if(!value){
-        return "";
-    }
-
-    const raw =
-        String(value)
-            .trim();
-
-    /*
-    Date-only values are parsed as local calendar data where
-    possible, avoiding unnecessary timezone shifts.
-    */
-
-    if(
-        /^\d{4}-\d{2}-\d{2}$/.test(
-            raw
-        )
-    ){
-
-        const [
-            year,
-            month,
-            day
-        ] =
-            raw
-                .split("-")
-                .map(
-                    Number
-                );
-
-        const localDate =
-            new Date(
-                year,
-                month - 1,
-                day
-            );
-
-        return new Intl.DateTimeFormat(
-            undefined,
-            {
-                weekday:"long",
-                year:"numeric",
-                month:"long",
-                day:"numeric"
-            }
-        ).format(
-            localDate
-        );
-    }
-
-    const date =
-        new Date(
-            raw
-        );
-
-    if(
-        Number.isNaN(
-            date.getTime()
-        )
-    ){
-
-        return raw;
-    }
-
-    return new Intl.DateTimeFormat(
-        undefined,
-        {
-            weekday:"long",
-            year:"numeric",
-            month:"long",
-            day:"numeric"
-        }
-    ).format(
-        date
     );
+
+if(initialSearch){
+
+    searchInput.value =
+        initialSearch;
 }
 
-function formatEventTime(
-    event
-){
-
-    const direct =
-        firstNonEmpty(
-            event,
-            [
-                "time",
-                "event_time"
-            ]
-        );
-
-    if(direct){
-        return direct;
-    }
-
-    const startTime =
-        firstNonEmpty(
-            event,
-            [
-                "start_time"
-            ]
-        );
-
-    const endTime =
-        firstNonEmpty(
-            event,
-            [
-                "end_time"
-            ]
-        );
-
-    if(
-        startTime &&
-        endTime
-    ){
-
-        return `${startTime} – ${endTime}`;
-    }
-
-    if(startTime){
-        return startTime;
-    }
-
-    const startAt =
-        firstNonEmpty(
-            event,
-            [
-                "start_at",
-                "starts_at"
-            ]
-        );
-
-    const endAt =
-        firstNonEmpty(
-            event,
-            [
-                "end_at",
-                "ends_at"
-            ]
-        );
-
-    if(startAt){
-
-        const start =
-            new Date(
-                startAt
-            );
-
-        if(
-            !Number.isNaN(
-                start.getTime()
-            )
-        ){
-
-            const startText =
-                new Intl.DateTimeFormat(
-                    undefined,
-                    {
-                        hour:"numeric",
-                        minute:"2-digit"
-                    }
-                ).format(
-                    start
-                );
-
-            if(endAt){
-
-                const end =
-                    new Date(
-                        endAt
-                    );
-
-                if(
-                    !Number.isNaN(
-                        end.getTime()
-                    )
-                ){
-
-                    const endText =
-                        new Intl.DateTimeFormat(
-                            undefined,
-                            {
-                                hour:"numeric",
-                                minute:"2-digit"
-                            }
-                        ).format(
-                            end
-                        );
-
-                    return (
-                        `${startText} – ${endText}`
-                    );
-                }
-            }
-
-            return startText;
-        }
-    }
-
-    return "";
-}
 
 /* ============================================================
-   MONEY
+   HELPERS
 ============================================================ */
-
-function formatMoney(
-    value,
-    currency
-){
-
-    const amount =
-        Number(
-            value
-        );
-
-    const code =
-        cleanValue(
-            currency
-        );
-
-    if(
-        !Number.isFinite(
-            amount
-        ) ||
-        !code
-    ){
-
-        return "—";
-    }
-
-    /*
-    Three decimals are preserved for KWD-style monetary
-    presentation, while the currency itself comes from
-    Supabase.
-    */
-
-    return (
-        amount.toFixed(3) +
-        " " +
-        code
-    );
-}
-
-/* ============================================================
-   NUMBERS
-============================================================ */
-
-function getNumeric(
-    value
-){
-
-    const number =
-        Number(
-            value
-        );
-
-    return Number.isFinite(
-        number
-    )
-        ? number
-        : 0;
-}
-
-function getFiniteNullable(
-    value
-){
-
-    if(
-        value === null ||
-        value === undefined ||
-        String(value).trim() === ""
-    ){
-        return null;
-    }
-
-    const number =
-        Number(
-            value
-        );
-
-    return Number.isFinite(
-        number
-    )
-        ? number
-        : null;
-}
-
-/* ============================================================
-   GENERIC HELPERS
-============================================================ */
-
-function getQuantity(
-    ticketId
-){
-
-    return (
-        quantities.get(
-            String(ticketId)
-        ) ||
-        0
-    );
-}
-
-function firstNonEmpty(
-    object,
-    keys
-){
-
-    for(
-        const key of keys
-    ){
-
-        const value =
-            object?.[
-                key
-            ];
-
-        if(
-            value !== null &&
-            value !== undefined &&
-            String(value).trim() !== ""
-        ){
-
-            return String(
-                value
-            ).trim();
-        }
-    }
-
-    return "";
-}
 
 function cleanValue(
     value
@@ -4145,40 +3334,346 @@ function cleanValue(
     ).trim();
 }
 
-/* ============================================================
-   INITIALS
-============================================================ */
 
-function getInitials(
+function parseDate(
     value
 ){
 
-    const text =
-        cleanValue(
+    if(!value){
+
+        return null;
+    }
+
+    const date =
+        new Date(
             value
         );
 
-    if(!text){
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+
+        return null;
+    }
+
+    return date;
+}
+
+
+function getEventTitle(
+    event
+){
+
+    return cleanValue(
+        event?.title
+    );
+}
+
+
+function getEventDescription(
+    event
+){
+
+    return cleanValue(
+        event?.description
+    );
+}
+
+
+function formatLocation(
+    event
+){
+
+    const venue =
+        cleanValue(
+            event?.venue
+        );
+
+    const city =
+        cleanValue(
+            event?.city
+        );
+
+    if(
+        venue &&
+        city
+    ){
+
+        return `${venue}, ${city}`;
+    }
+
+    return venue ||
+        city ||
+        "";
+}
+
+
+function formatDate(
+    value
+){
+
+    const date =
+        parseDate(
+            value
+        );
+
+    if(!date){
+
+        return "";
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            day:"numeric",
+            month:"short",
+            year:"numeric"
+        }
+    ).format(date);
+}
+
+
+function formatDateParts(
+    date
+){
+
+    if(!date){
+
+        return {
+            day:"—",
+            month:""
+        };
+    }
+
+    return {
+
+        day:
+            new Intl.DateTimeFormat(
+                undefined,
+                {
+                    day:"2-digit"
+                }
+            ).format(date),
+
+        month:
+            new Intl.DateTimeFormat(
+                undefined,
+                {
+                    month:"short"
+                }
+            ).format(date)
+            .toUpperCase()
+
+    };
+}
+
+
+function formatTime(
+    startValue,
+    endValue
+){
+
+    const start =
+        parseDate(
+            startValue
+        );
+
+    const end =
+        parseDate(
+            endValue
+        );
+
+    if(!start){
+
+        return "";
+    }
+
+    const formatter =
+        new Intl.DateTimeFormat(
+            undefined,
+            {
+                hour:"numeric",
+                minute:"2-digit"
+            }
+        );
+
+    const startText =
+        formatter.format(
+            start
+        );
+
+    if(!end){
+
+        return startText;
+    }
+
+    return `${startText} – ${formatter.format(end)}`;
+}
+
+
+function formatMoney(
+    value,
+    currency
+){
+
+    const amount =
+        Number(
+            value
+        );
+
+    if(
+        !Number.isFinite(
+            amount
+        )
+    ){
+
+        return "Price unavailable";
+    }
+
+    const currencyCode =
+        cleanValue(
+            currency
+        )
+        .toUpperCase();
+
+    if(!currencyCode){
+
+        return amount.toFixed(
+            3
+        );
+    }
+
+    try{
+
+        return new Intl.NumberFormat(
+            undefined,
+            {
+                style:"currency",
+                currency:
+                    currencyCode,
+                minimumFractionDigits:
+                    3,
+                maximumFractionDigits:
+                    3
+            }
+        ).format(
+            amount
+        );
+
+    }
+    catch(error){
+
+        return `${amount.toFixed(
+            3
+        )} ${currencyCode}`;
+    }
+}
+
+
+function getTicketAvailability(
+    ticket
+){
+
+    const total =
+        Number(
+            ticket?.quantity_total
+        );
+
+    const sold =
+        Number(
+            ticket?.quantity_sold
+        );
+
+    if(
+        !Number.isFinite(total) ||
+        !Number.isFinite(sold)
+    ){
+
+        return null;
+    }
+
+    return Math.max(
+        0,
+        total - sold
+    );
+}
+
+
+function isFutureOrCurrentEvent(
+    event
+){
+
+    const date =
+        parseDate(
+            event?.start_at
+        );
+
+    if(!date){
+
+        return false;
+    }
+
+    return (
+        date.getTime() >=
+        Date.now()
+    );
+}
+
+
+function getInitials(
+    name
+){
+
+    const value =
+        cleanValue(
+            name
+        );
+
+    if(!value){
+
         return "K";
     }
 
-    return text
-        .split(/\s+/)
-        .filter(Boolean)
-        .slice(0,2)
-        .map(
-            part =>
-                part
-                    .charAt(0)
-                    .toUpperCase()
-        )
-        .join("") ||
-        "K";
+    const parts =
+        value
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if(parts.length === 1){
+
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
 }
 
-/* ============================================================
-   HTML ESCAPE
-============================================================ */
+
+function addInfoRow(
+    parent,
+    icon,
+    text
+){
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+    row.textContent =
+        `${icon} ${text}`;
+
+    parent.appendChild(
+        row
+    );
+}
+
 
 function escapeHTML(
     value
@@ -4187,114 +3682,71 @@ function escapeHTML(
     return String(
         value ?? ""
     )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-}
-
-/* ============================================================
-   CSS ESCAPE
-============================================================ */
-
-function cssEscape(
-    value
-){
-
-    if(
-        window.CSS &&
-        typeof window.CSS.escape === "function"
-    ){
-
-        return window.CSS.escape(
-            value
-        );
-    }
-
-    return String(
-        value
+    .replaceAll(
+        "&",
+        "&amp;"
     )
-        .replace(
-            /["\\#.;:[\],]/g,
-            "\\$&"
-        );
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
 }
 
-/* ============================================================
-   CSS URL ESCAPE
-============================================================ */
 
 function escapeCSSUrl(
     value
 ){
 
     return String(
-        value || ""
+        value ?? ""
     )
-        .replaceAll(
-            "\\",
-            "\\\\"
-        )
-        .replaceAll(
-            '"',
-            '\\"'
-        )
-        .replaceAll(
-            "\n",
-            ""
-        )
-        .replaceAll(
-            "\r",
-            ""
-        );
+    .replaceAll(
+        "\\",
+        "\\\\"
+    )
+    .replaceAll(
+        '"',
+        '\\"'
+    )
+    .replaceAll(
+        "\n",
+        ""
+    )
+    .replaceAll(
+        "\r",
+        ""
+    );
 }
 
-/* ============================================================
-   TOAST
-============================================================ */
-
-let toastTimer = null;
 
 function showToast(
     message
 ){
 
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
     toast.textContent =
-        String(
-            message ||
-            ""
-        );
+        message;
 
     toast.classList.add(
         "show"
     );
 
     clearTimeout(
-        toastTimer
+        showToast.timer
     );
 
-    toastTimer =
+    showToast.timer =
         setTimeout(
             () => {
 
@@ -4303,187 +3755,24 @@ function showToast(
                 );
 
             },
-            2800
+            3000
         );
 }
 
-/* ============================================================
-   ERROR UI
-============================================================ */
 
-function showError(
-    title,
-    message
-){
-
-    loadingScreen.style.display =
-        "none";
-
-    eventPage.hidden =
-        true;
-
-    errorTitle.textContent =
-        title ||
-        "Event unavailable";
-
-    errorMessage.textContent =
-        message ||
-        "This event could not be loaded.";
-
-    errorPanel.classList.add(
-        "show"
-    );
-}
-
-function hideError(){
-
-    errorPanel.classList.remove(
-        "show"
-    );
-}
-
-/* ============================================================
-   RETRY
-============================================================ */
-
-document
-    .getElementById(
-        "retryButton"
-    )
-    .addEventListener(
-        "click",
-        async () => {
-
-            await loadPage();
-        }
-    );
-
-/* ============================================================
-   SHOW PAGE
-============================================================ */
-
-function showPage(){
-
-    loadingScreen.style.display =
-        "none";
-
-    errorPanel.classList.remove(
-        "show"
-    );
-
-    eventPage.hidden =
-        false;
-}
-
-/* ============================================================
-   LOGIN
-============================================================ */
-
-function redirectToLogin(
-    reason
-){
+function redirectToLogin(){
 
     window.location.replace(
-        "../login.html?error=" +
-        encodeURIComponent(
-            reason ||
-            "unauthorized"
-        )
+        "../login.html"
     );
 }
 
-/* ============================================================
-   AUTH MONITOR
-============================================================ */
-
-function monitorAuth(){
-
-    supabaseClient.auth.onAuthStateChange(
-        (
-            event,
-            session
-        ) => {
-
-            if(
-                event === "SIGNED_OUT" ||
-                event === "USER_DELETED" ||
-                !session
-            ){
-
-                redirectToLogin(
-                    "session_expired"
-                );
-            }
-        }
-    );
-}
-
-/* ============================================================
-   PAGE LOAD
-============================================================ */
-
-async function loadPage(){
-
-    loadingScreen.style.display =
-        "grid";
-
-    hideError();
-
-    eventPage.hidden =
-        true;
-
-    continueButton.disabled =
-        true;
-
-    try{
-
-        if(!supabaseClient){
-
-            initializeSupabase();
-
-            monitorAuth();
-        }
-
-        await loadSession();
-
-        if(!currentUser){
-            return;
-        }
-
-        await loadProfile();
-
-        await loadEvent();
-
-        await loadTicketTypes();
-
-        renderEvent();
-
-        renderTickets();
-
-        await updateNotificationState();
-
-        showPage();
-
-    }catch(error){
-
-        console.error(
-            "Event details load failed:",
-            error
-        );
-
-        showError(
-            "Event unavailable",
-            error?.message ||
-            "This event could not be loaded."
-        );
-    }
-}
 
 /* ============================================================
    START
 ============================================================ */
 
-loadPage();
+initializePage();
 </script>
 
 </body>
