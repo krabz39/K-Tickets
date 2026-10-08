@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="referrer" content="same-origin">
 
     <title>Event Details | K-Tickets</title>
 
@@ -10,6 +12,8 @@
         name="description"
         content="View event details and purchase tickets on K-Tickets."
     >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
@@ -30,8 +34,12 @@
             --line: #e8e1da;
             --surface: #fbfaf8;
 
-            --shadow-sm: 0 5px 20px rgba(30, 22, 18, .06);
-            --shadow-md: 0 20px 55px rgba(30, 22, 18, .12);
+            --success: #26705c;
+            --warning: #9a681b;
+            --danger: #9b2029;
+
+            --shadow-sm: 0 5px 20px rgba(30,22,18,.06);
+            --shadow-md: 0 20px 55px rgba(30,22,18,.12);
 
             --sidebar-width: 260px;
         }
@@ -69,12 +77,19 @@
             cursor: pointer;
         }
 
+        button:disabled {
+            cursor: not-allowed;
+            opacity: .55;
+        }
+
         a {
             color: inherit;
             text-decoration: none;
         }
 
-        /* SIDEBAR */
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
 
         .sidebar {
             position: fixed;
@@ -197,7 +212,14 @@
             color: rgba(255,255,255,.7);
         }
 
-        /* MAIN */
+        .logout-btn:hover {
+            color: white;
+            border-color: rgba(255,255,255,.25);
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
 
         .main {
             width: calc(100% - var(--sidebar-width));
@@ -227,11 +249,16 @@
             border-radius: 11px;
             background: var(--cream-light);
             color: var(--green);
+            font-size: 20px;
         }
 
         .breadcrumb {
+            min-width: 0;
             color: var(--muted);
             font-size: 11px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .breadcrumb a {
@@ -246,12 +273,23 @@
         }
 
         .icon-btn {
+            position: relative;
             width: 42px;
             height: 42px;
             border-radius: 12px;
             background: white;
             border: 1px solid var(--line);
             color: var(--green);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--bordo);
         }
 
         .avatar {
@@ -266,7 +304,9 @@
             font-weight: 800;
         }
 
-        /* CONTENT */
+        /* =====================================================
+           CONTENT
+        ===================================================== */
 
         .content {
             max-width: 1500px;
@@ -274,7 +314,9 @@
             padding: 35px;
         }
 
-        /* HERO */
+        /* =====================================================
+           HERO
+        ===================================================== */
 
         .event-hero {
             min-height: 380px;
@@ -297,6 +339,20 @@
                 );
             color: white;
             box-shadow: var(--shadow-md);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .event-hero.has-image::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(15,61,58,.12),
+                    rgba(15,61,58,.90)
+                );
         }
 
         .event-hero::before {
@@ -308,6 +364,7 @@
             font-weight: 900;
             line-height: 1;
             color: rgba(255,255,255,.045);
+            pointer-events: none;
         }
 
         .hero-content {
@@ -333,7 +390,7 @@
             letter-spacing: .08em;
         }
 
-        .event-badge.promo {
+        .event-badge.featured {
             background: var(--cream);
             color: var(--green);
             border-color: var(--cream);
@@ -341,7 +398,7 @@
 
         .hero-content h1 {
             margin-top: 15px;
-            font-size: clamp(32px, 4vw, 55px);
+            font-size: clamp(32px,4vw,55px);
             line-height: 1;
             letter-spacing: -.05em;
         }
@@ -369,12 +426,16 @@
             font-size: 10px;
         }
 
-        /* LAYOUT */
+        /* =====================================================
+           EVENT LAYOUT
+        ===================================================== */
 
         .event-layout {
             margin-top: 22px;
             display: grid;
-            grid-template-columns: minmax(0, 1.5fr) minmax(340px, .65fr);
+            grid-template-columns:
+                minmax(0,1.5fr)
+                minmax(340px,.65fr);
             gap: 22px;
             align-items: start;
         }
@@ -402,14 +463,17 @@
             color: #625d59;
             font-size: 13px;
             line-height: 1.8;
+            white-space: pre-line;
         }
 
-        /* INFO GRID */
+        /* =====================================================
+           INFO
+        ===================================================== */
 
         .info-grid {
             margin-top: 18px;
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2,1fr);
             gap: 11px;
         }
 
@@ -433,17 +497,24 @@
             margin-top: 7px;
             color: var(--green);
             font-size: 12px;
+            line-height: 1.5;
         }
 
-        /* ORGANIZER */
+        /* =====================================================
+           ORGANIZER
+        ===================================================== */
 
         .organizer {
             margin-top: 20px;
-            display: flex;
+            display: none;
             align-items: center;
             gap: 13px;
             padding-top: 20px;
             border-top: 1px solid var(--line);
+        }
+
+        .organizer.show {
+            display: flex;
         }
 
         .organizer-avatar {
@@ -469,7 +540,9 @@
             font-size: 13px;
         }
 
-        /* TICKETS */
+        /* =====================================================
+           TICKETS
+        ===================================================== */
 
         .ticket-section-head {
             display: flex;
@@ -500,6 +573,10 @@
             box-shadow: 0 0 0 2px rgba(108,21,30,.07);
         }
 
+        .ticket-option.unavailable {
+            opacity: .62;
+        }
+
         .ticket-option-top {
             display: flex;
             justify-content: space-between;
@@ -528,13 +605,6 @@
             font-size: 15px;
         }
 
-        .ticket-price del {
-            display: block;
-            margin-top: 3px;
-            color: var(--muted);
-            font-size: 9px;
-        }
-
         .ticket-bottom {
             margin-top: 13px;
             padding-top: 13px;
@@ -549,6 +619,10 @@
             color: var(--green);
             font-size: 9px;
             font-weight: 700;
+        }
+
+        .availability.sold {
+            color: var(--danger);
         }
 
         .quantity {
@@ -578,7 +652,9 @@
             font-weight: 800;
         }
 
-        /* CHECKOUT CARD */
+        /* =====================================================
+           CHECKOUT
+        ===================================================== */
 
         .checkout-card {
             position: sticky;
@@ -608,6 +684,7 @@
             margin-top: 5px;
             color: var(--green);
             font-size: 13px;
+            line-height: 1.5;
         }
 
         .summary-row {
@@ -625,6 +702,7 @@
 
         .summary-row strong {
             color: var(--ink);
+            text-align: right;
         }
 
         .summary-divider {
@@ -671,14 +749,20 @@
             text-align: center;
             color: var(--muted);
             font-size: 9px;
+            line-height: 1.5;
         }
 
         .promotion {
+            display: none;
             margin-top: 15px;
             padding: 13px;
             border-radius: 13px;
             background: var(--cream-light);
             border: 1px solid #ead9c8;
+        }
+
+        .promotion.show {
+            display: block;
         }
 
         .promotion strong {
@@ -693,14 +777,120 @@
             line-height: 1.5;
         }
 
-        /* MOBILE */
+        /* =====================================================
+           LOADING / ERROR
+        ===================================================== */
+
+        .page-state {
+            min-height: 500px;
+            display: grid;
+            place-items: center;
+        }
+
+        .state-box {
+            width: min(500px,100%);
+            padding: 40px 25px;
+            text-align: center;
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .spinner {
+            width: 42px;
+            height: 42px;
+            margin: 0 auto 15px;
+            border: 3px solid rgba(15,61,58,.12);
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .state-icon {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 15px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            background: var(--green-soft);
+            color: var(--green);
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        .state-box h2 {
+            color: var(--green);
+            font-size: 18px;
+        }
+
+        .state-box p {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .state-button {
+            margin-top: 17px;
+            min-height: 42px;
+            padding: 0 16px;
+            border-radius: 11px;
+            background: var(--green);
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* =====================================================
+           MOBILE NAV
+        ===================================================== */
 
         .mobile-nav {
             display: none;
         }
 
-        @media (max-width: 1100px) {
+        /* =====================================================
+           TOAST
+        ===================================================== */
 
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 90px;
+            transform: translateX(-50%) translateY(10px);
+            z-index: 9999;
+            max-width: min(440px,calc(100% - 30px));
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: var(--green);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.5;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            pointer-events: none;
+            transition: .22s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media(max-width:1100px) {
             .event-layout {
                 grid-template-columns: 1fr;
             }
@@ -708,14 +898,13 @@
             .checkout-card {
                 position: static;
             }
-
         }
 
-        @media (max-width: 900px) {
-
+        @media(max-width:900px) {
             .sidebar {
                 transform: translateX(-100%);
                 transition: transform .25s ease;
+                box-shadow: 20px 0 45px rgba(0,0,0,.13);
             }
 
             .sidebar.open {
@@ -743,7 +932,7 @@
             .mobile-nav {
                 position: fixed;
                 display: grid;
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(4,1fr);
                 left: 12px;
                 right: 12px;
                 bottom: 12px;
@@ -773,8 +962,7 @@
             }
         }
 
-        @media (max-width: 600px) {
-
+        @media(max-width:600px) {
             .topbar {
                 padding: 12px 15px;
             }
@@ -836,10 +1024,6 @@
             .quantity span {
                 flex: 1;
             }
-
-            .checkout-card {
-                margin-bottom: 15px;
-            }
         }
     </style>
 </head>
@@ -847,6 +1031,10 @@
 <body>
 
 <div class="app">
+
+    <!-- =====================================================
+         SIDEBAR
+    ===================================================== -->
 
     <aside class="sidebar" id="sidebar">
 
@@ -859,7 +1047,9 @@
             </div>
         </a>
 
-        <div class="nav-label">Menu</div>
+        <div class="nav-label">
+            Menu
+        </div>
 
         <nav class="nav">
 
@@ -878,28 +1068,14 @@
                 My Tickets
             </a>
 
-            <a href="#" class="nav-link">
+            <a href="orders.html" class="nav-link">
                 <span class="nav-icon">◷</span>
-                Payment History
+                Orders
             </a>
 
-            <a href="#" class="nav-link">
-                <span class="nav-icon">♡</span>
-                Saved Events
-            </a>
-
-            <div class="nav-label" style="margin-top:20px;">
-                Account
-            </div>
-
-            <a href="#" class="nav-link">
+            <a href="profile.html" class="nav-link">
                 <span class="nav-icon">◎</span>
                 Profile
-            </a>
-
-            <a href="#" class="nav-link">
-                <span class="nav-icon">⚙</span>
-                Settings
             </a>
 
         </nav>
@@ -911,7 +1087,11 @@
                 <strong>K-Tickets Support</strong>
             </div>
 
-            <button class="logout-btn" onclick="logout()">
+            <button
+                class="logout-btn"
+                id="logoutButton"
+                type="button"
+            >
                 Log out
             </button>
 
@@ -919,137 +1099,149 @@
 
     </aside>
 
+    <!-- =====================================================
+         MAIN
+    ===================================================== -->
+
     <main class="main">
 
         <header class="topbar">
 
-            <button
-                class="mobile-menu"
-                onclick="toggleSidebar()"
-                aria-label="Open menu"
+            <div
+                style="
+                    display:flex;
+                    align-items:center;
+                    gap:12px;
+                    min-width:0;
+                "
             >
-                ☰
-            </button>
 
-            <div class="breadcrumb">
-                <a href="events.html">Events</a>
-                <span> / </span>
-                <span id="breadcrumbTitle">
-                    Event details
-                </span>
+                <button
+                    class="mobile-menu"
+                    id="mobileMenu"
+                    type="button"
+                    aria-label="Open menu"
+                >
+                    ☰
+                </button>
+
+                <div class="breadcrumb">
+                    <a href="events.html">Events</a>
+                    <span> / </span>
+                    <span id="breadcrumbTitle">
+                        Event details
+                    </span>
+                </div>
+
             </div>
 
             <div class="top-actions">
 
-                <button class="icon-btn">
+                <button
+                    class="icon-btn"
+                    id="notificationButton"
+                    type="button"
+                    aria-label="Notifications"
+                    title="Notifications"
+                >
                     ♢
+
+                    <span
+                        class="notification-dot"
+                        id="notificationDot"
+                        hidden
+                    ></span>
                 </button>
 
-                <div class="avatar">
-                    EK
+                <div
+                    class="avatar"
+                    id="avatar"
+                    aria-label="Account"
+                >
+                    K
                 </div>
 
             </div>
 
         </header>
 
-        <section class="content">
+        <section
+            class="content"
+            id="pageContent"
+            hidden
+        >
 
-            <!-- EVENT HERO -->
+            <!-- =================================================
+                 HERO
+            ================================================= -->
 
-            <section class="event-hero">
+            <section
+                class="event-hero"
+                id="eventHero"
+            >
 
                 <div class="hero-content">
 
-                    <div class="event-badges">
-
-                        <span class="event-badge">
-                            Coffee
-                        </span>
-
-                        <span class="event-badge promo">
-                            Early access available
-                        </span>
-
-                    </div>
+                    <div
+                        class="event-badges"
+                        id="eventBadges"
+                    ></div>
 
                     <h1 id="eventTitle">
-                        Kuwait Coffee Festival 2026
+                        —
                     </h1>
 
                     <p id="eventShortDescription">
-                        A celebration of coffee, people and culture
-                        bringing together coffee lovers, creators
-                        and professionals.
+                        —
                     </p>
 
-                    <div class="hero-meta">
-
-                        <span id="heroDate">
-                            30 Oct 2026
-                        </span>
-
-                        <span id="heroTime">
-                            4:00 PM – 10:00 PM
-                        </span>
-
-                        <span id="heroLocation">
-                            Kuwait City
-                        </span>
-
-                    </div>
+                    <div
+                        class="hero-meta"
+                        id="heroMeta"
+                    ></div>
 
                 </div>
 
             </section>
 
-            <div class="event-layout">
+            <!-- =================================================
+                 LAYOUT
+            ================================================= -->
 
-                <!-- LEFT -->
+            <div class="event-layout">
 
                 <div class="left-column">
 
+                    <!-- ABOUT -->
+
                     <section class="card">
 
-                        <h2>About this event</h2>
+                        <h2>
+                            About this event
+                        </h2>
 
-                        <p class="description" id="description">
-
-                            Experience a curated celebration of coffee
-                            culture in Kuwait. Meet coffee professionals,
-                            discover new flavours, connect with creators
-                            and enjoy an evening built around great coffee
-                            and even better conversations.
-
-                            <br><br>
-
-                            Whether you're a coffee professional, enthusiast
-                            or simply curious, this event is designed to
-                            give you a memorable experience.
-
+                        <p
+                            class="description"
+                            id="description"
+                        >
+                            —
                         </p>
 
                         <div class="info-grid">
 
                             <div class="info-box">
                                 <small>Date</small>
-                                <strong id="infoDate">
-                                    Friday, 30 October 2026
-                                </strong>
+                                <strong id="infoDate">—</strong>
                             </div>
 
                             <div class="info-box">
                                 <small>Time</small>
-                                <strong id="infoTime">
-                                    4:00 PM – 10:00 PM
-                                </strong>
+                                <strong id="infoTime">—</strong>
                             </div>
 
                             <div class="info-box">
                                 <small>Location</small>
-                                <strong id="infoLocation">
-                                    Kuwait City, Kuwait
-                                </strong>
+                                <strong id="infoLocation">—</strong>
                             </div>
 
                             <div class="info-box">
@@ -1061,17 +1253,28 @@
 
                         </div>
 
-                        <div class="organizer">
+                        <div
+                            class="organizer"
+                            id="organizer"
+                        >
 
-                            <div class="organizer-avatar">
+                            <div
+                                class="organizer-avatar"
+                                id="organizerAvatar"
+                            >
                                 K
                             </div>
 
                             <div>
-                                <small>Organized by</small>
-                                <strong>
-                                    Kuwait Coffee Community
+
+                                <small>
+                                    Organized by
+                                </small>
+
+                                <strong id="organizerName">
+                                    —
                                 </strong>
+
                             </div>
 
                         </div>
@@ -1084,135 +1287,17 @@
 
                         <div class="ticket-section-head">
 
-                            <h2>Select tickets</h2>
+                            <h2>
+                                Select tickets
+                            </h2>
 
                             <span>
-                                Secure your spot
+                                Select your quantity
                             </span>
 
                         </div>
 
-                        <div
-                            class="ticket-option selected"
-                            data-ticket="standard"
-                        >
-
-                            <div class="ticket-option-top">
-
-                                <div>
-
-                                    <h3>
-                                        Standard Entry
-                                    </h3>
-
-                                    <p>
-                                        General event access.
-                                    </p>
-
-                                </div>
-
-                                <div class="ticket-price">
-
-                                    <strong>
-                                        4.500 KWD
-                                    </strong>
-
-                                    <del>
-                                        5.000 KWD
-                                    </del>
-
-                                </div>
-
-                            </div>
-
-                            <div class="ticket-bottom">
-
-                                <span class="availability">
-                                    146 tickets remaining
-                                </span>
-
-                                <div class="quantity">
-
-                                    <button
-                                        onclick="changeQuantity('standard', -1)"
-                                    >
-                                        −
-                                    </button>
-
-                                    <span id="standardQty">
-                                        0
-                                    </span>
-
-                                    <button
-                                        onclick="changeQuantity('standard', 1)"
-                                    >
-                                        +
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div
-                            class="ticket-option"
-                            data-ticket="vip"
-                        >
-
-                            <div class="ticket-option-top">
-
-                                <div>
-
-                                    <h3>
-                                        VIP Experience
-                                    </h3>
-
-                                    <p>
-                                        Priority access plus VIP benefits.
-                                    </p>
-
-                                </div>
-
-                                <div class="ticket-price">
-
-                                    <strong>
-                                        9.500 KWD
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
-                            <div class="ticket-bottom">
-
-                                <span class="availability">
-                                    32 tickets remaining
-                                </span>
-
-                                <div class="quantity">
-
-                                    <button
-                                        onclick="changeQuantity('vip', -1)"
-                                    >
-                                        −
-                                    </button>
-
-                                    <span id="vipQty">
-                                        0
-                                    </span>
-
-                                    <button
-                                        onclick="changeQuantity('vip', 1)"
-                                    >
-                                        +
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
+                        <div id="ticketList"></div>
 
                     </section>
 
@@ -1222,66 +1307,46 @@
 
                 <aside class="card checkout-card">
 
-                    <h2>Your order</h2>
+                    <h2>
+                        Your order
+                    </h2>
 
                     <div class="selected-summary">
 
-                        <small>Event</small>
+                        <small>
+                            Event
+                        </small>
 
                         <strong id="summaryEvent">
-                            Kuwait Coffee Festival 2026
+                            —
                         </strong>
 
                     </div>
 
-                    <div class="summary-row">
-
-                        <span>
-                            Standard ×
-                            <span id="summaryStandardQty">
-                                0
-                            </span>
-                        </span>
-
-                        <strong id="summaryStandard">
-                            0.000 KWD
-                        </strong>
-
-                    </div>
-
-                    <div class="summary-row">
-
-                        <span>
-                            VIP ×
-                            <span id="summaryVipQty">
-                                0
-                            </span>
-                        </span>
-
-                        <strong id="summaryVip">
-                            0.000 KWD
-                        </strong>
-
-                    </div>
+                    <div id="summaryTickets"></div>
 
                     <div class="summary-divider"></div>
 
                     <div class="summary-row">
 
-                        <span>Subtotal</span>
+                        <span>
+                            Subtotal
+                        </span>
 
                         <strong id="subtotal">
-                            0.000 KWD
+                            0.000
                         </strong>
 
                     </div>
 
                     <div class="summary-row">
 
-                        <span>Service fee</span>
+                        <span>
+                            Service fee
+                        </span>
 
-                        <strong id="serviceFee">
-                            0.000 KWD
+                        <strong>
+                            Calculated at checkout
                         </strong>
 
                     </div>
@@ -1290,34 +1355,41 @@
 
                     <div class="total-row">
 
-                        <span>Total</span>
+                        <span>
+                            Current subtotal
+                        </span>
 
                         <strong id="total">
-                            0.000 KWD
+                            0.000
                         </strong>
 
                     </div>
 
                     <button
                         class="buy-btn"
-                        onclick="continueToCheckout()"
+                        id="checkoutButton"
+                        type="button"
+                        disabled
                     >
                         Continue to Checkout
                     </button>
 
                     <p class="secure-note">
-                        Secure checkout · Digital ticket delivery
+                        Final price, service fee, promotion and
+                        inventory are revalidated securely at checkout.
                     </p>
 
-                    <div class="promotion">
+                    <div
+                        class="promotion"
+                        id="promotion"
+                    >
 
-                        <strong>
-                            Promotion active
+                        <strong id="promotionTitle">
+                            Promotion available
                         </strong>
 
-                        <p>
-                            Early-access pricing is currently available
-                            on selected ticket types.
+                        <p id="promotionText">
+                            —
                         </p>
 
                     </div>
@@ -1328,11 +1400,75 @@
 
         </section>
 
+        <!-- =====================================================
+             LOADING
+        ===================================================== -->
+
+        <section
+            class="page-state"
+            id="loadingState"
+        >
+
+            <div class="state-box">
+
+                <div class="spinner"></div>
+
+                <h2>
+                    Loading event
+                </h2>
+
+                <p>
+                    Getting the latest event information and
+                    ticket availability.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================================
+             ERROR
+        ===================================================== -->
+
+        <section
+            class="page-state"
+            id="errorState"
+            hidden
+        >
+
+            <div class="state-box">
+
+                <div class="state-icon">
+                    !
+                </div>
+
+                <h2 id="errorTitle">
+                    Event unavailable
+                </h2>
+
+                <p id="errorMessage">
+                    This event could not be loaded.
+                </p>
+
+                <button
+                    class="state-button"
+                    id="backToEvents"
+                    type="button"
+                >
+                    Back to Events
+                </button>
+
+            </div>
+
+        </section>
+
     </main>
 
 </div>
 
-<!-- MOBILE NAV -->
+<!-- ============================================================
+     MOBILE NAV
+============================================================ -->
 
 <nav class="mobile-nav">
 
@@ -1341,7 +1477,10 @@
         <span>Home</span>
     </a>
 
-    <a href="events.html" class="active">
+    <a
+        href="events.html"
+        class="active"
+    >
         <span>◫</span>
         <span>Events</span>
     </a>
@@ -1351,362 +1490,2597 @@
         <span>Tickets</span>
     </a>
 
-    <a href="#">
+    <a href="profile.html">
         <span>◎</span>
         <span>Account</span>
     </a>
 
 </nav>
 
+<div
+    class="toast"
+    id="toast"
+    aria-live="polite"
+></div>
+
 <script>
+"use strict";
 
-    /*
-        K-TICKETS EVENT DETAILS
+/*
+============================================================
+K-TICKETS CUSTOMER EVENT DETAILS
+============================================================
 
-        This page currently uses demonstration event data.
+PRODUCTION DATA RULE:
 
-        Later:
+There are NO hardcoded event records in this file.
 
-        1. Read event ID from URL.
-        2. Query Supabase.
-        3. Load published event.
-        4. Load ticket types.
-        5. Load merchant.
-        6. Check real inventory.
-        7. Apply active promotion.
-        8. Continue to checkout.
+The URL provides only:
 
-        IMPORTANT:
+    event-details.html?id=<REAL_EVENT_UUID>
 
-        Inventory must be revalidated server-side when checkout
-        is created. Never trust the quantity calculated only
-        in this browser.
-    */
+The page then reads:
 
-    const eventData = {
+    public.events
+    public.ticket_types
+    public.profiles
+    public.promotions
+    public.notifications
 
-        id: "coffee-festival-2026",
+The browser NEVER becomes the source of truth for:
 
-        title: "Kuwait Coffee Festival 2026",
+    price
+    inventory
+    service fee
+    promotion discount
+    order total
 
-        description:
-            "Experience a curated celebration of coffee culture " +
-            "in Kuwait. Meet coffee professionals, discover new " +
-            "flavours, connect with creators and enjoy an evening " +
-            "built around great coffee and even better conversations.",
+The secure checkout RPC performs final validation.
+============================================================
+*/
 
-        date: "30 Oct 2026",
 
-        fullDate: "Friday, 30 October 2026",
+/* ============================================================
+   SUPABASE CONFIG
+============================================================ */
 
-        time: "4:00 PM – 10:00 PM",
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
 
-        location: "Kuwait City",
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
 
-        organizer: "Kuwait Coffee Community",
+let supabaseClient = null;
 
-        tickets: {
 
-            standard: {
-                name: "Standard Entry",
-                price: 4.5,
-                inventory: 146,
-                max: 10
-            },
+/* ============================================================
+   STATE
+============================================================ */
 
-            vip: {
-                name: "VIP Experience",
-                price: 9.5,
-                inventory: 32,
-                max: 6
-            }
+let currentUser = null;
+let currentProfile = null;
 
-        }
+let eventRecord = null;
+let ticketTypes = [];
+let promotions = [];
 
-    };
+let quantities = {};
 
-    const quantities = {
-        standard: 0,
-        vip: 0
-    };
+let notificationChannel = null;
 
-    /*
-        K-Tickets admin-configurable service fee.
 
-        This will eventually come from Supabase settings,
-        for example:
+/* ============================================================
+   ELEMENTS
+============================================================ */
 
-        service_fee_percentage = 2.00
-    */
+const sidebar =
+    document.getElementById("sidebar");
 
-    const SERVICE_FEE_PERCENT = 2;
+const mobileMenu =
+    document.getElementById("mobileMenu");
 
-    function changeQuantity(type, change) {
+const logoutButton =
+    document.getElementById("logoutButton");
 
-        const ticket = eventData.tickets[type];
+const notificationButton =
+    document.getElementById("notificationButton");
 
-        const next =
-            quantities[type] + change;
+const notificationDot =
+    document.getElementById("notificationDot");
 
-        if (next < 0) return;
+const avatar =
+    document.getElementById("avatar");
 
-        if (next > ticket.max) {
+const breadcrumbTitle =
+    document.getElementById("breadcrumbTitle");
 
-            showMessage(
-                `Maximum ${ticket.max} ${ticket.name} tickets per order.`
+const pageContent =
+    document.getElementById("pageContent");
+
+const loadingState =
+    document.getElementById("loadingState");
+
+const errorState =
+    document.getElementById("errorState");
+
+const errorTitle =
+    document.getElementById("errorTitle");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const backToEvents =
+    document.getElementById("backToEvents");
+
+const eventHero =
+    document.getElementById("eventHero");
+
+const eventBadges =
+    document.getElementById("eventBadges");
+
+const eventTitle =
+    document.getElementById("eventTitle");
+
+const eventShortDescription =
+    document.getElementById("eventShortDescription");
+
+const heroMeta =
+    document.getElementById("heroMeta");
+
+const description =
+    document.getElementById("description");
+
+const infoDate =
+    document.getElementById("infoDate");
+
+const infoTime =
+    document.getElementById("infoTime");
+
+const infoLocation =
+    document.getElementById("infoLocation");
+
+const organizer =
+    document.getElementById("organizer");
+
+const organizerName =
+    document.getElementById("organizerName");
+
+const organizerAvatar =
+    document.getElementById("organizerAvatar");
+
+const ticketList =
+    document.getElementById("ticketList");
+
+const summaryEvent =
+    document.getElementById("summaryEvent");
+
+const summaryTickets =
+    document.getElementById("summaryTickets");
+
+const subtotal =
+    document.getElementById("subtotal");
+
+const total =
+    document.getElementById("total");
+
+const checkoutButton =
+    document.getElementById("checkoutButton");
+
+const promotion =
+    document.getElementById("promotion");
+
+const promotionTitle =
+    document.getElementById("promotionTitle");
+
+const promotionText =
+    document.getElementById("promotionText");
+
+const toast =
+    document.getElementById("toast");
+
+
+/* ============================================================
+   URL EVENT ID
+============================================================ */
+
+const urlParams =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const eventId =
+    cleanValue(
+        urlParams.get("id")
+    );
+
+
+/* ============================================================
+   INITIALISE
+============================================================ */
+
+async function initializePage(){
+
+    try {
+
+        initializeSupabase();
+
+        if(!eventId){
+
+            showError(
+                "Event not specified",
+                "This page needs a valid event ID."
             );
 
             return;
         }
 
-        if (next > ticket.inventory) {
+        await loadSession();
 
-            showMessage(
-                "There are not enough tickets available."
-            );
-
+        if(!currentUser){
             return;
         }
 
-        quantities[type] = next;
+        await loadProfile();
 
-        updateQuantityUI();
+        await loadEvent();
+
+        await loadTicketTypes();
+
+        await loadPromotions();
+
+        await loadOrganizer();
+
+        renderEvent();
+
+        renderTickets();
+
+        renderPromotion();
+
         updateSummary();
 
-    }
+        await loadNotificationState();
 
-    function updateQuantityUI() {
+        subscribeToNotifications();
 
-        document.getElementById("standardQty")
-            .textContent = quantities.standard;
+        subscribeToEventChanges();
 
-        document.getElementById("vipQty")
-            .textContent = quantities.vip;
-
-    }
-
-    function updateSummary() {
-
-        const standardTotal =
-            quantities.standard *
-            eventData.tickets.standard.price;
-
-        const vipTotal =
-            quantities.vip *
-            eventData.tickets.vip.price;
-
-        const subtotal =
-            standardTotal +
-            vipTotal;
-
-        const serviceFee =
-            subtotal *
-            (SERVICE_FEE_PERCENT / 100);
-
-        const total =
-            subtotal +
-            serviceFee;
-
-        document.getElementById("summaryStandardQty")
-            .textContent = quantities.standard;
-
-        document.getElementById("summaryVipQty")
-            .textContent = quantities.vip;
-
-        document.getElementById("summaryStandard")
-            .textContent =
-            `${standardTotal.toFixed(3)} KWD`;
-
-        document.getElementById("summaryVip")
-            .textContent =
-            `${vipTotal.toFixed(3)} KWD`;
-
-        document.getElementById("subtotal")
-            .textContent =
-            `${subtotal.toFixed(3)} KWD`;
-
-        document.getElementById("serviceFee")
-            .textContent =
-            `${serviceFee.toFixed(3)} KWD`;
-
-        document.getElementById("total")
-            .textContent =
-            `${total.toFixed(3)} KWD`;
+        loadingState.hidden = true;
+        pageContent.hidden = false;
 
     }
+    catch(error){
 
-    function continueToCheckout() {
+        console.error(
+            "K-Tickets event details error:",
+            error
+        );
 
-        const totalTickets =
-            quantities.standard +
-            quantities.vip;
+        showError(
+            "Event unavailable",
+            error?.message ||
+            "The event could not be loaded."
+        );
+    }
+}
 
-        if (totalTickets === 0) {
 
-            showMessage(
-                "Please select at least one ticket."
+/* ============================================================
+   SUPABASE
+============================================================ */
+
+function initializeSupabase(){
+
+    if(
+        !window.supabase ||
+        !window.supabase.createClient
+    ){
+
+        throw new Error(
+            "Supabase client could not be loaded."
+        );
+    }
+
+    supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY,
+            {
+                auth:{
+                    persistSession:true,
+                    autoRefreshToken:true,
+                    detectSessionInUrl:true
+                }
+            }
+        );
+}
+
+
+/* ============================================================
+   SESSION
+============================================================ */
+
+async function loadSession(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getSession();
+
+    if(error){
+
+        throw new Error(
+            `Session verification failed: ${error.message}`
+        );
+    }
+
+    if(!data?.session?.user){
+
+        window.location.replace(
+            "../login.html"
+        );
+
+        return;
+    }
+
+    currentUser =
+        data.session.user;
+}
+
+
+/* ============================================================
+   PROFILE
+============================================================ */
+
+async function loadProfile(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                is_active,
+                avatar_url
+            `)
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+    if(error){
+
+        throw new Error(
+            `Profile could not be loaded: ${error.message}`
+        );
+    }
+
+    if(!data){
+
+        throw new Error(
+            "No K-Tickets profile exists for this account."
+        );
+    }
+
+    if(data.is_active !== true){
+
+        await safeSignOut();
+
+        window.location.replace(
+            "../login.html"
+        );
+
+        return;
+    }
+
+    const role =
+        cleanValue(
+            data.role
+        ).toLowerCase();
+
+    if(role !== "customer"){
+
+        routeByRole(
+            role
+        );
+
+        return;
+    }
+
+    currentProfile =
+        data;
+
+    renderAvatar();
+}
+
+
+/* ============================================================
+   ROLE ROUTING
+============================================================ */
+
+function routeByRole(role){
+
+    const routes = {
+        merchant:
+            "../merchant/dashboard.html",
+
+        gate_staff:
+            "../gate/scan.html",
+
+        admin:
+            "../admin/dashboard.html"
+    };
+
+    if(routes[role]){
+
+        window.location.replace(
+            routes[role]
+        );
+
+        return;
+    }
+
+    window.location.replace(
+        "../login.html"
+    );
+}
+
+
+/* ============================================================
+   LOAD EVENT
+============================================================ */
+
+async function loadEvent(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("events")
+            .select(`
+                id,
+                merchant_id,
+                title,
+                description,
+                venue,
+                city,
+                start_at,
+                end_at,
+                status,
+                category,
+                image_url,
+                featured,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "id",
+                eventId
+            )
+            .eq(
+                "status",
+                "published"
+            )
+            .maybeSingle();
+
+    if(error){
+
+        throw new Error(
+            `Event could not be loaded: ${error.message}`
+        );
+    }
+
+    if(!data){
+
+        throw new Error(
+            "This event is not available for customer purchase."
+        );
+    }
+
+    eventRecord =
+        data;
+
+    if(!eventRecord.id){
+
+        throw new Error(
+            "The event record has no valid ID."
+        );
+    }
+}
+
+
+/* ============================================================
+   LOAD TICKET TYPES
+============================================================ */
+
+async function loadTicketTypes(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("ticket_types")
+            .select(`
+                id,
+                event_id,
+                name,
+                description,
+                price,
+                currency,
+                quantity_total,
+                quantity_sold,
+                sales_start,
+                sales_end,
+                active,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "event_id",
+                eventRecord.id
+            )
+            .eq(
+                "active",
+                true
+            )
+            .order(
+                "price",
+                {
+                    ascending:true
+                }
             );
 
-            return;
+    if(error){
+
+        throw new Error(
+            `Ticket types could not be loaded: ${error.message}`
+        );
+    }
+
+    ticketTypes =
+        Array.isArray(data)
+            ? data
+            : [];
+
+    if(!ticketTypes.length){
+
+        throw new Error(
+            "This event currently has no active ticket types."
+        );
+    }
+
+    /*
+        Start every real ticket type at zero.
+        Nothing about the ticket itself is prefilled.
+    */
+
+    quantities = {};
+
+    ticketTypes.forEach(
+        ticket => {
+
+            quantities[
+                ticket.id
+            ] = 0;
+
         }
+    );
+
+    /*
+        Try to obtain reservation-aware availability.
+
+        If the RPC cannot be read, we fall back to
+        quantity_total - quantity_sold for display.
+
+        Checkout still performs authoritative
+        reservation/inventory validation.
+    */
+
+    await loadAvailableQuantities();
+}
+
+
+/* ============================================================
+   AVAILABILITY
+============================================================ */
+
+async function loadAvailableQuantities(){
+
+    await Promise.all(
+        ticketTypes.map(
+            async ticket => {
+
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient.rpc(
+                        "get_available_ticket_quantity",
+                        {
+                            p_ticket_type_id:
+                                ticket.id
+                        }
+                    );
+
+                if(
+                    !error &&
+                    data !== null &&
+                    data !== undefined
+                ){
+
+                    ticket.available_quantity =
+                        Number(data);
+
+                    return;
+                }
+
+                const total =
+                    Number(
+                        ticket.quantity_total
+                    );
+
+                const sold =
+                    Number(
+                        ticket.quantity_sold
+                    );
+
+                if(
+                    Number.isFinite(total) &&
+                    Number.isFinite(sold)
+                ){
+
+                    ticket.available_quantity =
+                        Math.max(
+                            0,
+                            total - sold
+                        );
+
+                }
+                else{
+
+                    ticket.available_quantity =
+                        0;
+                }
+            }
+        )
+    );
+}
+
+
+/* ============================================================
+   LOAD PROMOTIONS
+============================================================ */
+
+async function loadPromotions(){
+
+    /*
+        Promotions are informational on this page.
+
+        The authoritative promotion application remains inside
+        create_checkout_order().
+    */
+
+    const now =
+        new Date().toISOString();
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("promotions")
+            .select(`
+                id,
+                merchant_id,
+                event_id,
+                ticket_type_id,
+                name,
+                code,
+                description,
+                discount_type,
+                discount_value,
+                starts_at,
+                ends_at,
+                status,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "event_id",
+                eventRecord.id
+            )
+            .lte(
+                "starts_at",
+                now
+            )
+            .gte(
+                "ends_at",
+                now
+            )
+            .order(
+                "starts_at",
+                {
+                    ascending:false
+                }
+            );
+
+    if(error){
 
         /*
-            Later we can pass only an order/session ID instead
-            of trusting prices from the URL.
+            Promotions are optional.
 
-            Example:
-
-            const { data, error } = await supabase
-                .from("orders")
-                .insert(...)
-                .select()
-                .single();
-
-            Then:
-
-            window.location.href =
-                `checkout.html?order=${data.id}`;
+            Do not prevent customers from seeing the event
+            if promotion RLS is not yet configured.
         */
+
+        console.warn(
+            "Promotion information unavailable:",
+            error.message
+        );
+
+        promotions = [];
+
+        return;
+    }
+
+    promotions =
+        (data || [])
+            .filter(
+                promo =>
+                    isPromotionActive(
+                        promo
+                    )
+            );
+}
+
+
+/* ============================================================
+   PROMOTION VALIDATION
+============================================================ */
+
+function isPromotionActive(
+    promo
+){
+
+    const status =
+        cleanValue(
+            promo?.status
+        ).toLowerCase();
+
+    /*
+        If a status is explicitly present and is not active,
+        don't advertise it.
+
+        Time validation is also performed.
+    */
+
+    if(
+        status &&
+        ![
+            "active",
+            "published",
+            "running"
+        ].includes(status)
+    ){
+
+        return false;
+    }
+
+    const now =
+        Date.now();
+
+    const start =
+        parseDate(
+            promo?.starts_at
+        );
+
+    const end =
+        parseDate(
+            promo?.ends_at
+        );
+
+    if(
+        start &&
+        now < start.getTime()
+    ){
+
+        return false;
+    }
+
+    if(
+        end &&
+        now > end.getTime()
+    ){
+
+        return false;
+    }
+
+    return true;
+}
+
+
+/* ============================================================
+   ORGANIZER
+============================================================ */
+
+async function loadOrganizer(){
+
+    const merchantId =
+        cleanValue(
+            eventRecord?.merchant_id
+        );
+
+    if(!merchantId){
+
+        return;
+    }
+
+    /*
+        This is deliberately a soft lookup.
+
+        If profiles RLS does not expose merchant profile
+        information to customers, the organizer block simply
+        remains hidden.
+
+        We do NOT invent a merchant name.
+    */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                avatar_url,
+                role,
+                is_active
+            `)
+            .eq(
+                "id",
+                merchantId
+            )
+            .maybeSingle();
+
+    if(error){
+
+        console.warn(
+            "Organizer profile unavailable:",
+            error.message
+        );
+
+        return;
+    }
+
+    if(
+        !data ||
+        data.is_active !== true ||
+        cleanValue(data.role).toLowerCase() !==
+            "merchant"
+    ){
+
+        return;
+    }
+
+    const name =
+        cleanValue(
+            data.full_name
+        );
+
+    if(!name){
+
+        return;
+    }
+
+    organizerName.textContent =
+        name;
+
+    organizerAvatar.textContent =
+        getInitials(
+            name
+        );
+
+    organizer.classList.add(
+        "show"
+    );
+}
+
+
+/* ============================================================
+   RENDER EVENT
+============================================================ */
+
+function renderEvent(){
+
+    const title =
+        cleanValue(
+            eventRecord.title
+        );
+
+    const eventDescription =
+        cleanValue(
+            eventRecord.description
+        );
+
+    const category =
+        cleanValue(
+            eventRecord.category
+        );
+
+    const imageUrl =
+        cleanValue(
+            eventRecord.image_url
+        );
+
+    eventTitle.textContent =
+        title ||
+        "Event";
+
+    breadcrumbTitle.textContent =
+        title ||
+        "Event details";
+
+    eventShortDescription.textContent =
+        eventDescription ||
+        "Event information and ticket availability.";
+
+    description.textContent =
+        eventDescription ||
+        "No additional event description has been provided.";
+
+    infoDate.textContent =
+        formatFullDate(
+            eventRecord.start_at
+        );
+
+    infoTime.textContent =
+        formatEventTime(
+            eventRecord.start_at,
+            eventRecord.end_at
+        );
+
+    infoLocation.textContent =
+        formatLocation(
+            eventRecord
+        ) ||
+        "Location details available at checkout.";
+
+    if(imageUrl){
+
+        eventHero.classList.add(
+            "has-image"
+        );
+
+        eventHero.style.backgroundImage =
+            `url("${escapeCSSUrl(imageUrl)}")`;
+    }
+    else{
+
+        eventHero.classList.remove(
+            "has-image"
+        );
+
+        eventHero.style.backgroundImage =
+            "";
+    }
+
+    eventBadges.innerHTML =
+        "";
+
+    if(category){
+
+        appendBadge(
+            category,
+            false
+        );
+    }
+
+    if(eventRecord.featured === true){
+
+        appendBadge(
+            "Featured",
+            true
+        );
+    }
+
+    if(
+        cleanValue(
+            eventRecord.status
+        ).toLowerCase() ===
+        "published"
+    ){
+
+        appendBadge(
+            "Published",
+            false
+        );
+    }
+
+    heroMeta.innerHTML =
+        "";
+
+    appendHeroMeta(
+        formatFullDate(
+            eventRecord.start_at
+        )
+    );
+
+    appendHeroMeta(
+        formatEventTime(
+            eventRecord.start_at,
+            eventRecord.end_at
+        )
+    );
+
+    const location =
+        formatLocation(
+            eventRecord
+        );
+
+    if(location){
+
+        appendHeroMeta(
+            location
+        );
+    }
+
+    summaryEvent.textContent =
+        title ||
+        "Event";
+}
+
+
+/* ============================================================
+   BADGES
+============================================================ */
+
+function appendBadge(
+    text,
+    featured
+){
+
+    const badge =
+        document.createElement(
+            "span"
+        );
+
+    badge.className =
+        "event-badge";
+
+    if(featured){
+
+        badge.classList.add(
+            "featured"
+        );
+    }
+
+    badge.textContent =
+        text;
+
+    eventBadges.appendChild(
+        badge
+    );
+}
+
+
+/* ============================================================
+   HERO META
+============================================================ */
+
+function appendHeroMeta(
+    text
+){
+
+    if(!cleanValue(text)){
+
+        return;
+    }
+
+    const span =
+        document.createElement(
+            "span"
+        );
+
+    span.textContent =
+        text;
+
+    heroMeta.appendChild(
+        span
+    );
+}
+
+
+/* ============================================================
+   RENDER TICKETS
+============================================================ */
+
+function renderTickets(){
+
+    ticketList.innerHTML =
+        "";
+
+    ticketTypes.forEach(
+        ticket => {
+
+            ticketList.appendChild(
+                createTicketOption(
+                    ticket
+                )
+            );
+
+        }
+    );
+}
+
+
+/* ============================================================
+   TICKET CARD
+============================================================ */
+
+function createTicketOption(
+    ticket
+){
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        "ticket-option";
+
+    wrapper.dataset.ticketId =
+        ticket.id;
+
+    const available =
+        getAvailableQuantity(
+            ticket
+        );
+
+    const salesOpen =
+        isTicketSalesOpen(
+            ticket
+        );
+
+    const purchasable =
+        available > 0 &&
+        salesOpen;
+
+    if(!purchasable){
+
+        wrapper.classList.add(
+            "unavailable"
+        );
+    }
+
+    const top =
+        document.createElement(
+            "div"
+        );
+
+    top.className =
+        "ticket-option-top";
+
+    const details =
+        document.createElement(
+            "div"
+        );
+
+    const name =
+        document.createElement(
+            "h3"
+        );
+
+    name.textContent =
+        cleanValue(
+            ticket.name
+        ) ||
+        "Ticket";
+
+    const ticketDescription =
+        document.createElement(
+            "p"
+        );
+
+    ticketDescription.textContent =
+        cleanValue(
+            ticket.description
+        ) ||
+        "Event admission.";
+
+    details.appendChild(
+        name
+    );
+
+    details.appendChild(
+        ticketDescription
+    );
+
+    const price =
+        document.createElement(
+            "div"
+        );
+
+    price.className =
+        "ticket-price";
+
+    const priceStrong =
+        document.createElement(
+            "strong"
+        );
+
+    priceStrong.textContent =
+        formatMoney(
+            ticket.price,
+            ticket.currency
+        );
+
+    price.appendChild(
+        priceStrong
+    );
+
+    top.appendChild(
+        details
+    );
+
+    top.appendChild(
+        price
+    );
+
+    const bottom =
+        document.createElement(
+            "div"
+        );
+
+    bottom.className =
+        "ticket-bottom";
+
+    const availability =
+        document.createElement(
+            "span"
+        );
+
+    availability.className =
+        "availability";
+
+    if(!salesOpen){
+
+        availability.classList.add(
+            "sold"
+        );
+
+        availability.textContent =
+            getSalesWindowMessage(
+                ticket
+            );
+
+    }
+    else if(available <= 0){
+
+        availability.classList.add(
+            "sold"
+        );
+
+        availability.textContent =
+            "Sold out";
+
+    }
+    else{
+
+        availability.textContent =
+            `${available} available`;
+    }
+
+    const quantity =
+        document.createElement(
+            "div"
+        );
+
+    quantity.className =
+        "quantity";
+
+    const minus =
+        document.createElement(
+            "button"
+        );
+
+    minus.type =
+        "button";
+
+    minus.textContent =
+        "−";
+
+    minus.setAttribute(
+        "aria-label",
+        `Decrease ${ticket.name}`
+    );
+
+    minus.disabled =
+        !purchasable;
+
+    minus.addEventListener(
+        "click",
+        () =>
+            changeQuantity(
+                ticket.id,
+                -1
+            )
+    );
+
+    const value =
+        document.createElement(
+            "span"
+        );
+
+    value.id =
+        `qty-${ticket.id}`;
+
+    value.textContent =
+        quantities[ticket.id] || 0;
+
+    const plus =
+        document.createElement(
+            "button"
+        );
+
+    plus.type =
+        "button";
+
+    plus.textContent =
+        "+";
+
+    plus.setAttribute(
+        "aria-label",
+        `Increase ${ticket.name}`
+    );
+
+    plus.disabled =
+        !purchasable;
+
+    plus.addEventListener(
+        "click",
+        () =>
+            changeQuantity(
+                ticket.id,
+                1
+            )
+    );
+
+    quantity.appendChild(
+        minus
+    );
+
+    quantity.appendChild(
+        value
+    );
+
+    quantity.appendChild(
+        plus
+    );
+
+    bottom.appendChild(
+        availability
+    );
+
+    bottom.appendChild(
+        quantity
+    );
+
+    wrapper.appendChild(
+        top
+    );
+
+    wrapper.appendChild(
+        bottom
+    );
+
+    return wrapper;
+}
+
+
+/* ============================================================
+   QUANTITY
+============================================================ */
+
+function changeQuantity(
+    ticketId,
+    change
+){
+
+    const ticket =
+        ticketTypes.find(
+            item =>
+                String(item.id) ===
+                String(ticketId)
+        );
+
+    if(!ticket){
+
+        return;
+    }
+
+    const available =
+        getAvailableQuantity(
+            ticket
+        );
+
+    const current =
+        Number(
+            quantities[ticket.id] || 0
+        );
+
+    const next =
+        current + change;
+
+    if(next < 0){
+
+        return;
+    }
+
+    if(next > available){
+
+        showToast(
+            "There are not enough tickets available."
+        );
+
+        return;
+    }
+
+    quantities[ticket.id] =
+        next;
+
+    const quantityElement =
+        document.getElementById(
+            `qty-${ticket.id}`
+        );
+
+    if(quantityElement){
+
+        quantityElement.textContent =
+            String(next);
+    }
+
+    const option =
+        document.querySelector(
+            `[data-ticket-id="${CSS.escape(
+                String(ticket.id)
+            )}"]`
+        );
+
+    if(option){
+
+        option.classList.toggle(
+            "selected",
+            next > 0
+        );
+    }
+
+    updateSummary();
+}
+
+
+/* ============================================================
+   SUMMARY
+============================================================ */
+
+function updateSummary(){
+
+    let total =
+        0;
+
+    let count =
+        0;
+
+    summaryTickets.innerHTML =
+        "";
+
+    ticketTypes.forEach(
+        ticket => {
+
+            const quantity =
+                Number(
+                    quantities[ticket.id] || 0
+                );
+
+            if(quantity <= 0){
+
+                return;
+            }
+
+            const unitPrice =
+                Number(
+                    ticket.price
+                );
+
+            const lineTotal =
+                Number.isFinite(
+                    unitPrice
+                )
+                    ? unitPrice * quantity
+                    : 0;
+
+            total +=
+                lineTotal;
+
+            count +=
+                quantity;
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "summary-row";
+
+            const label =
+                document.createElement(
+                    "span"
+                );
+
+            label.textContent =
+                `${cleanValue(
+                    ticket.name
+                ) || "Ticket"} × ${quantity}`;
+
+            const amount =
+                document.createElement(
+                    "strong"
+                );
+
+            amount.textContent =
+                formatMoney(
+                    lineTotal,
+                    ticket.currency
+                );
+
+            row.appendChild(
+                label
+            );
+
+            row.appendChild(
+                amount
+            );
+
+            summaryTickets.appendChild(
+                row
+            );
+        }
+    );
+
+    if(count === 0){
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+        empty.className =
+            "summary-row";
+
+        empty.innerHTML = `
+            <span>
+                No tickets selected
+            </span>
+
+            <strong>
+                —
+            </strong>
+        `;
+
+        summaryTickets.appendChild(
+            empty
+        );
+    }
+
+    const currency =
+        getSelectedCurrency();
+
+    subtotal.textContent =
+        formatMoney(
+            total,
+            currency
+        );
+
+    total.textContent =
+        formatMoney(
+            total,
+            currency
+        );
+
+    checkoutButton.disabled =
+        count === 0;
+}
+
+
+/* ============================================================
+   SELECTED CURRENCY
+============================================================ */
+
+function getSelectedCurrency(){
+
+    const selected =
+        ticketTypes.find(
+            ticket =>
+                Number(
+                    quantities[ticket.id] || 0
+                ) > 0
+        );
+
+    if(selected){
+
+        return cleanValue(
+            selected.currency
+        ).toUpperCase();
+    }
+
+    const first =
+        ticketTypes[0];
+
+    return cleanValue(
+        first?.currency
+    ).toUpperCase();
+}
+
+
+/* ============================================================
+   PROMOTION DISPLAY
+============================================================ */
+
+function renderPromotion(){
+
+    promotion.classList.remove(
+        "show"
+    );
+
+    if(!promotions.length){
+
+        return;
+    }
+
+    const promo =
+        promotions[0];
+
+    const name =
+        cleanValue(
+            promo.name
+        );
+
+    const description =
+        cleanValue(
+            promo.description
+        );
+
+    const code =
+        cleanValue(
+            promo.code
+        );
+
+    promotionTitle.textContent =
+        name ||
+        "Promotion available";
+
+    const parts = [];
+
+    if(description){
+
+        parts.push(
+            description
+        );
+    }
+
+    if(code){
+
+        parts.push(
+            `Code: ${code}`
+        );
+    }
+
+    if(
+        promo.discount_type &&
+        promo.discount_value !== null &&
+        promo.discount_value !== undefined
+    ){
+
+        const discountType =
+            cleanValue(
+                promo.discount_type
+            ).toLowerCase();
+
+        const value =
+            Number(
+                promo.discount_value
+            );
+
+        if(
+            Number.isFinite(value)
+        ){
+
+            if(
+                discountType.includes(
+                    "percent"
+                )
+            ){
+
+                parts.push(
+                    `${value}% discount`
+                );
+
+            }
+            else{
+
+                parts.push(
+                    `${value} discount`
+                );
+            }
+        }
+    }
+
+    promotionText.textContent =
+        parts.join(
+            " · "
+        ) ||
+        "A promotion is currently available for this event.";
+
+    promotion.classList.add(
+        "show"
+    );
+}
+
+
+/* ============================================================
+   CHECKOUT
+============================================================ */
+
+checkoutButton.addEventListener(
+    "click",
+    continueToCheckout
+);
+
+async function continueToCheckout(){
+
+    const selectedItems =
+        ticketTypes
+            .map(
+                ticket => ({
+                    ticket_type_id:
+                        ticket.id,
+
+                    quantity:
+                        Number(
+                            quantities[ticket.id] || 0
+                        )
+                })
+            )
+            .filter(
+                item =>
+                    item.quantity > 0
+            );
+
+    if(!selectedItems.length){
+
+        showToast(
+            "Please select at least one ticket."
+        );
+
+        return;
+    }
+
+    /*
+        IMPORTANT:
+
+        We pass the real event/ticket IDs and quantities.
+
+        We do NOT pass price, subtotal, fee or total as trusted
+        values.
+
+        customer/checkout.html + create_checkout_order()
+        will obtain authoritative values from Supabase.
+    */
+
+    checkoutButton.disabled =
+        true;
+
+    checkoutButton.textContent =
+        "Preparing checkout…";
+
+    try{
 
         const params =
             new URLSearchParams();
 
-        params.set("event", eventData.id);
         params.set(
-            "standard",
-            quantities.standard
+            "event",
+            eventRecord.id
         );
+
         params.set(
-            "vip",
-            quantities.vip
+            "items",
+            JSON.stringify(
+                selectedItems
+            )
         );
 
         window.location.href =
             `checkout.html?${params.toString()}`;
-    }
-
-    function showMessage(message) {
-
-        let toast =
-            document.getElementById("toast");
-
-        if (!toast) {
-
-            toast =
-                document.createElement("div");
-
-            toast.id = "toast";
-
-            toast.style.position = "fixed";
-            toast.style.left = "50%";
-            toast.style.bottom = "90px";
-            toast.style.transform = "translateX(-50%)";
-            toast.style.zIndex = "9999";
-            toast.style.padding = "12px 16px";
-            toast.style.borderRadius = "12px";
-            toast.style.background = "#0F3D3A";
-            toast.style.color = "white";
-            toast.style.fontSize = "12px";
-            toast.style.fontWeight = "700";
-            toast.style.boxShadow =
-                "0 15px 35px rgba(0,0,0,.2)";
-
-            document.body.appendChild(toast);
-        }
-
-        toast.textContent = message;
-        toast.style.opacity = "1";
-
-        clearTimeout(window.toastTimer);
-
-        window.toastTimer =
-            setTimeout(() => {
-
-                toast.style.opacity = "0";
-
-            }, 2600);
-    }
-
-    function toggleSidebar() {
-
-        document
-            .getElementById("sidebar")
-            .classList
-            .toggle("open");
 
     }
+    catch(error){
 
-    function logout() {
-
-        /*
-            Later:
-
-            await supabase.auth.signOut();
-        */
-
-        window.location.href =
-            "../auth/login.html";
-
-    }
-
-    /*
-        EVENT URL
-
-        Example:
-
-        event.html?id=coffee-festival-2026
-
-        Later the ID will be used to fetch the actual event.
-    */
-
-    const params =
-        new URLSearchParams(
-            window.location.search
+        console.error(
+            error
         );
 
-    const eventId =
-        params.get("id");
+        checkoutButton.disabled =
+            false;
 
-    /*
-        For now the demonstration page renders the
-        default event regardless of ID.
-    */
+        checkoutButton.textContent =
+            "Continue to Checkout";
 
-    document.getElementById("eventTitle")
-        .textContent = eventData.title;
+        showToast(
+            "Could not continue to checkout."
+        );
+    }
+}
 
-    document.getElementById("summaryEvent")
-        .textContent = eventData.title;
 
-    document.getElementById("breadcrumbTitle")
-        .textContent = eventData.title;
+/* ============================================================
+   NOTIFICATIONS
+============================================================ */
 
-    document.getElementById("heroDate")
-        .textContent = eventData.date;
+async function loadNotificationState(){
 
-    document.getElementById("heroTime")
-        .textContent = eventData.time;
+    if(!currentUser){
 
-    document.getElementById("heroLocation")
-        .textContent = eventData.location;
+        return;
+    }
 
-    document.getElementById("infoDate")
-        .textContent = eventData.fullDate;
+    const {
+        count,
+        error
+    } =
+        await supabaseClient
+            .from("notifications")
+            .select(
+                "id",
+                {
+                    count:"exact",
+                    head:true
+                }
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .eq(
+                "is_read",
+                false
+            );
 
-    document.getElementById("infoTime")
-        .textContent = eventData.time;
+    if(error){
 
-    document.getElementById("infoLocation")
-        .textContent =
-            `${eventData.location}, Kuwait`;
+        return;
+    }
 
-    document.getElementById("description")
-        .textContent =
-            eventData.description;
+    notificationDot.hidden =
+        !count;
+}
 
-    updateQuantityUI();
-    updateSummary();
 
+function subscribeToNotifications(){
+
+    if(
+        !supabaseClient ||
+        !currentUser
+    ){
+
+        return;
+    }
+
+    notificationChannel =
+        supabaseClient
+            .channel(
+                `event-details-notifications-${currentUser.id}`
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"notifications",
+                    filter:
+                        `user_id=eq.${currentUser.id}`
+                },
+                () => {
+
+                    loadNotificationState();
+                }
+            )
+            .subscribe();
+}
+
+
+/* ============================================================
+   EVENT REALTIME
+============================================================ */
+
+function subscribeToEventChanges(){
+
+    if(!supabaseClient){
+
+        return;
+    }
+
+    supabaseClient
+        .channel(
+            `event-details-${eventRecord.id}`
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"UPDATE",
+                schema:"public",
+                table:"events",
+                filter:
+                    `id=eq.${eventRecord.id}`
+            },
+            payload => {
+
+                const updated =
+                    payload.new;
+
+                /*
+                    Never allow a draft/cancelled event to remain
+                    visible after realtime status changes.
+                */
+
+                if(
+                    updated.status !==
+                    "published"
+                ){
+
+                    showError(
+                        "Event no longer available",
+                        "This event is no longer published for customer purchase."
+                    );
+
+                    return;
+                }
+
+                eventRecord =
+                    updated;
+
+                renderEvent();
+            }
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"*",
+                schema:"public",
+                table:"ticket_types",
+                filter:
+                    `event_id=eq.${eventRecord.id}`
+            },
+            async () => {
+
+                try{
+
+                    await loadTicketTypes();
+
+                    renderTickets();
+
+                    updateSummary();
+
+                }
+                catch(error){
+
+                    console.warn(
+                        "Ticket refresh failed:",
+                        error
+                    );
+                }
+            }
+        )
+        .subscribe();
+}
+
+
+/* ============================================================
+   SALES WINDOW
+============================================================ */
+
+function isTicketSalesOpen(
+    ticket
+){
+
+    if(ticket.active !== true){
+
+        return false;
+    }
+
+    const now =
+        Date.now();
+
+    const starts =
+        parseDate(
+            ticket.sales_start
+        );
+
+    const ends =
+        parseDate(
+            ticket.sales_end
+        );
+
+    if(
+        starts &&
+        now < starts.getTime()
+    ){
+
+        return false;
+    }
+
+    if(
+        ends &&
+        now > ends.getTime()
+    ){
+
+        return false;
+    }
+
+    return true;
+}
+
+
+function getSalesWindowMessage(
+    ticket
+){
+
+    const now =
+        Date.now();
+
+    const starts =
+        parseDate(
+            ticket.sales_start
+        );
+
+    const ends =
+        parseDate(
+            ticket.sales_end
+        );
+
+    if(
+        starts &&
+        now < starts.getTime()
+    ){
+
+        return `Sales open ${formatFullDate(
+            ticket.sales_start
+        )}`;
+    }
+
+    if(
+        ends &&
+        now > ends.getTime()
+    ){
+
+        return "Sales closed";
+    }
+
+    return "Unavailable";
+}
+
+
+/* ============================================================
+   INVENTORY
+============================================================ */
+
+function getAvailableQuantity(
+    ticket
+){
+
+    const value =
+        Number(
+            ticket.available_quantity
+        );
+
+    if(
+        Number.isFinite(value)
+    ){
+
+        return Math.max(
+            0,
+            value
+        );
+    }
+
+    const total =
+        Number(
+            ticket.quantity_total
+        );
+
+    const sold =
+        Number(
+            ticket.quantity_sold
+        );
+
+    if(
+        Number.isFinite(total) &&
+        Number.isFinite(sold)
+    ){
+
+        return Math.max(
+            0,
+            total - sold
+        );
+    }
+
+    return 0;
+}
+
+
+/* ============================================================
+   LOCATION
+============================================================ */
+
+function formatLocation(
+    event
+){
+
+    const venue =
+        cleanValue(
+            event?.venue
+        );
+
+    const city =
+        cleanValue(
+            event?.city
+        );
+
+    if(
+        venue &&
+        city
+    ){
+
+        return `${venue}, ${city}`;
+    }
+
+    return venue ||
+        city ||
+        "";
+}
+
+
+/* ============================================================
+   DATE
+============================================================ */
+
+function parseDate(
+    value
+){
+
+    if(!value){
+
+        return null;
+    }
+
+    const date =
+        new Date(
+            value
+        );
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+
+        return null;
+    }
+
+    return date;
+}
+
+
+function formatFullDate(
+    value
+){
+
+    const date =
+        parseDate(
+            value
+        );
+
+    if(!date){
+
+        return "Date not provided";
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            weekday:"long",
+            day:"numeric",
+            month:"long",
+            year:"numeric"
+        }
+    ).format(
+        date
+    );
+}
+
+
+function formatEventTime(
+    startValue,
+    endValue
+){
+
+    const start =
+        parseDate(
+            startValue
+        );
+
+    const end =
+        parseDate(
+            endValue
+        );
+
+    if(!start){
+
+        return "Time not provided";
+    }
+
+    const formatter =
+        new Intl.DateTimeFormat(
+            undefined,
+            {
+                hour:"numeric",
+                minute:"2-digit"
+            }
+        );
+
+    const startText =
+        formatter.format(
+            start
+        );
+
+    if(!end){
+
+        return startText;
+    }
+
+    return `${startText} – ${formatter.format(end)}`;
+}
+
+
+/* ============================================================
+   MONEY
+============================================================ */
+
+function formatMoney(
+    value,
+    currency
+){
+
+    const amount =
+        Number(
+            value
+        );
+
+    if(
+        !Number.isFinite(amount)
+    ){
+
+        return "—";
+    }
+
+    const code =
+        cleanValue(
+            currency
+        ).toUpperCase();
+
+    if(!code){
+
+        return amount.toFixed(
+            3
+        );
+    }
+
+    try{
+
+        return new Intl.NumberFormat(
+            undefined,
+            {
+                style:"currency",
+                currency:code,
+                minimumFractionDigits:3,
+                maximumFractionDigits:3
+            }
+        ).format(
+            amount
+        );
+
+    }
+    catch(error){
+
+        return `${amount.toFixed(
+            3
+        )} ${code}`;
+    }
+}
+
+
+/* ============================================================
+   PROFILE AVATAR
+============================================================ */
+
+function renderAvatar(){
+
+    const name =
+        cleanValue(
+            currentProfile?.full_name
+        ) ||
+        cleanValue(
+            currentUser?.email
+        ) ||
+        "Customer";
+
+    avatar.textContent =
+        getInitials(
+            name
+        );
+}
+
+
+function getInitials(
+    value
+){
+
+    const name =
+        cleanValue(
+            value
+        );
+
+    if(!name){
+
+        return "K";
+    }
+
+    const parts =
+        name
+            .split(/\s+/)
+            .filter(Boolean);
+
+    if(parts.length === 1){
+
+        return parts[0]
+            .slice(0,2)
+            .toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+}
+
+
+/* ============================================================
+   CLEAN VALUE
+============================================================ */
+
+function cleanValue(
+    value
+){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+
+        return "";
+    }
+
+    return String(
+        value
+    ).trim();
+}
+
+
+/* ============================================================
+   HTML/CSS ESCAPING
+============================================================ */
+
+function escapeCSSUrl(
+    value
+){
+
+    return String(
+        value || ""
+    )
+    .replaceAll(
+        "\\",
+        "\\\\"
+    )
+    .replaceAll(
+        '"',
+        '\\"'
+    )
+    .replaceAll(
+        "\n",
+        ""
+    )
+    .replaceAll(
+        "\r",
+        ""
+    );
+}
+
+
+/* ============================================================
+   TOAST
+============================================================ */
+
+function showToast(
+    message
+){
+
+    toast.textContent =
+        message;
+
+    toast.classList.add(
+        "show"
+    );
+
+    clearTimeout(
+        showToast.timer
+    );
+
+    showToast.timer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            3000
+        );
+}
+
+
+/* ============================================================
+   ERROR
+============================================================ */
+
+function showError(
+    title,
+    message
+){
+
+    loadingState.hidden =
+        true;
+
+    pageContent.hidden =
+        true;
+
+    errorState.hidden =
+        false;
+
+    errorTitle.textContent =
+        title;
+
+    errorMessage.textContent =
+        message;
+}
+
+
+/* ============================================================
+   BACK
+============================================================ */
+
+backToEvents.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "events.html";
+    }
+);
+
+
+/* ============================================================
+   NOTIFICATIONS
+============================================================ */
+
+notificationButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "notifications.html";
+    }
+);
+
+
+/* ============================================================
+   MOBILE MENU
+============================================================ */
+
+mobileMenu.addEventListener(
+    "click",
+    () => {
+
+        sidebar.classList.toggle(
+            "open"
+        );
+    }
+);
+
+
+/* ============================================================
+   LOGOUT
+============================================================ */
+
+logoutButton.addEventListener(
+    "click",
+    async () => {
+
+        logoutButton.disabled =
+            true;
+
+        try{
+
+            await safeSignOut();
+
+        }
+        finally{
+
+            window.location.href =
+                "../login.html";
+        }
+    }
+);
+
+
+async function safeSignOut(){
+
+    if(!supabaseClient){
+
+        return;
+    }
+
+    try{
+
+        await supabaseClient.auth.signOut();
+
+    }
+    catch(error){
+
+        console.warn(
+            "Logout warning:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   START
+============================================================ */
+
+initializePage();
 </script>
 
 </body>
