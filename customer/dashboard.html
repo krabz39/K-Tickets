@@ -1,1067 +1,5962 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <meta name="referrer" content="same-origin">
-  <title>Customer Dashboard | K-Tickets</title>
-  <meta name="description" content="Your K-Tickets customer dashboard.">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
 
-  <style>
-    :root {
-      --bordo: #6C151E;
-      --bordo-dark: #531018;
-      --bordo-soft: #f4e5e4;
-      --green: #0F3D3A;
-      --green-dark: #092b29;
-      --green-soft: #e4efec;
-      --cream: #F5DABF;
-      --cream-light: #fff8f1;
-      --white: #fff;
-      --dark: #171414;
-      --muted: #756b67;
-      --border: rgba(15,61,58,.12);
-      --shadow: 0 12px 35px rgba(15,61,58,.07);
-      --radius: 20px;
-      --sidebar-width: 250px;
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="robots" content="noindex,nofollow,noarchive">
+
+<meta name="referrer" content="same-origin">
+
+
+
+<title>Customer Dashboard | K-Tickets</title>
+
+
+
+<meta
+
+    name="description"
+
+    content="Your K-Tickets customer dashboard."
+
+>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+
+<style>
+
+:root{
+
+    --bordo:#6C151E;
+
+    --bordo-dark:#531018;
+
+    --bordo-soft:#f4e5e4;
+
+    --green:#0F3D3A;
+
+    --green-dark:#092b29;
+
+    --green-soft:#e4efec;
+
+    --cream:#F5DABF;
+
+    --cream-light:#fff8f1;
+
+    --white:#ffffff;
+
+    --dark:#171414;
+
+    --muted:#756b67;
+
+    --border:rgba(15,61,58,.12);
+
+    --shadow:0 18px 50px rgba(15,61,58,.08);
+
+    --radius:21px;
+
+    --sidebar-width:260px;
+
+}
+
+
+
+*{
+
+    box-sizing:border-box;
+
+    margin:0;
+
+    padding:0;
+
+}
+
+
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+
+
+body{
+
+    min-height:100vh;
+
+    background:#fbf7f2;
+
+    color:var(--dark);
+
+    font-family:Inter,Arial,sans-serif;
+
+    overflow-x:hidden;
+
+}
+
+
+
+button,
+
+input{
+
+    font:inherit;
+
+}
+
+
+
+button{
+
+    cursor:pointer;
+
+}
+
+
+
+button:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.55;
+
+}
+
+
+
+a{
+
+    color:inherit;
+
+    text-decoration:none;
+
+}
+
+
+
+.app{
+
+    min-height:100vh;
+
+}
+
+
+
+/* ============================================================
+
+   SIDEBAR
+
+============================================================ */
+
+
+
+.sidebar{
+
+    position:fixed;
+
+    inset:0 auto 0 0;
+
+    width:var(--sidebar-width);
+
+    background:var(--green);
+
+    color:white;
+
+    padding:28px 18px;
+
+    z-index:100;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+.brand{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:4px 10px 35px;
+
+}
+
+
+
+.brand-mark{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:13px;
+
+    background:var(--cream);
+
+    color:var(--green);
+
+    display:grid;
+
+    place-items:center;
+
+    font-weight:900;
+
+    font-size:17px;
+
+}
+
+
+
+.brand-text strong{
+
+    display:block;
+
+    font-size:18px;
+
+    letter-spacing:.04em;
+
+}
+
+
+
+.brand-text span{
+
+    display:block;
+
+    margin-top:3px;
+
+    font-size:10px;
+
+    opacity:.65;
+
+}
+
+
+
+.nav-label{
+
+    margin:0 0 9px;
+
+    padding:0 12px;
+
+    color:rgba(255,255,255,.4);
+
+    font-size:10px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.15em;
+
+    font-weight:800;
+
+}
+
+
+
+.nav{
+
+    display:grid;
+
+    gap:7px;
+    overflow-y:auto;
+    min-height:0;
+    padding-right:3px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(245,218,191,.35) transparent;
+
+}
+
+
+
+.nav a{
+
+    padding:13px 14px;
+
+    border-radius:13px;
+
+    color:rgba(255,255,255,.7);
+
+    font-size:14px;
+
+    font-weight:700;
+
+    transition:.2s ease;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:11px;
+
+}
+
+
+
+.nav a:hover{
+
+    background:rgba(255,255,255,.08);
+
+    color:#fff;
+
+}
+
+
+
+.nav a.active{
+
+    background:var(--bordo);
+
+    color:#fff;
+
+}
+
+
+
+.nav-icon{
+
+    width:21px;
+
+    text-align:center;
+
+    font-size:16px;
+
+}
+
+
+
+.sidebar-bottom{
+
+    margin-top:auto;
+
+}
+
+
+
+.logout{
+
+    width:100%;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    background:transparent;
+
+    color:white;
+
+    border-radius:13px;
+
+    padding:13px;
+
+    font-weight:700;
+
+}
+
+
+
+.logout:hover{
+
+    background:rgba(255,255,255,.07);
+
+}
+
+
+
+/* ============================================================
+
+   MAIN
+
+============================================================ */
+
+
+
+.main{
+
+    margin-left:260px;
+
+    min-height:100vh;
+
+}
+
+
+
+.topbar{
+
+    min-height:78px;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:50;
+
+    background:rgba(255,255,255,.92);
+
+    backdrop-filter:blur(12px);
+
+    border-bottom:1px solid var(--border);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 40px;
+
+    gap:20px;
+
+}
+
+
+
+.mobile-menu{
+
+    display:none;
+
+    width:42px;
+
+    height:42px;
+
+    border:0;
+
+    border-radius:11px;
+
+    background:var(--cream-light);
+
+    color:var(--green);
+
+    font-size:21px;
+
+}
+
+
+
+.topbar-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+
+.topbar-title strong{
+
+    color:var(--green);
+
+    font-size:13px;
+
+}
+
+
+
+.top-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+
+
+.refresh-btn,
+
+.notification-btn{
+
+    position:relative;
+
+    width:40px;
+
+    height:40px;
+
+    border:1px solid var(--border);
+
+    border-radius:11px;
+
+    background:#fff;
+
+    color:var(--green);
+
+}
+
+
+
+.refresh-btn{
+
+    font-size:16px;
+
+}
+
+
+
+.notification-btn{
+
+    font-size:17px;
+
+}
+
+
+
+.notification-dot{
+
+    position:absolute;
+
+    top:7px;
+
+    right:7px;
+
+    width:7px;
+
+    height:7px;
+
+    border-radius:50%;
+
+    background:var(--bordo);
+
+}
+
+
+
+.user-area{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+
+.user-name{
+
+    font-size:13px;
+
+    font-weight:800;
+
+    color:var(--green);
+
+    max-width:170px;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+}
+
+
+
+.avatar{
+
+    width:40px;
+
+    height:40px;
+
+    background:var(--cream);
+
+    color:var(--green);
+
+    border-radius:50%;
+
+    display:grid;
+
+    place-items:center;
+
+    font-weight:900;
+
+    font-size:12px;
+
+}
+
+
+
+/* ============================================================
+
+   CONTENT
+
+============================================================ */
+
+
+
+.content{
+
+    width:min(1350px,100%);
+
+    margin:auto;
+
+    padding:42px;
+
+}
+
+
+
+.hero{
+
+    background:
+
+        linear-gradient(
+
+            125deg,
+
+            var(--green),
+
+            #174b47 60%,
+
+            var(--bordo)
+
+        );
+
+    border-radius:27px;
+
+    padding:clamp(28px,5vw,55px);
+
+    color:white;
+
+    position:relative;
+
+    overflow:hidden;
+
+    box-shadow:0 25px 65px rgba(15,61,58,.18);
+
+}
+
+
+
+.hero::after{
+
+    content:"";
+
+    width:350px;
+
+    height:350px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    position:absolute;
+
+    right:-130px;
+
+    top:-130px;
+
+    pointer-events:none;
+
+}
+
+
+
+.hero::before{
+
+    content:"";
+
+    width:190px;
+
+    height:190px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    position:absolute;
+
+    right:50px;
+
+    bottom:-130px;
+
+    pointer-events:none;
+
+}
+
+
+
+.hero small{
+
+    opacity:.7;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    letter-spacing:1px;
+
+    text-transform:uppercase;
+
+}
+
+
+
+.hero h1{
+
+    margin-top:9px;
+
+    font-family:Georgia,serif;
+
+    font-size:clamp(30px,5vw,50px);
+
+    line-height:1.04;
+
+    max-width:800px;
+
+}
+
+
+
+.hero p{
+
+    margin-top:14px;
+
+    color:rgba(255,255,255,.76);
+
+    max-width:680px;
+
+    line-height:1.65;
+
+    font-size:14px;
+
+}
+
+
+
+.hero-actions{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+    margin-top:25px;
+
+}
+
+
+
+.hero-btn{
+
+    border-radius:13px;
+
+    padding:13px 18px;
+
+    font-weight:800;
+
+    font-size:13px;
+
+}
+
+
+
+.hero-btn.primary{
+
+    background:var(--cream);
+
+    color:var(--green);
+
+}
+
+
+
+.hero-btn.secondary{
+
+    background:rgba(255,255,255,.1);
+
+    color:white;
+
+    border:1px solid rgba(255,255,255,.18);
+
+}
+
+
+
+.hero-btn:hover{
+
+    transform:translateY(-1px);
+
+}
+
+
+
+/* ============================================================
+
+   STATS
+
+============================================================ */
+
+
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,minmax(0,1fr));
+
+    gap:15px;
+
+    margin-top:20px;
+
+}
+
+
+
+.stat{
+
+    background:#fff;
+
+    border:1px solid var(--border);
+
+    border-radius:18px;
+
+    padding:22px;
+
+    box-shadow:var(--shadow);
+
+}
+
+
+
+.stat-label{
+
+    color:var(--muted);
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    font-weight:800;
+
+    letter-spacing:.5px;
+
+}
+
+
+
+.stat-value{
+
+    margin-top:9px;
+
+    color:var(--green);
+
+    font-family:Georgia,serif;
+
+    font-size:31px;
+
+    font-weight:800;
+
+}
+
+
+
+.stat.loading-state .stat-value{
+
+    font-family:Inter,Arial,sans-serif;
+
+    font-size:20px;
+
+}
+
+
+
+/* ============================================================
+
+   SECTIONS
+
+============================================================ */
+
+
+
+.section{
+
+    margin-top:34px;
+
+}
+
+
+
+.section-heading{
+
+    display:flex;
+
+    align-items:end;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    margin-bottom:17px;
+
+}
+
+
+
+.section-heading h2{
+
+    color:var(--green);
+
+    font-family:Georgia,serif;
+
+    font-size:27px;
+
+}
+
+
+
+.section-heading p{
+
+    color:var(--muted);
+
+    font-size:12px;
+
+    margin-top:4px;
+
+}
+
+
+
+.section-link{
+
+    color:var(--bordo);
+
+    font-size:12px;
+
+    font-weight:800;
+
+}
+
+
+
+/* ============================================================
+
+   RECENT TICKETS
+
+============================================================ */
+
+
+
+.recent-card{
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    overflow:hidden;
+
+}
+
+
+
+.recent-row{
+
+    padding:18px 20px;
+
+    display:grid;
+
+    grid-template-columns:minmax(0,1fr) auto auto;
+
+    align-items:center;
+
+    gap:20px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+
+
+.recent-row:last-child{
+
+    border-bottom:0;
+
+}
+
+
+
+.recent-main{
+
+    min-width:0;
+
+}
+
+
+
+.recent-title{
+
+    color:var(--green);
+
+    font-weight:800;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+}
+
+
+
+.recent-sub{
+
+    color:var(--muted);
+
+    font-size:11px;
+
+    margin-top:5px;
+
+    line-height:1.6;
+
+}
+
+
+
+.recent-date{
+
+    color:var(--muted);
+
+    font-size:11px;
+
+    text-align:right;
+
+}
+
+
+
+.ticket-status{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    width:max-content;
+
+    margin-top:6px;
+
+    padding:4px 8px;
+
+    border-radius:999px;
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:.05em;
+
+    text-transform:uppercase;
+
+}
+
+
+
+.ticket-status.valid{
+
+    background:rgba(38,112,92,.09);
+
+    color:#26705c;
+
+}
+
+
+
+.ticket-status.used{
+
+    background:rgba(113,128,125,.12);
+
+    color:#62706d;
+
+}
+
+
+
+.ticket-status.cancelled,
+
+.ticket-status.refunded{
+
+    background:rgba(167,40,50,.08);
+
+    color:var(--bordo);
+
+}
+
+
+
+.ticket-status.unknown{
+
+    background:#efeeeb;
+
+    color:var(--muted);
+
+}
+
+
+
+.view-btn{
+
+    background:var(--cream);
+
+    color:var(--green);
+
+    padding:9px 12px;
+
+    border-radius:10px;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    white-space:nowrap;
+
+}
+
+
+
+/* ============================================================
+
+   QUICK ACCESS
+
+============================================================ */
+
+
+
+.quick-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,minmax(0,1fr));
+
+    gap:15px;
+
+}
+
+
+
+.quick-card{
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:18px;
+
+    padding:23px;
+
+    transition:.2s ease;
+
+}
+
+
+
+.quick-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:var(--shadow);
+
+}
+
+
+
+.quick-icon{
+
+    width:43px;
+
+    height:43px;
+
+    border-radius:13px;
+
+    background:var(--cream);
+
+    color:var(--green);
+
+    display:grid;
+
+    place-items:center;
+
+    font-size:17px;
+
+    font-weight:900;
+
+    margin-bottom:17px;
+
+}
+
+
+
+.quick-card h3{
+
+    color:var(--green);
+
+    font-size:16px;
+
+}
+
+
+
+.quick-card p{
+
+    color:var(--muted);
+
+    font-size:12px;
+
+    line-height:1.5;
+
+    margin-top:7px;
+
+}
+
+
+
+.quick-card a{
+
+    display:inline-block;
+
+    color:var(--bordo);
+
+    font-size:12px;
+
+    font-weight:800;
+
+    margin-top:15px;
+
+}
+
+
+
+/* ============================================================
+
+   PROFILE
+
+============================================================ */
+
+
+
+.profile-card{
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    padding:24px;
+
+}
+
+
+
+.profile-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+    gap:20px;
+
+}
+
+
+
+.profile-label{
+
+    color:var(--muted);
+
+    font-size:10px;
+
+    text-transform:uppercase;
+
+    font-weight:800;
+
+    letter-spacing:.05em;
+
+}
+
+
+
+.profile-value{
+
+    margin-top:6px;
+
+    color:var(--green);
+
+    font-weight:800;
+
+    font-size:13px;
+
+    overflow-wrap:anywhere;
+
+}
+
+
+
+.profile-role{
+
+    display:inline-flex;
+
+    margin-top:6px;
+
+    padding:5px 9px;
+
+    border-radius:999px;
+
+    background:var(--green-soft);
+
+    color:var(--green);
+
+    font-size:9px;
+
+    font-weight:900;
+
+    text-transform:uppercase;
+
+    letter-spacing:.04em;
+
+}
+
+
+
+/* ============================================================
+
+   ERROR / EMPTY / LOADING
+
+============================================================ */
+
+
+
+.empty{
+
+    padding:40px 20px;
+
+    text-align:center;
+
+    color:var(--muted);
+
+    font-size:12px;
+
+    line-height:1.7;
+
+}
+
+
+
+.empty strong{
+
+    display:block;
+
+    margin-bottom:5px;
+
+    color:var(--dark);
+
+    font-size:14px;
+
+}
+
+
+
+.loading{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+}
+
+
+
+.dashboard-error{
+
+    margin-top:18px;
+
+    padding:15px;
+
+    border-radius:13px;
+
+    background:var(--bordo-soft);
+
+    border:1px solid rgba(108,21,30,.12);
+
+    color:var(--bordo);
+
+    font-size:12px;
+
+    line-height:1.65;
+
+    display:none;
+
+}
+
+
+
+.retry-btn{
+
+    display:inline-block;
+
+    margin-top:10px;
+
+    padding:9px 12px;
+
+    border-radius:9px;
+
+    background:var(--bordo);
+
+    color:#fff;
+
+    font-size:10px;
+
+    font-weight:800;
+
+}
+
+
+
+/* ============================================================
+
+   MOBILE NAV
+
+============================================================ */
+
+
+
+.mobile-nav{
+
+    display:none;
+
+}
+
+
+
+/* ============================================================
+
+   RESPONSIVE
+
+============================================================ */
+
+
+
+@media(max-width:1000px){
+
+
+
+    .stats{
+
+        grid-template-columns:repeat(2,minmax(0,1fr));
+
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      min-height: 100vh;
-      background: #fbf7f2;
-      color: var(--dark);
-      font-family: Inter, Arial, sans-serif;
+
+    .quick-grid{
+
+        grid-template-columns:repeat(2,minmax(0,1fr));
+
     }
 
-    a { color: inherit; text-decoration: none; }
-    button { font: inherit; cursor: pointer; }
-    button:disabled { opacity: .6; cursor: wait; }
+}
 
-    .sidebar {
-      position: fixed;
-      inset: 0 auto 0 0;
-      z-index: 100;
-      width: var(--sidebar-width);
-      padding: 26px 18px;
-      display: flex;
-      flex-direction: column;
-      background: var(--green);
-      color: white;
-      transition: transform .25s ease;
+
+
+@media(max-width:900px){
+
+
+
+    .sidebar{
+
+        transform:translateX(-100%);
+
+        transition:transform .25s ease;
+
+        box-shadow:20px 0 45px rgba(0,0,0,.13);
+
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 5px 9px 32px;
+
+
+    .sidebar.open{
+
+        transform:translateX(0);
+
     }
 
-    .brand-mark {
-      width: 43px;
-      height: 43px;
-      display: grid;
-      place-items: center;
-      border-radius: 13px;
-      background: var(--cream);
-      color: var(--green);
-      font-weight: 900;
-      font-size: 20px;
+
+
+    .main{
+
+        margin-left:0;
+
     }
 
-    .brand strong { display: block; font-size: 18px; }
-    .brand small { display: block; margin-top: 4px; opacity: .65; }
 
-    .nav-label {
-      padding: 0 12px;
-      margin-bottom: 10px;
-      color: rgba(255,255,255,.45);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .14em;
-      text-transform: uppercase;
+
+    .mobile-menu{
+
+        display:block;
+
     }
 
-    .nav { display: grid; gap: 7px; }
 
-    .nav a {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 13px;
-      border-radius: 12px;
-      color: rgba(255,255,255,.72);
-      font-size: 13px;
-      font-weight: 700;
+
+    .topbar{
+
+        padding:0 18px;
+
     }
 
-    .nav a:hover { background: rgba(255,255,255,.08); color: white; }
-    .nav a.active { background: var(--bordo); color: white; }
 
-    .nav-icon { width: 20px; text-align: center; }
 
-    .sidebar-bottom { margin-top: auto; }
+    .content{
 
-    .logout {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 12px;
-      background: transparent;
-      color: white;
-      font-weight: 700;
+        padding:25px 18px;
+
+        padding-bottom:100px;
+
     }
 
-    .logout:hover { background: rgba(255,255,255,.08); }
 
-    .main { min-height: 100vh; margin-left: var(--sidebar-width); }
 
-    .topbar {
-      min-height: 76px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 14px 35px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(255,255,255,.94);
-      backdrop-filter: blur(12px);
+    .mobile-nav{
+
+        position:fixed;
+
+        display:grid;
+
+        grid-template-columns:repeat(4,1fr);
+
+        left:12px;
+
+        right:12px;
+
+        bottom:12px;
+
+        height:64px;
+
+        border-radius:19px;
+
+        background:rgba(15,61,58,.97);
+
+        z-index:90;
+
+        box-shadow:var(--shadow);
+
     }
 
-    .topbar-title { display: flex; align-items: center; gap: 12px; }
-    .topbar-title strong { color: var(--green); font-size: 14px; }
 
-    .top-actions, .user-area {
-      display: flex;
-      align-items: center;
-      gap: 11px;
+
+    .mobile-nav a{
+
+        display:grid;
+
+        place-items:center;
+
+        align-content:center;
+
+        gap:3px;
+
+        color:rgba(255,255,255,.55);
+
+        font-size:10px;
+
     }
 
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-      position: relative;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: white;
-      color: var(--green);
-      font-size: 18px;
+
+
+    .mobile-nav a.active{
+
+        color:var(--cream);
+
     }
 
-    .notification-dot {
-      position: absolute;
-      top: 7px;
-      right: 7px;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--bordo);
+}
+
+
+
+@media(max-width:600px){
+
+
+
+    .stats{
+
+        grid-template-columns:1fr 1fr;
+
     }
 
-    .user-name {
-      max-width: 160px;
-      overflow: hidden;
-      color: var(--green);
-      font-size: 13px;
-      font-weight: 800;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+
+
+    .quick-grid{
+
+        grid-template-columns:1fr;
+
     }
 
-    .avatar {
-      width: 40px;
-      height: 40px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--cream);
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 900;
+
+
+    .recent-row{
+
+        grid-template-columns:1fr auto;
+
     }
 
-    .mobile-menu { display: none; }
 
-    .content {
-      width: min(1350px, 100%);
-      margin: auto;
-      padding: 35px;
+
+    .recent-date{
+
+        display:none;
+
     }
 
-    .hero {
-      position: relative;
-      overflow: hidden;
-      padding: clamp(28px, 5vw, 50px);
-      border-radius: 25px;
-      background: linear-gradient(125deg, var(--green), #174b47 60%, var(--bordo));
-      box-shadow: 0 20px 50px rgba(15,61,58,.16);
-      color: white;
+
+
+    .user-name{
+
+        display:none;
+
     }
 
-    .hero::after {
-      content: "";
-      position: absolute;
-      top: -110px;
-      right: -80px;
-      width: 300px;
-      height: 300px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 50%;
-      pointer-events: none;
+
+
+    .content{
+
+        padding:20px 15px 100px;
+
     }
 
-    .hero small {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .13em;
-      text-transform: uppercase;
-      opacity: .75;
+
+
+    .hero{
+
+        border-radius:20px;
+
     }
 
-    .hero h1 {
-      position: relative;
-      margin-top: 10px;
-      font-family: Georgia, serif;
-      font-size: clamp(32px, 4vw, 48px);
-      line-height: 1.12;
+
+
+    .hero-actions{
+
+        display:grid;
+
+        grid-template-columns:1fr;
+
     }
 
-    .hero p {
-      max-width: 650px;
-      margin-top: 14px;
-      color: rgba(255,255,255,.78);
-      font-size: 14px;
-      line-height: 1.7;
+
+
+    .hero-btn{
+
+        width:100%;
+
+        text-align:center;
+
     }
 
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 
-    .hero-btn {
-      display: inline-flex;
-      justify-content: center;
-      padding: 13px 17px;
-      border: 1px solid transparent;
-      border-radius: 11px;
-      font-size: 12px;
-      font-weight: 800;
+
+    .section-heading{
+
+        align-items:flex-start;
+
     }
 
-    .hero-btn.primary { background: var(--cream); color: var(--green); }
-    .hero-btn.secondary { border-color: rgba(255,255,255,.25); color: white; }
-    .hero-btn:hover { transform: translateY(-1px); }
+}
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 15px;
-      margin-top: 20px;
+
+
+@media(max-width:450px){
+
+
+
+    .stats{
+
+        grid-template-columns:1fr;
+
     }
 
-    .stat {
-      padding: 21px;
-      border: 1px solid var(--border);
-      border-radius: 17px;
-      background: white;
-      box-shadow: var(--shadow);
+
+
+    .hero h1{
+
+        font-size:34px;
+
     }
 
-    .stat-label {
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-    }
+}
 
-    .stat-value {
-      margin-top: 10px;
-      color: var(--green);
-      font-family: Georgia, serif;
-      font-size: 31px;
-      font-weight: 800;
-    }
+</style>
 
-    .section { margin-top: 34px; }
-
-    .section-heading {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 16px;
-    }
-
-    .section-heading h2 {
-      color: var(--green);
-      font-family: Georgia, serif;
-      font-size: 26px;
-    }
-
-    .section-heading p { margin-top: 5px; color: var(--muted); font-size: 12px; }
-    .section-link { color: var(--bordo); font-size: 12px; font-weight: 800; }
-
-    .recent-card, .profile-card {
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: white;
-      box-shadow: var(--shadow);
-    }
-
-    .recent-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto auto;
-      align-items: center;
-      gap: 18px;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .recent-row:last-child { border-bottom: 0; }
-    .recent-main { min-width: 0; }
-
-    .recent-title {
-      overflow: hidden;
-      color: var(--green);
-      font-size: 13px;
-      font-weight: 800;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .recent-sub { margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.7; }
-    .recent-date { color: var(--muted); font-size: 11px; text-align: right; }
-
-    .ticket-status {
-      display: inline-flex;
-      width: max-content;
-      margin-top: 5px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 9px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .ticket-status.valid { background: var(--green-soft); color: var(--green); }
-    .ticket-status.used { background: #efefed; color: #62706d; }
-    .ticket-status.cancelled, .ticket-status.refunded { background: var(--bordo-soft); color: var(--bordo); }
-    .ticket-status.unknown { background: #efeeeb; color: var(--muted); }
-
-    .view-btn {
-      display: inline-block;
-      padding: 10px 12px;
-      border-radius: 10px;
-      background: var(--cream);
-      color: var(--green);
-      font-size: 11px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 15px;
-    }
-
-    .quick-card {
-      padding: 23px;
-      border: 1px solid var(--border);
-      border-radius: 17px;
-      background: white;
-      transition: .2s ease;
-    }
-
-    .quick-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
-
-    .quick-icon {
-      width: 43px;
-      height: 43px;
-      display: grid;
-      place-items: center;
-      margin-bottom: 16px;
-      border-radius: 12px;
-      background: var(--cream);
-      color: var(--green);
-      font-weight: 900;
-    }
-
-    .quick-card h3 { color: var(--green); font-size: 15px; }
-    .quick-card p { margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.6; }
-    .quick-card a { display: inline-block; margin-top: 14px; color: var(--bordo); font-size: 12px; font-weight: 800; }
-
-    .profile-card { padding: 24px; }
-
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 20px;
-    }
-
-    .profile-label { color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; }
-    .profile-value { margin-top: 7px; overflow-wrap: anywhere; color: var(--green); font-size: 13px; font-weight: 800; }
-
-    .profile-role {
-      display: inline-block;
-      margin-top: 7px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: var(--green-soft);
-      color: var(--green);
-      font-size: 10px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .empty { padding: 35px 20px; color: var(--muted); text-align: center; font-size: 12px; line-height: 1.7; }
-    .empty strong { display: block; margin-bottom: 6px; color: var(--dark); font-size: 14px; }
-
-    .dashboard-error {
-      display: none;
-      margin-bottom: 18px;
-      padding: 15px;
-      border: 1px solid rgba(108,21,30,.15);
-      border-radius: 12px;
-      background: var(--bordo-soft);
-      color: var(--bordo);
-      font-size: 12px;
-      line-height: 1.6;
-      overflow-wrap: anywhere;
-    }
-
-    .retry-btn {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 9px 12px;
-      border: 0;
-      border-radius: 9px;
-      background: var(--bordo);
-      color: white;
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .mobile-nav { display: none; }
-
-    @media(max-width: 1000px) {
-      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    @media(max-width: 850px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .main { margin-left: 0; }
-      .mobile-menu {
-        display: inline-grid;
-        place-items: center;
-        width: 40px;
-        height: 40px;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        background: white;
-        color: var(--green);
-        font-size: 20px;
-      }
-      .topbar { padding: 12px 18px; }
-      .content { padding: 24px 18px 100px; }
-
-      .mobile-nav {
-        position: fixed;
-        z-index: 90;
-        right: 12px;
-        bottom: 12px;
-        left: 12px;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        height: 62px;
-        border-radius: 17px;
-        background: rgba(15,61,58,.98);
-        box-shadow: var(--shadow);
-      }
-
-      .mobile-nav a {
-        display: grid;
-        place-content: center;
-        justify-items: center;
-        gap: 3px;
-        color: rgba(255,255,255,.65);
-        font-size: 10px;
-      }
-
-      .mobile-nav a.active { color: var(--cream); }
-    }
-
-    @media(max-width: 600px) {
-      .quick-grid { grid-template-columns: 1fr; }
-      .recent-row { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
-      .recent-date, .user-name { display: none; }
-      .hero { border-radius: 19px; }
-      .hero-actions { display: grid; grid-template-columns: 1fr; }
-      .hero-btn { width: 100%; }
-      .section-heading { align-items: flex-start; }
-    }
-
-    @media(max-width: 400px) {
-      .stats { grid-template-columns: 1fr 1fr; gap: 9px; }
-      .stat { padding: 15px; }
-      .stat-value { font-size: 26px; }
-      .content { padding-right: 12px; padding-left: 12px; }
-    }
-  </style>
 </head>
 
+
+
 <body>
-  <aside class="sidebar" id="sidebar">
-    <a href="../index.html" class="brand">
-      <span class="brand-mark">K</span>
-      <span>
-        <strong>K-Tickets</strong>
-        <small>Customer Portal</small>
-      </span>
+
+
+
+<div class="app">
+
+
+
+    <!-- ========================================================
+
+         SIDEBAR
+
+    ========================================================= -->
+
+
+
+    <aside
+
+        class="sidebar"
+
+        id="sidebar"
+
+    >
+
+
+
+        <a
+
+            href="../index.html"
+
+            class="brand"
+
+        >
+
+
+
+            <div class="brand-mark">
+
+                K
+
+            </div>
+
+
+
+            <div class="brand-text">
+
+
+
+                <strong>
+
+                    K-Tickets
+
+                </strong>
+
+
+
+                <span>
+
+                    Customer Portal
+
+                </span>
+
+
+
+            </div>
+
+
+
+        </a>
+
+
+
+        <div class="nav-label">
+
+            Menu
+
+        </div>
+
+
+
+        <nav class="nav">
+            <a href="dashboard.html" class="active"><span class="nav-icon">⌂</span>Dashboard</a>
+            <a href="events.html"><span class="nav-icon">◫</span>Browse Events</a>
+            <a href="event.html"><span class="nav-icon">◇</span>Event Details</a>
+            <a href="my-tickets.html"><span class="nav-icon">▣</span>My Tickets</a>
+            <a href="ticket.html"><span class="nav-icon">▤</span>Ticket Details</a>
+            <a href="notifications.html"><span class="nav-icon">♢</span>Notifications</a>
+            <a href="checkout.html"><span class="nav-icon">🛒</span>Checkout</a>
+            <a href="payment.html"><span class="nav-icon">¤</span>Payment</a>
+            <a href="payment-success.html"><span class="nav-icon">✓</span>Payment Success</a>
+            <a href="orders.html"><span class="nav-icon">◷</span>Orders</a>
+            <a href="../gate/scan.html"><span class="nav-icon">⌗</span>Verify Ticket</a>
+            <a href="profile.html"><span class="nav-icon">◎</span>Profile</a>
+        </nav>
+
+
+
+        <div class="sidebar-bottom">
+
+
+
+            <button
+
+                class="logout"
+
+                id="logoutBtn"
+
+                type="button"
+
+            >
+
+                Sign Out
+
+            </button>
+
+
+
+        </div>
+
+
+
+    </aside>
+
+
+
+    <!-- ========================================================
+
+         MAIN
+
+    ========================================================= -->
+
+
+
+    <main class="main">
+
+
+
+        <header class="topbar">
+
+
+
+            <div class="topbar-title">
+
+
+
+                <button
+
+                    class="mobile-menu"
+
+                    id="mobileMenu"
+
+                    type="button"
+
+                    aria-label="Open navigation"
+
+                >
+
+                    ☰
+
+                </button>
+
+
+
+                <strong>
+
+                    Customer Dashboard
+
+                </strong>
+
+
+
+            </div>
+
+
+
+            <div class="top-actions">
+
+
+
+                <button
+
+                    class="refresh-btn"
+
+                    id="refreshBtn"
+
+                    type="button"
+
+                    title="Refresh dashboard"
+
+                    aria-label="Refresh dashboard"
+
+                >
+
+                    ↻
+
+                </button>
+
+
+
+                <button
+
+                    class="notification-btn"
+
+                    id="notificationBtn"
+
+                    type="button"
+
+                    title="Notifications"
+
+                    aria-label="Notifications"
+
+                >
+
+                    ♢
+
+
+
+                    <span
+
+                        class="notification-dot"
+
+                        id="notificationDot"
+
+                        hidden
+
+                    ></span>
+
+
+
+                </button>
+
+
+
+                <div class="user-area">
+
+
+
+                    <div
+
+                        class="user-name"
+
+                        id="topUserName"
+
+                    >
+
+                        Account
+
+                    </div>
+
+
+
+                    <div
+
+                        class="avatar"
+
+                        id="avatar"
+
+                    >
+
+                        K
+
+                    </div>
+
+
+
+                </div>
+
+
+
+            </div>
+
+
+
+        </header>
+
+
+
+        <section class="content">
+
+
+
+            <!-- ==================================================
+
+                 ERROR
+
+            ================================================== -->
+
+
+
+            <div
+
+                class="dashboard-error"
+
+                id="dashboardError"
+
+                role="alert"
+
+            ></div>
+
+
+
+            <!-- ==================================================
+
+                 HERO
+
+            ================================================== -->
+
+
+
+            <section class="hero">
+
+
+
+                <small>
+
+                    K-Tickets Customer Portal
+
+                </small>
+
+
+
+                <h1 id="greeting">
+
+                    Welcome
+
+                </h1>
+
+
+
+                <p>
+
+                    Discover available events, keep your tickets
+
+                    organised, review your orders and stay connected
+
+                    to your K-Tickets account.
+
+                </p>
+
+
+
+                <div class="hero-actions">
+
+
+
+                    <a
+
+                        href="events.html"
+
+                        class="hero-btn primary"
+
+                    >
+
+                        Browse Events
+
+                    </a>
+
+
+
+                    <a
+
+                        href="my-tickets.html"
+
+                        class="hero-btn secondary"
+
+                    >
+
+                        My Tickets
+
+                    </a>
+
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+            <!-- ==================================================
+
+                 STATS
+
+            ================================================== -->
+
+
+
+            <section class="stats">
+
+
+
+                <div class="stat">
+
+
+
+                    <div class="stat-label">
+
+                        Tickets
+
+                    </div>
+
+
+
+                    <div
+
+                        class="stat-value loading-state"
+
+                        id="ticketCount"
+
+                    >
+
+                        —
+
+                    </div>
+
+
+
+                </div>
+
+
+
+                <div class="stat">
+
+
+
+                    <div class="stat-label">
+
+                        Orders
+
+                    </div>
+
+
+
+                    <div
+
+                        class="stat-value loading-state"
+
+                        id="orderCount"
+
+                    >
+
+                        —
+
+                    </div>
+
+
+
+                </div>
+
+
+
+                <div class="stat">
+
+
+
+                    <div class="stat-label">
+
+                        Used
+
+                    </div>
+
+
+
+                    <div
+
+                        class="stat-value loading-state"
+
+                        id="usedCount"
+
+                    >
+
+                        —
+
+                    </div>
+
+
+
+                </div>
+
+
+
+                <div class="stat">
+
+
+
+                    <div class="stat-label">
+
+                        Upcoming
+
+                    </div>
+
+
+
+                    <div
+
+                        class="stat-value loading-state"
+
+                        id="upcomingCount"
+
+                    >
+
+                        —
+
+                    </div>
+
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+            <!-- ==================================================
+
+                 RECENT TICKETS
+
+            ================================================== -->
+
+
+
+            <section class="section">
+
+
+
+                <div class="section-heading">
+
+
+
+                    <div>
+
+
+
+                        <h2>
+
+                            Recent Tickets
+
+                        </h2>
+
+
+
+                        <p>
+
+                            Your latest issued tickets.
+
+                        </p>
+
+
+
+                    </div>
+
+
+
+                    <a
+
+                        class="section-link"
+
+                        href="my-tickets.html"
+
+                    >
+
+                        View all
+
+                    </a>
+
+
+
+                </div>
+
+
+
+                <div
+
+                    class="recent-card"
+
+                    id="recentTickets"
+
+                >
+
+
+
+                    <div class="empty">
+
+
+
+                        <span class="loading">
+
+                            Loading tickets...
+
+                        </span>
+
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+            <!-- ==================================================
+
+                 QUICK ACCESS
+
+            ================================================== -->
+
+
+
+            <section class="section">
+
+
+
+                <div class="section-heading">
+
+
+
+                    <div>
+
+
+
+                        <h2>
+
+                            Quick Access
+
+                        </h2>
+
+
+
+                        <p>
+
+                            Your main K-Tickets actions.
+
+                        </p>
+
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+                <div class="quick-grid">
+
+
+
+                    <article class="quick-card">
+
+
+
+                        <div class="quick-icon">
+
+                            🎟
+
+                        </div>
+
+
+
+                        <h3>
+
+                            Browse Events
+
+                        </h3>
+
+
+
+                        <p>
+
+                            Discover events and available ticket types.
+
+                        </p>
+
+
+
+                        <a href="events.html">
+
+                            Explore →
+
+                        </a>
+
+
+
+                    </article>
+
+
+
+                    <article class="quick-card">
+
+
+
+                        <div class="quick-icon">
+
+                            QR
+
+                        </div>
+
+
+
+                        <h3>
+
+                            My Tickets
+
+                        </h3>
+
+
+
+                        <p>
+
+                            Open your issued tickets and QR codes.
+
+                        </p>
+
+
+
+                        <a href="my-tickets.html">
+
+                            Open tickets →
+
+                        </a>
+
+
+
+                    </article>
+
+
+
+                    <article class="quick-card">
+
+
+
+                        <div class="quick-icon">
+
+                            ◎
+
+                        </div>
+
+
+
+                        <h3>
+
+                            Orders
+
+                        </h3>
+
+
+
+                        <p>
+
+                            Review your K-Tickets order and payment history.
+
+                        </p>
+
+
+
+                        <a href="orders.html">
+
+                            View orders →
+
+                        </a>
+
+
+
+                    </article>
+
+
+
+                
+                    <article class="quick-card">
+                        <div class="quick-icon">♢</div>
+                        <h3>Notifications</h3>
+                        <p>Read account updates, payment messages and ticket alerts.</p>
+                        <a href="notifications.html">Open notifications →</a>
+                    </article>
+                    <article class="quick-card">
+                        <div class="quick-icon">◇</div>
+                        <h3>Event Details</h3>
+                        <p>Review an event before selecting tickets and checking out.</p>
+                        <a href="event.html">View event details →</a>
+                    </article>
+                    <article class="quick-card">
+                        <div class="quick-icon">🛒</div>
+                        <h3>Checkout</h3>
+                        <p>Continue checkout for a selected event and ticket.</p>
+                        <a href="checkout.html">Go to checkout →</a>
+                    </article>
+                    <article class="quick-card">
+                        <div class="quick-icon">¤</div>
+                        <h3>Payment</h3>
+                        <p>Continue to payment for an existing checkout.</p>
+                        <a href="payment.html">Open payment →</a>
+                    </article>
+                    <article class="quick-card">
+                        <div class="quick-icon">✓</div>
+                        <h3>Payment Success</h3>
+                        <p>View the confirmation page after a completed payment.</p>
+                        <a href="payment-success.html">View confirmation →</a>
+                    </article>
+                    <article class="quick-card">
+                        <div class="quick-icon">▤</div>
+                        <h3>Ticket Details</h3>
+                        <p>Open a specific issued ticket and its QR credential.</p>
+                        <a href="ticket.html">Open ticket page →</a>
+                    </article>
+                    <article class="quick-card">
+                        <div class="quick-icon">⌗</div>
+                        <h3>Verify Ticket</h3>
+                        <p>Open gate verification where your account role permits access.</p>
+                        <a href="../gate/scan.html">Open verification →</a>
+                    </article>
+</div>
+
+
+
+            </section>
+
+
+
+            <!-- ==================================================
+
+                 PROFILE
+
+            ================================================== -->
+
+
+
+            <section
+
+                class="section"
+
+                id="profile"
+
+            >
+
+
+
+                <div class="section-heading">
+
+
+
+                    <div>
+
+
+
+                        <h2>
+
+                            Account
+
+                        </h2>
+
+
+
+                        <p>
+
+                            Information connected to your authenticated account.
+
+                        </p>
+
+
+
+                    </div>
+
+
+
+                    <a
+
+                        class="section-link"
+
+                        href="profile.html"
+
+                    >
+
+                        Manage
+
+                    </a>
+
+
+
+                </div>
+
+
+
+                <div
+
+                    class="profile-card"
+
+                    id="profileContent"
+
+                >
+
+
+
+                    <div class="empty">
+
+                        <span class="loading">
+
+                            Loading account information...
+
+                        </span>
+
+                    </div>
+
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+        </section>
+
+
+
+    </main>
+
+
+
+</div>
+
+
+
+<!-- ============================================================
+
+     MOBILE NAV
+
+============================================================ -->
+
+
+
+<nav class="mobile-nav">
+
+
+
+    <a
+
+        href="dashboard.html"
+
+        class="active"
+
+    >
+
+        <span>⌂</span>
+
+        <span>Home</span>
+
     </a>
 
-    <div class="nav-label">Menu</div>
 
-    <nav class="nav">
-      <a href="dashboard.html" class="active"><span class="nav-icon">⌂</span>Dashboard</a>
-      <a href="events.html"><span class="nav-icon">◫</span>Browse Events</a>
-      <a href="my-tickets.html"><span class="nav-icon">▣</span>My Tickets</a>
-      <a href="orders.html"><span class="nav-icon">◷</span>Orders</a>
-      <a href="profile.html"><span class="nav-icon">◎</span>Profile</a>
-    </nav>
 
-    <div class="sidebar-bottom">
-      <button class="logout" id="logoutBtn" type="button">Sign Out</button>
-    </div>
-  </aside>
+    <a href="events.html">
 
-  <main class="main">
-    <header class="topbar">
-      <div class="topbar-title">
-        <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Open menu">☰</button>
-        <strong>Customer Dashboard</strong>
-      </div>
+        <span>◫</span>
 
-      <div class="top-actions">
-        <button class="icon-btn" id="refreshBtn" type="button" aria-label="Refresh dashboard" title="Refresh">↻</button>
-        <button class="icon-btn" id="notificationBtn" type="button" aria-label="Notifications" title="Notifications">
-          ♢<span class="notification-dot" id="notificationDot" hidden></span>
-        </button>
-        <div class="user-area">
-          <span class="user-name" id="topUserName">Account</span>
-          <span class="avatar" id="avatar">K</span>
-        </div>
-      </div>
-    </header>
+        <span>Events</span>
 
-    <div class="content">
-      <div class="dashboard-error" id="dashboardError" role="alert"></div>
+    </a>
 
-      <section class="hero">
-        <small>K-Tickets Customer Portal</small>
-        <h1 id="greeting">Welcome</h1>
-        <p>Discover events, keep your tickets organised, review your orders and stay connected to your K-Tickets account.</p>
-        <div class="hero-actions">
-          <a href="events.html" class="hero-btn primary">Browse Events</a>
-          <a href="my-tickets.html" class="hero-btn secondary">My Tickets</a>
-        </div>
-      </section>
 
-      <section class="stats">
-        <article class="stat">
-          <div class="stat-label">Tickets</div>
-          <div class="stat-value" id="ticketCount">—</div>
-        </article>
-        <article class="stat">
-          <div class="stat-label">Orders</div>
-          <div class="stat-value" id="orderCount">—</div>
-        </article>
-        <article class="stat">
-          <div class="stat-label">Used</div>
-          <div class="stat-value" id="usedCount">—</div>
-        </article>
-        <article class="stat">
-          <div class="stat-label">Upcoming</div>
-          <div class="stat-value" id="upcomingCount">—</div>
-        </article>
-      </section>
 
-      <section class="section">
-        <div class="section-heading">
-          <div>
-            <h2>Recent Tickets</h2>
-            <p>Your latest issued tickets.</p>
-          </div>
-          <a class="section-link" href="my-tickets.html">View all →</a>
-        </div>
-        <div class="recent-card" id="recentTickets">
-          <div class="empty">Loading your tickets...</div>
-        </div>
-      </section>
+    <a href="my-tickets.html">
 
-      <section class="section">
-        <div class="section-heading">
-          <div>
-            <h2>Quick Access</h2>
-            <p>Your main K-Tickets actions.</p>
-          </div>
-        </div>
+        <span>▣</span>
 
-        <div class="quick-grid">
-          <article class="quick-card">
-            <div class="quick-icon">🎟</div>
-            <h3>Browse Events</h3>
-            <p>Discover events and available ticket types.</p>
-            <a href="events.html">Explore events →</a>
-          </article>
-          <article class="quick-card">
-            <div class="quick-icon">QR</div>
-            <h3>My Tickets</h3>
-            <p>Open your issued tickets and QR codes.</p>
-            <a href="my-tickets.html">Open tickets →</a>
-          </article>
-          <article class="quick-card">
-            <div class="quick-icon">◷</div>
-            <h3>Orders</h3>
-            <p>Review your order and payment history.</p>
-            <a href="orders.html">View orders →</a>
-          </article>
-        </div>
-      </section>
+        <span>Tickets</span>
 
-      <section class="section" id="profile">
-        <div class="section-heading">
-          <div>
-            <h2>Your Account</h2>
-            <p>Information connected to your authenticated account.</p>
-          </div>
-          <a class="section-link" href="profile.html">Manage →</a>
-        </div>
-        <div class="profile-card" id="profileContent">
-          <div class="empty">Loading account information...</div>
-        </div>
-      </section>
-    </div>
-  </main>
+    </a>
 
-  <nav class="mobile-nav">
-    <a href="dashboard.html" class="active"><span>⌂</span><span>Home</span></a>
-    <a href="events.html"><span>◫</span><span>Events</span></a>
-    <a href="my-tickets.html"><span>▣</span><span>Tickets</span></a>
-    <a href="profile.html"><span>◎</span><span>Account</span></a>
-  </nav>
 
-  <script>
-    "use strict";
 
-    const SUPABASE_URL = "https://mdzlfejdvifxxsreuzwz.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+    <a href="profile.html">
 
-    let supabaseClient;
-    let currentUser = null;
-    let currentProfile = null;
-    let customerTickets = [];
-    let customerOrders = [];
-    let relatedEvents = new Map();
-    let dashboardLoading = false;
+        <span>◎</span>
 
-    const $ = id => document.getElementById(id);
+        <span>Account</span>
 
-    function escapeHTML(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    </a>
+
+
+
+</nav>
+
+
+
+<script>
+
+"use strict";
+
+
+
+/*
+
+============================================================
+
+K-TICKETS CUSTOMER DASHBOARD
+
+============================================================
+
+
+
+NO PRODUCTION DATA IS HARDCODED.
+
+
+
+Dynamic sources:
+
+- Supabase Auth
+
+- public.profiles
+
+- public.tickets
+
+- public.orders
+
+- public.events
+
+- public.notifications
+
+
+
+The only static values in this file are application
+
+configuration, UI labels and presentation rules.
+
+
+
+CURRENT TICKET STATUS VALUES:
+
+- valid
+
+- used
+
+- cancelled
+
+- refunded
+
+
+
+There is NO "checked_in" ticket status in the current
+
+K-Tickets ticket schema.
+
+
+
+The secure gate:
+
+1. Requires authenticated Supabase session.
+
+2. Loads the current user's profile.
+
+3. Requires an active account.
+
+4. Requires the customer role for this portal.
+
+5. Redirects other roles to their appropriate portal.
+
+
+
+============================================================
+
+*/
+
+
+
+const SUPABASE_URL =
+
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+
+
+const SUPABASE_PUBLISHABLE_KEY =
+
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
+
+
+let supabaseClient = null;
+
+
+
+let currentUser = null;
+
+let currentProfile = null;
+
+
+
+let customerTickets = [];
+
+let customerOrders = [];
+
+let relatedEvents = new Map();
+
+
+
+let dashboardLoading = false;
+
+
+
+/* ============================================================
+
+   INITIALISE SUPABASE
+
+============================================================ */
+
+
+
+function initializeSupabase(){
+
+
+
+    if(
+
+        !SUPABASE_URL ||
+
+        !SUPABASE_PUBLISHABLE_KEY
+
+    ){
+
+
+
+        throw new Error(
+
+            "Supabase configuration is missing."
+
+        );
+
     }
 
-    function redirectToLogin(reason = "unauthorized") {
-      window.location.replace("../login.html?error=" + encodeURIComponent(reason));
+
+
+    if(
+
+        !window.supabase?.createClient
+
+    ){
+
+
+
+        throw new Error(
+
+            "Supabase client library could not be loaded."
+
+        );
+
     }
 
-    function initializeSupabase() {
-      if (!window.supabase?.createClient) {
-        throw new Error("Supabase library failed to load. Check your internet connection and refresh.");
-      }
 
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY,
-        {
-          auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
-          }
-        }
-      );
+
+    supabaseClient =
+
+        window.supabase.createClient(
+
+            SUPABASE_URL,
+
+            SUPABASE_PUBLISHABLE_KEY,
+
+            {
+
+                auth:{
+
+                    persistSession:true,
+
+                    autoRefreshToken:true,
+
+                    detectSessionInUrl:true
+
+                }
+
+            }
+
+        );
+
+}
+
+
+
+/* ============================================================
+
+   SESSION
+
+============================================================ */
+
+
+
+async function getSessionUser(){
+
+
+
+    const {
+
+        data,
+
+        error
+
+    } =
+
+        await supabaseClient.auth.getSession();
+
+
+
+    if(error){
+
+
+
+        throw new Error(
+
+            `Session verification failed: ${error.message}`
+
+        );
+
     }
 
-    async function getSessionUser() {
-      const { data, error } = await supabaseClient.auth.getSession();
 
-      if (error) throw new Error("Session verification failed: " + error.message);
-      if (!data?.session?.user) {
-        redirectToLogin("no_session");
+
+    if(
+
+        !data?.session?.user
+
+    ){
+
+
+
+        redirectToLogin(
+
+            "no_session"
+
+        );
+
+
+
         return null;
-      }
 
-      return data.session.user;
     }
 
-    async function loadProfile(user) {
-      const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("id,full_name,phone,role,is_active,created_at")
-        .eq("id", user.id)
-        .maybeSingle();
 
-      if (error) throw new Error("Profile could not be loaded: " + error.message);
-      if (!data) throw new Error("No K-Tickets profile exists for this account.");
 
-      if (data.is_active !== true) {
-        await supabaseClient.auth.signOut();
-        redirectToLogin("account_inactive");
-        throw new Error("This account is inactive.");
-      }
+    return data.session.user;
 
-      const role = String(data.role || "").trim().toLowerCase();
+}
 
-      const routes = {
-        merchant: "../merchant/dashboard.html",
-        gate_staff: "../gate/scan.html",
-        admin: "../admin/dashboard.html"
-      };
 
-      if (role !== "customer") {
-        if (routes[role]) {
-          window.location.replace(routes[role]);
-          throw new Error("Redirecting to your assigned portal.");
-        }
-        throw new Error("Your account role could not be verified.");
-      }
 
-      currentProfile = data;
-      renderProfile(user, data);
+/* ============================================================
+
+   PROFILE
+
+============================================================ */
+
+
+
+async function loadProfile(
+
+    user
+
+){
+
+
+
+    const {
+
+        data,
+
+        error
+
+    } =
+
+        await supabaseClient
+
+            .from("profiles")
+
+            .select(`
+
+                id,
+
+                full_name,
+
+                phone,
+
+                role,
+
+                is_active,
+
+                avatar_url,
+
+                created_at,
+
+                updated_at
+
+            `)
+
+            .eq(
+
+                "id",
+
+                user.id
+
+            )
+
+            .maybeSingle();
+
+
+
+    if(error){
+
+
+
+        throw new Error(
+
+            `Customer profile could not be loaded: ${error.message}`
+
+        );
+
     }
 
-    async function loadTickets(user) {
-      const { data, error } = await supabaseClient
-        .from("tickets")
-        .select("id,order_id,user_id,event_id,ticket_code,status,issued_at,created_at")
-        .eq("user_id", user.id)
-        .order("issued_at", { ascending: false, nullsFirst: false });
 
-      if (error) throw new Error("Tickets could not be loaded: " + error.message);
 
-      customerTickets = Array.isArray(data) ? data : [];
+    if(!data){
 
-      $("ticketCount").textContent = customerTickets.length.toLocaleString();
-      $("usedCount").textContent = customerTickets.filter(
-        ticket => normalizeStatus(ticket.status) === "used"
-      ).length.toLocaleString();
+
+
+        throw new Error(
+
+            "No K-Tickets profile exists for this account."
+
+        );
+
     }
 
-    async function loadOrders(user) {
-      const { data, error } = await supabaseClient
-        .from("orders")
-        .select("id,user_id,event_id,status,created_at,order_number,total,currency,paid_at")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
 
-      if (error) throw new Error("Orders could not be loaded: " + error.message);
 
-      customerOrders = Array.isArray(data) ? data : [];
-      $("orderCount").textContent = customerOrders.length.toLocaleString();
+    if(
+
+        data.is_active !== true
+
+    ){
+
+
+
+        await safeSignOut();
+
+
+
+        redirectToLogin(
+
+            "account_inactive"
+
+        );
+
+
+
+        throw new Error(
+
+            "This K-Tickets account is inactive."
+
+        );
+
     }
 
-    async function loadRelatedEvents() {
-      relatedEvents = new Map();
 
-      const ids = [...new Set([
-        ...customerTickets.map(ticket => ticket.event_id),
-        ...customerOrders.map(order => order.event_id)
-      ].filter(Boolean).map(String))];
 
-      if (!ids.length) {
+    currentProfile =
+
+        data;
+
+
+
+    handleRoleRouting(
+
+        data.role
+
+    );
+
+
+
+    renderProfile(
+
+        user,
+
+        data
+
+    );
+
+}
+
+
+
+/* ============================================================
+
+   ROLE ROUTING
+
+============================================================ */
+
+
+
+function handleRoleRouting(
+
+    role
+
+){
+
+
+
+    const normalizedRole =
+
+        String(
+
+            role || ""
+
+        )
+
+            .trim()
+
+            .toLowerCase();
+
+
+
+    /*
+
+    Customer stays on this dashboard.
+
+    Other authenticated roles are routed to their own portal.
+
+    */
+
+
+
+    if(
+
+        normalizedRole === "customer"
+
+    ){
+
+        return;
+
+    }
+
+
+
+    const routes = {
+
+        merchant:
+
+            "../merchant/dashboard.html",
+
+
+
+        gate_staff:
+
+            "../gate/scan.html",
+
+
+
+        admin:
+
+            "../admin/dashboard.html"
+
+    };
+
+
+
+    const destination =
+
+        routes[
+
+            normalizedRole
+
+        ];
+
+
+
+    if(destination){
+
+
+
+        window.location.replace(
+
+            destination
+
+        );
+
+
+
+        throw new Error(
+
+            "Redirecting to the appropriate K-Tickets portal."
+
+        );
+
+    }
+
+
+
+    throw new Error(
+
+        "Your K-Tickets account role could not be verified."
+
+    );
+
+}
+
+
+
+/* ============================================================
+
+   TICKETS
+
+============================================================ */
+
+
+
+async function loadTickets(
+
+    user
+
+){
+
+
+
+    const {
+
+        data,
+
+        error
+
+    } =
+
+        await supabaseClient
+
+            .from("tickets")
+
+            .select(`
+
+                id,
+
+                order_id,
+
+                order_item_id,
+
+                user_id,
+
+                event_id,
+
+                ticket_type_id,
+
+                ticket_code,
+
+                qr_token,
+
+                status,
+
+                issued_at,
+
+                checked_in_at,
+
+                checked_in_by,
+
+                created_at,
+
+                updated_at
+
+            `)
+
+            .eq(
+
+                "user_id",
+
+                user.id
+
+            )
+
+            .order(
+
+                "issued_at",
+
+                {
+
+                    ascending:false,
+
+                    nullsFirst:false
+
+                }
+
+            );
+
+
+
+    if(error){
+
+
+
+        throw new Error(
+
+            `Tickets could not be loaded: ${error.message}`
+
+        );
+
+    }
+
+
+
+    customerTickets =
+
+        Array.isArray(data)
+
+            ? data
+
+            : [];
+
+
+
+    document.getElementById(
+
+        "ticketCount"
+
+    ).textContent =
+
+        customerTickets.length.toLocaleString();
+
+
+
+    document.getElementById(
+
+        "ticketCount"
+
+    ).classList.remove(
+
+        "loading-state"
+
+    );
+
+
+
+    const usedTickets =
+
+        customerTickets.filter(
+
+            ticket =>
+
+                normalizeStatus(
+
+                    ticket.status
+
+                ) === "used"
+
+        );
+
+
+
+    document.getElementById(
+
+        "usedCount"
+
+    ).textContent =
+
+        usedTickets.length.toLocaleString();
+
+
+
+    document.getElementById(
+
+        "usedCount"
+
+    ).classList.remove(
+
+        "loading-state"
+
+    );
+
+}
+
+
+
+/* ============================================================
+
+   ORDERS
+
+============================================================ */
+
+
+
+async function loadOrders(
+
+    user
+
+){
+
+
+
+    const {
+
+        data,
+
+        error
+
+    } =
+
+        await supabaseClient
+
+            .from("orders")
+
+            .select(`
+
+                id,
+
+                order_number,
+
+                user_id,
+
+                event_id,
+
+                status,
+
+                subtotal,
+
+                service_fee_percentage,
+
+                service_fee,
+
+                discount,
+
+                total,
+
+                currency,
+
+                promotion_id,
+
+                created_at,
+
+                updated_at,
+
+                paid_at
+
+            `)
+
+            .eq(
+
+                "user_id",
+
+                user.id
+
+            )
+
+            .order(
+
+                "created_at",
+
+                {
+
+                    ascending:false,
+
+                    nullsFirst:false
+
+                }
+
+            );
+
+
+
+    if(error){
+
+
+
+        throw new Error(
+
+            `Orders could not be loaded: ${error.message}`
+
+        );
+
+    }
+
+
+
+    customerOrders =
+
+        Array.isArray(data)
+
+            ? data
+
+            : [];
+
+
+
+    document.getElementById(
+
+        "orderCount"
+
+    ).textContent =
+
+        customerOrders.length.toLocaleString();
+
+
+
+    document.getElementById(
+
+        "orderCount"
+
+    ).classList.remove(
+
+        "loading-state"
+
+    );
+
+}
+
+
+
+/* ============================================================
+
+   RELATED EVENTS
+
+============================================================ */
+
+
+
+async function loadRelatedEvents(){
+
+
+
+    relatedEvents =
+
+        new Map();
+
+
+
+    const eventIds = [
+
+        ...new Set(
+
+            [
+
+                ...customerTickets.map(
+
+                    ticket =>
+
+                        ticket.event_id
+
+                ),
+
+
+
+                ...customerOrders.map(
+
+                    order =>
+
+                        order.event_id
+
+                )
+
+            ]
+
+                .filter(Boolean)
+
+                .map(
+
+                    id =>
+
+                        String(id)
+
+                )
+
+        )
+
+    ];
+
+
+
+    if(!eventIds.length){
+
+
+
         updateUpcomingCount();
+
+
+
         renderRecentTickets();
+
+
+
         return;
-      }
 
-      const { data, error } = await supabaseClient
-        .from("events")
-        .select("*")
-        .in("id", ids);
-
-      if (error) {
-        console.warn("Could not load event details:", error.message);
-      } else {
-        (data || []).forEach(event => relatedEvents.set(String(event.id), event));
-      }
-
-      updateUpcomingCount();
-      renderRecentTickets();
     }
 
-    function firstNonEmpty(object, keys) {
-      for (const key of keys) {
-        const value = object?.[key];
-        if (value !== null && value !== undefined && String(value).trim() !== "") {
-          return String(value).trim();
-        }
-      }
-      return "";
+
+
+    const {
+
+        data,
+
+        error
+
+    } =
+
+        await supabaseClient
+
+            .from("events")
+
+            .select("*")
+
+            .in(
+
+                "id",
+
+                eventIds
+
+            );
+
+
+
+    if(error){
+
+
+
+        /*
+
+        Ticket records themselves remain visible even when
+
+        event enrichment is temporarily unavailable.
+
+        */
+
+
+
+        console.warn(
+
+            "Related events could not be loaded:",
+
+            error
+
+        );
+
+
+
+        updateUpcomingCount();
+
+
+
+        renderRecentTickets();
+
+
+
+        return;
+
     }
 
-    function getEventName(event) {
-      return firstNonEmpty(event, ["name", "title", "event_name"]) || "Event information unavailable";
+
+
+    if(Array.isArray(data)){
+
+
+
+        data.forEach(
+
+            event => {
+
+
+
+                if(event?.id){
+
+
+
+                    relatedEvents.set(
+
+                        String(event.id),
+
+                        event
+
+                    );
+
+                }
+
+            }
+
+        );
+
     }
 
-    function getEventVenue(event) {
-      return firstNonEmpty(event, ["venue", "location", "address"]);
-    }
 
-    function getEventStart(event) {
-      const direct = firstNonEmpty(event, [
-        "start_at", "starts_at", "event_start", "start_datetime", "event_datetime"
-      ]);
 
-      if (direct) {
-        const parsed = new Date(direct);
-        if (!Number.isNaN(parsed.getTime())) return parsed;
-      }
+    updateUpcomingCount();
 
-      const date = firstNonEmpty(event, ["date", "event_date", "start_date"]);
-      const time = firstNonEmpty(event, ["start_time", "time", "event_time"]);
 
-      if (!date) return null;
 
-      const parsed = new Date(time ? `${date}T${time}` : date);
-      return Number.isNaN(parsed.getTime()) ? null : parsed;
-    }
+    renderRecentTickets();
 
-    function updateUpcomingCount() {
-      const now = Date.now();
+}
 
-      const count = customerTickets.filter(ticket => {
-        if (normalizeStatus(ticket.status) !== "valid") return false;
 
-        const event = relatedEvents.get(String(ticket.event_id));
-        const start = getEventStart(event);
 
-        return Boolean(start && start.getTime() > now);
-      }).length;
+/* ============================================================
 
-      $("upcomingCount").textContent = count.toLocaleString();
-    }
+   UPCOMING
 
-    function normalizeStatus(value) {
-      const status = String(value || "").trim().toLowerCase();
-      return ["valid", "used", "cancelled", "refunded"].includes(status)
-        ? status
-        : "unknown";
-    }
+============================================================ */
 
-    function formatDate(value) {
-      if (!value) return "Date unavailable";
 
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return "Date unavailable";
 
-      return new Intl.DateTimeFormat(undefined, {
-        dateStyle: "medium",
-        timeStyle: "short"
-      }).format(date);
-    }
+function updateUpcomingCount(){
 
-    function renderRecentTickets() {
-      const container = $("recentTickets");
 
-      if (!customerTickets.length) {
+
+    const now =
+
+        Date.now();
+
+
+
+    const upcoming =
+
+        customerTickets.filter(
+
+            ticket => {
+
+
+
+                if(
+
+                    normalizeStatus(
+
+                        ticket.status
+
+                    ) !== "valid"
+
+                ){
+
+                    return false;
+
+                }
+
+
+
+                const event =
+
+                    relatedEvents.get(
+
+                        String(
+
+                            ticket.event_id
+
+                        )
+
+                    );
+
+
+
+                if(!event){
+
+                    return false;
+
+                }
+
+
+
+                const start =
+
+                    getEventStart(
+
+                        event
+
+                    );
+
+
+
+                if(!start){
+
+                    return false;
+
+                }
+
+
+
+                return (
+
+                    start.getTime() >
+
+                    now
+
+                );
+
+            }
+
+        );
+
+
+
+    document.getElementById(
+
+        "upcomingCount"
+
+    ).textContent =
+
+        upcoming.length.toLocaleString();
+
+
+
+    document.getElementById(
+
+        "upcomingCount"
+
+    ).classList.remove(
+
+        "loading-state"
+
+    );
+
+}
+
+
+
+/* ============================================================
+
+   RECENT TICKETS
+
+============================================================ */
+
+
+
+function renderRecentTickets(){
+
+
+
+    const container =
+
+        document.getElementById(
+
+            "recentTickets"
+
+        );
+
+
+
+    if(!customerTickets.length){
+
+
+
         container.innerHTML = `
-          <div class="empty">
-            <strong>No issued tickets yet</strong>
-            Your tickets will appear here after your payment has been confirmed.
-            <br><br><a class="section-link" href="events.html">Browse events →</a>
-          </div>`;
-        return;
-      }
 
-      container.innerHTML = customerTickets.slice(0, 5).map(ticket => {
-        const event = relatedEvents.get(String(ticket.event_id));
-        const status = normalizeStatus(ticket.status);
-        const venue = getEventVenue(event);
+            <div class="empty">
 
-        return `
-          <div class="recent-row">
-            <div class="recent-main">
-              <div class="recent-title">${escapeHTML(getEventName(event))}</div>
-              <div class="recent-sub">
-                ${escapeHTML(venue || "Venue information unavailable")}<br>
-                Ticket: ${escapeHTML(ticket.ticket_code || ticket.id)}
-                <br><span class="ticket-status ${escapeHTML(status)}">${escapeHTML(status)}</span>
-              </div>
+                <strong>No issued tickets yet</strong>
+
+                Your tickets will appear here after a successful payment.
+
+                <br><br>
+
+                <a
+
+                    href="events.html"
+
+                    style="color:#6C151E;font-weight:800;"
+
+                >
+
+                    Browse events →
+
+                </a>
+
             </div>
-            <div class="recent-date">${escapeHTML(formatDate(ticket.issued_at || ticket.created_at))}</div>
-            <a class="view-btn" href="ticket.html?id=${encodeURIComponent(ticket.id)}">Open Ticket</a>
-          </div>`;
-      }).join("");
+
+        `;
+
+
+
+        return;
+
     }
 
-    function getInitials(value) {
-      return String(value || "")
-        .trim()
-        .split(/\s+/)
-        .slice(0, 2)
-        .map(part => part.charAt(0).toUpperCase())
-        .join("") || "K";
-    }
 
-    function renderProfile(user, profile) {
-      const name = profile.full_name || user.user_metadata?.full_name || "";
-      const email = user.email || "";
-      const phone = profile.phone || user.user_metadata?.phone || "";
 
-      const hour = new Date().getHours();
-      const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    const recent =
 
-      $("greeting").textContent = name ? `${greeting}, ${name}` : greeting;
-      $("topUserName").textContent = name || email || "Account";
-      $("avatar").textContent = getInitials(name || email);
+        customerTickets.slice(
 
-      $("profileContent").innerHTML = `
+            0,
+
+            5
+
+        );
+
+
+
+    container.innerHTML =
+
+        recent.map(
+
+            ticket => {
+
+
+
+                const event =
+
+                    relatedEvents.get(
+
+                        String(
+
+                            ticket.event_id
+
+                        )
+
+                    );
+
+
+
+                const eventName =
+
+                    getEventName(
+
+                        event
+
+                    );
+
+
+
+                const venue =
+
+                    getEventVenue(
+
+                        event
+
+                    );
+
+
+
+                const status =
+
+                    normalizeStatus(
+
+                        ticket.status
+
+                    );
+
+
+
+                const statusLabel =
+
+                    formatStatusLabel(
+
+                        status
+
+                    );
+
+
+
+                return `
+
+                    <div class="recent-row">
+
+
+
+                        <div class="recent-main">
+
+
+
+                            <div class="recent-title">
+
+                                ${escapeHTML(
+
+                                    eventName ||
+
+                                    "Event information unavailable"
+
+                                )}
+
+                            </div>
+
+
+
+                            <div class="recent-sub">
+
+
+
+                                ${
+
+                                    venue
+
+                                        ? escapeHTML(venue)
+
+                                        : "Venue information unavailable"
+
+                                }
+
+
+
+                                <br>
+
+
+
+                                Ticket:
+
+                                ${escapeHTML(
+
+                                    ticket.ticket_code ||
+
+                                    ticket.id
+
+                                )}
+
+
+
+                                <span
+
+                                    class="ticket-status ${escapeHTML(status)}"
+
+                                >
+
+                                    ${escapeHTML(
+
+                                        statusLabel
+
+                                    )}
+
+                                </span>
+
+
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+                        <div class="recent-date">
+
+
+
+                            ${escapeHTML(
+
+                                formatDate(
+
+                                    ticket.issued_at ||
+
+                                    ticket.created_at
+
+                                )
+
+                            )}
+
+
+
+                        </div>
+
+
+
+                        <a
+
+                            class="view-btn"
+
+                            href="ticket.html?id=${encodeURIComponent(
+
+                                ticket.id
+
+                            )}"
+
+                        >
+
+                            Open Ticket
+
+                        </a>
+
+
+
+                    </div>
+
+                `;
+
+            }
+
+        )
+
+        .join("");
+
+}
+
+
+
+/* ============================================================
+
+   PROFILE RENDER
+
+============================================================ */
+
+
+
+function renderProfile(
+
+    user,
+
+    profile
+
+){
+
+
+
+    const name =
+
+        profile.full_name ||
+
+        user.user_metadata?.full_name ||
+
+        "";
+
+
+
+    const email =
+
+        user.email ||
+
+        "";
+
+
+
+    const phone =
+
+        profile.phone ||
+
+        user.user_metadata?.phone ||
+
+        "";
+
+
+
+    document.getElementById(
+
+        "greeting"
+
+    ).textContent =
+
+        getGreeting(
+
+            name
+
+        );
+
+
+
+    document.getElementById(
+
+        "topUserName"
+
+    ).textContent =
+
+        name ||
+
+        email ||
+
+        "Account";
+
+
+
+    document.getElementById(
+
+        "avatar"
+
+    ).textContent =
+
+        getInitials(
+
+            name ||
+
+            email
+
+        );
+
+
+
+    document.getElementById(
+
+        "profileContent"
+
+    ).innerHTML = `
+
+
+
         <div class="profile-grid">
-          <div><div class="profile-label">Name</div><div class="profile-value">${escapeHTML(name || "Not provided")}</div></div>
-          <div><div class="profile-label">Email</div><div class="profile-value">${escapeHTML(email || "Not available")}</div></div>
-          <div><div class="profile-label">Phone</div><div class="profile-value">${escapeHTML(phone || "Not provided")}</div></div>
-          <div><div class="profile-label">Account type</div><span class="profile-role">${escapeHTML(profile.role || "customer")}</span></div>
-          <div><div class="profile-label">Account created</div><div class="profile-value">${escapeHTML(formatDate(profile.created_at))}</div></div>
-        </div>`;
-    }
 
-    function showDashboardError(message) {
-      const box = $("dashboardError");
-      box.replaceChildren();
 
-      const text = document.createElement("div");
-      text.textContent = message || "Unable to load the dashboard.";
 
-      const retry = document.createElement("button");
-      retry.type = "button";
-      retry.className = "retry-btn";
-      retry.textContent = "Try again";
-      retry.addEventListener("click", loadDashboard);
+            <div>
 
-      box.append(text, retry);
-      box.style.display = "block";
-    }
 
-    async function updateNotificationState() {
-      try {
-        const { data, error } = await supabaseClient
-          .from("notifications")
-          .select("id")
-          .eq("user_id", currentUser.id)
-          .eq("is_read", false)
-          .limit(1);
 
-        if (error) {
-          console.warn("Notification status unavailable:", error.message);
-          return;
+                <div class="profile-label">
+
+                    Name
+
+                </div>
+
+
+
+                <div class="profile-value">
+
+                    ${escapeHTML(
+
+                        name ||
+
+                        "Not provided"
+
+                    )}
+
+                </div>
+
+
+
+            </div>
+
+
+
+            <div>
+
+
+
+                <div class="profile-label">
+
+                    Email
+
+                </div>
+
+
+
+                <div class="profile-value">
+
+                    ${escapeHTML(
+
+                        email ||
+
+                        "Not available"
+
+                    )}
+
+                </div>
+
+
+
+            </div>
+
+
+
+            <div>
+
+
+
+                <div class="profile-label">
+
+                    Phone
+
+                </div>
+
+
+
+                <div class="profile-value">
+
+                    ${escapeHTML(
+
+                        phone ||
+
+                        "Not provided"
+
+                    )}
+
+                </div>
+
+
+
+            </div>
+
+
+
+            <div>
+
+
+
+                <div class="profile-label">
+
+                    Account type
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="profile-role">
+
+                        ${escapeHTML(
+
+                            profile.role ||
+
+                            "customer"
+
+                        )}
+
+                    </span>
+
+                </div>
+
+
+
+            </div>
+
+
+
+            <div>
+
+
+
+                <div class="profile-label">
+
+                    Account created
+
+                </div>
+
+
+
+                <div class="profile-value">
+
+                    ${escapeHTML(
+
+                        formatDate(
+
+                            profile.created_at
+
+                        )
+
+                    )}
+
+                </div>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+    `;
+
+}
+
+
+
+/* ============================================================
+
+   NOTIFICATIONS
+
+============================================================ */
+
+
+
+async function updateNotificationState(){
+
+
+
+    try{
+
+
+
+        const {
+
+            data,
+
+            error
+
+        } =
+
+            await supabaseClient
+
+                .from("notifications")
+
+                .select("id")
+
+                .eq(
+
+                    "user_id",
+
+                    currentUser.id
+
+                )
+
+                .eq(
+
+                    "is_read",
+
+                    false
+
+                )
+
+                .limit(1);
+
+
+
+        if(error){
+
+
+
+            console.warn(
+
+                "Notification status unavailable:",
+
+                error
+
+            );
+
+
+
+            return;
+
         }
 
-        $("notificationDot").hidden = !(data && data.length);
-      } catch (error) {
-        console.warn("Notification check failed:", error);
-      }
+
+
+        document.getElementById(
+
+            "notificationDot"
+
+        ).hidden =
+
+            !(
+
+                Array.isArray(data) &&
+
+                data.length > 0
+
+            );
+
+
+
+    }catch(error){
+
+
+
+        console.warn(
+
+            "Notification status check failed:",
+
+            error
+
+        );
+
     }
 
-    async function loadDashboard() {
-      if (dashboardLoading) return;
+}
 
-      dashboardLoading = true;
-      $("dashboardError").style.display = "none";
 
-      try {
-        if (!supabaseClient) initializeSupabase();
 
-        const user = currentUser || await getSessionUser();
-        if (!user) return;
+/* ============================================================
 
-        currentUser = user;
+   DASHBOARD LOAD
 
-        await loadProfile(user);
-        await Promise.all([loadTickets(user), loadOrders(user)]);
+============================================================ */
+
+
+
+async function loadDashboard(){
+
+
+
+    if(dashboardLoading){
+
+        return;
+
+    }
+
+
+
+    dashboardLoading =
+
+        true;
+
+
+
+    hideDashboardError();
+
+
+
+    try{
+
+
+
+        if(!supabaseClient){
+
+
+
+            initializeSupabase();
+
+        }
+
+
+
+        const user =
+
+            currentUser ||
+
+            await getSessionUser();
+
+
+
+        if(!user){
+
+            return;
+
+        }
+
+
+
+        currentUser =
+
+            user;
+
+
+
+        /*
+
+        Profile and ticket/order queries are all scoped to
+
+        auth.uid() through Supabase RLS.
+
+        */
+
+
+
+        await loadProfile(
+
+            user
+
+        );
+
+
+
+        await Promise.all([
+
+            loadTickets(user),
+
+            loadOrders(user)
+
+        ]);
+
+
+
         await loadRelatedEvents();
+
+
+
         await updateNotificationState();
-      } catch (error) {
-        console.error("Dashboard loading failed:", error);
-        showDashboardError(error?.message || "Unable to load your dashboard.");
-      } finally {
-        dashboardLoading = false;
-      }
+
+
+
+    }catch(error){
+
+
+
+        console.error(
+
+            "Customer dashboard load failed:",
+
+            error
+
+        );
+
+
+
+        showDashboardError(
+
+            error?.message ||
+
+            "Unable to load your K-Tickets dashboard."
+
+        );
+
+
+
+    }finally{
+
+
+
+        dashboardLoading =
+
+            false;
+
     }
 
-    async function logout() {
-      try {
-        if (supabaseClient) await supabaseClient.auth.signOut();
-      } finally {
-        window.location.replace("../login.html");
-      }
+}
+
+
+
+/* ============================================================
+
+   REFRESH
+
+============================================================ */
+
+
+
+document
+
+    .getElementById(
+
+        "refreshBtn"
+
+    )
+
+    .addEventListener(
+
+        "click",
+
+        async () => {
+
+
+
+            const button =
+
+                document.getElementById(
+
+                    "refreshBtn"
+
+                );
+
+
+
+            button.disabled =
+
+                true;
+
+
+
+            button.textContent =
+
+                "↻";
+
+
+
+            try{
+
+
+
+                await loadDashboard();
+
+
+
+            }finally{
+
+
+
+                button.disabled =
+
+                    false;
+
+
+
+                button.textContent =
+
+                    "↻";
+
+            }
+
+        }
+
+    );
+
+
+
+/* ============================================================
+
+   NOTIFICATIONS
+
+============================================================ */
+
+
+
+document
+
+    .getElementById(
+
+        "notificationBtn"
+
+    )
+
+    .addEventListener(
+
+        "click",
+
+        () => {
+
+
+
+            window.location.href =
+
+                "notifications.html";
+
+        }
+
+    );
+
+
+
+/* ============================================================
+
+   MOBILE MENU
+
+============================================================ */
+
+
+
+document
+
+    .getElementById(
+
+        "mobileMenu"
+
+    )
+
+    .addEventListener(
+
+        "click",
+
+        () => {
+
+
+
+            document
+
+                .getElementById(
+
+                    "sidebar"
+
+                )
+
+                .classList
+
+                .toggle(
+
+                    "open"
+
+                );
+
+        }
+
+    );
+
+
+
+document
+
+    .querySelectorAll(
+
+        ".sidebar .nav a"
+
+    )
+
+    .forEach(
+
+        link => {
+
+
+
+            link.addEventListener(
+
+                "click",
+
+                () => {
+
+
+
+                    document
+
+                        .getElementById(
+
+                            "sidebar"
+
+                        )
+
+                        .classList
+
+                        .remove(
+
+                            "open"
+
+                        );
+
+                }
+
+            );
+
+        }
+
+    );
+
+
+
+/* ============================================================
+
+   LOGOUT
+
+============================================================ */
+
+
+
+document
+
+    .getElementById(
+
+        "logoutBtn"
+
+    )
+
+    .addEventListener(
+
+        "click",
+
+        logout
+
+    );
+
+
+
+async function logout(){
+
+
+
+    try{
+
+
+
+        if(supabaseClient){
+
+
+
+            await supabaseClient.auth.signOut();
+
+        }
+
+
+
+    }catch(error){
+
+
+
+        console.warn(
+
+            "Logout warning:",
+
+            error
+
+        );
+
+
+
+    }finally{
+
+
+
+        window.location.replace(
+
+            "../login.html"
+
+        );
+
     }
 
-    $("refreshBtn").addEventListener("click", async () => {
-      $("refreshBtn").disabled = true;
-      try {
-        await loadDashboard();
-      } finally {
-        $("refreshBtn").disabled = false;
-      }
-    });
+}
 
-    $("notificationBtn").addEventListener("click", () => {
-      window.location.href = "notifications.html";
-    });
 
-    $("mobileMenu").addEventListener("click", () => {
-      $("sidebar").classList.toggle("open");
-    });
 
-    document.querySelectorAll(".sidebar .nav a").forEach(link => {
-      link.addEventListener("click", () => $("sidebar").classList.remove("open"));
-    });
+async function safeSignOut(){
 
-    $("logoutBtn").addEventListener("click", logout);
 
-    (async function startDashboard() {
-      try {
+
+    try{
+
+
+
+        if(supabaseClient){
+
+
+
+            await supabaseClient.auth.signOut();
+
+        }
+
+
+
+    }catch(error){
+
+
+
+        console.warn(
+
+            "Sign-out warning:",
+
+            error
+
+        );
+
+    }
+
+}
+
+
+
+/* ============================================================
+
+   AUTH MONITOR
+
+============================================================ */
+
+
+
+function monitorAuth(){
+
+
+
+    if(!supabaseClient){
+
+        return;
+
+    }
+
+
+
+    supabaseClient.auth.onAuthStateChange(
+
+        (
+
+            event,
+
+            session
+
+        ) => {
+
+
+
+            if(
+
+                event === "SIGNED_OUT" ||
+
+                event === "USER_DELETED" ||
+
+                !session
+
+            ){
+
+
+
+                redirectToLogin(
+
+                    "session_expired"
+
+                );
+
+            }
+
+
+
+        }
+
+    );
+
+}
+
+
+
+/* ============================================================
+
+   ERROR UI
+
+============================================================ */
+
+
+
+function showDashboardError(
+
+    message
+
+){
+
+
+
+    const box =
+
+        document.getElementById(
+
+            "dashboardError"
+
+        );
+
+
+
+    box.innerHTML = `
+
+        ${escapeHTML(
+
+            message ||
+
+            "Unable to load the dashboard."
+
+        )}
+
+
+
+        <br>
+
+
+
+        <button
+
+            type="button"
+
+            class="retry-btn"
+
+            id="retryDashboardBtn"
+
+        >
+
+            Try again
+
+        </button>
+
+    `;
+
+
+
+    box.style.display =
+
+        "block";
+
+
+
+    document
+
+        .getElementById(
+
+            "retryDashboardBtn"
+
+        )
+
+        .addEventListener(
+
+            "click",
+
+            loadDashboard,
+
+            {
+
+                once:true
+
+            }
+
+        );
+
+
+
+    document.getElementById(
+
+        "recentTickets"
+
+    ).innerHTML = `
+
+        <div class="empty">
+
+            <strong>Dashboard data unavailable</strong>
+
+            ${escapeHTML(
+
+                message ||
+
+                "Please try again."
+
+            )}
+
+        </div>
+
+    `;
+
+
+
+    document.getElementById(
+
+        "profileContent"
+
+    ).innerHTML = `
+
+        <div class="empty">
+
+            <strong>Account information unavailable</strong>
+
+            Please refresh the dashboard.
+
+        </div>
+
+    `;
+
+}
+
+
+
+function hideDashboardError(){
+
+
+
+    const box =
+
+        document.getElementById(
+
+            "dashboardError"
+
+        );
+
+
+
+    box.style.display =
+
+        "none";
+
+
+
+    box.textContent =
+
+        "";
+
+}
+
+
+
+/* ============================================================
+
+   ROLE / STATUS HELPERS
+
+============================================================ */
+
+
+
+function normalizeStatus(
+
+    value
+
+){
+
+
+
+    const status =
+
+        String(
+
+            value ||
+
+            ""
+
+        )
+
+            .trim()
+
+            .toLowerCase();
+
+
+
+    if(
+
+        status === "valid"
+
+    ){
+
+        return "valid";
+
+    }
+
+
+
+    if(
+
+        status === "used"
+
+    ){
+
+        return "used";
+
+    }
+
+
+
+    if(
+
+        status === "cancelled"
+
+    ){
+
+        return "cancelled";
+
+    }
+
+
+
+    if(
+
+        status === "refunded"
+
+    ){
+
+        return "refunded";
+
+    }
+
+
+
+    return "unknown";
+
+}
+
+
+
+function formatStatusLabel(
+
+    status
+
+){
+
+
+
+    const labels = {
+
+        valid:"Valid",
+
+        used:"Used",
+
+        cancelled:"Cancelled",
+
+        refunded:"Refunded",
+
+        unknown:"Unknown"
+
+    };
+
+
+
+    return (
+
+        labels[
+
+            status
+
+        ] ||
+
+        "Unknown"
+
+    );
+
+}
+
+
+
+/* ============================================================
+
+   EVENT HELPERS
+
+============================================================ */
+
+
+
+function getEventName(
+
+    event
+
+){
+
+
+
+    if(!event){
+
+        return "";
+
+    }
+
+
+
+    return firstNonEmpty(
+
+        event,
+
+        [
+
+            "name",
+
+            "title",
+
+            "event_name"
+
+        ]
+
+    );
+
+}
+
+
+
+function getEventVenue(
+
+    event
+
+){
+
+
+
+    if(!event){
+
+        return "";
+
+    }
+
+
+
+    return firstNonEmpty(
+
+        event,
+
+        [
+
+            "venue",
+
+            "location",
+
+            "address"
+
+        ]
+
+    );
+
+}
+
+
+
+function getEventStart(
+
+    event
+
+){
+
+
+
+    if(!event){
+
+        return null;
+
+    }
+
+
+
+    const directDateTime =
+
+        firstNonEmpty(
+
+            event,
+
+            [
+
+                "start_at",
+
+                "starts_at",
+
+                "event_start",
+
+                "start_datetime",
+
+                "event_datetime"
+
+            ]
+
+        );
+
+
+
+    if(directDateTime){
+
+
+
+        const parsed =
+
+            new Date(
+
+                directDateTime
+
+            );
+
+
+
+        if(
+
+            !Number.isNaN(
+
+                parsed.getTime()
+
+            )
+
+        ){
+
+
+
+            return parsed;
+
+        }
+
+    }
+
+
+
+    const dateValue =
+
+        firstNonEmpty(
+
+            event,
+
+            [
+
+                "date",
+
+                "event_date",
+
+                "start_date"
+
+            ]
+
+        );
+
+
+
+    const timeValue =
+
+        firstNonEmpty(
+
+            event,
+
+            [
+
+                "start_time",
+
+                "time",
+
+                "event_time"
+
+            ]
+
+        );
+
+
+
+    if(!dateValue){
+
+
+
+        return null;
+
+    }
+
+
+
+    const combined =
+
+        timeValue
+
+            ? `${dateValue}T${timeValue}`
+
+            : dateValue;
+
+
+
+    const parsed =
+
+        new Date(
+
+            combined
+
+        );
+
+
+
+    if(
+
+        Number.isNaN(
+
+            parsed.getTime()
+
+        )
+
+    ){
+
+
+
+        return null;
+
+    }
+
+
+
+    return parsed;
+
+}
+
+
+
+function firstNonEmpty(
+
+    object,
+
+    keys
+
+){
+
+
+
+    for(
+
+        const key of keys
+
+    ){
+
+
+
+        const value =
+
+            object?.[
+
+                key
+
+            ];
+
+
+
+        if(
+
+            value !== null &&
+
+            value !== undefined &&
+
+            String(value).trim() !== ""
+
+        ){
+
+
+
+            return String(value)
+
+                .trim();
+
+        }
+
+    }
+
+
+
+    return "";
+
+}
+
+
+
+/* ============================================================
+
+   GREETING
+
+============================================================ */
+
+
+
+function getGreeting(
+
+    name
+
+){
+
+
+
+    const hour =
+
+        new Date().getHours();
+
+
+
+    let greeting;
+
+
+
+    if(
+
+        hour >= 5 &&
+
+        hour < 12
+
+    ){
+
+
+
+        greeting =
+
+            "Good morning";
+
+
+
+    }else if(
+
+        hour >= 12 &&
+
+        hour < 18
+
+    ){
+
+
+
+        greeting =
+
+            "Good afternoon";
+
+
+
+    }else{
+
+
+
+        greeting =
+
+            "Good evening";
+
+    }
+
+
+
+    return name
+
+        ? `${greeting}, ${name}`
+
+        : greeting;
+
+}
+
+
+
+/* ============================================================
+
+   DATE
+
+============================================================ */
+
+
+
+function formatDate(
+
+    value
+
+){
+
+
+
+    if(!value){
+
+        return "Date unavailable";
+
+    }
+
+
+
+    const date =
+
+        new Date(
+
+            value
+
+        );
+
+
+
+    if(
+
+        Number.isNaN(
+
+            date.getTime()
+
+        )
+
+    ){
+
+
+
+        return "Date unavailable";
+
+    }
+
+
+
+    return new Intl.DateTimeFormat(
+
+        undefined,
+
+        {
+
+            dateStyle:"medium",
+
+            timeStyle:"short"
+
+        }
+
+    ).format(
+
+        date
+
+    );
+
+}
+
+
+
+/* ============================================================
+
+   INITIALS
+
+============================================================ */
+
+
+
+function getInitials(
+
+    value
+
+){
+
+
+
+    const name =
+
+        String(
+
+            value ||
+
+            ""
+
+        )
+
+            .trim();
+
+
+
+    if(!name){
+
+        return "K";
+
+    }
+
+
+
+    return name
+
+        .split(/\s+/)
+
+        .slice(0,2)
+
+        .map(
+
+            part =>
+
+                part
+
+                    .charAt(0)
+
+                    .toUpperCase()
+
+        )
+
+        .join("") ||
+
+        "K";
+
+}
+
+
+
+/* ============================================================
+
+   HTML ESCAPE
+
+============================================================ */
+
+
+
+function escapeHTML(
+
+    value
+
+){
+
+
+
+    return String(
+
+        value ?? ""
+
+    )
+
+        .replaceAll(
+
+            "&",
+
+            "&amp;"
+
+        )
+
+        .replaceAll(
+
+            "<",
+
+            "&lt;"
+
+        )
+
+        .replaceAll(
+
+            ">",
+
+            "&gt;"
+
+        )
+
+        .replaceAll(
+
+            '"',
+
+            "&quot;"
+
+        )
+
+        .replaceAll(
+
+            "'",
+
+            "&#039;"
+
+        );
+
+}
+
+
+
+/* ============================================================
+
+   LOGIN REDIRECT
+
+============================================================ */
+
+
+
+function redirectToLogin(
+
+    reason
+
+){
+
+
+
+    window.location.replace(
+
+        "../login.html?error=" +
+
+        encodeURIComponent(
+
+            reason ||
+
+            "unauthorized"
+
+        )
+
+    );
+
+}
+
+
+
+/* ============================================================
+
+   INITIAL START
+
+============================================================ */
+
+
+
+(async function(){
+
+
+
+    try{
+
+
+
         initializeSupabase();
 
-        supabaseClient.auth.onAuthStateChange((event, session) => {
-          if (event === "SIGNED_OUT" || event === "USER_DELETED" || !session) {
-            redirectToLogin("session_expired");
-          }
-        });
+
+
+        monitorAuth();
+
+
 
         await loadDashboard();
-      } catch (error) {
-        console.error("Dashboard startup failed:", error);
-        showDashboardError(error?.message || "Unable to start the dashboard.");
-      }
-    })();
-  </script>
+
+
+
+    }catch(error){
+
+
+
+        console.error(
+
+            "Customer dashboard startup failed:",
+
+            error
+
+        );
+
+
+
+        showDashboardError(
+
+            error?.message ||
+
+            "Unable to start the customer dashboard."
+
+        );
+
+    }
+
+
+
+})();
+
+</script>
+
+
+
 </body>
+
 </html>
