@@ -1,24 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="robots"
-        content="noindex,nofollow,noarchive,nosnippet"
-    >
-    <meta
-        name="referrer"
-        content="same-origin"
-    >
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-    <meta
-        name="theme-color"
-        content="#0F3D3A"
-    >
+
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+    <meta name="referrer" content="same-origin">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F3D3A">
 
     <title>Fees | K-Tickets Admin</title>
 
@@ -515,10 +504,7 @@
 
         .filters {
             display: grid;
-            grid-template-columns:
-                minmax(200px, 1.5fr)
-                repeat(2, minmax(130px, 1fr))
-                auto;
+            grid-template-columns: minmax(200px, 1.5fr) repeat(3, minmax(130px, 1fr)) auto;
             gap: 10px;
             margin-bottom: 16px;
         }
@@ -543,8 +529,7 @@
         .field input:focus,
         .field select:focus {
             border-color: var(--green);
-            box-shadow:
-                0 0 0 3px rgba(15,61,58,.08);
+            box-shadow: 0 0 0 3px rgba(15,61,58,.08);
         }
 
         .btn {
@@ -576,6 +561,16 @@
 
         .btn-secondary:hover {
             background: var(--soft);
+        }
+
+        .btn-danger {
+            background: var(--bordo);
+            color: var(--cream);
+        }
+
+        .btn-disabled {
+            opacity: .5;
+            cursor: not-allowed;
         }
 
         .table-card {
@@ -619,7 +614,7 @@
 
         table {
             width: 100%;
-            min-width: 850px;
+            min-width: 900px;
             border-collapse: collapse;
         }
 
@@ -932,13 +927,11 @@
         @media (max-width: 1180px) {
 
             .fee-grid {
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
             .filters {
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(3, minmax(0, 1fr));
             }
 
             .filters .search-field {
@@ -946,8 +939,7 @@
             }
 
             .stats {
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
@@ -1007,8 +999,7 @@
             }
 
             .stats {
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 9px;
             }
 
@@ -1079,208 +1070,112 @@
 <body>
 
 <div class="security-gate" id="securityGate">
-
     <div class="security-box">
+        <div class="security-icon">%</div>
 
-        <div class="security-icon">
-            %
-        </div>
-
-        <h2>
-            Securing Admin Session
-        </h2>
+        <h2>Securing Admin Session</h2>
 
         <p>
             Verifying authentication and administrator privileges
             before loading financial configuration.
         </p>
-
     </div>
-
 </div>
-
 
 <div class="app" id="app" hidden>
 
     <!-- SIDEBAR -->
-
-    <aside
-        class="sidebar"
-        id="sidebar"
-    >
+    <aside class="sidebar" id="sidebar">
 
         <div class="brand">
-
-            <div class="brand-mark">
-                KT
-            </div>
+            <div class="brand-mark">KT</div>
 
             <div class="brand-text">
-
-                <strong>
-                    K-TICKETS
-                </strong>
-
-                <span>
-                    Admin CMS
-                </span>
-
+                <strong>K-TICKETS</strong>
+                <span>Admin CMS</span>
             </div>
-
         </div>
 
+        <div class="nav-section">Overview</div>
 
-        <div class="nav-section">
-            Overview
-        </div>
-
-
-        <a
-            class="nav-link"
-            href="./dashboard.html"
-        >
+        <a class="nav-link" href="./dashboard.html">
             <span class="nav-icon">⌂</span>
             Dashboard
         </a>
 
+        <div class="nav-section">Platform</div>
 
-        <div class="nav-section">
-            Platform
-        </div>
-
-
-        <a
-            class="nav-link"
-            href="./events.html"
-        >
+        <a class="nav-link" href="./events.html">
             <span class="nav-icon">◫</span>
             Events
         </a>
 
-
-        <a
-            class="nav-link"
-            href="./merchants.html"
-        >
+        <a class="nav-link" href="./merchants.html">
             <span class="nav-icon">♙</span>
             Merchants
         </a>
 
-
-        <a
-            class="nav-link"
-            href="./customers.html"
-        >
+        <a class="nav-link" href="./customers.html">
             <span class="nav-icon">♧</span>
             Customers
         </a>
 
-
-        <a
-            class="nav-link"
-            href="./orders.html"
-        >
+        <a class="nav-link" href="./orders.html">
             <span class="nav-icon">▤</span>
             Orders
         </a>
 
-
-        <a
-            class="nav-link"
-            href="./payments.html"
-        >
+        <a class="nav-link" href="./payments.html">
             <span class="nav-icon">◈</span>
             Payments
         </a>
 
-
-        <a
-            class="nav-link"
-            href="./wamd.html"
-        >
+        <a class="nav-link" href="./wamd.html">
             <span class="nav-icon">↔</span>
             WAMD
         </a>
 
-
-        <a
-            class="nav-link"
-            href="./withdrawals.html"
-        >
+        <a class="nav-link" href="./withdrawals.html">
             <span class="nav-icon">⇧</span>
             Withdrawals
         </a>
 
-
-        <a
-            class="nav-link active"
-            href="./fees.html"
-        >
+        <a class="nav-link active" href="./fees.html">
             <span class="nav-icon">%</span>
             Fees
         </a>
 
+        <div class="nav-section">Control</div>
 
-        <div class="nav-section">
-            Control
-        </div>
-
-
-        <a
-            class="nav-link"
-            href="./reports.html"
-        >
+        <a class="nav-link" href="./reports.html">
             <span class="nav-icon">▥</span>
             Reports
         </a>
 
-
-        <a
-            class="nav-link"
-            href="./settings.html"
-        >
+        <a class="nav-link" href="./settings.html">
             <span class="nav-icon">⚙</span>
             Settings
         </a>
 
-
-        <a
-            class="nav-link"
-            href="./audit-logs.html"
-        >
+        <a class="nav-link" href="./audit-logs.html">
             <span class="nav-icon">◉</span>
             Audit Logs
         </a>
 
-
         <div class="sidebar-bottom">
-
-            <button
-                class="signout"
-                id="signOutBtn"
-            >
+            <button class="signout" id="signOutBtn">
                 ⇥ &nbsp; Sign Out
             </button>
-
         </div>
 
     </aside>
 
-
     <!-- MAIN -->
-
     <main class="main">
 
         <header class="topbar">
 
-            <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:12px;
-                    min-width:0;
-                "
-            >
+            <div style="display:flex;align-items:center;gap:12px;min-width:0;">
 
                 <button
                     class="mobile-menu"
@@ -1290,34 +1185,20 @@
                     ☰
                 </button>
 
-
                 <div class="page-heading">
-
-                    <h1>
-                        Fees
-                    </h1>
-
-                    <p>
-                        Platform service fee configuration
-                    </p>
-
+                    <h1>Fees</h1>
+                    <p>Platform fee configuration and financial rules</p>
                 </div>
 
             </div>
 
-
             <div class="admin-user">
 
-                <div
-                    class="admin-avatar"
-                    id="adminAvatar"
-                >
+                <div class="admin-avatar" id="adminAvatar">
                     A
                 </div>
 
-
                 <div class="admin-user-text">
-
                     <strong id="adminName">
                         Administrator
                     </strong>
@@ -1325,13 +1206,11 @@
                     <span>
                         Platform Administrator
                     </span>
-
                 </div>
 
             </div>
 
         </header>
-
 
         <section class="content">
 
@@ -1341,32 +1220,62 @@
                     !
                 </div>
 
-
                 <div>
-
                     <strong>
                         Financial configuration is protected
                     </strong>
 
                     <p>
                         Fee values affect customer charges and merchant
-                        earnings. This page only reads the configured
-                        service-fee records. Fee mutations will be handled
-                        through a privileged server-side operation with
+                        earnings. The browser never receives service-role
+                        credentials and cannot directly change fee settings.
+                        Production updates must go through an authorized,
+                        atomic server-side RPC or Edge Function with
                         validation and audit logging.
                     </p>
-
                 </div>
 
             </div>
 
+            <!-- PLATFORM FEE SETTINGS (server-side RPC only) -->
+            <div class="section-card" style="margin-bottom:22px;">
+                <div class="section-header">
+                    <div>
+                        <h2>Checkout & Merchant Channel Fees</h2>
+                        <p>These settings are saved through the admin-only RPC. Existing orders keep their saved checkout fee.</p>
+                    </div>
+                    <button class="btn btn-secondary" id="refreshPlatformSettingsBtn" type="button">↻ Reload rates</button>
+                </div>
+                <div class="section-body">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;">
+                        <label style="display:grid;gap:7px;font-weight:700;">
+                            Platform fee charged to customer (%)
+                            <input id="platformFeePercent" type="number" min="0" max="100" step="0.01" inputmode="decimal" placeholder="e.g. 5.00" required style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;">
+                            <small style="font-weight:400;color:var(--muted);">Applied to ticket subtotal after discounts.</small>
+                        </label>
+                        <label style="display:grid;gap:7px;font-weight:700;">
+                            M-Pesa merchant deduction (%)
+                            <input id="mpesaFeePercent" type="number" min="0" max="100" step="0.01" inputmode="decimal" placeholder="e.g. 1.50" required style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;">
+                            <small style="font-weight:400;color:var(--muted);">Deducted from merchant earnings; not added to checkout.</small>
+                        </label>
+                        <label style="display:grid;gap:7px;font-weight:700;">
+                            WAMD merchant deduction (%)
+                            <input id="wamdFeePercent" type="number" min="0" max="100" step="0.01" inputmode="decimal" placeholder="e.g. 1.00" required style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;">
+                            <small style="font-weight:400;color:var(--muted);">Deducted from merchant earnings; not added to checkout.</small>
+                        </label>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px;">
+                        <button class="btn btn-primary" id="savePlatformSettingsBtn" type="button">Save platform fee settings</button>
+                        <span id="platformSettingsStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;">Loading saved rates…</span>
+                    </div>
+                    <p style="margin-top:14px;color:var(--muted);font-size:13px;line-height:1.5;">Saving changes the rates used for new calculations. It does not edit existing orders, payment records, or trigger an M-Pesa STK request.</p>
+                </div>
+            </div>
 
             <!-- STATS -->
-
             <div class="stats">
 
                 <div class="stat">
-
                     <div class="stat-label">
                         Configurations
                     </div>
@@ -1377,12 +1286,9 @@
                     >
                         —
                     </div>
-
                 </div>
 
-
                 <div class="stat">
-
                     <div class="stat-label">
                         Active
                     </div>
@@ -1393,12 +1299,9 @@
                     >
                         —
                     </div>
-
                 </div>
 
-
                 <div class="stat">
-
                     <div class="stat-label">
                         Percentage Fees
                     </div>
@@ -1409,47 +1312,35 @@
                     >
                         —
                     </div>
-
                 </div>
 
-
                 <div class="stat">
-
                     <div class="stat-label">
-                        Inactive
+                        Fixed Fees
                     </div>
 
                     <div
-                        class="stat-value warning"
-                        id="inactiveFees"
+                        class="stat-value"
+                        id="fixedFees"
                     >
                         —
                     </div>
-
                 </div>
 
             </div>
 
-
             <!-- CURRENT CONFIGURATION -->
-
             <div class="section-card">
 
                 <div class="section-header">
 
                     <div>
-
-                        <h2>
-                            Current Fee Configuration
-                        </h2>
+                        <h2>Current Fee Configuration</h2>
 
                         <p>
-                            Values currently returned from
-                            <strong>service_fees</strong>.
+                            Values currently returned by the platform database.
                         </p>
-
                     </div>
-
 
                     <button
                         class="btn btn-secondary"
@@ -1460,7 +1351,6 @@
 
                 </div>
 
-
                 <div class="section-body">
 
                     <div
@@ -1468,13 +1358,11 @@
                         id="feeCards"
                     ></div>
 
-
                     <div
                         class="empty"
                         id="feeEmpty"
                         hidden
                     >
-
                         <div class="empty-icon">
                             %
                         </div>
@@ -1484,36 +1372,28 @@
                         </h3>
 
                         <p>
-                            No service-fee records were returned from
-                            the database. K-Tickets does not invent a
-                            default financial value.
+                            No fee records were returned from the configured
+                            database table. This page does not invent default
+                            financial values.
                         </p>
-
                     </div>
 
                 </div>
 
             </div>
 
-
             <!-- FEE RECORDS -->
-
             <div class="table-card">
 
                 <div class="table-header">
 
                     <div>
-
-                        <h2>
-                            Service Fee Records
-                        </h2>
+                        <h2>Fee Records</h2>
 
                         <p id="resultCount">
                             Loading fee records...
                         </p>
-
                     </div>
-
 
                     <div class="table-actions">
 
@@ -1523,7 +1403,6 @@
                         >
                             Clear
                         </button>
-
 
                         <button
                             class="btn btn-primary"
@@ -1536,31 +1415,39 @@
 
                 </div>
 
-
-                <div
-                    class="filters"
-                    style="
-                        padding:15px;
-                        margin-bottom:0;
-                    "
-                >
+                <div class="filters" style="padding:15px;margin-bottom:0;">
 
                     <div class="field search-field">
-
                         <input
                             type="search"
                             id="searchInput"
-                            placeholder="Search fee name or ID..."
+                            placeholder="Search fee name, ID, description..."
                             autocomplete="off"
                         >
-
                     </div>
 
+                    <div class="field">
+                        <select id="typeFilter">
+                            <option value="">
+                                All fee types
+                            </option>
+
+                            <option value="percentage">
+                                Percentage
+                            </option>
+
+                            <option value="fixed">
+                                Fixed
+                            </option>
+
+                            <option value="hybrid">
+                                Hybrid
+                            </option>
+                        </select>
+                    </div>
 
                     <div class="field">
-
                         <select id="statusFilter">
-
                             <option value="">
                                 All statuses
                             </option>
@@ -1572,24 +1459,36 @@
                             <option value="inactive">
                                 Inactive
                             </option>
-
                         </select>
-
                     </div>
-
 
                     <div class="field">
-
-                        <select id="creatorFilter">
-
+                        <select id="scopeFilter">
                             <option value="">
-                                All creators
+                                All scopes
                             </option>
 
+                            <option value="platform">
+                                Platform
+                            </option>
+
+                            <option value="ticket">
+                                Ticket
+                            </option>
+
+                            <option value="payment">
+                                Payment
+                            </option>
+
+                            <option value="withdrawal">
+                                Withdrawal
+                            </option>
+
+                            <option value="merchant">
+                                Merchant
+                            </option>
                         </select>
-
                     </div>
-
 
                     <button
                         class="btn btn-secondary"
@@ -1600,45 +1499,21 @@
 
                 </div>
 
-
                 <div class="table-wrap">
 
                     <table>
 
                         <thead>
-
                             <tr>
-
-                                <th>
-                                    Name
-                                </th>
-
-                                <th>
-                                    Type
-                                </th>
-
-                                <th>
-                                    Percentage
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
-
-                                <th>
-                                    Created
-                                </th>
-
-                                <th>
-                                    Updated
-                                </th>
-
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Scope</th>
+                                <th>Status</th>
+                                <th>Updated</th>
                                 <th></th>
-
                             </tr>
-
                         </thead>
-
 
                         <tbody id="feesTableBody"></tbody>
 
@@ -1646,19 +1521,16 @@
 
                 </div>
 
-
                 <div
                     class="mobile-list"
                     id="mobileFees"
                 ></div>
-
 
                 <div
                     class="empty"
                     id="tableEmpty"
                     hidden
                 >
-
                     <div class="empty-icon">
                         %
                     </div>
@@ -1670,7 +1542,6 @@
                     <p>
                         No database records match the current filters.
                     </p>
-
                 </div>
 
             </div>
@@ -1678,17 +1549,13 @@
         </section>
 
     </main>
-
 </div>
 
-
 <!-- DRAWER -->
-
 <div
     class="drawer-backdrop"
     id="drawerBackdrop"
 ></div>
-
 
 <aside
     class="drawer"
@@ -1698,333 +1565,203 @@
     <div class="drawer-header">
 
         <div>
-
-            <h2>
-                Fee Details
-            </h2>
+            <h2>Fee Details</h2>
 
             <p>
-                Database configuration displayed read-only.
+                Financial configuration is displayed read-only.
             </p>
-
         </div>
-
 
         <button
             class="close-btn"
             id="closeDrawerBtn"
-            aria-label="Close fee details"
         >
             ×
         </button>
 
     </div>
 
-
     <div class="detail-grid">
 
         <div class="detail">
-
-            <label>
-                Fee ID
-            </label>
-
-            <strong id="detailId">
-                —
-            </strong>
-
+            <label>Fee ID</label>
+            <strong id="detailId">—</strong>
         </div>
-
 
         <div class="detail">
-
-            <label>
-                Status
-            </label>
-
-            <strong id="detailStatus">
-                —
-            </strong>
-
+            <label>Status</label>
+            <strong id="detailStatus">—</strong>
         </div>
-
 
         <div class="detail">
-
-            <label>
-                Name
-            </label>
-
-            <strong id="detailName">
-                —
-            </strong>
-
+            <label>Name</label>
+            <strong id="detailName">—</strong>
         </div>
-
 
         <div class="detail">
-
-            <label>
-                Type
-            </label>
-
-            <strong id="detailType">
-                Percentage
-            </strong>
-
+            <label>Type</label>
+            <strong id="detailType">—</strong>
         </div>
-
 
         <div class="detail">
-
-            <label>
-                Percentage
-            </label>
-
-            <strong id="detailPercentage">
-                —
-            </strong>
-
+            <label>Percentage</label>
+            <strong id="detailPercentage">—</strong>
         </div>
-
 
         <div class="detail">
-
-            <label>
-                Created By
-            </label>
-
-            <strong
-                id="detailCreatedBy"
-                class="mono"
-            >
-                —
-            </strong>
-
+            <label>Fixed Amount</label>
+            <strong id="detailFixed">—</strong>
         </div>
-
 
         <div class="detail">
-
-            <label>
-                Created
-            </label>
-
-            <strong id="detailCreated">
-                —
-            </strong>
-
+            <label>Currency</label>
+            <strong id="detailCurrency">—</strong>
         </div>
-
 
         <div class="detail">
-
-            <label>
-                Updated
-            </label>
-
-            <strong id="detailUpdated">
-                —
-            </strong>
-
+            <label>Scope</label>
+            <strong id="detailScope">—</strong>
         </div>
 
+        <div class="detail">
+            <label>Minimum</label>
+            <strong id="detailMinimum">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Maximum</label>
+            <strong id="detailMaximum">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Created</label>
+            <strong id="detailCreated">—</strong>
+        </div>
+
+        <div class="detail">
+            <label>Updated</label>
+            <strong id="detailUpdated">—</strong>
+        </div>
 
         <div class="detail full">
+            <label>Description</label>
+            <strong id="detailDescription">—</strong>
+        </div>
 
-            <label>
-                Configuration
-            </label>
-
+        <div class="detail full">
+            <label>Configuration Metadata</label>
             <pre id="detailMetadata">{}</pre>
-
         </div>
 
     </div>
-
 
     <div class="drawer-warning">
 
         <strong>
-            Read-only financial configuration
+            Secure mutation required
         </strong>
 
         <br><br>
 
-        This page intentionally does not perform direct browser
-        INSERT, UPDATE or DELETE operations on service_fees.
-        Fee changes should use an authorized server-side RPC or
-        Edge Function with validation, conflict protection and
-        audit logging.
+        Fee changes must not be performed with a normal browser
+        <code>insert</code>, <code>update</code> or <code>delete</code>.
+        The production implementation should use a server-side function
+        such as an authorized fee-management RPC that validates the new
+        value, applies bounds, prevents conflicting active configurations,
+        records the administrator identity and writes an audit event.
 
     </div>
 
 </aside>
-
 
 <div
     class="toast"
     id="toast"
 ></div>
 
-
 <script>
-"use strict";
-
 /*
 |--------------------------------------------------------------------------
 | K-TICKETS ADMIN FEES
 |--------------------------------------------------------------------------
 |
-| REAL DATABASE TABLE
-| -------------------
-| public.service_fees
+| SECURITY MODEL
 |
-| Current schema:
+| - Supabase ANON key only.
+| - No service-role key.
+| - No database password.
+| - No payment-provider secret.
+| - Admin authentication is checked.
+| - Admin authorization is independently required by RLS.
+| - Platform rate mutations use admin_update_platform_fees only.
+| - Generic fee-record mutations remain intentionally disabled.
+|
+| Financial settings should be changed only through a trusted server-side
+| RPC / Edge Function after the following checks:
+|
+| 1. Authenticated user is an admin.
+| 2. Requested fee is valid and within approved bounds.
+| 3. Percentage is finite and non-negative.
+| 4. Fixed amount is finite and non-negative.
+| 5. Minimum cannot exceed maximum.
+| 6. Currency is valid for the configured fee.
+| 7. Conflicting active fee rules are prevented.
+| 8. Existing active configuration is versioned or safely replaced.
+| 9. The operation is atomic.
+| 10. The administrator action is written to audit_logs.
+| 11. No merchant/customer can invoke the privileged RPC.
+|
+|--------------------------------------------------------------------------
+|
+| EXPECTED / FLEXIBLE DATABASE FIELDS
+|
+| Common possibilities:
 |
 | id
 | name
+| title
+| description
+| type
+| fee_type
+| value
 | percentage
-| is_active
-| created_by
+| rate
+| fixed_amount
+| amount
+| currency
+| scope
+| applies_to
+| status
+| active
+| minimum
+| min_amount
+| maximum
+| max_amount
+| metadata
 | created_at
 | updated_at
 |
-| IMPORTANT
-| ---------
-| Nothing below creates fake financial records.
-|
-| The browser only READS service_fees.
-|
-| No service-role key.
-| No database password.
-| No payment-provider secret.
+| Once the production schema is finalized, replace the broad "*" query
+| with an explicit SELECT list.
 |
 |--------------------------------------------------------------------------
 */
 
-
 const SUPABASE_URL =
-    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+    window.KTICKETS_SUPABASE_URL || "";
 
-
-const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
-
+const SUPABASE_ANON_KEY =
+    window.KTICKETS_SUPABASE_ANON_KEY || "";
 
 let supabaseClient = null;
-
 let currentUser = null;
-
 let currentProfile = null;
 
 let allFees = [];
-
 let filteredFees = [];
-
 let selectedFee = null;
 
-
-/* ============================================================
-   DOM
-============================================================ */
-
-const $ =
-    id =>
-        document.getElementById(id);
-
-
-const securityGate =
-    $("securityGate");
-
-
-const app =
-    $("app");
-
-
-const sidebar =
-    $("sidebar");
-
-
-const adminName =
-    $("adminName");
-
-
-const adminAvatar =
-    $("adminAvatar");
-
-
-const searchInput =
-    $("searchInput");
-
-
-const statusFilter =
-    $("statusFilter");
-
-
-const creatorFilter =
-    $("creatorFilter");
-
-
-const feeCards =
-    $("feeCards");
-
-
-const feeEmpty =
-    $("feeEmpty");
-
-
-const feesTableBody =
-    $("feesTableBody");
-
-
-const mobileFees =
-    $("mobileFees");
-
-
-const tableEmpty =
-    $("tableEmpty");
-
-
-const resultCount =
-    $("resultCount");
-
-
-const refreshBtn =
-    $("refreshBtn");
-
-
-const reloadTableBtn =
-    $("reloadTableBtn");
-
-
-const clearFiltersBtn =
-    $("clearFiltersBtn");
-
-
-const exportBtn =
-    $("exportBtn");
-
-
-const drawerBackdrop =
-    $("drawerBackdrop");
-
-
-const detailDrawer =
-    $("detailDrawer");
-
-
-const closeDrawerBtn =
-    $("closeDrawerBtn");
-
-
-const toast =
-    $("toast");
-
-
-/* ============================================================
-   HELPERS
-============================================================ */
+const $ = id => document.getElementById(id);
 
 function escapeHtml(value) {
 
@@ -2036,127 +1773,262 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 }
 
-
-function safeText(
-    value,
-    fallback = "—"
-) {
+function safeText(value, fallback = "—") {
 
     if (
         value === null ||
         value === undefined ||
         value === ""
     ) {
-
         return fallback;
     }
-
 
     return String(value);
 }
 
-
-function initials(
-    name
-) {
+function initials(name) {
 
     const value =
-        String(
-            name ||
-            "Administrator"
-        ).trim();
-
+        String(name || "Admin")
+            .trim();
 
     if (!value) {
-
         return "A";
     }
-
 
     return value
         .split(/\s+/)
         .slice(0, 2)
-        .map(
-            part =>
-                part.charAt(0)
-        )
+        .map(part => part.charAt(0))
         .join("")
         .toUpperCase();
 }
 
+function showToast(message, type = "") {
 
-function normalizeRole(
-    role
-) {
+    const toast = $("toast");
 
-    return String(
-        role || ""
-    )
-        .trim()
-        .toLowerCase()
-        .replace(
-            /\s+/g,
-            "_"
-        );
+    toast.textContent = message;
+
+    toast.className =
+        "toast show " + type;
+
+    clearTimeout(showToast.timer);
+
+    showToast.timer =
+        setTimeout(() => {
+            toast.className = "toast";
+        }, 3500);
 }
 
+function redirectLogin(reason = "") {
 
-function formatPercentage(
-    value
-) {
-
-    const number =
-        Number(value);
-
-
-    if (
-        !Number.isFinite(
-            number
+    window.location.replace(
+        "../auth/login.html" +
+        (
+            reason
+                ? "?error=" +
+                  encodeURIComponent(reason)
+                : ""
         )
-    ) {
-
-        return "—";
-    }
-
-
-    return (
-        number.toLocaleString(
-            undefined,
-            {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 4
-            }
-        ) +
-        "%"
     );
 }
 
+async function safeSignOut() {
 
-function formatDate(
-    value
-) {
+    try {
 
-    if (!value) {
+        if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+        }
 
+    } catch (error) {
+
+        console.warn(
+            "Sign-out error:",
+            error
+        );
+    }
+}
+
+function normalizeRole(role) {
+
+    return String(role || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+}
+
+function normalizeFee(row) {
+
+    const rawType =
+        row.type ??
+        row.fee_type ??
+        row.calculation_type ??
+        "";
+
+    const rawPercentage =
+        row.percentage ??
+        row.rate ??
+        row.percent ??
+        (
+            String(rawType)
+                .toLowerCase()
+                .includes("percent")
+                ? row.value
+                : null
+        );
+
+    const rawFixed =
+        row.fixed_amount ??
+        row.fixed_fee ??
+        row.amount ??
+        (
+            String(rawType)
+                .toLowerCase()
+                .includes("fixed")
+                ? row.value
+                : null
+        );
+
+    const rawStatus =
+        row.status ??
+        (
+            row.active === true
+                ? "active"
+                : row.active === false
+                    ? "inactive"
+                    : null
+        ) ??
+        "unknown";
+
+    const name =
+        row.name ??
+        row.title ??
+        row.code ??
+        "Unnamed fee";
+
+    const scope =
+        row.scope ??
+        row.applies_to ??
+        row.category ??
+        "platform";
+
+    const metadata =
+        row.metadata ??
+        row.meta ??
+        {};
+
+    let percentage =
+        Number(rawPercentage);
+
+    if (!Number.isFinite(percentage)) {
+        percentage = null;
+    }
+
+    let fixed =
+        Number(rawFixed);
+
+    if (!Number.isFinite(fixed)) {
+        fixed = null;
+    }
+
+    return {
+
+        raw: row,
+
+        id:
+            row.id ??
+            row.fee_id ??
+            null,
+
+        name:
+            String(name),
+
+        description:
+            row.description ??
+            row.notes ??
+            "",
+
+        type:
+            String(rawType || "").toLowerCase(),
+
+        percentage,
+
+        fixedAmount: fixed,
+
+        value:
+            row.value ?? null,
+
+        currency:
+            row.currency ??
+            row.currency_code ??
+            null,
+
+        scope:
+            String(scope),
+
+        status:
+            String(rawStatus)
+                .toLowerCase(),
+
+        minimum:
+            row.minimum ??
+            row.min_amount ??
+            row.minimum_amount ??
+            null,
+
+        maximum:
+            row.maximum ??
+            row.max_amount ??
+            row.maximum_amount ??
+            null,
+
+        createdAt:
+            row.created_at ??
+            null,
+
+        updatedAt:
+            row.updated_at ??
+            null,
+
+        metadata
+    };
+}
+
+function prettyValue(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
         return "—";
     }
 
+    return String(value)
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, char =>
+            char.toUpperCase()
+        );
+}
+
+function formatDate(value) {
+
+    if (!value) {
+        return "—";
+    }
 
     const date =
         new Date(value);
-
 
     if (
         Number.isNaN(
             date.getTime()
         )
     ) {
-
-        return safeText(
-            value
-        );
+        return safeText(value);
     }
-
 
     return date.toLocaleString(
         undefined,
@@ -2170,173 +2042,914 @@ function formatDate(
     );
 }
 
+function formatNumber(value) {
 
-function showToast(
-    message,
-    type = ""
-) {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return "—";
+    }
 
-    if (!toast) {
+    const number =
+        Number(value);
+
+    if (
+        !Number.isFinite(number)
+    ) {
+        return safeText(value);
+    }
+
+    return number.toLocaleString(
+        undefined,
+        {
+            maximumFractionDigits: 6
+        }
+    );
+}
+
+function formatMoney(value, currency = "") {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return "—";
+    }
+
+    const number =
+        Number(value);
+
+    if (
+        !Number.isFinite(number)
+    ) {
+        return safeText(value);
+    }
+
+    return (
+        currency
+            ? currency + " "
+            : ""
+    ) +
+    number.toLocaleString(
+        undefined,
+        {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 6
+        }
+    );
+}
+
+function feeType(fee) {
+
+    const type =
+        String(fee.type || "")
+            .toLowerCase();
+
+    if (
+        type.includes("percent") ||
+        fee.percentage !== null &&
+        fee.fixedAmount === null
+    ) {
+        return "percentage";
+    }
+
+    if (
+        type.includes("fixed") ||
+        fee.fixedAmount !== null &&
+        fee.percentage === null
+    ) {
+        return "fixed";
+    }
+
+    if (
+        type.includes("hybrid") ||
+        fee.percentage !== null &&
+        fee.fixedAmount !== null
+    ) {
+        return "hybrid";
+    }
+
+    return "unknown";
+}
+
+function feeValueText(fee) {
+
+    const type =
+        feeType(fee);
+
+    if (type === "percentage") {
+
+        return (
+            formatNumber(
+                fee.percentage
+            ) +
+            "%"
+        );
+    }
+
+    if (type === "fixed") {
+
+        return formatMoney(
+            fee.fixedAmount,
+            fee.currency || ""
+        );
+    }
+
+    if (type === "hybrid") {
+
+        const percent =
+            fee.percentage !== null
+                ? formatNumber(
+                    fee.percentage
+                ) + "%"
+                : "—";
+
+        const fixed =
+            fee.fixedAmount !== null
+                ? formatMoney(
+                    fee.fixedAmount,
+                    fee.currency || ""
+                )
+                : "—";
+
+        return percent +
+            " + " +
+            fixed;
+    }
+
+    if (fee.value !== null) {
+        return safeText(fee.value);
+    }
+
+    return "—";
+}
+
+function isActive(fee) {
+
+    if (
+        fee.status === "active" ||
+        fee.status === "enabled" ||
+        fee.status === "live"
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+function statusClass(fee) {
+
+    if (isActive(fee)) {
+        return "status-live";
+    }
+
+    if (
+        fee.status === "unknown"
+    ) {
+        return "status-warning";
+    }
+
+    return "status-disabled";
+}
+
+function statusText(fee) {
+
+    if (isActive(fee)) {
+        return "Active";
+    }
+
+    if (
+        fee.status === "unknown"
+    ) {
+        return "Unknown";
+    }
+
+    return "Inactive";
+}
+
+function updateStats() {
+
+    const total =
+        allFees.length;
+
+    const active =
+        allFees.filter(
+            isActive
+        ).length;
+
+    const percentage =
+        allFees.filter(
+            fee =>
+                feeType(fee) ===
+                "percentage"
+        ).length;
+
+    const fixed =
+        allFees.filter(
+            fee =>
+                feeType(fee) ===
+                "fixed"
+        ).length;
+
+    $("totalFees").textContent =
+        total.toLocaleString();
+
+    $("activeFees").textContent =
+        active.toLocaleString();
+
+    $("percentageFees").textContent =
+        percentage.toLocaleString();
+
+    $("fixedFees").textContent =
+        fixed.toLocaleString();
+}
+
+function renderSummaryCards() {
+
+    const container =
+        $("feeCards");
+
+    container.innerHTML = "";
+
+    $("feeEmpty").hidden =
+        allFees.length !== 0;
+
+    /*
+     * Only show database-returned active configurations in the
+     * summary. No default fee values are fabricated here.
+     */
+
+    const visible =
+        allFees
+            .filter(isActive)
+            .slice(0, 12);
+
+    if (!visible.length) {
+        return;
+    }
+
+    visible.forEach(fee => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "fee-card";
+
+        card.innerHTML = `
+            <div class="fee-card-head">
+
+                <div>
+                    <h3>
+                        ${escapeHtml(fee.name)}
+                    </h3>
+
+                    <p>
+                        ${escapeHtml(
+                            fee.description ||
+                            "No description provided."
+                        )}
+                    </p>
+                </div>
+
+                <span class="status-badge status-live">
+                    Active
+                </span>
+
+            </div>
+
+            <div class="fee-value">
+                ${escapeHtml(
+                    feeValueText(fee)
+                )}
+            </div>
+
+            <div class="fee-meta">
+
+                <div class="fee-meta-item">
+                    <span>Type</span>
+                    <strong>
+                        ${escapeHtml(
+                            prettyValue(
+                                feeType(fee)
+                            )
+                        )}
+                    </strong>
+                </div>
+
+                <div class="fee-meta-item">
+                    <span>Scope</span>
+                    <strong>
+                        ${escapeHtml(
+                            prettyValue(
+                                fee.scope
+                            )
+                        )}
+                    </strong>
+                </div>
+
+                <div class="fee-meta-item">
+                    <span>Minimum</span>
+                    <strong>
+                        ${escapeHtml(
+                            formatMoney(
+                                fee.minimum,
+                                fee.currency || ""
+                            )
+                        )}
+                    </strong>
+                </div>
+
+                <div class="fee-meta-item">
+                    <span>Maximum</span>
+                    <strong>
+                        ${escapeHtml(
+                            formatMoney(
+                                fee.maximum,
+                                fee.currency || ""
+                            )
+                        )}
+                    </strong>
+                </div>
+
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+function applyFilters() {
+
+    const search =
+        $("searchInput")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const type =
+        $("typeFilter").value;
+
+    const status =
+        $("statusFilter").value;
+
+    const scope =
+        $("scopeFilter").value;
+
+    filteredFees =
+        allFees.filter(fee => {
+
+            if (
+                type &&
+                feeType(fee) !== type
+            ) {
+                return false;
+            }
+
+            if (status) {
+
+                const active =
+                    isActive(fee);
+
+                if (
+                    status === "active" &&
+                    !active
+                ) {
+                    return false;
+                }
+
+                if (
+                    status === "inactive" &&
+                    active
+                ) {
+                    return false;
+                }
+            }
+
+            if (
+                scope &&
+                String(fee.scope)
+                    .toLowerCase() !==
+                scope.toLowerCase()
+            ) {
+                return false;
+            }
+
+            if (search) {
+
+                const haystack = [
+                    fee.id,
+                    fee.name,
+                    fee.description,
+                    fee.type,
+                    fee.scope,
+                    fee.currency,
+                    fee.status,
+                    feeValueText(fee)
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase();
+
+                if (
+                    !haystack.includes(search)
+                ) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+    renderTable(filteredFees);
+
+    $("resultCount").textContent =
+        `${filteredFees.length.toLocaleString()} record` +
+        `${filteredFees.length === 1 ? "" : "s"} shown`;
+}
+
+function renderTable(fees) {
+
+    const tbody =
+        $("feesTableBody");
+
+    const mobile =
+        $("mobileFees");
+
+    tbody.innerHTML = "";
+    mobile.innerHTML = "";
+
+    $("tableEmpty").hidden =
+        fees.length !== 0;
+
+    fees.forEach(fee => {
+
+        const row =
+            document.createElement("tr");
+
+        row.innerHTML = `
+
+            <td>
+                <div class="type-name">
+                    ${escapeHtml(fee.name)}
+                </div>
+
+                <div class="type-description">
+                    ${escapeHtml(
+                        fee.description ||
+                        "No description"
+                    )}
+                </div>
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    prettyValue(
+                        feeType(fee)
+                    )
+                )}
+            </td>
+
+            <td>
+                <strong>
+                    ${escapeHtml(
+                        feeValueText(fee)
+                    )}
+                </strong>
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    prettyValue(
+                        fee.scope
+                    )
+                )}
+            </td>
+
+            <td>
+                <span
+                    class="status-badge ${statusClass(fee)}"
+                >
+                    ${escapeHtml(
+                        statusText(fee)
+                    )}
+                </span>
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    formatDate(
+                        fee.updatedAt
+                    )
+                )}
+            </td>
+
+            <td>
+                <button
+                    class="btn btn-secondary view-fee"
+                    data-fee-id="${escapeHtml(
+                        fee.id
+                    )}"
+                    style="height:34px;padding:0 10px;"
+                >
+                    View
+                </button>
+            </td>
+        `;
+
+        tbody.appendChild(row);
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "mobile-fee";
+
+        card.innerHTML = `
+
+            <div class="mobile-fee-top">
+
+                <div>
+                    <div class="type-name">
+                        ${escapeHtml(
+                            fee.name
+                        )}
+                    </div>
+
+                    <div
+                        class="type-description"
+                        style="max-width:none;"
+                    >
+                        ${escapeHtml(
+                            fee.description ||
+                            "No description"
+                        )}
+                    </div>
+                </div>
+
+                <span
+                    class="status-badge ${statusClass(fee)}"
+                >
+                    ${escapeHtml(
+                        statusText(fee)
+                    )}
+                </span>
+
+            </div>
+
+            <div class="mobile-fee-value">
+                ${escapeHtml(
+                    feeValueText(fee)
+                )}
+            </div>
+
+            <div class="mobile-fee-meta">
+
+                <div class="mobile-meta">
+                    <span>Type</span>
+
+                    <strong>
+                        ${escapeHtml(
+                            prettyValue(
+                                feeType(fee)
+                            )
+                        )}
+                    </strong>
+                </div>
+
+                <div class="mobile-meta">
+                    <span>Scope</span>
+
+                    <strong>
+                        ${escapeHtml(
+                            prettyValue(
+                                fee.scope
+                            )
+                        )}
+                    </strong>
+                </div>
+
+                <div class="mobile-meta">
+                    <span>Currency</span>
+
+                    <strong>
+                        ${escapeHtml(
+                            fee.currency || "—"
+                        )}
+                    </strong>
+                </div>
+
+                <div class="mobile-meta">
+                    <span>Updated</span>
+
+                    <strong>
+                        ${escapeHtml(
+                            formatDate(
+                                fee.updatedAt
+                            )
+                        )}
+                    </strong>
+                </div>
+
+            </div>
+
+            <button
+                class="btn btn-secondary view-fee"
+                data-fee-id="${escapeHtml(
+                    fee.id
+                )}"
+                style="width:100%;margin-top:13px;"
+            >
+                View Fee
+            </button>
+        `;
+
+        mobile.appendChild(card);
+    });
+
+    document
+        .querySelectorAll(".view-fee")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => openFee(
+                    button.dataset.feeId
+                )
+            );
+        });
+}
+
+function findFee(id) {
+
+    return allFees.find(
+        fee =>
+            String(fee.id) ===
+            String(id)
+    );
+}
+
+function openFee(id) {
+
+    const fee =
+        findFee(id);
+
+    if (!fee) {
+
+        showToast(
+            "Fee record could not be found.",
+            "error"
+        );
 
         return;
     }
 
+    selectedFee =
+        fee;
 
-    toast.textContent =
-        message;
+    $("detailId").textContent =
+        safeText(fee.id);
 
+    $("detailStatus").textContent =
+        statusText(fee);
 
-    toast.className =
-        "toast show " +
-        type;
+    $("detailName").textContent =
+        safeText(fee.name);
 
-
-    clearTimeout(
-        showToast.timer
-    );
-
-
-    showToast.timer =
-        setTimeout(
-            () => {
-
-                toast.className =
-                    "toast";
-
-            },
-            3500
+    $("detailType").textContent =
+        prettyValue(
+            feeType(fee)
         );
-}
 
+    $("detailPercentage").textContent =
+        fee.percentage === null
+            ? "—"
+            : formatNumber(
+                fee.percentage
+            ) + "%";
 
-/* ============================================================
-   ROUTING
-============================================================ */
+    $("detailFixed").textContent =
+        formatMoney(
+            fee.fixedAmount,
+            fee.currency || ""
+        );
 
-function redirectLogin(
-    reason = ""
-) {
+    $("detailCurrency").textContent =
+        safeText(
+            fee.currency
+        );
 
-    const suffix =
-        reason
-            ? "?error=" +
-              encodeURIComponent(
-                  reason
-              )
-            : "";
+    $("detailScope").textContent =
+        prettyValue(
+            fee.scope
+        );
 
+    $("detailMinimum").textContent =
+        formatMoney(
+            fee.minimum,
+            fee.currency || ""
+        );
 
-    window.location.replace(
-        "/login.html" +
-        suffix
-    );
-}
+    $("detailMaximum").textContent =
+        formatMoney(
+            fee.maximum,
+            fee.currency || ""
+        );
 
+    $("detailCreated").textContent =
+        formatDate(
+            fee.createdAt
+        );
 
-/* ============================================================
-   SIGN OUT
-============================================================ */
+    $("detailUpdated").textContent =
+        formatDate(
+            fee.updatedAt
+        );
 
-async function safeSignOut() {
+    $("detailDescription").textContent =
+        safeText(
+            fee.description
+        );
 
     try {
 
-        if (
-            supabaseClient
-        ) {
+        $("detailMetadata").textContent =
+            JSON.stringify(
+                fee.metadata || {},
+                null,
+                2
+            );
 
-            await supabaseClient
-                .auth
-                .signOut();
-        }
+    } catch {
 
-    } catch (error) {
-
-        console.warn(
-            "Sign-out failed:",
-            error
-        );
+        $("detailMetadata").textContent =
+            "{}";
     }
+
+    $("drawerBackdrop")
+        .classList.add("open");
+
+    $("detailDrawer")
+        .classList.add("open");
+
+    document.body.style.overflow =
+        "hidden";
 }
 
+function closeDrawer() {
 
-/* ============================================================
-   ADMIN SESSION
-============================================================ */
+    $("drawerBackdrop")
+        .classList.remove("open");
 
-async function verifyAdminSession() {
+    $("detailDrawer")
+        .classList.remove("open");
 
-    if (
-        !window.supabase
-    ) {
+    document.body.style.overflow =
+        "";
+}
 
-        throw new Error(
-            "Supabase client library failed to load."
+function csvEscape(value) {
+
+    const text =
+        String(value ?? "");
+
+    return '"' +
+        text.replace(
+            /"/g,
+            '""'
+        ) +
+        '"';
+}
+
+function exportCsv() {
+
+    if (!filteredFees.length) {
+
+        showToast(
+            "There are no fee records to export.",
+            "error"
         );
+
+        return;
     }
 
+    const headers = [
+        "Fee ID",
+        "Name",
+        "Description",
+        "Type",
+        "Percentage",
+        "Fixed Amount",
+        "Currency",
+        "Scope",
+        "Status",
+        "Minimum",
+        "Maximum",
+        "Created At",
+        "Updated At"
+    ];
 
-    supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY,
+    const rows =
+        filteredFees.map(fee => [
+
+            fee.id,
+            fee.name,
+            fee.description,
+            feeType(fee),
+            fee.percentage,
+            fee.fixedAmount,
+            fee.currency,
+            fee.scope,
+            statusText(fee),
+            fee.minimum,
+            fee.maximum,
+            fee.createdAt,
+            fee.updatedAt
+
+        ]);
+
+    const csv =
+        [
+            headers
+                .map(csvEscape)
+                .join(","),
+
+            ...rows.map(row =>
+                row
+                    .map(csvEscape)
+                    .join(",")
+            )
+
+        ].join("\n");
+
+    const blob =
+        new Blob(
+            [csv],
             {
-                auth: {
-                    persistSession: true,
-                    autoRefreshToken: true,
-                    detectSessionInUrl: true
-                }
+                type:
+                    "text/csv;charset=utf-8;"
             }
         );
 
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href =
+        url;
+
+    link.download =
+        "k-tickets-fees-" +
+        new Date()
+            .toISOString()
+            .slice(0, 10) +
+        ".csv";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(url);
+
+    showToast(
+        `${filteredFees.length} fee record(s) exported.`,
+        "success"
+    );
+}
+
+async function loadAdminProfile() {
 
     const {
-        data:
-            sessionData,
-        error:
-            sessionError
+        data: sessionData,
+        error: sessionError
     } =
-        await supabaseClient
-            .auth
-            .getSession();
-
+        await supabaseClient.auth.getSession();
 
     if (
-        sessionError
-    ) {
-
-        throw new Error(
-            "Session verification failed: " +
-            sessionError.message
-        );
-    }
-
-
-    const session =
-        sessionData?.session;
-
-
-    if (
-        !session?.user
+        sessionError ||
+        !sessionData?.session?.user
     ) {
 
         redirectLogin(
-            "login_required"
+            "session_required"
         );
 
         return false;
     }
 
-
     currentUser =
-        session.user;
-
+        sessionData.session.user;
 
     const {
-        data:
-            profile,
-        error:
-            profileError
+        data: profile,
+        error: profileError
     } =
         await supabaseClient
             .from("profiles")
@@ -2344,8 +2957,7 @@ async function verifyAdminSession() {
                 id,
                 full_name,
                 phone,
-                role,
-                is_active
+                role
             `)
             .eq(
                 "id",
@@ -2353,33 +2965,11 @@ async function verifyAdminSession() {
             )
             .maybeSingle();
 
-
     if (
-        profileError
-    ) {
-
-        throw new Error(
-            "Profile query failed: " +
-            profileError.message
-        );
-    }
-
-
-    if (
-        !profile
-    ) {
-
-        throw new Error(
-            "Your authenticated account does not have a K-Tickets profile."
-        );
-    }
-
-
-    if (
-        normalizeRole(
-            profile.role
-        ) !== "admin" ||
-        profile.is_active !== true
+        profileError ||
+        !profile ||
+        normalizeRole(profile.role) !==
+            "admin"
     ) {
 
         await safeSignOut();
@@ -2391,1586 +2981,410 @@ async function verifyAdminSession() {
         return false;
     }
 
-
     currentProfile =
         profile;
 
+    $("adminName").textContent =
+        safeText(
+            profile.full_name,
+            "Administrator"
+        );
 
-    renderAdminIdentity();
-
+    $("adminAvatar").textContent =
+        initials(
+            profile.full_name
+        );
 
     return true;
 }
 
-
-/* ============================================================
-   ADMIN IDENTITY
-============================================================ */
-
-function renderAdminIdentity() {
-
-    const name =
-        currentProfile?.full_name ||
-        "Administrator";
-
-
-    adminName.textContent =
-        name;
-
-
-    adminAvatar.textContent =
-        initials(
-            name
-        );
-}
-
-
-/* ============================================================
-   NORMALIZE DATABASE RECORD
-============================================================ */
-
-function normalizeFee(
-    row
-) {
-
-    const percentage =
-        Number(
-            row.percentage
-        );
-
-
-    return {
-
-        id:
-            row.id,
-
-        name:
-            row.name ||
-            "",
-
-        percentage:
-            Number.isFinite(
-                percentage
-            )
-                ? percentage
-                : null,
-
-        is_active:
-            row.is_active === true,
-
-        created_by:
-            row.created_by ||
-            null,
-
-        created_at:
-            row.created_at ||
-            null,
-
-        updated_at:
-            row.updated_at ||
-            null
-
-    };
-}
-
-
-/* ============================================================
-   LOAD FEES
-============================================================ */
-
 async function loadFees() {
 
-    setLoadingState(
-        true
-    );
-
+    /*
+     * Development-compatible broad query.
+     *
+     * Once the schema is finalized, use an explicit SELECT list
+     * and remove unsupported columns.
+     */
 
     const {
         data,
         error
     } =
         await supabaseClient
-            .from("service_fees")
-            .select(`
-                id,
-                name,
-                percentage,
-                is_active,
-                created_by,
-                created_at,
-                updated_at
-            `)
+            .from("fees")
+            .select("*")
             .order(
                 "updated_at",
                 {
-                    ascending: false,
-                    nullsFirst: false
+                    ascending: false
                 }
-            );
+            )
+            .limit(1000);
 
-
-    if (
-        error
-    ) {
+    if (error) {
 
         console.error(
-            "service_fees query failed:",
+            "Fee query failed:",
             error
         );
 
-
-        allFees =
-            [];
-
-        filteredFees =
-            [];
-
+        allFees = [];
+        filteredFees = [];
 
         updateStats();
-
         renderSummaryCards();
+        renderTable([]);
 
-        renderCreatorFilter();
-
-        renderTable(
-            []
-        );
-
-
-        resultCount.textContent =
+        $("resultCount").textContent =
             "Fee data unavailable";
 
-
-        setLoadingState(
-            false
-        );
-
-
         showToast(
-            "Fees could not be loaded: " +
-            error.message,
+            "Fees could not be loaded. Check the fees table and RLS policy.",
             "error"
         );
-
 
         return;
     }
 
-
     allFees =
-        Array.isArray(
-            data
-        )
-            ? data.map(
-                normalizeFee
-            )
-            : [];
-
+        (data || [])
+            .map(normalizeFee);
 
     updateStats();
 
     renderSummaryCards();
 
-    renderCreatorFilter();
-
     applyFilters();
-
-
-    setLoadingState(
-        false
-    );
 }
-
-
-/* ============================================================
-   LOADING
-============================================================ */
-
-function setLoadingState(
-    loading
-) {
-
-    refreshBtn.disabled =
-        loading;
-
-
-    refreshBtn.textContent =
-        loading
-            ? "Loading..."
-            : "↻ Refresh";
-
-
-    reloadTableBtn.disabled =
-        loading;
-}
-
-
-/* ============================================================
-   STATS
-============================================================ */
-
-function updateStats() {
-
-    const total =
-        allFees.length;
-
-
-    const active =
-        allFees.filter(
-            fee =>
-                fee.is_active === true
-        ).length;
-
-
-    const percentage =
-        allFees.filter(
-            fee =>
-                Number.isFinite(
-                    fee.percentage
-                )
-        ).length;
-
-
-    const inactive =
-        total -
-        active;
-
-
-    $("totalFees")
-        .textContent =
-        total.toLocaleString();
-
-
-    $("activeFees")
-        .textContent =
-        active.toLocaleString();
-
-
-    $("percentageFees")
-        .textContent =
-        percentage.toLocaleString();
-
-
-    $("inactiveFees")
-        .textContent =
-        inactive.toLocaleString();
-}
-
-
-/* ============================================================
-   SUMMARY CARDS
-============================================================ */
-
-function renderSummaryCards() {
-
-    feeCards.innerHTML =
-        "";
-
-
-    feeEmpty.hidden =
-        allFees.length !== 0;
-
-
-    const activeFees =
-        allFees.filter(
-            fee =>
-                fee.is_active === true
-        );
-
-
-    if (
-        !activeFees.length
-    ) {
-
-        return;
-    }
-
-
-    activeFees
-        .slice(
-            0,
-            12
-        )
-        .forEach(
-            fee => {
-
-                const card =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                card.className =
-                    "fee-card";
-
-
-                card.innerHTML = `
-
-                    <div class="fee-card-head">
-
-                        <div>
-
-                            <h3>
-                                ${escapeHtml(
-                                    fee.name ||
-                                    "Unnamed fee"
-                                )}
-                            </h3>
-
-                            <p>
-                                Platform service fee
-                                configuration
-                            </p>
-
-                        </div>
-
-
-                        <span
-                            class="
-                                status-badge
-                                status-live
-                            "
-                        >
-                            Active
-                        </span>
-
-                    </div>
-
-
-                    <div class="fee-value">
-
-                        ${escapeHtml(
-                            formatPercentage(
-                                fee.percentage
-                            )
-                        )}
-
-                    </div>
-
-
-                    <div class="fee-meta">
-
-                        <div class="fee-meta-item">
-
-                            <span>
-                                Type
-                            </span>
-
-                            <strong>
-                                Percentage
-                            </strong>
-
-                        </div>
-
-
-                        <div class="fee-meta-item">
-
-                            <span>
-                                Status
-                            </span>
-
-                            <strong>
-                                Active
-                            </strong>
-
-                        </div>
-
-
-                        <div class="fee-meta-item">
-
-                            <span>
-                                Created
-                            </span>
-
-                            <strong>
-                                ${escapeHtml(
-                                    formatDate(
-                                        fee.created_at
-                                    )
-                                )}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="fee-meta-item">
-
-                            <span>
-                                Updated
-                            </span>
-
-                            <strong>
-                                ${escapeHtml(
-                                    formatDate(
-                                        fee.updated_at
-                                    )
-                                )}
-                            </strong>
-
-                        </div>
-
-                    </div>
-                `;
-
-
-                feeCards.appendChild(
-                    card
-                );
-            }
-        );
-}
-
-
-/* ============================================================
-   CREATOR FILTER
-============================================================ */
-
-function renderCreatorFilter() {
-
-    const current =
-        creatorFilter.value;
-
-
-    const creators =
-        [
-            ...new Set(
-                allFees
-                    .map(
-                        fee =>
-                            fee.created_by
-                    )
-                    .filter(Boolean)
-            )
-        ];
-
-
-    creatorFilter.innerHTML =
-        `
-            <option value="">
-                All creators
-            </option>
-        `;
-
-
-    creators.forEach(
-        creator => {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-
-            option.value =
-                creator;
-
-
-            option.textContent =
-                creator;
-
-
-            creatorFilter.appendChild(
-                option
-            );
-        }
-    );
-
-
-    if (
-        creators.includes(
-            current
-        )
-    ) {
-
-        creatorFilter.value =
-            current;
-    }
-}
-
-
-/* ============================================================
-   FILTERS
-============================================================ */
-
-function applyFilters() {
-
-    const search =
-        searchInput
-            .value
-            .trim()
-            .toLowerCase();
-
-
-    const status =
-        statusFilter.value;
-
-
-    const creator =
-        creatorFilter.value;
-
-
-    filteredFees =
-        allFees.filter(
-            fee => {
-
-                if (
-                    status ===
-                        "active" &&
-                    fee.is_active !== true
-                ) {
-
-                    return false;
-                }
-
-
-                if (
-                    status ===
-                        "inactive" &&
-                    fee.is_active === true
-                ) {
-
-                    return false;
-                }
-
-
-                if (
-                    creator &&
-                    String(
-                        fee.created_by
-                    ) !==
-                    String(
-                        creator
-                    )
-                ) {
-
-                    return false;
-                }
-
-
-                if (
-                    search
-                ) {
-
-                    const haystack = [
-
-                        fee.id,
-                        fee.name,
-                        fee.percentage,
-                        fee.created_by,
-                        fee.created_at,
-                        fee.updated_at
-
-                    ]
-                        .filter(
-                            value =>
-                                value !==
-                                null &&
-                                value !==
-                                undefined
-                        )
-                        .join(" ")
-                        .toLowerCase();
-
-
-                    if (
-                        !haystack.includes(
-                            search
-                        )
-                    ) {
-
-                        return false;
-                    }
-                }
-
-
-                return true;
-            }
-        );
-
-
-    renderTable(
-        filteredFees
-    );
-
-
-    resultCount.textContent =
-        `${filteredFees.length.toLocaleString()} record` +
-        (
-            filteredFees.length === 1
-                ? ""
-                : "s"
-        ) +
-        " shown";
-}
-
-
-/* ============================================================
-   TABLE
-============================================================ */
-
-function renderTable(
-    fees
-) {
-
-    feesTableBody.innerHTML =
-        "";
-
-
-    mobileFees.innerHTML =
-        "";
-
-
-    tableEmpty.hidden =
-        fees.length !== 0;
-
-
-    fees.forEach(
-        fee => {
-
-            const row =
-                document.createElement(
-                    "tr"
-                );
-
-
-            row.innerHTML = `
-
-                <td>
-
-                    <div class="type-name">
-
-                        ${escapeHtml(
-                            fee.name ||
-                            "Unnamed fee"
-                        )}
-
-                    </div>
-
-                    <div class="type-description">
-
-                        Service fee configuration
-
-                    </div>
-
-                </td>
-
-
-                <td>
-                    Percentage
-                </td>
-
-
-                <td>
-
-                    <strong>
-
-                        ${escapeHtml(
-                            formatPercentage(
-                                fee.percentage
-                            )
-                        )}
-
-                    </strong>
-
-                </td>
-
-
-                <td>
-
-                    <span
-                        class="
-                            status-badge
-                            ${
-                                fee.is_active
-                                    ? "status-live"
-                                    : "status-disabled"
-                            }
-                        "
-                    >
-
-                        ${
-                            fee.is_active
-                                ? "Active"
-                                : "Inactive"
-                        }
-
-                    </span>
-
-                </td>
-
-
-                <td>
-
-                    ${escapeHtml(
-                        formatDate(
-                            fee.created_at
-                        )
-                    )}
-
-                </td>
-
-
-                <td>
-
-                    ${escapeHtml(
-                        formatDate(
-                            fee.updated_at
-                        )
-                    )}
-
-                </td>
-
-
-                <td>
-
-                    <button
-                        class="
-                            btn
-                            btn-secondary
-                            view-fee
-                        "
-                        data-fee-id="${escapeHtml(
-                            fee.id
-                        )}"
-                        style="
-                            height:34px;
-                            padding:0 10px;
-                        "
-                    >
-                        View
-                    </button>
-
-                </td>
-            `;
-
-
-            feesTableBody.appendChild(
-                row
-            );
-
-
-            const mobile =
-                document.createElement(
-                    "div"
-                );
-
-
-            mobile.className =
-                "mobile-fee";
-
-
-            mobile.innerHTML = `
-
-                <div class="mobile-fee-top">
-
-                    <div>
-
-                        <div class="type-name">
-
-                            ${escapeHtml(
-                                fee.name ||
-                                "Unnamed fee"
-                            )}
-
-                        </div>
-
-                        <div
-                            class="type-description"
-                            style="
-                                max-width:none;
-                            "
-                        >
-                            Service fee configuration
-                        </div>
-
-                    </div>
-
-
-                    <span
-                        class="
-                            status-badge
-                            ${
-                                fee.is_active
-                                    ? "status-live"
-                                    : "status-disabled"
-                            }
-                        "
-                    >
-
-                        ${
-                            fee.is_active
-                                ? "Active"
-                                : "Inactive"
-                        }
-
-                    </span>
-
-                </div>
-
-
-                <div class="mobile-fee-value">
-
-                    ${escapeHtml(
-                        formatPercentage(
-                            fee.percentage
-                        )
-                    )}
-
-                </div>
-
-
-                <div class="mobile-fee-meta">
-
-                    <div class="mobile-meta">
-
-                        <span>
-                            Type
-                        </span>
-
-                        <strong>
-                            Percentage
-                        </strong>
-
-                    </div>
-
-
-                    <div class="mobile-meta">
-
-                        <span>
-                            Status
-                        </span>
-
-                        <strong>
-                            ${
-                                fee.is_active
-                                    ? "Active"
-                                    : "Inactive"
-                            }
-                        </strong>
-
-                    </div>
-
-
-                    <div class="mobile-meta">
-
-                        <span>
-                            Created
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(
-                                formatDate(
-                                    fee.created_at
-                                )
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="mobile-meta">
-
-                        <span>
-                            Updated
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(
-                                formatDate(
-                                    fee.updated_at
-                                )
-                            )}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    class="
-                        btn
-                        btn-secondary
-                        view-fee
-                    "
-                    data-fee-id="${escapeHtml(
-                        fee.id
-                    )}"
-                    style="
-                        width:100%;
-                        margin-top:13px;
-                    "
-                >
-                    View Fee
-                </button>
-            `;
-
-
-            mobileFees.appendChild(
-                mobile
-            );
-        }
-    );
-
-
-    document
-        .querySelectorAll(
-            ".view-fee"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () =>
-                        openFee(
-                            button.dataset
-                                .feeId
-                        )
-                );
-            }
-        );
-}
-
-
-/* ============================================================
-   DRAWER
-============================================================ */
-
-function findFee(
-    id
-) {
-
-    return allFees.find(
-        fee =>
-            String(
-                fee.id
-            ) ===
-            String(
-                id
-            )
-    );
-}
-
-
-function openFee(
-    id
-) {
-
-    const fee =
-        findFee(
-            id
-        );
-
-
-    if (
-        !fee
-    ) {
-
-        showToast(
-            "Fee record could not be found.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    selectedFee =
-        fee;
-
-
-    $("detailId")
-        .textContent =
-        safeText(
-            fee.id
-        );
-
-
-    $("detailStatus")
-        .textContent =
-        fee.is_active
-            ? "Active"
-            : "Inactive";
-
-
-    $("detailName")
-        .textContent =
-        safeText(
-            fee.name
-        );
-
-
-    $("detailType")
-        .textContent =
-        "Percentage";
-
-
-    $("detailPercentage")
-        .textContent =
-        formatPercentage(
-            fee.percentage
-        );
-
-
-    $("detailCreatedBy")
-        .textContent =
-        safeText(
-            fee.created_by
-        );
-
-
-    $("detailCreated")
-        .textContent =
-        formatDate(
-            fee.created_at
-        );
-
-
-    $("detailUpdated")
-        .textContent =
-        formatDate(
-            fee.updated_at
-        );
-
-
-    $("detailMetadata")
-        .textContent =
-        JSON.stringify(
-            {
-                id:
-                    fee.id,
-
-                name:
-                    fee.name,
-
-                percentage:
-                    fee.percentage,
-
-                is_active:
-                    fee.is_active,
-
-                created_by:
-                    fee.created_by,
-
-                created_at:
-                    fee.created_at,
-
-                updated_at:
-                    fee.updated_at
-
-            },
-            null,
-            2
-        );
-
-
-    drawerBackdrop
-        .classList.add(
-            "open"
-        );
-
-
-    detailDrawer
-        .classList.add(
-            "open"
-        );
-
-
-    document.body.style.overflow =
-        "hidden";
-}
-
-
-function closeDrawer() {
-
-    drawerBackdrop
-        .classList.remove(
-            "open"
-        );
-
-
-    detailDrawer
-        .classList.remove(
-            "open"
-        );
-
-
-    document.body.style.overflow =
-        "";
-}
-
-
-/* ============================================================
-   CSV
-============================================================ */
-
-function csvEscape(
-    value
-) {
-
-    const text =
-        String(
-            value ?? ""
-        );
-
-
-    return (
-        '"' +
-        text.replace(
-            /"/g,
-            '""'
-        ) +
-        '"'
-    );
-}
-
-
-function exportCsv() {
-
-    if (
-        !filteredFees.length
-    ) {
-
-        showToast(
-            "There are no fee records to export.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    const headers = [
-
-        "Fee ID",
-        "Name",
-        "Percentage",
-        "Status",
-        "Created By",
-        "Created At",
-        "Updated At"
-
-    ];
-
-
-    const rows =
-        filteredFees.map(
-            fee => [
-
-                fee.id,
-
-                fee.name,
-
-                fee.percentage,
-
-                fee.is_active
-                    ? "Active"
-                    : "Inactive",
-
-                fee.created_by,
-
-                fee.created_at,
-
-                fee.updated_at
-
-            ]
-        );
-
-
-    const csv =
-        [
-            headers
-                .map(
-                    csvEscape
-                )
-                .join(","),
-
-            ...rows.map(
-                row =>
-                    row
-                        .map(
-                            csvEscape
-                        )
-                        .join(",")
-            )
-
-        ].join("\n");
-
-
-    const blob =
-        new Blob(
-            [csv],
-            {
-                type:
-                    "text/csv;charset=utf-8;"
-            }
-        );
-
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const link =
-        document.createElement(
-            "a"
-        );
-
-
-    link.href =
-        url;
-
-
-    link.download =
-        "k-tickets-service-fees-" +
-        new Date()
-            .toISOString()
-            .slice(
-                0,
-                10
-            ) +
-        ".csv";
-
-
-    document.body.appendChild(
-        link
-    );
-
-
-    link.click();
-
-
-    link.remove();
-
-
-    URL.revokeObjectURL(
-        url
-    );
-
-
-    showToast(
-        `${filteredFees.length} fee record(s) exported.`,
-        "success"
-    );
-}
-
-
-/* ============================================================
-   REFRESH
-============================================================ */
 
 async function refreshFees() {
+
+    $("refreshBtn").disabled =
+        true;
+
+    $("refreshBtn").textContent =
+        "Loading...";
 
     try {
 
         await loadFees();
-
 
         showToast(
             "Fee configuration refreshed.",
             "success"
         );
 
-    } catch (
-        error
-    ) {
+    } finally {
 
-        console.error(
-            "Fee refresh failed:",
-            error
-        );
+        $("refreshBtn").disabled =
+            false;
 
-
-        showToast(
-            error?.message ||
-                "Fee refresh failed.",
-            "error"
-        );
+        $("refreshBtn").textContent =
+            "↻ Refresh";
     }
 }
 
-
-/* ============================================================
-   FILTER EVENTS
-============================================================ */
-
 function clearFilters() {
 
-    searchInput.value =
-        "";
-
-
-    statusFilter.value =
-        "";
-
-
-    creatorFilter.value =
-        "";
-
+    $("searchInput").value = "";
+    $("typeFilter").value = "";
+    $("statusFilter").value = "";
+    $("scopeFilter").value = "";
 
     applyFilters();
 }
 
-
 function setupFilters() {
 
-    searchInput.addEventListener(
-        "input",
-        applyFilters
-    );
+    [
+        "searchInput",
+        "typeFilter",
+        "statusFilter",
+        "scopeFilter"
+    ].forEach(id => {
 
+        $(id).addEventListener(
+            id === "searchInput"
+                ? "input"
+                : "change",
+            applyFilters
+        );
+    });
 
-    statusFilter.addEventListener(
-        "change",
-        applyFilters
-    );
+    $("clearFiltersBtn")
+        .addEventListener(
+            "click",
+            clearFilters
+        );
 
+    $("reloadTableBtn")
+        .addEventListener(
+            "click",
+            refreshFees
+        );
 
-    creatorFilter.addEventListener(
-        "change",
-        applyFilters
-    );
+    $("refreshBtn")
+        .addEventListener(
+            "click",
+            refreshFees
+        );
 
-
-    clearFiltersBtn.addEventListener(
-        "click",
-        clearFilters
-    );
-
-
-    refreshBtn.addEventListener(
-        "click",
-        refreshFees
-    );
-
-
-    reloadTableBtn.addEventListener(
-        "click",
-        refreshFees
-    );
-
-
-    exportBtn.addEventListener(
-        "click",
-        exportCsv
-    );
+    $("exportBtn")
+        .addEventListener(
+            "click",
+            exportCsv
+        );
 }
-
-
-/* ============================================================
-   DRAWER EVENTS
-============================================================ */
 
 function setupDrawer() {
 
-    closeDrawerBtn.addEventListener(
-        "click",
-        closeDrawer
-    );
+    $("closeDrawerBtn")
+        .addEventListener(
+            "click",
+            closeDrawer
+        );
 
-
-    drawerBackdrop.addEventListener(
-        "click",
-        closeDrawer
-    );
-
+    $("drawerBackdrop")
+        .addEventListener(
+            "click",
+            closeDrawer
+        );
 
     document.addEventListener(
         "keydown",
         event => {
 
             if (
-                event.key ===
-                "Escape"
+                event.key === "Escape"
             ) {
-
                 closeDrawer();
             }
         }
     );
 }
 
-
-/* ============================================================
-   MOBILE MENU
-============================================================ */
-
 function setupMobileMenu() {
 
-    const mobileMenuBtn =
-        $("mobileMenuBtn");
+    const sidebar =
+        $("sidebar");
 
+    $("mobileMenuBtn")
+        .addEventListener(
+            "click",
+            () => {
 
-    if (
-        !mobileMenuBtn
-    ) {
-
-        return;
-    }
-
-
-    mobileMenuBtn.addEventListener(
-        "click",
-        () => {
-
-            sidebar.classList.toggle(
-                "open"
-            );
-        }
-    );
-
+                sidebar.classList.toggle(
+                    "open"
+                );
+            }
+        );
 
     document
-        .querySelectorAll(
-            ".nav-link"
-        )
-        .forEach(
-            link => {
+        .querySelectorAll(".nav-link")
+        .forEach(link => {
 
-                link.addEventListener(
-                    "click",
-                    () => {
+            link.addEventListener(
+                "click",
+                () => {
+                    sidebar.classList.remove(
+                        "open"
+                    );
+                }
+            );
+        });
+}
 
-                        sidebar.classList.remove(
-                            "open"
-                        );
-                    }
+function setupSignOut() {
+
+    $("signOutBtn")
+        .addEventListener(
+            "click",
+            async () => {
+
+                $("signOutBtn").disabled =
+                    true;
+
+                $("signOutBtn").textContent =
+                    "Signing out...";
+
+                await safeSignOut();
+
+                redirectLogin(
+                    "signed_out"
                 );
             }
         );
 }
 
+async function loadPlatformSettings() {
+    const status = $("platformSettingsStatus");
+    const reload = $("refreshPlatformSettingsBtn");
+    if (status) status.textContent = "Loading saved rates…";
+    if (reload) reload.disabled = true;
 
-/* ============================================================
-   SIGN OUT
-============================================================ */
+    try {
+        const { data, error } = await supabaseClient
+            .from("platform_settings")
+            .select("platform_fee_percent,mpesa_fee_percent,wamd_fee_percent")
+            .eq("id", "global")
+            .single();
 
-function setupSignOut() {
+        if (error) throw error;
+        if (!data) throw new Error("Global platform settings row was not found.");
 
-    const signOutBtn =
-        $("signOutBtn");
+        $("platformFeePercent").value = Number(data.platform_fee_percent ?? 0);
+        $("mpesaFeePercent").value = Number(data.mpesa_fee_percent ?? 0);
+        $("wamdFeePercent").value = Number(data.wamd_fee_percent ?? 0);
+        if (status) status.textContent = "Rates loaded from platform_settings.";
+    } catch (error) {
+        console.error("Platform fee settings load failed:", error);
+        if (status) status.textContent = "Could not load rates. Check platform_settings SELECT permissions and the global row.";
+    } finally {
+        if (reload) reload.disabled = false;
+    }
+}
 
+async function savePlatformSettings() {
+    const button = $("savePlatformSettingsBtn");
+    const status = $("platformSettingsStatus");
+    const values = {
+        p_platform_fee_percent: Number($("platformFeePercent").value),
+        p_mpesa_fee_percent: Number($("mpesaFeePercent").value),
+        p_wamd_fee_percent: Number($("wamdFeePercent").value)
+    };
+
+    for (const [key, value] of Object.entries(values)) {
+        if (!Number.isFinite(value) || value < 0 || value > 100) {
+            if (status) status.textContent = "Each percentage must be between 0 and 100.";
+            const inputId = {
+                p_platform_fee_percent: "platformFeePercent",
+                p_mpesa_fee_percent: "mpesaFeePercent",
+                p_wamd_fee_percent: "wamdFeePercent"
+            }[key];
+            $(inputId).focus();
+            return;
+        }
+    }
+
+    if (button) {
+        button.disabled = true;
+        button.textContent = "Saving…";
+    }
+    if (status) status.textContent = "Submitting to secure admin RPC…";
+
+    try {
+        const { error } = await supabaseClient.rpc("admin_update_platform_fees", values);
+        if (error) throw error;
+        if (status) status.textContent = "Saved. New checkouts will use the updated platform fee rate.";
+        showToast("Platform fee settings saved.", "success");
+        await loadPlatformSettings();
+    } catch (error) {
+        console.error("Platform fee settings save failed:", error);
+        if (status) status.textContent = error?.message || "Save failed. Confirm the admin_update_platform_fees RPC is installed and your account is authorized.";
+        showToast("Fee settings were not saved. Check the RPC and admin permissions.", "error");
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = "Save platform fee settings";
+        }
+    }
+}
+
+async function initialize() {
 
     if (
-        !signOutBtn
+        !SUPABASE_URL ||
+        !SUPABASE_ANON_KEY
     ) {
+
+        securityGate.innerHTML = `
+            <div class="security-box">
+
+                <div class="security-icon">
+                    !
+                </div>
+
+                <h2>
+                    Configuration Required
+                </h2>
+
+                <p>
+                    Supabase configuration is missing.
+                    No financial configuration has been loaded.
+                </p>
+
+            </div>
+        `;
 
         return;
     }
 
-
-    signOutBtn.addEventListener(
-        "click",
-        async () => {
-
-            signOutBtn.disabled =
-                true;
-
-
-            signOutBtn.textContent =
-                "Signing out...";
-
-
-            await safeSignOut();
-
-
-            redirectLogin(
-                "signed_out"
-            );
-        }
-    );
-}
-
-
-/* ============================================================
-   AUTH LISTENER
-============================================================ */
-
-function setupAuthListener() {
-
-    supabaseClient
-        .auth
-        .onAuthStateChange(
-            (
-                event,
-                session
-            ) => {
-
-                if (
-                    event ===
-                        "SIGNED_OUT" ||
-                    !session?.user
-                ) {
-
-                    redirectLogin(
-                        "session_expired"
-                    );
-                }
-            }
-        );
-}
-
-
-/* ============================================================
-   INITIALIZE
-============================================================ */
-
-async function initialize() {
-
     try {
 
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY,
+                {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true
+                    }
+                }
+            );
+
         const authorized =
-            await verifyAdminSession();
+            await loadAdminProfile();
 
-
-        if (
-            !authorized
-        ) {
-
+        if (!authorized) {
             return;
         }
 
-
         setupFilters();
-
         setupDrawer();
-
         setupMobileMenu();
-
         setupSignOut();
 
-        setupAuthListener();
-
-
         await loadFees();
+        await loadPlatformSettings();
 
+        $("savePlatformSettingsBtn").addEventListener("click", savePlatformSettings);
+        $("refreshPlatformSettingsBtn").addEventListener("click", loadPlatformSettings);
 
         app.hidden =
             false;
 
+        securityGate.classList.add(
+            "hidden"
+        );
 
-        securityGate
-            .classList
-            .add(
-                "hidden"
+        supabaseClient.auth
+            .onAuthStateChange(
+                (event, session) => {
+
+                    if (
+                        event ===
+                            "SIGNED_OUT" ||
+                        !session?.user
+                    ) {
+
+                        redirectLogin(
+                            "session_expired"
+                        );
+                    }
+                }
             );
 
-
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         console.error(
-            "K-Tickets Fees initialization failed:",
+            "Admin fees initialization failed:",
             error
         );
 
-
         securityGate.innerHTML = `
-
             <div class="security-box">
 
                 <div class="security-icon">
@@ -3982,17 +3396,14 @@ async function initialize() {
                 </h2>
 
                 <p>
-                    ${escapeHtml(
-                        error?.message ||
-                        "The administrator session could not be verified."
-                    )}
+                    The administrator session could not
+                    be verified. Please sign in again.
                 </p>
 
             </div>
         `;
     }
 }
-
 
 initialize();
 </script>

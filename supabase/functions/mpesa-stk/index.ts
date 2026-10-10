@@ -1,55 +1,127 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
-const corsHeaders = {
+declare const Deno: {
+  env: {
+    get(name: string): string | undefined;
+  };
+  serve(
+    handler: (
+      request: Request,
+    ) => Response | Promise<Response>,
+  ): void;
+};
+
+/*
+|--------------------------------------------------------------------------
+| K-TICKETS — M-PESA STK PUSH
+|--------------------------------------------------------------------------
+*/
+
+function env(name: string): string {
+  const runtime = globalThis as {
+    Deno?: {
+      env?: {
+        get?: (key: string) => string | undefined;
+      };
+    };
+  };
+
+  return runtime.Deno?.env?.get?.(name) ?? "";
+}
+
+/*
+|--------------------------------------------------------------------------
+| CORS
+|--------------------------------------------------------------------------
+*/
+
+const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
-
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SUPABASE_ANON_KEY =
-  Deno.env.get("SUPABASE_ANON_KEY") ||
-  Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!;
-
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get(
-  "SUPABASE_SERVICE_ROLE_KEY",
-);
-
-const MPESA_CONSUMER_KEY = Deno.env.get("MPESA_CONSUMER_KEY");
-const MPESA_CONSUMER_SECRET = Deno.env.get("MPESA_CONSUMER_SECRET");
-const MPESA_SHORTCODE = Deno.env.get("MPESA_SHORTCODE");
-const MPESA_TILL_NUMBER = Deno.env.get("MPESA_TILL_NUMBER");
-const MPESA_PASSKEY = Deno.env.get("MPESA_PASSKEY");
-
-const MPESA_TRANSACTION_TYPE =
-  Deno.env.get("MPESA_TRANSACTION_TYPE") ||
-  "CustomerBuyGoodsOnline";
-
-const MPESA_CALLBACK_URL =
-  Deno.env.get("MPESA_CALLBACK_URL") ||
-  `${SUPABASE_URL}/functions/v1/mpesa-callback`;
-
-const MPESA_ENVIRONMENT =
-  Deno.env.get("MPESA_ENVIRONMENT") || "production";
-
-const jsonHeaders = {
-  ...corsHeaders,
   "Content-Type": "application/json",
 };
 
-function response(
+/*
+|--------------------------------------------------------------------------
+| ENVIRONMENT VARIABLES
+|--------------------------------------------------------------------------
+*/
+
+const SUPABASE_URL = env("SUPABASE_URL");
+
+const SUPABASE_ANON_KEY =
+  env("SUPABASE_ANON_KEY") ||
+  env("SUPABASE_PUBLISHABLE_KEY");
+
+const SUPABASE_SERVICE_ROLE_KEY =
+  env("SUPABASE_SERVICE_ROLE_KEY");
+
+const MPESA_CONSUMER_KEY =
+  env("MPESA_CONSUMER_KEY");
+
+const MPESA_CONSUMER_SECRET =
+  env("MPESA_CONSUMER_SECRET");
+
+/* Store / Head Office shortcode */
+const MPESA_SHORTCODE =
+  env("MPESA_SHORTCODE");
+
+/* Actual receiving Buy Goods Till */
+const MPESA_TILL_NUMBER =
+  env("MPESA_TILL_NUMBER");
+
+const MPESA_PASSKEY =
+  env("MPESA_PASSKEY");
+
+const MPESA_TRANSACTION_TYPE =
+  env("MPESA_TRANSACTION_TYPE") ||
+  "CustomerBuyGoodsOnline";
+
+const MPESA_ENVIRONMENT =
+  env("MPESA_ENVIRONMENT") ||
+  "production";
+
+const MPESA_CALLBACK_URL =
+  env("MPESA_CALLBACK_URL") ||
+  `${SUPABASE_URL}/functions/v1/mpesa-callback`;
+
+/*
+|--------------------------------------------------------------------------
+| RESPONSE HELPERS
+|--------------------------------------------------------------------------
+*/
+
+function jsonResponse(
   body: Record<string, unknown>,
   status = 200,
-) {
+): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: jsonHeaders,
+    headers: corsHeaders,
   });
 }
 
+function businessError(
+  message: string,
+  extra: Record<string, unknown> = {},
+): Response {
+  return jsonResponse({
+    success: false,
+    error: message,
+    ...extra,
+  });
+}
+
+/*
+|--------------------------------------------------------------------------
+| PHONE NORMALIZATION
+|--------------------------------------------------------------------------
+*/
+
 function normalizeKenyanPhone(input: string): string {
-  let phone = String(input || "").trim();
+  let phone = String(input ?? "").trim();
 
   phone = phone.replace(/[\s\-()]/g, "");
 
@@ -58,7 +130,7 @@ function normalizeKenyanPhone(input: string): string {
   }
 
   if (phone.startsWith("07") || phone.startsWith("01")) {
-    phone = "254" + phone.substring(1);
+    phone = `254${phone.substring(1)}`;
   }
 
   if (!/^254[71]\d{8}$/.test(phone)) {
@@ -69,6 +141,12 @@ function normalizeKenyanPhone(input: string): string {
 
   return phone;
 }
+
+/*
+|--------------------------------------------------------------------------
+| KENYA TIMESTAMP
+|--------------------------------------------------------------------------
+*/
 
 function getKenyaTimestamp(): string {
   const now = new Date();
@@ -85,7 +163,6 @@ function getKenyaTimestamp(): string {
   });
 
   const parts = formatter.formatToParts(now);
-
   const values: Record<string, string> = {};
 
   for (const part of parts) {
@@ -104,98 +181,165 @@ function getKenyaTimestamp(): string {
   );
 }
 
-function toBase64(value: string): string {
-  return btoa(unescape(encodeURIComponent(value)));
+/*
+|--------------------------------------------------------------------------
+| STK PASSWORD
+|--------------------------------------------------------------------------
+*/
+
+function createStkPassword(
+  shortcode: string,
+  passkey: string,
+  timestamp: string,
+): string {
+  return btoa(`${shortcode}${passkey}${timestamp}`);
 }
+
+/*
+|--------------------------------------------------------------------------
+| DARAJA BASE URL
+|--------------------------------------------------------------------------
+*/
+
+function getMpesaBaseUrl(): string {
+  if (MPESA_ENVIRONMENT.toLowerCase().trim() === "sandbox") {
+    return "https://sandbox.safaricom.co.ke";
+  }
+
+  return "https://api.safaricom.co.ke";
+}
+
+/*
+|--------------------------------------------------------------------------
+| DARAJA ACCESS TOKEN
+|--------------------------------------------------------------------------
+*/
 
 async function getMpesaAccessToken(): Promise<string> {
   if (!MPESA_CONSUMER_KEY || !MPESA_CONSUMER_SECRET) {
-    throw new Error("M-Pesa credentials are not configured.");
+    throw new Error(
+      "M-Pesa consumer credentials are not configured.",
+    );
   }
 
-  const baseUrl =
-    MPESA_ENVIRONMENT === "sandbox"
-      ? "https://sandbox.safaricom.co.ke"
-      : "https://api.safaricom.co.ke";
+  const baseUrl = getMpesaBaseUrl();
 
-  const credentials = `${MPESA_CONSUMER_KEY}:${MPESA_CONSUMER_SECRET}`;
+  const credentials =
+    `${MPESA_CONSUMER_KEY}:${MPESA_CONSUMER_SECRET}`;
 
-  const authHeader = `Basic ${btoa(credentials)}`;
+  const basicAuth = btoa(credentials);
 
   const tokenUrl =
     `${baseUrl}/oauth/v1/generate?grant_type=client_credentials`;
 
+  console.log("Requesting M-Pesa OAuth token.", {
+    environment: MPESA_ENVIRONMENT,
+  });
+
   const tokenResponse = await fetch(tokenUrl, {
     method: "GET",
     headers: {
-      Authorization: authHeader,
+      Authorization: `Basic ${basicAuth}`,
       Accept: "application/json",
     },
   });
 
-  const tokenText = await tokenResponse.text();
+  const responseText = await tokenResponse.text();
 
   let tokenData: Record<string, unknown>;
 
   try {
-    tokenData = JSON.parse(tokenText);
+    tokenData = JSON.parse(responseText);
   } catch {
-    throw new Error("Invalid response received from M-Pesa authorization.");
+    console.error("M-Pesa OAuth returned non-JSON response.", {
+      status: tokenResponse.status,
+    });
+
+    throw new Error(
+      "Invalid response received from M-Pesa authorization.",
+    );
   }
 
   if (!tokenResponse.ok || !tokenData.access_token) {
-    console.error("M-Pesa authorization failed:", {
+    console.error("M-Pesa authorization failed.", {
       status: tokenResponse.status,
       error: tokenData.error,
       error_description: tokenData.error_description,
     });
 
     throw new Error(
-      "Unable to authenticate with M-Pesa. Check the Daraja credentials and environment.",
+      "Unable to authenticate with M-Pesa. Check your Daraja credentials and environment.",
     );
   }
 
   return String(tokenData.access_token);
 }
 
-async function createStkPush(params: {
+/*
+|--------------------------------------------------------------------------
+| SEND STK PUSH
+|--------------------------------------------------------------------------
+*/
+
+async function sendStkPush(params: {
   accessToken: string;
   phone: string;
   amount: number;
   accountReference: string;
   transactionDescription: string;
 }) {
-  if (!MPESA_SHORTCODE || !MPESA_TILL_NUMBER || !MPESA_PASSKEY) {
-    throw new Error("M-Pesa Store Number, Till Number or passkey is not configured.");
+  if (
+    !MPESA_SHORTCODE ||
+    !MPESA_TILL_NUMBER ||
+    !MPESA_PASSKEY
+  ) {
+    throw new Error(
+      "M-Pesa Store Number, Till Number or passkey is not configured.",
+    );
   }
 
-  const baseUrl =
-    MPESA_ENVIRONMENT === "sandbox"
-      ? "https://sandbox.safaricom.co.ke"
-      : "https://api.safaricom.co.ke";
-
+  const baseUrl = getMpesaBaseUrl();
   const timestamp = getKenyaTimestamp();
 
-  const passwordSource =
-    MPESA_SHORTCODE +
-    MPESA_PASSKEY +
-    timestamp;
+  /*
+   * The password uses the shortcode associated with
+   * the passkey issued for this STK configuration.
+   */
+  const password = createStkPassword(
+    MPESA_SHORTCODE,
+    MPESA_PASSKEY,
+    timestamp,
+  );
 
-  const password = toBase64(passwordSource);
+  const amount = Math.round(params.amount);
 
   const payload = {
     BusinessShortCode: MPESA_SHORTCODE,
     Password: password,
     Timestamp: timestamp,
     TransactionType: MPESA_TRANSACTION_TYPE,
-    Amount: Math.round(amount),
+    Amount: amount,
     PartyA: params.phone,
+
+    /* Receiving Buy Goods Till */
     PartyB: MPESA_TILL_NUMBER,
+
     PhoneNumber: params.phone,
     CallBackURL: MPESA_CALLBACK_URL,
     AccountReference: params.accountReference,
     TransactionDesc: params.transactionDescription,
   };
+
+  console.log("Sending M-Pesa STK Push.", {
+    environment: MPESA_ENVIRONMENT,
+    transaction_type: MPESA_TRANSACTION_TYPE,
+    amount,
+    callback_configured: Boolean(MPESA_CALLBACK_URL),
+    shortcode_configured: Boolean(MPESA_SHORTCODE),
+    till_number_configured: Boolean(MPESA_TILL_NUMBER),
+    party_b_matches_shortcode:
+      MPESA_TILL_NUMBER === MPESA_SHORTCODE,
+  });
 
   const stkUrl =
     `${baseUrl}/mpesa/stkpush/v1/processrequest`;
@@ -217,7 +361,7 @@ async function createStkPush(params: {
   try {
     data = JSON.parse(responseText);
   } catch {
-    console.error("Invalid M-Pesa STK response:", {
+    console.error("M-Pesa STK returned invalid JSON.", {
       status: stkResponse.status,
     });
 
@@ -232,27 +376,71 @@ async function createStkPush(params: {
   };
 }
 
-Deno.serve(async (req) => {
+/*
+|--------------------------------------------------------------------------
+| SUCCESS CHECK
+|--------------------------------------------------------------------------
+*/
+
+function isSuccessfulStkResponse(
+  httpStatus: number,
+  responseCode: string,
+): boolean {
+  return (
+    httpStatus >= 200 &&
+    httpStatus < 300 &&
+    responseCode === "0"
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| MAIN HANDLER
+|--------------------------------------------------------------------------
+*/
+
+Deno.serve(async (req: Request): Promise<Response> => {
+  /*
+  |--------------------------------------------------------------------------
+  | CORS
+  |--------------------------------------------------------------------------
+  */
+
   if (req.method === "OPTIONS") {
     return new Response("ok", {
+      status: 200,
       headers: corsHeaders,
     });
   }
 
+  /*
+  |--------------------------------------------------------------------------
+  | POST ONLY
+  |--------------------------------------------------------------------------
+  */
+
   if (req.method !== "POST") {
-    return response(
-      {
-        success: false,
-        error: "Method not allowed.",
-      },
-      405,
-    );
+    return businessError("Method not allowed.", {
+      allowed_methods: ["POST"],
+    });
   }
 
   try {
+    /*
+    |--------------------------------------------------------------------------
+    | SERVER CONFIGURATION
+    |--------------------------------------------------------------------------
+    */
+
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error(
         "Supabase server configuration is incomplete.",
+      );
+    }
+
+    if (!SUPABASE_ANON_KEY) {
+      throw new Error(
+        "Supabase public authentication key is not configured.",
       );
     }
 
@@ -264,35 +452,29 @@ Deno.serve(async (req) => {
       !MPESA_PASSKEY
     ) {
       throw new Error(
-        "M-Pesa server configuration is incomplete. Check the shortcode, Till Number, passkey and Daraja credentials.",
+        "M-Pesa server configuration is incomplete.",
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 1. Authenticate the customer
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | AUTHENTICATE CUSTOMER
+    |--------------------------------------------------------------------------
+    */
 
-    const authHeader = req.headers.get("Authorization");
+    const authorization = req.headers.get("Authorization");
 
-    if (!authHeader?.startsWith("Bearer ")) {
-      return response(
-        {
-          success: false,
-          error: "Authentication required.",
-        },
-        401,
-      );
+    if (!authorization || !authorization.startsWith("Bearer ")) {
+      return businessError("Authentication required.");
     }
 
-    const userSupabase = createClient(
+    const userClient = createClient(
       SUPABASE_URL,
       SUPABASE_ANON_KEY,
       {
         global: {
           headers: {
-            Authorization: authHeader,
+            Authorization: authorization,
           },
         },
       },
@@ -300,60 +482,64 @@ Deno.serve(async (req) => {
 
     const {
       data: { user },
-      error: userError,
-    } = await userSupabase.auth.getUser();
+      error: authError,
+    } = await userClient.auth.getUser();
 
-    if (userError || !user) {
-      return response(
-        {
-          success: false,
-          error: "Invalid or expired login session.",
-        },
-        401,
+    if (authError || !user) {
+      return businessError(
+        "Invalid or expired login session.",
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 2. Read browser request
-     *
-     * We only accept IDs and phone here.
-     * Amount is NEVER trusted from the browser.
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | READ REQUEST
+    |--------------------------------------------------------------------------
+    */
 
-    const body = await req.json();
+    let body: Record<string, unknown>;
 
-    const orderId = String(body?.order_id || "").trim();
-    const paymentId = String(body?.payment_id || "").trim();
-    const submittedPhone = String(body?.phone || "").trim();
+    try {
+      body = await req.json();
+    } catch {
+      return businessError("Invalid JSON request.");
+    }
+
+    const orderId = String(body.order_id ?? "").trim();
+    const paymentId = String(body.payment_id ?? "").trim();
+    const submittedPhone = String(body.phone ?? "").trim();
 
     if (!orderId || !paymentId || !submittedPhone) {
-      return response(
-        {
-          success: false,
-          error:
-            "order_id, payment_id and phone are required.",
-        },
-        400,
+      return businessError(
+        "order_id, payment_id and phone are required.",
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 3. Normalize phone
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | NORMALIZE PHONE
+    |--------------------------------------------------------------------------
+    */
 
-    const phone = normalizeKenyanPhone(submittedPhone);
+    let phone: string;
+
+    try {
+      phone = normalizeKenyanPhone(submittedPhone);
+    } catch (error) {
+      return businessError(
+        error instanceof Error
+          ? error.message
+          : "Invalid phone number.",
+      );
+    }
 
     /*
-     * ---------------------------------------------------------
-     * 4. Create trusted Supabase client
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | SERVICE ROLE CLIENT
+    |--------------------------------------------------------------------------
+    */
 
-    const adminSupabase = createClient(
+    const adminClient = createClient(
       SUPABASE_URL,
       SUPABASE_SERVICE_ROLE_KEY,
       {
@@ -365,15 +551,15 @@ Deno.serve(async (req) => {
     );
 
     /*
-     * ---------------------------------------------------------
-     * 5. Load order
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | LOAD ORDER
+    |--------------------------------------------------------------------------
+    */
 
     const {
       data: order,
       error: orderError,
-    } = await adminSupabase
+    } = await adminClient
       .from("orders")
       .select(`
         id,
@@ -393,82 +579,149 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (orderError) {
-      console.error("Order lookup failed:", orderError.message);
+      console.error("Order lookup failed:", orderError);
 
-      return response(
-        {
-          success: false,
-          error: "Unable to load the order.",
-        },
-        500,
-      );
+      return businessError("Unable to load the order.", {
+        details: orderError.message,
+      });
     }
 
     if (!order) {
-      return response(
-        {
-          success: false,
-          error: "Order not found.",
-        },
-        404,
-      );
+      return businessError("Order not found.");
     }
 
     /*
-     * ---------------------------------------------------------
-     * 6. Ownership check
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | VERIFY ORDER OWNERSHIP
+    |--------------------------------------------------------------------------
+    */
 
     if (order.user_id !== user.id) {
-      return response(
-        {
-          success: false,
-          error: "You are not authorized to pay for this order.",
-        },
-        403,
+      return businessError(
+        "You are not authorized to pay for this order.",
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 7. Validate order state
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | VERIFY ORDER STATUS
+    |--------------------------------------------------------------------------
+    */
 
     if (order.status !== "awaiting_payment") {
-      return response(
+      return businessError(
+        "This order is no longer awaiting payment.",
         {
-          success: false,
-          error:
-            "This order is no longer awaiting payment.",
+          order_status: order.status,
         },
-        409,
-      );
-    }
-
-    const amount = Number(order.total);
-
-    if (!Number.isFinite(amount) || amount <= 0) {
-      return response(
-        {
-          success: false,
-          error: "Invalid order amount.",
-        },
-        400,
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 8. Load payment
-     * ---------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | TRUSTED ORDER AMOUNT
+    |--------------------------------------------------------------------------
+    */
+
+    const orderAmount = Number(order.total);
+
+    if (!Number.isFinite(orderAmount) || orderAmount <= 0) {
+      return businessError(
+        "The order has an invalid payment amount.",
+      );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VERIFY ORDER CURRENCY AND LOAD LIVE EXCHANGE RATE
+    |--------------------------------------------------------------------------
+    |
+    | The order total is maintained in KWD.
+    | Daraja receives the converted amount in KES.
+    | The rate is read server-side, not trusted from the browser.
+    |
+    */
+
+    const orderCurrency = String(order.currency ?? "")
+      .trim()
+      .toUpperCase();
+
+    if (orderCurrency !== "KWD") {
+      return businessError(
+        "M-Pesa checkout currently supports KWD orders only.",
+        {
+          order_currency: orderCurrency || null,
+        },
+      );
+    }
+
+    const {
+      data: platformSettings,
+      error: settingsError,
+    } = await adminClient
+      .from("platform_settings")
+      .select("exchange_rate")
+      .eq("id", "global")
+      .maybeSingle();
+
+    if (settingsError) {
+      console.error(
+        "Exchange-rate lookup failed:",
+        settingsError,
+      );
+
+      return businessError(
+        "Unable to load the current KWD to KES exchange rate. Please try again.",
+      );
+    }
+
+    const exchangeRate = Number(
+      platformSettings?.exchange_rate,
+    );
+
+    if (
+      !Number.isFinite(exchangeRate) ||
+      exchangeRate <= 0
+    ) {
+      console.error(
+        "Invalid platform_settings.exchange_rate.",
+        {
+          exchangeRate: platformSettings?.exchange_rate,
+        },
+      );
+
+      return businessError(
+        "The KWD to KES exchange rate is not configured correctly.",
+      );
+    }
+
+    /*
+     * Convert the trusted order total to whole Kenyan shillings.
+     * Example: 2 KWD × 427 = 854 KES.
      */
+    const amountKes = Math.round(
+      orderAmount * exchangeRate,
+    );
+
+    if (
+      !Number.isSafeInteger(amountKes) ||
+      amountKes < 1
+    ) {
+      return businessError(
+        "The converted M-Pesa payment amount is invalid.",
+      );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOAD PAYMENT
+    |--------------------------------------------------------------------------
+    */
 
     const {
       data: payment,
       error: paymentError,
-    } = await adminSupabase
+    } = await adminClient
       .from("payments")
       .select(`
         id,
@@ -493,65 +746,56 @@ Deno.serve(async (req) => {
     if (paymentError) {
       console.error(
         "Payment lookup failed:",
-        paymentError.message,
+        paymentError,
       );
 
-      return response(
+      return businessError(
+        "Unable to load the payment attempt.",
         {
-          success: false,
-          error: "Unable to load the payment.",
+          details: paymentError.message,
         },
-        500,
       );
     }
 
     if (!payment) {
-      return response(
-        {
-          success: false,
-          error: "Payment attempt not found.",
-        },
-        404,
-      );
+      return businessError("Payment attempt not found.");
     }
 
     /*
-     * ---------------------------------------------------------
-     * 9. Payment ownership / order relationship
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | VERIFY PAYMENT OWNERSHIP
+    |--------------------------------------------------------------------------
+    */
 
     if (
       payment.user_id !== user.id ||
       payment.order_id !== order.id
     ) {
-      return response(
-        {
-          success: false,
-          error: "Invalid payment request.",
-        },
-        403,
-      );
+      return businessError("Invalid payment request.");
     }
 
-    if (payment.method !== "mpesa") {
-      return response(
-        {
-          success: false,
-          error: "This payment attempt is not an M-Pesa payment.",
-        },
-        400,
+    /*
+    |--------------------------------------------------------------------------
+    | VERIFY PAYMENT METHOD
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      String(payment.method).toLowerCase() !== "mpesa"
+    ) {
+      return businessError(
+        "This payment attempt is not an M-Pesa payment.",
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 10. If already paid, don't initiate another STK push.
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | ALREADY PAID
+    |--------------------------------------------------------------------------
+    */
 
     if (payment.status === "paid") {
-      return response({
+      return jsonResponse({
         success: true,
         already_paid: true,
         message: "Payment has already been completed.",
@@ -559,137 +803,81 @@ Deno.serve(async (req) => {
       });
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | VALID PAYMENT STATES
+    |--------------------------------------------------------------------------
+    */
+
     if (
       !["pending", "processing"].includes(
         String(payment.status),
       )
     ) {
-      return response(
+      return businessError(
+        `This payment cannot be initiated because its status is ${payment.status}.`,
         {
-          success: false,
-          error:
-            `This payment cannot be initiated because its status is ${payment.status}.`,
+          payment_status: payment.status,
         },
-        409,
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 11. Validate payment amount against trusted order amount
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | VERIFY PAYMENT AMOUNT AND CURRENCY
+    |--------------------------------------------------------------------------
+    */
 
     const paymentAmount = Number(payment.amount);
 
     if (
       !Number.isFinite(paymentAmount) ||
-      Math.abs(paymentAmount - amount) > 0.001
+      Math.abs(paymentAmount - orderAmount) > 0.001
     ) {
-      console.error("Payment/order amount mismatch:", {
-        payment_id: payment.id,
-        payment_amount: paymentAmount,
-        order_amount: amount,
-      });
-
-      return response(
-        {
-          success: false,
-          error:
-            "Payment amount does not match the order amount.",
-        },
-        409,
-      );
-    }
-
-
-    /*
-     * ---------------------------------------------------------
-     * 12. Read the live exchange rate and calculate the STK
-     * amount on the server. The browser never supplies an amount.
-     * The order and payment records remain denominated in KWD.
-     * ---------------------------------------------------------
-     */
-
-    const orderCurrency = String(
-      order.currency || payment.currency || "",
-    ).trim().toUpperCase();
-
-    if (orderCurrency !== "KWD") {
-      return response(
-        {
-          success: false,
-          error:
-            `M-Pesa checkout currently expects a KWD order. Received ${orderCurrency || "an unspecified currency"}.`,
-        },
-        400,
-      );
-    }
-
-    const {
-      data: platformSettings,
-      error: settingsError,
-    } = await adminSupabase
-      .from("platform_settings")
-      .select("exchange_rate")
-      .eq("id", "global")
-      .maybeSingle();
-
-    if (settingsError || !platformSettings) {
       console.error(
-        "Unable to load K-Tickets exchange rate:",
-        settingsError?.message || "No global settings row exists.",
+        "Payment/order amount mismatch.",
+        {
+          paymentId: payment.id,
+          paymentAmount,
+          orderAmount,
+        },
       );
 
-      return response(
+      return businessError(
+        "Payment amount does not match the order amount.",
         {
-          success: false,
-          error:
-            "The KWD-to-KES exchange rate is not configured. Please contact the administrator.",
+          payment_amount: paymentAmount,
+          order_amount: orderAmount,
         },
-        503,
-      );
-    }
-
-    const exchangeRate = Number(platformSettings.exchange_rate);
-
-    if (!Number.isFinite(exchangeRate) || exchangeRate <= 0) {
-      console.error("Invalid K-Tickets exchange rate in platform_settings.");
-
-      return response(
-        {
-          success: false,
-          error:
-            "The configured KWD-to-KES exchange rate is invalid. Please contact the administrator.",
-        },
-        503,
       );
     }
 
-    const amountKes = Math.round(amount * exchangeRate);
+    const paymentCurrency = String(payment.currency ?? "")
+      .trim()
+      .toUpperCase();
 
-    if (!Number.isSafeInteger(amountKes) || amountKes < 1) {
-      return response(
+    if (
+      paymentCurrency &&
+      paymentCurrency !== "KWD"
+    ) {
+      return businessError(
+        "Payment currency does not match the KWD order.",
         {
-          success: false,
-          error: "The converted M-Pesa amount must be at least KES 1.",
+          payment_currency: paymentCurrency,
         },
-        400,
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 13. Check for an existing M-Pesa transaction.
-     *
-     * This is backend idempotency protection.
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | CHECK EXISTING M-PESA TRANSACTION
+    |--------------------------------------------------------------------------
+    */
 
     const {
-      data: existingMpesa,
-      error: existingMpesaError,
-    } = await adminSupabase
+      data: existingTransaction,
+      error: existingTransactionError,
+    } = await adminClient
       .from("mpesa_transactions")
       .select(`
         id,
@@ -709,66 +897,100 @@ Deno.serve(async (req) => {
       .limit(1)
       .maybeSingle();
 
-    if (existingMpesaError) {
+    if (existingTransactionError) {
       console.error(
-        "M-Pesa transaction lookup failed:",
-        existingMpesaError.message,
+        "Existing M-Pesa transaction lookup failed:",
+        existingTransactionError,
       );
     }
 
     if (
-      existingMpesa &&
-      existingMpesa.checkout_request_id &&
+      existingTransaction &&
+      existingTransaction.checkout_request_id &&
       ["pending", "processing"].includes(
-        String(existingMpesa.status),
+        String(existingTransaction.status),
       )
     ) {
-      return response({
+      return jsonResponse({
         success: true,
         reused: true,
         message:
           "An M-Pesa payment request is already in progress.",
         payment_id: payment.id,
         checkout_request_id:
-          existingMpesa.checkout_request_id,
+          existingTransaction.checkout_request_id,
         merchant_request_id:
-          existingMpesa.merchant_request_id,
-        phone_number: existingMpesa.phone_number,
+          existingTransaction.merchant_request_id,
+        phone_number: existingTransaction.phone_number,
       });
     }
 
     /*
-     * ---------------------------------------------------------
-     * 14. Get Daraja OAuth token
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | GET DARAJA TOKEN
+    |--------------------------------------------------------------------------
+    */
 
-    const accessToken = await getMpesaAccessToken();
+    let accessToken: string;
+
+    try {
+      accessToken = await getMpesaAccessToken();
+    } catch (error) {
+      console.error(
+        "M-Pesa authorization error:",
+        error,
+      );
+
+      return businessError(
+        error instanceof Error
+          ? error.message
+          : "Unable to authenticate with M-Pesa.",
+      );
+    }
 
     /*
-     * ---------------------------------------------------------
-     * 15. Build safe account reference
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | ACCOUNT REFERENCE
+    |--------------------------------------------------------------------------
+    */
 
-    const accountReference =
-      String(order.order_number || order.id)
-        .replace(/[^a-zA-Z0-9_-]/g, "")
-        .substring(0, 12);
+    const accountReference = String(
+      order.order_number || order.id,
+    )
+      .replace(/[^a-zA-Z0-9_-]/g, "")
+      .substring(0, 12);
 
     /*
-     * ---------------------------------------------------------
-     * 16. Initiate STK Push
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | SEND STK PUSH
+    |--------------------------------------------------------------------------
+    */
 
-    const stk = await createStkPush({
-      accessToken,
-      phone,
-      amount: amountKes,
-      accountReference,
-      transactionDescription: "K-Tickets payment",
-    });
+    let stk;
+
+    try {
+      stk = await sendStkPush({
+        accessToken,
+        phone,
+
+        /* M-Pesa receives KES, not the KWD order total. */
+        amount: amountKes,
+
+        accountReference,
+        transactionDescription: "K-Tickets payment",
+      });
+    } catch (error) {
+      console.error(
+        "M-Pesa STK request error:",
+        error,
+      );
+
+      return businessError(
+        error instanceof Error
+          ? error.message
+          : "Unable to send M-Pesa payment request.",
+      );
+    }
 
     const stkData = stk.data;
 
@@ -777,150 +999,156 @@ Deno.serve(async (req) => {
     );
 
     /*
-     * ---------------------------------------------------------
-     * 17. Daraja rejected the request
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | DARAJA REJECTED REQUEST
+    |--------------------------------------------------------------------------
+    */
 
     if (
-      !stkResponseSuccessful(stk.httpStatus, responseCode)
+      !isSuccessfulStkResponse(
+        stk.httpStatus,
+        responseCode,
+      )
     ) {
-      console.error("M-Pesa STK request rejected:", {
-        http_status: stk.httpStatus,
-        response_code: stkData.ResponseCode,
-        response_description:
-          stkData.ResponseDescription,
-        customer_message:
-          stkData.CustomerMessage,
-        error_code: stkData.errorCode,
-        error_message: stkData.errorMessage,
-      });
+      const providerMessage = String(
+        stkData.ResponseDescription ??
+          stkData.CustomerMessage ??
+          stkData.errorMessage ??
+          "M-Pesa STK request failed.",
+      );
 
-      await adminSupabase
+      console.error(
+        "M-Pesa STK request rejected.",
+        {
+          httpStatus: stk.httpStatus,
+          responseCode,
+          responseDescription:
+            stkData.ResponseDescription,
+          customerMessage: stkData.CustomerMessage,
+          errorCode: stkData.errorCode,
+          errorMessage: stkData.errorMessage,
+        },
+      );
+
+      /*
+      |--------------------------------------------------------------------------
+      | MARK PAYMENT FAILED
+      |--------------------------------------------------------------------------
+      */
+
+      const {
+        error: failureUpdateError,
+      } = await adminClient
         .from("payments")
         .update({
           status: "failed",
           failure_reason:
-            String(
-              stkData.ResponseDescription ||
-              stkData.errorMessage ||
-              stkData.CustomerMessage ||
-              "M-Pesa STK request failed.",
-            ).substring(0, 500),
+            providerMessage.substring(0, 500),
           updated_at: new Date().toISOString(),
         })
         .eq("id", payment.id)
         .in("status", ["pending", "processing"]);
 
-      return response(
-        {
-          success: false,
-          error:
-            String(
-              stkData.ResponseDescription ||
-              stkData.CustomerMessage ||
-              "M-Pesa could not start the payment request.",
-            ),
-        },
-        502,
-      );
+      if (failureUpdateError) {
+        console.error(
+          "Could not mark payment failed:",
+          failureUpdateError,
+        );
+      }
+
+      return businessError(providerMessage, {
+        provider_http_status: stk.httpStatus,
+        provider_response_code: responseCode,
+      });
     }
 
     /*
-     * ---------------------------------------------------------
-     * 18. Extract provider identifiers
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | PROVIDER IDENTIFIERS
+    |--------------------------------------------------------------------------
+    */
 
     const merchantRequestId = String(
-      stkData.MerchantRequestID || "",
+      stkData.MerchantRequestID ?? "",
     ).trim();
 
     const checkoutRequestId = String(
-      stkData.CheckoutRequestID || "",
+      stkData.CheckoutRequestID ?? "",
     ).trim();
 
     if (!checkoutRequestId) {
       console.error(
-        "M-Pesa returned success but no CheckoutRequestID.",
+        "M-Pesa returned success without CheckoutRequestID.",
+        {
+          response: stkData,
+        },
       );
 
-      return response(
-        {
-          success: false,
-          error:
-            "M-Pesa did not return a valid checkout request.",
-        },
-        502,
+      return businessError(
+        "M-Pesa did not return a valid checkout request.",
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 19. Record M-Pesa transaction
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | SAVE M-PESA TRANSACTION
+    |--------------------------------------------------------------------------
+    |
+    | mpesa_transactions.amount stores the KES amount sent to
+    | Daraja. payments.amount and orders.total remain in KWD.
+    |
+    */
 
     const {
-      error: mpesaInsertError,
-    } = await adminSupabase
+      error: transactionInsertError,
+    } = await adminClient
       .from("mpesa_transactions")
       .insert({
         payment_id: payment.id,
+        order_id: order.id,
+        user_id: user.id,
         phone_number: phone,
+
+        /* Store the amount expected from the M-Pesa callback. */
         amount: amountKes,
+
         merchant_request_id:
           merchantRequestId || null,
-        checkout_request_id:
-          checkoutRequestId,
+        checkout_request_id: checkoutRequestId,
         status: "processing",
       });
 
-    if (mpesaInsertError) {
-      /*
-       * Important:
-       *
-       * If the provider accepted the STK request but our
-       * database insert failed, do NOT tell the customer
-       * to retry automatically.
-       *
-       * The provider may still send the callback.
-       */
-
+    if (transactionInsertError) {
       console.error(
-        "Failed to store M-Pesa transaction:",
-        mpesaInsertError.message,
+        "Failed to save M-Pesa transaction after provider acceptance:",
+        transactionInsertError,
       );
 
-      return response(
+      return businessError(
+        "M-Pesa accepted the payment request, but K-Tickets could not save the payment record. Please do not retry immediately.",
         {
-          success: false,
-          error:
-            "M-Pesa request was sent, but the payment record could not be saved. Please contact support before retrying.",
           provider_request_received: true,
+          checkout_request_id: checkoutRequestId,
         },
-        500,
       );
     }
 
     /*
-     * ---------------------------------------------------------
-     * 20. Mark payment as processing
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | UPDATE PAYMENT
+    |--------------------------------------------------------------------------
+    */
 
     const {
       error: paymentUpdateError,
-    } = await adminSupabase
+    } = await adminClient
       .from("payments")
       .update({
         provider: "mpesa",
         status: "processing",
         reference: checkoutRequestId,
-        provider_transaction_id:
-          checkoutRequestId,
-        transaction_id:
-          checkoutRequestId,
+        provider_transaction_id: checkoutRequestId,
+        transaction_id: checkoutRequestId,
         updated_at: new Date().toISOString(),
       })
       .eq("id", payment.id)
@@ -929,28 +1157,17 @@ Deno.serve(async (req) => {
     if (paymentUpdateError) {
       console.error(
         "Payment update failed after STK acceptance:",
-        paymentUpdateError.message,
+        paymentUpdateError,
       );
-
-      /*
-       * Do not tell the customer to retry.
-       * The M-Pesa callback remains the source of truth.
-       */
     }
 
     /*
-     * ---------------------------------------------------------
-     * 21. Return safe response to browser
-     *
-     * Never return:
-     * - access token
-     * - consumer secret
-     * - passkey
-     * - service role key
-     * ---------------------------------------------------------
-     */
+    |--------------------------------------------------------------------------
+    | SUCCESS
+    |--------------------------------------------------------------------------
+    */
 
-    return response({
+    return jsonResponse({
       success: true,
       message:
         "M-Pesa payment request sent. Check your phone and enter your M-Pesa PIN.",
@@ -960,22 +1177,27 @@ Deno.serve(async (req) => {
       merchant_request_id:
         merchantRequestId || null,
       phone_number: phone,
+
+      /* KES amount requested from M-Pesa */
       amount: amountKes,
       amount_kes: amountKes,
-      amount_kwd: amount,
+
+      /* Original order total */
+      amount_kwd: orderAmount,
+
       exchange_rate: exchangeRate,
       currency: "KES",
-      order_currency: order.currency || payment.currency || "KWD",
+      order_currency: order.currency,
     });
   } catch (error) {
     console.error(
-      "mpesa-stk error:",
+      "mpesa-stk unexpected error:",
       error instanceof Error
         ? error.message
-        : "Unknown error",
+        : error,
     );
 
-    return response(
+    return jsonResponse(
       {
         success: false,
         error:
@@ -987,12 +1209,3 @@ Deno.serve(async (req) => {
     );
   }
 });
-
-function stkResponseSuccessful(
-  httpStatus: number,
-  responseCode: string,
-): boolean {
-  return httpStatus >= 200 &&
-    httpStatus < 300 &&
-    responseCode === "0";
-}
