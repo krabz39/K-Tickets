@@ -1511,7 +1511,20 @@
             }
         }
 
-    </style>
+    
+.mpesa-conversion{
+    margin:14px 0;
+    padding:12px 14px;
+    border:1px solid rgba(15,61,58,.14);
+    border-radius:12px;
+    background:rgba(15,61,58,.05);
+    color:var(--text,#1e2928);
+    font-size:12px;
+    line-height:1.6;
+}
+.mpesa-conversion strong{color:var(--green,#0F3D3A)}
+
+</style>
 
 </head>
 
@@ -1951,6 +1964,16 @@
                             Do not enter your M-Pesa PIN on this website.
 
                         </p>
+
+
+                        <div
+                            class="mpesa-conversion"
+                            id="mpesaConversionPreview"
+                            role="status"
+                            aria-live="polite"
+                        >
+                            Loading the current KWD-to-KES exchange rate…
+                        </div>
 
 
                         <button
@@ -2481,6 +2504,9 @@ let ticketTypeMap =
     new Map();
 
 let currentPayment =
+    null;
+
+let mpesaExchangeRate =
     null;
 
 let selectedMethod =
@@ -3862,6 +3888,10 @@ function renderOrder(){
 
 
     renderCurrentPaymentSummary();
+
+    // Display the current KWD-to-KES estimate. The Edge Function
+    // independently reloads the rate and computes the real STK amount.
+    loadMpesaConversionPreview();
 }
 
 
@@ -4014,6 +4044,64 @@ function setupMethodSelection(){
    M-PESA
    ================================================================ */
 
+/* ================================================================
+   M-PESA CONVERSION PREVIEW
+   ================================================================ */
+
+async function loadMpesaConversionPreview(){
+
+    const preview = $("mpesaConversionPreview");
+    if(!preview || !order) return;
+
+    const currency = String(order.currency || "").trim().toUpperCase();
+    const amountKwd = Number(order.total);
+
+    if(currency !== "KWD"){
+        preview.textContent =
+            "M-Pesa conversion is configured for KWD orders. Please contact support if this order uses another currency.";
+        return;
+    }
+
+    if(!Number.isFinite(amountKwd) || amountKwd <= 0){
+        preview.textContent =
+            "The order amount could not be calculated. The payment cannot proceed until the order is corrected.";
+        return;
+    }
+
+    preview.textContent = "Loading the current KWD-to-KES exchange rate…";
+
+    try{
+        const { data, error } = await supabaseClient
+            .from("platform_settings")
+            .select("exchange_rate")
+            .eq("id", "global")
+            .maybeSingle();
+
+        if(error) throw error;
+
+        const rate = Number(data?.exchange_rate);
+        if(!Number.isFinite(rate) || rate <= 0){
+            throw new Error("The exchange rate is not configured.");
+        }
+
+        mpesaExchangeRate = rate;
+        const amountKes = Math.round(amountKwd * rate);
+
+        preview.innerHTML =
+            `M-Pesa will request approximately <strong>${formatMoney(amountKes, "KES")}</strong>. ` +
+            `Order total: ${escapeHtml(formatMoney(amountKwd, "KWD"))}; ` +
+            `rate: 1 KWD = ${escapeHtml(rate.toLocaleString(undefined, {maximumFractionDigits: 4}))} KES. ` +
+            `The server confirms the final amount before sending the STK Push.`;
+
+    }catch(error){
+        console.warn("Could not load M-Pesa conversion preview:", error);
+        mpesaExchangeRate = null;
+        preview.textContent =
+            "The current exchange-rate preview is unavailable. The server will verify the saved rate before sending any M-Pesa request.";
+    }
+}
+
+
 async function startMpesaPayment(){
 
     hideError();
@@ -4157,6 +4245,7 @@ async function startMpesaPayment(){
         ){
 
             throw new Error(
+                data.error ||
                 data.message ||
                 "The M-Pesa payment request could not be started."
             );
@@ -4169,6 +4258,15 @@ async function startMpesaPayment(){
 
         await refreshOrderState();
 
+        if(data && Number.isFinite(Number(data.amount_kes))){
+            const preview = $("mpesaConversionPreview");
+            if(preview){
+                preview.textContent =
+                    `STK Push requested: ${formatMoney(Number(data.amount_kes), "KES")} ` +
+                    `(converted from ${formatMoney(Number(data.amount_kwd), "KWD")} ` +
+                    `at 1 KWD = ${Number(data.exchange_rate).toLocaleString(undefined, {maximumFractionDigits: 4})} KES).`;
+            }
+        }
 
         button.textContent =
             "Waiting for confirmation...";
