@@ -2042,7 +2042,7 @@ const urlParams =
     );
 
 
-let ticketId =
+const ticketId =
     urlParams.get(
         "id"
     );
@@ -2431,76 +2431,102 @@ async function loadProfile(){
 
 async function loadTicket(){
 
-    /*
-        If the page was opened without ?id=..., load the most recently
-        issued ticket belonging to the signed-in customer. When an ID is
-        supplied, keep the strict ID + owner filter below.
-    */
+    if(!ticketId){
 
-    const ticketColumns = `
-        id,
-        order_id,
-        order_item_id,
-        user_id,
-        event_id,
-        ticket_type_id,
-        ticket_code,
-        qr_token,
-        status,
-        issued_at,
-        checked_in_at,
-        checked_in_by,
-        created_at,
-        updated_at
-    `;
-
-    let ticketQuery = supabaseClient
-        .from("tickets")
-        .select(ticketColumns)
-        .eq("user_id", currentUser.id);
-
-    if(ticketId){
-        ticketQuery = ticketQuery.eq("id", ticketId);
-    }else{
-        ticketQuery = ticketQuery
-            .order("issued_at", { ascending: false, nullsFirst: false })
-            .order("created_at", { ascending: false })
-            .limit(1);
+        throw new Error(
+            "No ticket was selected."
+        );
     }
 
-    const { data, error } = await ticketQuery.maybeSingle();
+
+    /*
+        Critical ownership condition.
+
+        Even when the user changes:
+
+            ?id=<OTHER_TICKET>
+
+        the database query remains scoped to:
+
+            user_id = auth.uid()
+    */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("tickets")
+            .select(`
+                id,
+                order_id,
+                order_item_id,
+                user_id,
+                event_id,
+                ticket_type_id,
+                ticket_code,
+                qr_token,
+                status,
+                issued_at,
+                checked_in_at,
+                checked_in_by,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "id",
+                ticketId
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .maybeSingle();
+
 
     if(error){
+
         throw error;
     }
 
+
     if(!data){
+
         throw new Error(
-            ticketId
-                ? "This ticket does not exist or you do not have access to it."
-                : "No ticket was found in your account yet. Open My Tickets and select a ticket after your payment is confirmed."
+            "This ticket does not exist or you do not have access to it."
         );
     }
 
-    // Save the resolved ID so realtime updates can subscribe correctly.
-    ticketId = data.id;
 
-    /* A real issued QR credential is required; never fabricate one. */
-    if(!data.qr_token){
+    /*
+        A QR token is required for the issued ticket.
+
+        Do not silently replace it with the ticket ID.
+    */
+
+    if(
+        !data.qr_token
+    ){
+
         throw new Error(
-            "This ticket has not received a valid QR credential yet. Please contact K-Tickets support."
+            "This ticket has not received a valid QR credential yet."
         );
     }
 
-    ticketRecord = data;
+
+    ticketRecord =
+        data;
+
 
     await Promise.all([
         loadEvent(),
         loadTicketType()
     ]);
 
+
     renderTicket();
 }
+
 
 /* ================================================================
    EVENT

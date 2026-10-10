@@ -562,9 +562,6 @@ a{
 ============================================================ */
 
 .event-grid{
-**Part 2 of 9 — rest of the CSS and the page layout.** Continue immediately after Part 1.
-
-```html
     margin-top:17px;
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
@@ -1400,6 +1397,770 @@ a{
     </a>
 
 </nav>
+
+<script>
+"use strict";
+
+/*
+============================================================
+K-TICKETS CUSTOMER EVENT MARKETPLACE
+============================================================
+
+STRICT DATA RULE:
+
+There are NO hardcoded production event records in this file.
+
+Dynamic sources:
+
+- Supabase Auth
+- public.profiles
+- public.events
+- public.ticket_types
+- get_available_ticket_quantity(uuid)
+- public.notifications
+
+Dynamic content includes:
+
+- event names
+- event descriptions
+- event categories
+- event dates
+- event times
+- event locations
+- event images
+- organizer information when supplied by the event record
+- ticket prices
+- currencies
+- available quantities
+- featured event
+- category filters
+- result counts
+
+Static content is UI/application configuration only.
+
+The browser never creates an order from this page.
+
+The selected event is passed to event-details.html.
+
+That page then passes ticket selections to checkout.html.
+
+The authoritative purchase operation is:
+
+create_checkout_order()
+
+============================================================
+*/
+
+/* ============================================================
+   SUPABASE
+============================================================ */
+
+const SUPABASE_URL =
+    "https://mdzlfejdvifxxsreuzwz.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_MxmMaG9dr2IhvDF1PSwT4Q_KUflsVA6";
+
+let supabaseClient = null;
+
+let currentUser = null;
+let currentProfile = null;
+
+let allEvents = [];
+let filteredEvents = [];
+
+let activeCategory = "all";
+
+let loading = false;
+
+/* ============================================================
+   URL STATE
+============================================================ */
+
+const urlParams =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const initialSearch =
+    cleanValue(
+        urlParams.get("search")
+    );
+
+/* ============================================================
+   ELEMENTS
+============================================================ */
+
+const sidebar =
+    document.getElementById(
+        "sidebar"
+    );
+
+const searchInput =
+    document.getElementById(
+        "searchInput"
+    );
+
+const filterBar =
+    document.getElementById(
+        "filterBar"
+    );
+
+const sortSelect =
+    document.getElementById(
+        "sortSelect"
+    );
+
+const eventGrid =
+    document.getElementById(
+        "eventGrid"
+    );
+
+const loadingState =
+    document.getElementById(
+        "loadingState"
+    );
+
+const emptyState =
+    document.getElementById(
+        "emptyState"
+    );
+
+const emptyMessage =
+    document.getElementById(
+        "emptyMessage"
+    );
+
+const resultsCount =
+    document.getElementById(
+        "resultsCount"
+    );
+
+const pageError =
+    document.getElementById(
+        "pageError"
+    );
+
+const featuredSection =
+    document.getElementById(
+        "featuredSection"
+    );
+
+/* ============================================================
+   INIT SUPABASE
+============================================================ */
+
+function initializeSupabase(){
+
+    if(
+        !SUPABASE_URL ||
+        !SUPABASE_PUBLISHABLE_KEY
+    ){
+
+        throw new Error(
+            "Supabase configuration is missing."
+        );
+    }
+
+    if(
+        !window.supabase?.createClient
+    ){
+
+        throw new Error(
+            "Supabase client library could not be loaded."
+        );
+    }
+
+    supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY,
+            {
+                auth:{
+                    persistSession:true,
+                    autoRefreshToken:true,
+                    detectSessionInUrl:true
+                }
+            }
+        );
+}
+
+/* ============================================================
+   SESSION
+============================================================ */
+
+async function loadSession(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getSession();
+
+    if(error){
+
+        throw new Error(
+            `Session verification failed: ${error.message}`
+        );
+    }
+
+    if(
+        !data?.session?.user
+    ){
+
+        redirectToLogin(
+            "no_session"
+        );
+
+        return null;
+    }
+
+    currentUser =
+        data.session.user;
+
+    return currentUser;
+}
+
+/* ============================================================
+   PROFILE
+============================================================ */
+
+async function loadProfile(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                phone,
+                role,
+                is_active,
+                avatar_url
+            `)
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
+
+    if(error){
+
+        throw new Error(
+            `Customer profile could not be loaded: ${error.message}`
+        );
+    }
+
+    if(!data){
+
+        throw new Error(
+            "No K-Tickets profile exists for this account."
+        );
+    }
+
+    if(
+        data.is_active !== true
+    ){
+
+        await safeSignOut();
+
+        redirectToLogin(
+            "account_inactive"
+        );
+
+        throw new Error(
+            "This K-Tickets account is inactive."
+        );
+    }
+
+    const role =
+        cleanValue(
+            data.role
+        )
+            .toLowerCase();
+
+    if(
+        role !== "customer"
+    ){
+
+        routeByRole(
+            role
+        );
+
+        throw new Error(
+            "Redirecting to your K-Tickets portal."
+        );
+    }
+
+    currentProfile =
+        data;
+
+    renderIdentity();
+}
+
+/* ============================================================
+   ROLE ROUTING
+============================================================ */
+
+function routeByRole(
+    role
+){
+
+    const routes = {
+        merchant:
+            "../merchant/dashboard.html",
+
+        gate_staff:
+            "../gate/scan.html",
+
+        admin:
+            "../admin/dashboard.html"
+    };
+
+    if(
+        routes[role]
+    ){
+
+        window.location.replace(
+            routes[role]
+        );
+
+        return;
+    }
+
+    redirectToLogin(
+        "unauthorized"
+    );
+}
+
+/* ============================================================
+   IDENTITY
+============================================================ */
+
+function renderIdentity(){
+
+    const name =
+        cleanValue(
+            currentProfile?.full_name
+        ) ||
+        cleanValue(
+            currentUser?.user_metadata?.full_name
+        ) ||
+        cleanValue(
+            currentUser?.email
+        ) ||
+        "Account";
+
+    document.getElementById(
+        "profileName"
+    ).textContent =
+        name;
+
+    document.getElementById(
+        "avatar"
+    ).textContent =
+        getInitials(
+            name
+        );
+}
+
+/* ============================================================
+   LOAD EVENTS
+============================================================ */
+
+async function loadEvents(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("events")
+            .select("*");
+
+    if(error){
+
+        throw new Error(
+            `Events could not be loaded: ${error.message}`
+        );
+    }
+
+    const rawEvents =
+        Array.isArray(data)
+            ? data
+            : [];
+
+    /*
+    Customer marketplace filtering happens only against
+    fields that actually exist in the returned records.
+
+    Supabase RLS remains the primary visibility control.
+    */
+
+    allEvents =
+        rawEvents
+            .filter(
+                event =>
+                    isEventVisibleToCustomer(
+                        event
+                    )
+            );
+
+    /*
+    Load active ticket types for all visible events in one query.
+    */
+
+    await enrichEventsWithTickets();
+
+    /*
+    Remove events that have no ticket data only when the event
+    clearly requires ticketing and the platform's ticket records
+    are available.
+
+    Events without ticket types remain viewable so customers can
+    still open their details page.
+    */
+
+    sortAllEvents();
+
+    buildCategoryFilters();
+
+    renderFeatured();
+
+    applyFiltersAndRender();
+}
+
+/* ============================================================
+   EVENT VISIBILITY
+============================================================ */
+
+function isEventVisibleToCustomer(
+    event
+){
+
+    if(!event){
+        return false;
+    }
+
+    /*
+    These checks only apply when the respective fields exist.
+    This avoids inventing a required schema column.
+    */
+
+    if(
+        hasOwn(
+            event,
+            "active"
+        ) &&
+        event.active === false
+    ){
+        return false;
+    }
+
+    if(
+        hasOwn(
+            event,
+            "is_active"
+        ) &&
+        event.is_active === false
+    ){
+        return false;
+    }
+
+    if(
+        hasOwn(
+            event,
+            "is_published"
+        ) &&
+        event.is_published === false
+    ){
+        return false;
+    }
+
+    if(
+        hasOwn(
+            event,
+            "published"
+        ) &&
+        event.published === false
+    ){
+        return false;
+    }
+
+    const status =
+        cleanValue(
+            event.status
+        )
+            .toLowerCase();
+
+    if(
+        [
+            "draft",
+            "cancelled",
+            "canceled",
+            "archived",
+            "inactive",
+            "deleted"
+        ].includes(
+            status
+        )
+    ){
+        return false;
+    }
+
+    /*
+    When a clear end date/time exists, remove already-ended
+    events from the upcoming marketplace.
+    */
+
+    const end =
+        getEventEnd(
+            event
+        );
+
+    if(
+        end &&
+        end.getTime() < Date.now()
+    ){
+
+        return false;
+    }
+
+    return true;
+}
+
+/* ============================================================
+   TICKET ENRICHMENT
+============================================================ */
+
+async function enrichEventsWithTickets(){
+
+    const eventIds =
+        allEvents
+            .map(
+                event =>
+                    event.id
+            )
+            .filter(Boolean)
+            .map(
+                id =>
+                    String(id)
+            );
+
+    allEvents.forEach(
+        event => {
+
+            event.ticket_types =
+                [];
+
+            event.minimum_ticket_price =
+                null;
+
+            event.minimum_ticket_currency =
+                "";
+
+            event.availability =
+                null;
+
+            event.ticket_data_loaded =
+                false;
+
+        }
+    );
+
+    if(!eventIds.length){
+        return;
+    }
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("ticket_types")
+            .select("*")
+            .in(
+                "event_id",
+                eventIds
+            )
+            .eq(
+                "active",
+                true
+            )
+            .order(
+                "price",
+                {
+                    ascending:true,
+                    nullsFirst:false
+                }
+            );
+
+    if(error){
+
+        throw new Error(
+            `Ticket information could not be loaded: ${error.message}`
+        );
+    }
+
+    const ticketTypes =
+        Array.isArray(data)
+            ? data
+            : [];
+
+    const eventMap =
+        new Map();
+
+    allEvents.forEach(
+        event => {
+
+            eventMap.set(
+                String(
+                    event.id
+                ),
+                event
+            );
+        }
+    );
+
+    ticketTypes.forEach(
+        ticket => {
+
+            const event =
+                eventMap.get(
+                    String(
+                        ticket.event_id
+                    )
+                );
+
+            if(!event){
+                return;
+            }
+
+            event.ticket_types.push(
+                ticket
+            );
+
+        }
+    );
+
+    /*
+    Query secure availability for each visible active ticket type.
+
+    This prevents the marketplace from treating quantity_sold
+    alone as the final real-time available quantity when
+    reservations exist.
+    */
+
+    await enrichTicketAvailability();
+
+    allEvents.forEach(
+        event => {
+
+            event.minimum_ticket_price =
+                getMinimumTicketPrice(
+                    event.ticket_types
+                );
+
+            event.minimum_ticket_currency =
+                getMinimumTicketCurrency(
+                    event.ticket_types
+                );
+
+            event.availability =
+                getEventAvailability(
+                    event.ticket_types
+                );
+
+            event.ticket_data_loaded =
+                true;
+        }
+    );
+}
+
+/* ============================================================
+   LIVE TICKET AVAILABILITY
+============================================================ */
+
+async function enrichTicketAvailability(){
+
+    const ticketTypes =
+        allEvents
+            .flatMap(
+                event =>
+                    event.ticket_types ||
+                    []
+            );
+
+    if(!ticketTypes.length){
+        return;
+    }
+
+    /*
+    Keep RPC calls bounded to currently visible ticket types.
+    The authoritative purchase operation still rechecks
+    inventory inside create_checkout_order().
+    */
+
+    await Promise.all(
+        ticketTypes.map(
+            async ticket => {
+
+                try{
+
+                    const {
+                        data,
+                        error
+                    } =
+                        await supabaseClient.rpc(
+                            "get_available_ticket_quantity",
+                            {
+                                p_ticket_type_id:
+                                    ticket.id
+                            }
+                        );
+
+                    if(error){
+                        throw error;
+                    }
+
+                    ticket.available_quantity =
+                        parseAvailableQuantity(
+                            data
+                        );
+
+                    ticket.availability_source =
+                        "rpc";
+
+                }catch(error){
+
+                    /*
+                    Display fallback using current database
+                    snapshot. It is explicitly not treated as
+                    authoritative for purchase.
+                    */
+
+                    console.warn(
+                        "Live availability unavailable for ticket:",
+                        ticket.id,
+                        error
+                    );
+
+                    ticket.available_quantity =
+                        calculateSnapshotAvailability(
+                            ticket
+                        );
+
+                    ticket.availability_source =
+                        "snapshot";
+                }
+            }
+        )
+    );
+}
+
 function parseAvailableQuantity(
     value
 ){
@@ -1994,6 +2755,7 @@ function createSortControl(){
             applyFiltersAndRender
         );
 }
+
 /* ============================================================
    FEATURED EVENT
 ============================================================ */
@@ -2087,517 +2849,7 @@ function renderFeatured(){
         );
 
     link.href =
-        "event.html?id=" +
-        encodeURIComponent(
-            featured.id
-        );
-}
-
-function renderFeaturedMeta(
-    event
-){
-
-    const container =
-        document.getElementById(
-            "featuredMeta"
-        );
-
-    container.innerHTML =
-        "";
-
-    const metaValues = [
-        formatEventDate(
-            getEventDate(
-                event
-            )
-        ),
-
-        getEventLocation(
-            event
-        ),
-
-        getStartingPriceText(
-            event
-        )
-    ]
-        .filter(Boolean);
-
-    metaValues.forEach(
-        value => {
-
-            const span =
-                document.createElement(
-                    "span"
-                );
-
-            span.textContent =
-                value;
-
-            container.appendChild(
-                span
-            );
-        }
-    );
-}
-
-/* ============================================================
-   GRID
-============================================================ */
-
-function renderEventGrid(){
-
-    eventGrid.innerHTML =
-        "";
-
-    loadingState.style.display =
-        "none";
-
-    eventGrid.hidden =
-        false;
-
-    if(!filteredEvents.length){
-
-        eventGrid.hidden =
-            true;
-
-        emptyState.classList.add(
-            "show"
-        );
-
-        const search =
-            cleanValue(
-                searchInput.value
-            );
-
-        if(
-            search ||
-            activeCategory !== "all"
-        ){
-
-            emptyMessage.textContent =
-                "Try another search or category.";
-        }else{
-
-            emptyMessage.textContent =
-                "There are currently no available events listed on K-Tickets.";
-        }
-
-        return;
-    }
-
-    emptyState.classList.remove(
-        "show"
-    );
-
-    filteredEvents.forEach(
-        event => {
-
-            eventGrid.appendChild(
-                createEventCard(
-                    event
-                )
-            );
-        }
-    );
-}
-
-/* ============================================================
-   EVENT CARD
-============================================================ */
-
-function createEventCard(
-    event
-){
-
-    const card =
-        document.createElement(
-            "article"
-        );
-
-    card.className =
-        "event-card";
-
-    const cover =
-        document.createElement(
-            "div"
-        );
-
-    cover.className =
-        "event-cover";
-
-    const image =
-        getEventImageUrl(
-            event
-        );
-
-    if(image){
-
-        cover.classList.add(
-            "has-image"
-        );
-
-        cover.style.backgroundImage =
-            `url("${escapeCSSUrl(image)}")`;
-    }
-
-    const dateBox =
-        document.createElement(
-            "div"
-        );
-
-    dateBox.className =
-        "date-box";
-
-    const date =
-        getEventStart(
-            event
-        );
-
-    const dateDay =
-        date
-            ? date.getDate()
-            : "—";
-
-    const dateMonth =
-        date
-            ? date.toLocaleDateString(
-                undefined,
-                {
-                    month:"short"
-                }
-            )
-            : "TBA";
-
-    dateBox.innerHTML = `
-        <strong>${escapeHTML(dateDay)}</strong>
-        <span>${escapeHTML(dateMonth)}</span>
-    `;
-
-    const coverTitle =
-        document.createElement(
-            "div"
-        );
-
-    coverTitle.className =
-        "cover-title";
-
-    const organizer =
-        getEventOrganizer(
-            event
-        );
-
-    const coverSmall =
-        document.createElement(
-            "small"
-        );
-
-    coverSmall.textContent =
-        organizer ||
-        getEventCategory(
-            event
-        ) ||
-        "K-Tickets Event";
-
-    const coverStrong =
-        document.createElement(
-            "strong"
-        );
-
-    coverStrong.textContent =
-        getEventTitle(
-            event
-        ) ||
-        "Event";
-
-    coverTitle.appendChild(
-        coverSmall
-    );
-
-    coverTitle.appendChild(
-        coverStrong
-    );
-
-    cover.appendChild(
-        dateBox
-    );
-
-    cover.appendChild(
-        coverTitle
-    );
-
-    const body =
-        document.createElement(
-            "div"
-        );
-
-    body.className =
-        "event-body";
-
-    const category =
-        document.createElement(
-            "div"
-        );
-
-    category.className =
-        "event-category";
-
-    category.textContent =
-        getEventCategory(
-            event
-        ) ||
-        "Experience";
-
-    const title =
-        document.createElement(
-            "h3"
-        );
-
-    title.textContent =
-        getEventTitle(
-            event
-        ) ||
-        "Event";
-
-    const info =
-        document.createElement(
-            "div"
-        );
-
-    info.className =
-        "event-info";
-
-    const dateText =
-        formatEventDate(
-            getEventDate(
-                event
-            )
-        );
-
-    const timeText =
-        getEventTime(
-            event
-        );
-
-    const locationText =
-        getEventLocation(
-            event
-        );
-
-    const organizerText =
-        getEventOrganizer(
-            event
-        );
-
-    if(dateText){
-        info.appendChild(
-            createInfoLine(
-                "📅",
-                dateText
-            )
-        );
-    }
-
-    if(timeText){
-        info.appendChild(
-            createInfoLine(
-                "🕒",
-                timeText
-            )
-        );
-    }
-
-    if(locationText){
-        info.appendChild(
-            createInfoLine(
-                "📍",
-                locationText
-            )
-        );
-    }
-
-    if(organizerText){
-        info.appendChild(
-            createInfoLine(
-                "✦",
-                organizerText
-            )
-        );
-    }
-
-    const footer =
-        document.createElement(
-            "div"
-        );
-
-    footer.className =
-        "event-footer";
-
-    const priceBox =
-        createPriceBox(
-            event
-        );
-
-    const viewButton =
-        document.createElement(
-            "a"
-        );
-
-    viewButton.className =
-        "view-btn";
-
-    viewButton.href =
-        "event.html?id=" +
-        encodeURIComponent(
-            event.id
-        );
-
-    viewButton.textContent =
-        "View Event";
-
-    footer.appendChild(
-        priceBox
-    );
-
-    footer.appendChild(
-        viewButton
-    );
-
-    body.appendChild(
-        category
-    );
-
-    body.appendChild(
-        title
-    );
-
-    body.appendChild(
-        info
-    );
-
-    body.appendChild(
-        footer
-    );
-
-    card.appendChild(
-        cover
-    );
-
-    card.appendChild(
-        body
-    );
-
-    return card;
-}
-
-function createInfoLine(
-    icon,
-    text
-){
-
-    const line =
-        document.createElement(
-            "div"
-        );
-
-    line.textContent =
-        `${icon} ${text}`;
-
-    return line;
-}
-/* ============================================================
-   FEATURED EVENT
-============================================================ */
-
-function renderFeatured(){
-
-    if(!allEvents.length){
-
-        featuredSection.hidden =
-            true;
-
-        return;
-    }
-
-    /*
-    Prefer an actual featured marker if the database contains one.
-    Otherwise use the first upcoming event. No fabricated event
-    is inserted.
-    */
-
-    const featured =
-        allEvents.find(
-            event =>
-                event.is_featured === true ||
-                event.featured === true
-        ) ||
-        [...allEvents]
-            .sort(
-                compareEventDates
-            )[0];
-
-    if(!featured){
-
-        featuredSection.hidden =
-            true;
-
-        return;
-    }
-
-    featuredSection.hidden =
-        false;
-
-    document.getElementById(
-        "featuredTitle"
-    ).textContent =
-        getEventTitle(
-            featured
-        ) ||
-        "Event";
-
-    document.getElementById(
-        "featuredDescription"
-    ).textContent =
-        getEventShortDescription(
-            featured
-        ) ||
-        getEventDescription(
-            featured
-        ) ||
-        "Explore this event on K-Tickets.";
-
-    renderFeaturedMeta(
-        featured
-    );
-
-    const image =
-        getEventImageUrl(
-            featured
-        );
-
-    featuredSection.classList.remove(
-        "has-image"
-    );
-
-    featuredSection.style.backgroundImage =
-        "";
-
-    if(image){
-
-        featuredSection.classList.add(
-            "has-image"
-        );
-
-        featuredSection.style.backgroundImage =
-            `url("${escapeCSSUrl(image)}")`;
-    }
-
-    const link =
-        document.getElementById(
-            "featuredLink"
-        );
-
-    link.href =
-        "event.html?id=" +
+        "event-details.html?id=" +
         encodeURIComponent(
             featured.id
         );
@@ -3076,7 +3328,7 @@ function createEventCard(
         "view-btn";
 
     viewButton.href =
-        "event.html?id=" +
+        "event-details.html?id=" +
         encodeURIComponent(
             event.id
         );
@@ -3118,6 +3370,7 @@ function createEventCard(
 
     return card;
 }
+
 /* ============================================================
    RESULTS COUNT
 ============================================================ */
@@ -3851,6 +4104,7 @@ function getOriginalStartingPrice(
             )
     };
 }
+
 function getAvailabilityText(
     event
 ){
@@ -4239,6 +4493,7 @@ function escapeCSSUrl(
 ============================================================ */
 
 createSortControl();
+
 /* ============================================================
    NOTIFICATIONS
 ============================================================ */
