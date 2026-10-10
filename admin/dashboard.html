@@ -753,6 +753,40 @@ a{
     display:block;
 }
 
+
+/* =========================================================
+   PAYMENT CONFIGURATION
+========================================================= */
+.settings-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+}
+.settings-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.settings-field label{font-size:11px;font-weight:800;color:var(--muted)}
+.settings-field input{
+    width:100%;min-height:44px;padding:11px 12px;border:1px solid var(--border);
+    border-radius:10px;background:#fff;color:var(--text);outline:none;
+}
+.settings-field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(15,61,58,.08)}
+.settings-help{font-size:11px;color:var(--muted);line-height:1.5}
+.settings-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+.primary-btn{
+    border:0;border-radius:10px;background:var(--green);color:#fff;
+    padding:12px 16px;font-weight:800;font-size:12px;
+}
+.primary-btn:hover{filter:brightness(1.08)}
+.primary-btn:disabled{opacity:.6;cursor:wait}
+.settings-message{font-size:12px;font-weight:700;min-height:18px}
+.settings-message.success{color:var(--success)}
+.settings-message.error{color:var(--danger)}
+.settings-preview{
+    margin-top:16px;padding:13px 15px;border-radius:11px;
+    background:rgba(15,61,58,.05);font-size:12px;line-height:1.6;
+}
+@media(max-width:1100px){.settings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.settings-grid{grid-template-columns:1fr}}
+
 /* =========================================================
    RESPONSIVE
 ========================================================= */
@@ -1366,6 +1400,52 @@ a{
 
             </section>
 
+            <!-- =================================================
+                 PAYMENT CONFIGURATION
+            ================================================== -->
+            <section class="card" style="margin-bottom:20px">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Payment & Currency Settings</div>
+                        <div class="card-subtitle">Saved in Supabase and editable by administrators</div>
+                    </div>
+                    <span class="status-state warning" id="paymentSettingsStatus">Loading</span>
+                </div>
+                <div class="card-body">
+                    <form id="paymentSettingsForm">
+                        <div class="settings-grid">
+                            <div class="settings-field">
+                                <label for="exchangeRate">Exchange rate (KES per 1 KWD)</label>
+                                <input id="exchangeRate" name="exchangeRate" type="number" min="0.0001" step="0.0001" value="427" required>
+                                <div class="settings-help">Example: 2 KWD × 427 = 854 KES.</div>
+                            </div>
+                            <div class="settings-field">
+                                <label for="platformFeePercent">Platform service fee (%)</label>
+                                <input id="platformFeePercent" name="platformFeePercent" type="number" min="0" max="100" step="0.01" value="0" required>
+                                <div class="settings-help">Percentage charged by the platform.</div>
+                            </div>
+                            <div class="settings-field">
+                                <label for="mpesaFeePercent">M-Pesa fee (%)</label>
+                                <input id="mpesaFeePercent" name="mpesaFeePercent" type="number" min="0" max="100" step="0.01" value="0" required>
+                                <div class="settings-help">Configurable M-Pesa-related fee rate.</div>
+                            </div>
+                            <div class="settings-field">
+                                <label for="wamdFeePercent">WAMD fee (%)</label>
+                                <input id="wamdFeePercent" name="wamdFeePercent" type="number" min="0" max="100" step="0.01" value="0" required>
+                                <div class="settings-help">Configurable WAMD-related fee rate.</div>
+                            </div>
+                        </div>
+                        <div class="settings-preview" id="paymentSettingsPreview">
+                            Example conversion: 2 KWD = 854 KES at a rate of 427.
+                        </div>
+                        <div class="settings-actions">
+                            <button class="primary-btn" id="savePaymentSettingsBtn" type="submit">Save Payment Settings</button>
+                            <span class="settings-message" id="paymentSettingsMessage" role="status" aria-live="polite"></span>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
 
             <!-- =================================================
                  DASHBOARD GRID
@@ -1890,6 +1970,18 @@ const activityList =
 const databaseStatus =
     document.getElementById("databaseStatus");
 
+const paymentSettingsForm =
+    document.getElementById("paymentSettingsForm");
+
+const paymentSettingsStatus =
+    document.getElementById("paymentSettingsStatus");
+
+const paymentSettingsMessage =
+    document.getElementById("paymentSettingsMessage");
+
+const savePaymentSettingsBtn =
+    document.getElementById("savePaymentSettingsBtn");
+
 
 /* =========================================================
    ESCAPE HTML
@@ -2206,6 +2298,130 @@ function applyIdentity(){
 
 
 /* =========================================================
+   PAYMENT SETTINGS (Supabase table: platform_settings)
+========================================================= */
+
+function getPaymentSettingsValues(){
+    return {
+        exchange_rate: Number(document.getElementById("exchangeRate").value),
+        platform_fee_percent: Number(document.getElementById("platformFeePercent").value),
+        mpesa_fee_percent: Number(document.getElementById("mpesaFeePercent").value),
+        wamd_fee_percent: Number(document.getElementById("wamdFeePercent").value)
+    };
+}
+
+function updatePaymentSettingsPreview(){
+    const values = getPaymentSettingsValues();
+    const rate = Number.isFinite(values.exchange_rate) && values.exchange_rate > 0
+        ? values.exchange_rate : 0;
+    const platformFee = Number.isFinite(values.platform_fee_percent)
+        ? values.platform_fee_percent : 0;
+    const mpesaFee = Number.isFinite(values.mpesa_fee_percent)
+        ? values.mpesa_fee_percent : 0;
+    const wamdFee = Number.isFinite(values.wamd_fee_percent)
+        ? values.wamd_fee_percent : 0;
+    const converted = Math.round(2 * rate);
+    document.getElementById("paymentSettingsPreview").textContent =
+        `Example conversion: 2 KWD = ${converted.toLocaleString("en-KE")} KES. ` +
+        `Platform fee: ${platformFee}%; M-Pesa fee: ${mpesaFee}%; WAMD fee: ${wamdFee}%.`;
+}
+
+function setPaymentSettingsStatus(label, state = "warning"){
+    paymentSettingsStatus.textContent = label;
+    paymentSettingsStatus.className = `status-state ${state}`;
+}
+
+function showPaymentSettingsMessage(message, type = ""){
+    paymentSettingsMessage.textContent = message;
+    paymentSettingsMessage.className = `settings-message ${type}`.trim();
+}
+
+async function loadPaymentSettings(){
+    setPaymentSettingsStatus("Loading", "warning");
+    try{
+        const { data, error } = await supabaseClient
+            .from("platform_settings")
+            .select("id,exchange_rate,platform_fee_percent,mpesa_fee_percent,wamd_fee_percent,updated_at")
+            .eq("id", "global")
+            .maybeSingle();
+
+        if(error) throw error;
+
+        if(data){
+            document.getElementById("exchangeRate").value = data.exchange_rate ?? 427;
+            document.getElementById("platformFeePercent").value = data.platform_fee_percent ?? 0;
+            document.getElementById("mpesaFeePercent").value = data.mpesa_fee_percent ?? 0;
+            document.getElementById("wamdFeePercent").value = data.wamd_fee_percent ?? 0;
+            setPaymentSettingsStatus("Connected", "ok");
+        }else{
+            setPaymentSettingsStatus("Not configured", "warning");
+            showPaymentSettingsMessage("Run the supplied SQL setup in Supabase, then save your settings.", "error");
+        }
+    }catch(error){
+        console.error("[K-Tickets] Payment settings load failed:", error);
+        setPaymentSettingsStatus("Setup required", "warning");
+        showPaymentSettingsMessage("Payment settings table or permissions are not ready. Run the supplied SQL setup and check admin RLS.", "error");
+    }
+    updatePaymentSettingsPreview();
+}
+
+async function savePaymentSettings(event){
+    event.preventDefault();
+    showPaymentSettingsMessage("");
+
+    const values = getPaymentSettingsValues();
+    const validPercent = value => Number.isFinite(value) && value >= 0 && value <= 100;
+
+    if(!Number.isFinite(values.exchange_rate) || values.exchange_rate <= 0){
+        showPaymentSettingsMessage("Enter an exchange rate greater than zero.", "error");
+        return;
+    }
+    if(!validPercent(values.platform_fee_percent) ||
+       !validPercent(values.mpesa_fee_percent) ||
+       !validPercent(values.wamd_fee_percent)){
+        showPaymentSettingsMessage("Each percentage must be between 0 and 100.", "error");
+        return;
+    }
+
+    savePaymentSettingsBtn.disabled = true;
+    savePaymentSettingsBtn.textContent = "Saving…";
+
+    try{
+        const payload = {
+            id: "global",
+            ...values,
+            updated_at: new Date().toISOString(),
+            updated_by: currentUser.id
+        };
+        const { error } = await supabaseClient
+            .from("platform_settings")
+            .upsert(payload, { onConflict: "id" });
+
+        if(error) throw error;
+
+        setPaymentSettingsStatus("Saved", "ok");
+        showPaymentSettingsMessage("Settings saved to Supabase.", "success");
+        updatePaymentSettingsPreview();
+    }catch(error){
+        console.error("[K-Tickets] Payment settings save failed:", error);
+        setPaymentSettingsStatus("Save failed", "error");
+        showPaymentSettingsMessage(
+            error?.message || "Could not save settings. Check the SQL table and administrator policies.",
+            "error"
+        );
+    }finally{
+        savePaymentSettingsBtn.disabled = false;
+        savePaymentSettingsBtn.textContent = "Save Payment Settings";
+    }
+}
+
+paymentSettingsForm.addEventListener("submit", savePaymentSettings);
+["exchangeRate","platformFeePercent","mpesaFeePercent","wamdFeePercent"].forEach(id => {
+    document.getElementById(id).addEventListener("input", updatePaymentSettingsPreview);
+});
+
+
+/* =========================================================
    DASHBOARD LOAD
 ========================================================= */
 
@@ -2230,7 +2446,9 @@ async function loadDashboard(){
 
             checkDatabase(),
 
-            loadNotificationState()
+            loadNotificationState(),
+
+            loadPaymentSettings()
 
         ]);
 
