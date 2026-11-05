@@ -59,6 +59,11 @@
             padding:0;
         }
 
+        /* Respect HTML hidden state even when component styles set display:grid/flex. */
+        [hidden]{
+            display:none !important;
+        }
+
         html{
             scroll-behavior:smooth;
         }
