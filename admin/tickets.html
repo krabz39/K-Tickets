@@ -1077,13 +1077,7 @@ tbody tr:hover{
 }
 </style>
 
-    <meta name="theme-color" content="#6c151e">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="../manifest.webmanifest">
-    <link rel="icon" href="../assets/icon-192.png" type="image/png">
-    <link rel="stylesheet" href="../assets/k-tickets-ui.css">
-    <link rel="apple-touch-icon" href="../assets/icon-192.png">
+<link rel="stylesheet" href="../assets/kt-redesign.css?v=2">
 </head>
 
 <body>
@@ -4166,11 +4160,5 @@ async function init(){
 init();
 </script>
 
-
-<script id="k-tickets-pwa-register">
-if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', () => navigator.serviceWorker.register('../sw.js').catch(err => console.warn('K-Tickets offline support unavailable:', err)));
-}
-</script>
 </body>
 </html>
