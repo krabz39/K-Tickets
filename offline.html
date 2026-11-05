@@ -1,0 +1,28 @@
+
+<meta name="theme-color" content="#6C151E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="K-Tickets">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="/assets/kt-icon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/kt-icon-180.png">
+<link rel="stylesheet" href="/assets/kt-premium.css">
+<script>
+(function(){
+  var p=location.pathname;
+  var role=p.indexOf('/customer/')===0?'customer':p.indexOf('/merchant/')===0?'merchant':p.indexOf('/admin/')===0?'admin':p.indexOf('/gate/')===0?'gate':'public';
+  document.documentElement.dataset.ktRole=role;
+  document.addEventListener('DOMContentLoaded',function(){
+    document.body.dataset.ktRole=role;
+    document.body.dataset.ktPage=p.split('/').pop().replace('.html','');
+  });
+})();
+</script>
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#6C151E"><title>K-Tickets offline</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0F3D3A;color:#F5DABF;font:16px system-ui;text-align:center}.box{padding:32px;max-width:420px}h1{font:42px Georgia}a{color:#fff}</style><div class="box"><h1>K-Tickets</h1><p>You’re offline. Previously saved ticket files may still be available on your device. Reconnect to browse events, make payments or verify tickets.</p><a href="/">Try again</a></div></html>
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  });
+}
+</script>

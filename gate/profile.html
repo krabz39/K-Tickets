@@ -1544,7 +1544,26 @@
     </style>
 
 
-<link rel="stylesheet" href="../assets/kt-redesign.css?v=2">
+<meta name="theme-color" content="#6C151E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="K-Tickets">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="/assets/kt-icon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/kt-icon-180.png">
+<link rel="stylesheet" href="/assets/kt-premium.css">
+<script>
+(function(){
+  var p=location.pathname;
+  var role=p.indexOf('/customer/')===0?'customer':p.indexOf('/merchant/')===0?'merchant':p.indexOf('/admin/')===0?'admin':p.indexOf('/gate/')===0?'gate':'public';
+  document.documentElement.dataset.ktRole=role;
+  document.addEventListener('DOMContentLoaded',function(){
+    document.body.dataset.ktRole=role;
+    document.body.dataset.ktPage=p.split('/').pop().replace('.html','');
+  });
+})();
+</script>
+
 </head>
 
 
@@ -4030,5 +4049,15 @@ startPage();
 </script>
 
 
+
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  });
+}
+</script>
+
+<script src="/assets/kt-app.js" defer></script>
 </body>
 </html>
