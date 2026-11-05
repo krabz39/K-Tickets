@@ -134,37 +134,63 @@ body[data-kt-role="public"] .hero-card .event-price strong{color:#0F3D3A!importa
 body[data-kt-role="public"] .navbar .nav-actions .btn-outline{color:#fff!important}
 body[data-kt-role="public"] footer,body[data-kt-role="public"] footer *{color:#fff8f0!important}
 
+/* MOBILE-FIRST PUBLIC ENTRY + CONSISTENT ICONS */
+body[data-kt-role="public"] .brand-mark{padding:0!important;overflow:hidden!important;border-radius:13px!important;display:grid!important;place-items:center!important}
+body[data-kt-role="public"] .brand-mark img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important}
+.cta-icon-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;min-height:50px!important}
+.cta-icon{width:19px;height:19px;flex:0 0 19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.account-icon svg{width:21px;height:21px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
-/* PUBLIC ENTRY + ACCOUNT CREATION VISUAL POLISH */
-body[data-kt-role="public"] .brand-mark{
-  width:46px!important;height:46px!important;border-radius:15px!important;
-  display:grid!important;place-items:center!important;flex:0 0 46px;
-  background:linear-gradient(145deg,#7b1c27,#561019)!important;
-  color:#fff8ef!important;box-shadow:0 8px 20px rgba(86,16,25,.22);
-}
-body[data-kt-role="public"] .brand-mark svg{width:27px;height:27px;display:block}
-body[data-kt-role="public"] .nav-actions{align-items:center;gap:12px}
-body[data-kt-role="public"] .nav-actions .btn{min-height:44px;padding:11px 19px;border-radius:13px;display:inline-flex;align-items:center;justify-content:center}
-body[data-kt-role="public"] .hero-actions{align-items:center;gap:14px}
-body[data-kt-role="public"] .hero-actions .btn{min-height:54px;padding:14px 21px;border-radius:15px;display:inline-flex;align-items:center;justify-content:center;gap:11px;font-size:15px;letter-spacing:.005em}
-body[data-kt-role="public"] .hero-actions .explore-cta{background:linear-gradient(135deg,#791c27,#5b111a)!important;color:#fff!important;box-shadow:0 13px 26px rgba(108,21,30,.22)!important}
-body[data-kt-role="public"] .hero-actions .explore-cta:hover{background:#4d0d15!important;box-shadow:0 16px 30px rgba(108,21,30,.28)!important}
-body[data-kt-role="public"] .hero-actions .create-cta{background:rgba(255,253,249,.72)!important;color:#0f3d3a!important;border:1px solid rgba(15,61,58,.24)!important;box-shadow:0 8px 20px rgba(15,61,58,.06)}
-body[data-kt-role="public"] .hero-actions .create-cta:hover{background:#fffdf9!important;border-color:#0f3d3a!important}
-body[data-kt-role="public"] .cta-icon{width:22px;height:22px;display:inline-grid;place-items:center}
-body[data-kt-role="public"] .cta-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-body[data-kt-role="public"] .cta-arrow{font-size:19px;line-height:1;margin-left:3px;transition:transform .2s ease}
-body[data-kt-role="public"] .explore-cta:hover .cta-arrow{transform:translateX(3px)}
-/* Create-account page: clear, consistent icon tiles and selectable cards */
-body:has(#registerForm) .account-type{gap:14px}
-body:has(#registerForm) .account-card{min-height:178px;border:1px solid #e8e1da;border-radius:18px;background:#fffdf9;transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease}
-body:has(#registerForm) .account-icon{width:48px;height:48px;border-radius:15px;background:#f7e9df;color:#6c151e;display:grid;place-items:center;font-size:0;margin-bottom:14px}
-body:has(#registerForm) .account-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-body:has(#registerForm) .account-option input:checked + .account-card{border:2px solid #6c151e;background:#fff9f5;box-shadow:0 9px 24px rgba(108,21,30,.09);transform:translateY(-2px)}
-body:has(#registerForm) .account-card strong{display:block;color:#173d39;font-size:15px}
-body:has(#registerForm) .account-card span{display:block;color:#6b625d;font-size:12px;line-height:1.55;margin-top:6px}
+/* Registration identity and form controls */
+body[data-kt-page="register"] .logo{display:inline-flex;align-items:center;gap:12px;color:#fff;text-decoration:none;font-size:23px;font-weight:850;letter-spacing:.2px}
+body[data-kt-page="register"] .logo img{width:42px;height:42px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+body[data-kt-page="register"] .account-card{min-height:142px;display:flex;flex-direction:column;justify-content:flex-start}
+body[data-kt-page="register"] .account-card:focus-visible{outline:3px solid rgba(108,21,30,.28);outline-offset:3px}
+body[data-kt-page="register"] .account-icon{width:42px;height:42px;border-radius:12px;margin-bottom:12px;background:var(--kt-bordo);color:#fff}
+body[data-kt-page="register"] .submit-btn{min-height:56px;border-radius:14px;box-shadow:0 10px 24px rgba(108,21,30,.18)}
+body[data-kt-page="register"] .field input{min-height:54px}
+
 @media(max-width:760px){
- body[data-kt-role="public"] .nav-actions .btn{padding:10px 13px;font-size:13px;min-height:41px}
- body[data-kt-role="public"] .hero-actions .btn{min-height:52px}
- body:has(#registerForm) .account-card{min-height:155px;padding:15px}
+ body[data-kt-role="public"] .navbar .nav-inner{min-height:66px}
+ body[data-kt-role="public"] .brand-mark{width:38px!important;height:38px!important}
+ body[data-kt-role="public"] .hero{min-height:unset!important;padding:48px 20px 38px!important;gap:28px!important;background-position:57% center!important}
+ body[data-kt-role="public"] .hero h1{font-size:clamp(2.75rem,12vw,4.1rem)!important;line-height:.99!important;letter-spacing:-.045em!important}
+ body[data-kt-role="public"] .hero p{font-size:16px!important;line-height:1.6!important;margin-top:18px!important}
+ body[data-kt-role="public"] .hero-actions{display:grid!important;grid-template-columns:1fr!important;gap:11px!important;margin-top:24px!important}
+ body[data-kt-role="public"] .hero-actions .btn{width:100%!important;min-height:54px!important;flex:auto!important;font-size:15px!important}
+ body[data-kt-role="public"] .hero-card{min-height:245px!important;border-radius:22px!important}
+ body[data-kt-role="public"] .hero-card-inner{padding:22px!important}
+ body[data-kt-role="public"] .hero-card h2{font-size:1.85rem!important}
+ body[data-kt-role="public"] .features{padding:44px 18px!important}
+ body[data-kt-role="public"] .features-inner{gap:12px!important}
+ body[data-kt-role="public"] .feature{padding:21px!important}
+ body[data-kt-role="public"] footer{padding:26px 20px!important}
+}
+
+@media(max-width:850px){
+ body[data-kt-page="register"] .page{display:flex!important;flex-direction:column!important;min-height:100svh!important}
+ body[data-kt-page="register"] .brand-panel{min-height:unset!important;padding:20px 22px 22px!important;gap:18px!important}
+ body[data-kt-page="register"] .brand-panel::before,body[data-kt-page="register"] .brand-panel::after{opacity:.45}
+ body[data-kt-page="register"] .brand-content h1{font-size:clamp(30px,7vw,42px)!important;line-height:1.02!important;letter-spacing:-1.5px!important;margin:0 0 9px!important}
+ body[data-kt-page="register"] .brand-content p{font-size:14px!important;line-height:1.45!important}
+ body[data-kt-page="register"] .points{display:none!important}
+ body[data-kt-page="register"] .form-panel{padding:26px 20px 34px!important;align-items:flex-start!important}
+ body[data-kt-page="register"] .form-container{max-width:540px!important}
+ body[data-kt-page="register"] .form-header{margin-bottom:20px!important}
+ body[data-kt-page="register"] .form-header h2{font-size:clamp(29px,7vw,36px)!important}
+ body[data-kt-page="register"] .account-type{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ body[data-kt-page="register"] .account-card{min-height:145px!important;padding:14px!important}
+ body[data-kt-page="register"] .account-card span{font-size:11px!important}
+ body[data-kt-page="register"] .field{margin-bottom:15px!important}
+ body[data-kt-page="register"] .terms{font-size:12px!important;gap:10px!important}
+ body[data-kt-page="register"] .terms input{width:18px;height:18px;flex:0 0 18px}
+ body[data-kt-page="register"] .login-link{margin-top:20px!important}
+}
+@media(max-width:390px){
+ body[data-kt-page="register"] .brand-panel{padding:17px 18px 19px!important}
+ body[data-kt-page="register"] .brand-content h1{font-size:30px!important}
+ body[data-kt-page="register"] .form-panel{padding:22px 15px 30px!important}
+ body[data-kt-page="register"] .account-card{padding:12px!important;min-height:152px!important}
+ body[data-kt-page="register"] .account-card strong{font-size:13px!important}
+ body[data-kt-page="register"] .account-card span{font-size:10.5px!important}
 }
