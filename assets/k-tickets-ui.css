@@ -1,0 +1,58 @@
+/* K-Tickets visual upgrade layer — presentation only; no application logic. */
+:root{--kt-bordo:#6c151e;--kt-bordo-dark:#531018;--kt-green:#0f3d3a;--kt-green-dark:#092b29;--kt-cream:#f5dabf;--kt-paper:#fffaf5;--kt-ink:#211b19;--kt-muted:#756b67;--kt-line:rgba(15,61,58,.13);--kt-shadow:0 18px 48px rgba(45,25,20,.09);--kt-radius:20px}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:88px}
+body{overflow-x:hidden;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
+button,a{touch-action:manipulation}
+:focus-visible{outline:3px solid #c58a59!important;outline-offset:3px}
+img{max-width:100%;height:auto}
+button,[role=button],a.btn,.btn{min-height:42px}
+input,select,textarea{max-width:100%;min-width:0}
+/* A consistent premium surface treatment without changing component behavior. */
+.card,.card-section,.detail-card,.events-card,.checkout-card,.form-card,.filter-card,.application-card,.applications-card,.attendee-card,.earn-card,.fee-card,.dashboard-card,.stat-card,.metric-card,.table-card,.content-card{border-radius:var(--kt-radius);box-shadow:var(--kt-shadow)}
+.btn,.button,.buy-btn,.hero-btn,.continue-btn,.confirm-btn,.action-btn{border-radius:999px;font-weight:750;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+.btn:hover,.button:hover,.buy-btn:hover,.hero-btn:hover,.continue-btn:hover,.confirm-btn:hover{transform:translateY(-1px);filter:brightness(1.04)}
+input,select,textarea{border-radius:12px}
+table{width:100%;border-collapse:separate;border-spacing:0}
+th{font-weight:750}
+td,th{vertical-align:middle}
+/* Event discovery: make event media feel editorial and swipe-friendly. */
+.event-grid,.card-grid,.dashboard-grid,.content-grid,.events-grid,.event-list{min-width:0}
+.event-card,.event,.event-item,.event-row{border-radius:18px;overflow:hidden}
+.event-cover img,.event-card img,.event-hero img,.detail-hero img{object-fit:cover}
+.event-card,.event-item{transition:transform .2s ease,box-shadow .2s ease}
+.event-card:hover,.event-item:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(45,25,20,.12)}
+/* Navigation and dashboards */
+.sidebar,.side-nav,.dashboard-sidebar{overscroll-behavior:contain}
+.header,.navbar,.topbar{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.content,.main-content,.dashboard-content,.page-content{min-width:0}
+/* Horizontal data tables remain usable on phones instead of crushing columns. */
+.table-wrap,.table-responsive,.table-container,.overflow-x-auto{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{min-width:620px}
+/* Ticket cards */
+.ticket-card,.digital-ticket,.ticket,.ticket-preview{border-radius:20px;overflow:hidden}
+/* Respect device safe areas */
+@supports(padding:max(0px)){body{padding-bottom:env(safe-area-inset-bottom)}}
+@media(max-width:1100px){:root{--kt-radius:18px}.sidebar,.side-nav,.dashboard-sidebar{width: min(250px,82vw)}.content,.main-content,.dashboard-content,.page-content{min-width:0}}
+@media(max-width:760px){
+  body{font-size:15px}
+  h1{font-size:clamp(1.65rem,7vw,2.35rem);line-height:1.12}
+  h2{font-size:clamp(1.3rem,5vw,1.8rem);line-height:1.2}
+  .container,.page-container,.content,.main-content,.dashboard-content,.page-content{width:100%;max-width:100%;padding-left:16px;padding-right:16px}
+  .header,.navbar,.topbar{padding-left:14px;padding-right:14px}
+  .event-grid,.card-grid,.dashboard-grid,.content-grid,.events-grid,.detail-grid,.details-grid,.earnings-grid,.fee-grid,.form-grid{grid-template-columns:minmax(0,1fr)!important}
+  .event-layout,.checkout-layout,.form-layout{grid-template-columns:minmax(0,1fr)!important}
+  .hero,.event-hero,.detail-hero{min-height:unset}
+  .hero-content,.hero-copy{max-width:100%}
+  .event-card,.card,.detail-card,.checkout-card,.form-card{min-width:0}
+  .event-card img,.event-cover img{max-height:240px}
+  .action-buttons,.card-actions,.header-actions{flex-wrap:wrap}
+  .action-buttons>*{flex:1 1 auto}
+  .btn,.button,.buy-btn,.continue-btn,.confirm-btn{min-height:46px}
+  input,select,textarea{font-size:16px!important} /* prevents iOS focus zoom */
+  .table-wrap,.table-responsive,.table-container{margin-left:-2px;margin-right:-2px}
+  .sidebar,.side-nav,.dashboard-sidebar{max-width:84vw}
+  .modal,.dialog,.drawer,.mobile-drawer{max-width:calc(100vw - 24px)}
+}
+@media(max-width:420px){.container,.page-container,.content,.main-content,.dashboard-content,.page-content{padding-left:12px;padding-right:12px}.card,.detail-card,.checkout-card,.form-card{border-radius:15px}.header,.navbar,.topbar{gap:8px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

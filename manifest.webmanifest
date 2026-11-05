@@ -1,0 +1,17 @@
+{
+  "id": "/",
+  "name": "K-Tickets | Events, Tickets & Access",
+  "short_name": "K-Tickets",
+  "description": "Discover events, book tickets and manage event access with K-Tickets.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#f5dabf",
+  "theme_color": "#6c151e",
+  "icons": [
+    {"src":"/assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"/assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
