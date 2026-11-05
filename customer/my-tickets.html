@@ -999,6 +999,7 @@
     </style>
 
 <meta name="theme-color" content="#6C151E">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="K-Tickets">
@@ -1760,7 +1761,7 @@ async function loadRelatedRecords() {
                     city,
                     start_at,
                     end_at,
-                    cover_image_url
+                    image_url
                 `)
                 .in("id", eventIds)
                 .then(result => ({
@@ -1900,7 +1901,7 @@ function createTicketCard(ticket) {
     const label = statusLabel(ticket.status);
     const statusCss = statusClass(ticket.status);
 
-    const imageUrl = safeText(event?.cover_image_url);
+    const imageUrl = safeText(event?.image_url);
     const ticketUrl =
         `ticket.html?id=${encodeURIComponent(ticket.id)}`;
 

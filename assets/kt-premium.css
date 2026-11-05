@@ -110,3 +110,26 @@ body[data-kt-role="gate"] .scan-btn{background:var(--kt-bordo)!important}
  .hero-card-inner{padding:22px!important}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* HOTFIX: readable contrast on ivory/cream surfaces */
+body[data-kt-role="public"]{color:#211b19!important}
+body[data-kt-role="public"] .features,
+body[data-kt-role="public"] .features-inner,
+body[data-kt-role="public"] .feature{color:#211b19!important}
+body[data-kt-role="public"] .features h2,
+body[data-kt-role="public"] .features h3,
+body[data-kt-role="public"] .features p,
+body[data-kt-role="public"] .feature h2,
+body[data-kt-role="public"] .feature h3,
+body[data-kt-role="public"] .feature p,
+body[data-kt-role="public"] .footer-copy{color:#352b27!important}
+body[data-kt-role="public"] .hero-card,
+body[data-kt-role="public"] .hero-card-inner{color:#470d15!important}
+body[data-kt-role="public"] .hero-card h2,
+body[data-kt-role="public"] .hero-card p,
+body[data-kt-role="public"] .hero-card .event-label,
+body[data-kt-role="public"] .hero-card .event-price,
+body[data-kt-role="public"] .hero-card strong{color:#470d15!important}
+body[data-kt-role="public"] .hero-card .event-price strong{color:#0F3D3A!important}
+body[data-kt-role="public"] .navbar .nav-actions .btn-outline{color:#fff!important}
+body[data-kt-role="public"] footer,body[data-kt-role="public"] footer *{color:#fff8f0!important}

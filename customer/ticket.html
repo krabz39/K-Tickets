@@ -1438,6 +1438,7 @@
 
 
 <meta name="theme-color" content="#6C151E">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="K-Tickets">
@@ -2580,7 +2581,7 @@ async function loadEvent(){
                 city,
                 start_at,
                 end_at,
-                cover_image_url
+                image_url
             `)
             .eq(
                 "id",
@@ -2808,11 +2809,11 @@ function renderTicket(){
 
 
     if(
-        event?.cover_image_url
+        event?.image_url
     ){
 
         image.src =
-            event.cover_image_url;
+            event.image_url;
 
 
         image.alt =
@@ -3536,15 +3537,7 @@ function buildDownloadHtml(){
 </div>
 
 
-<script>
-if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('/sw.js').catch(function(){});
-  });
-}
-</script>
 
-<script src="/assets/kt-app.js" defer></script>
 </body>
 
 </html>
@@ -3957,6 +3950,14 @@ initialize();
 
 </script>
 
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function(error){ console.warn('PWA registration unavailable:', error); });
+  });
+}
+</script>
+<script src="/assets/kt-app.js" defer></script>
 
 </body>
 </html>
